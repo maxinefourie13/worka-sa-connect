@@ -2,95 +2,101 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
+/*
+  Worka design system — "Grounded Workbench"
+  All colors MUST be HSL.
+  Palette source:
+    bg     #f7f8fc
+    ink    #0f1117
+    ink/2  #3a3d4a
+    muted  #6b6f7e
+    border #e4e6ed
+    green  #1a8a5a
+    green-light #e8f5ee
+    amber  #f59e0b
+    white  #ffffff
 */
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    --background: 228 33% 98%;          /* #f7f8fc */
+    --foreground: 230 22% 8%;           /* #0f1117 */
 
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 230 22% 8%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover-foreground: 230 22% 8%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    /* Brand green */
+    --primary: 150 69% 32%;             /* #1a8a5a */
+    --primary-foreground: 0 0% 100%;
+    --primary-light: 144 47% 93%;       /* #e8f5ee */
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 228 25% 96%;           /* near bg, slightly cooler */
+    --secondary-foreground: 230 22% 8%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 228 25% 96%;
+    --muted-foreground: 228 8% 46%;     /* #6b6f7e */
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 36 92% 50%;               /* amber #f59e0b */
+    --accent-foreground: 230 22% 8%;
+    --accent-soft: 36 92% 95%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --ink-2: 230 12% 26%;               /* #3a3d4a */
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --destructive: 0 72% 50%;
+    --destructive-foreground: 0 0% 100%;
 
-    --radius: 0.5rem;
+    --border: 226 18% 91%;              /* #e4e6ed */
+    --input: 226 18% 91%;
+    --ring: 150 69% 32%;
 
-    --sidebar-background: 0 0% 98%;
+    --radius: 0.625rem;
 
-    --sidebar-foreground: 240 5.3% 26.1%;
+    /* Sidebar (dashboard) */
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 230 22% 8%;
+    --sidebar-primary: 150 69% 32%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 228 25% 96%;
+    --sidebar-accent-foreground: 230 22% 8%;
+    --sidebar-border: 226 18% 91%;
+    --sidebar-ring: 150 69% 32%;
 
-    --sidebar-primary: 240 5.9% 10%;
+    /* Gradients & shadows */
+    --shadow-soft: 0 4px 20px -8px hsl(230 22% 8% / 0.08);
+    --shadow-card: 0 1px 2px hsl(230 22% 8% / 0.04), 0 8px 24px -12px hsl(230 22% 8% / 0.08);
+    --shadow-pop: 0 12px 40px -12px hsl(230 22% 8% / 0.18);
 
-    --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    /* Business card gradients (used per-business via class names) */
+    --grad-1: linear-gradient(135deg, hsl(150 69% 32%), hsl(160 60% 38%));
+    --grad-2: linear-gradient(135deg, hsl(36 92% 50%), hsl(20 90% 55%));
+    --grad-3: linear-gradient(135deg, hsl(220 65% 45%), hsl(260 55% 50%));
+    --grad-4: linear-gradient(135deg, hsl(340 70% 50%), hsl(15 85% 55%));
+    --grad-5: linear-gradient(135deg, hsl(190 70% 40%), hsl(220 60% 45%));
+    --grad-6: linear-gradient(135deg, hsl(280 50% 45%), hsl(320 55% 50%));
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    /* Worka uses light only for v1, but keep tokens valid */
+    --background: 230 22% 8%;
+    --foreground: 228 33% 98%;
+    --card: 230 18% 12%;
+    --card-foreground: 228 33% 98%;
+    --popover: 230 18% 12%;
+    --popover-foreground: 228 33% 98%;
+    --primary: 150 60% 45%;
+    --primary-foreground: 230 22% 8%;
+    --secondary: 230 14% 16%;
+    --secondary-foreground: 228 33% 98%;
+    --muted: 230 14% 16%;
+    --muted-foreground: 228 12% 65%;
+    --accent: 36 92% 55%;
+    --accent-foreground: 230 22% 8%;
+    --border: 230 14% 18%;
+    --input: 230 14% 18%;
+    --ring: 150 60% 45%;
   }
 }
 
@@ -99,7 +105,46 @@ All colors MUST be HSL.
     @apply border-border;
   }
 
+  html {
+    -webkit-font-smoothing: antialiased;
+  }
+
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-sans antialiased;
+    font-feature-settings: "ss01", "cv11";
+  }
+
+  ::selection {
+    background: hsl(var(--primary) / 0.2);
+    color: hsl(var(--foreground));
+  }
+
+  h1, h2, h3, h4, h5 {
+    @apply font-display tracking-tight;
+  }
+}
+
+@layer components {
+  .text-balance {
+    text-wrap: balance;
+  }
+  .text-pretty {
+    text-wrap: pretty;
+  }
+
+  /* Business gradient utilities */
+  .bg-grad-1 { background-image: var(--grad-1); }
+  .bg-grad-2 { background-image: var(--grad-2); }
+  .bg-grad-3 { background-image: var(--grad-3); }
+  .bg-grad-4 { background-image: var(--grad-4); }
+  .bg-grad-5 { background-image: var(--grad-5); }
+  .bg-grad-6 { background-image: var(--grad-6); }
+
+  /* Subtle dotted/lined background used in hero */
+  .bg-grid-soft {
+    background-image:
+      radial-gradient(hsl(var(--border)) 1px, transparent 1px);
+    background-size: 24px 24px;
+    background-position: 0 0;
   }
 }
