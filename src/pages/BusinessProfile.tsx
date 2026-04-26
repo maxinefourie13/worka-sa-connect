@@ -1,0 +1,234 @@
+import { useState } from "react";
+import { Link, useParams } from "react-router-dom";
+import { Check, MapPin, Phone, Globe, Mail, Clock, Star, UserPlus, MessageCircle, ChevronRight, ArrowLeft } from "lucide-react";
+import { SiteLayout } from "@/components/SiteLayout";
+import { Button } from "@/components/ui/button";
+import { BUSINESSES, formatRand } from "@/lib/mockData";
+import { cn } from "@/lib/utils";
+
+type TabKey = "about" | "services" | "promotions" | "reviews";
+const TABS: { key: TabKey; label: string }[] = [
+  { key: "about", label: "About" },
+  { key: "services", label: "Services" },
+  { key: "promotions", label: "Promotions" },
+  { key: "reviews", label: "Reviews" },
+];
+
+const BusinessProfile = () => {
+  const { slug } = useParams<{ slug: string }>();
+  const business = BUSINESSES.find((b) => b.slug === slug) ?? BUSINESSES[0];
+  const [tab, setTab] = useState<TabKey>("about");
+  const [following, setFollowing] = useState(false);
+  const [followers, setFollowers] = useState(business.followers);
+
+  const toggleFollow = () => {
+    setFollowing((f) => {
+      const next = !f;
+      setFollowers((c) => (next ? c + 1 : c - 1));
+      return next;
+    });
+  };
+
+  return (
+    <SiteLayout>
+      {/* Header / cover */}
+      <div className={cn("h-56 md:h-72 relative", business.gradient)}>
+        <div className="container h-full relative">
+          <Link
+            to="/directory"
+            className="absolute top-5 left-6 inline-flex items-center gap-1.5 text-white/85 hover:text-white text-sm font-medium"
+          >
+            <ArrowLeft className="size-4" /> Back to directory
+          </Link>
+          {business.plan === "featured" && (
+            <span className="absolute top-5 right-6 bg-foreground/85 text-background text-[10px] font-bold tracking-widest uppercase px-2.5 py-1 rounded">
+              Featured
+            </span>
+          )}
+        </div>
+      </div>
+
+      <div className="container -mt-16 relative pb-20">
+        <div className="grid lg:grid-cols-[1fr_340px] gap-10">
+          {/* Main */}
+          <div>
+            <div className="bg-card border border-border rounded-2xl p-6 md:p-8 shadow-card">
+              <div className="flex flex-col md:flex-row md:items-end gap-5">
+                <div className="size-24 rounded-2xl bg-card border-4 border-card shadow-soft flex items-center justify-center font-display font-bold text-4xl text-foreground -mt-20">
+                  {business.name.charAt(0)}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-start gap-2">
+                    <h1 className="font-display text-3xl md:text-4xl font-semibold tracking-tight leading-tight">
+                      {business.name}
+                    </h1>
+                    {business.isVerified && (
+                      <span className="mt-2 size-6 rounded-full bg-primary/10 text-primary flex items-center justify-center" title="Verified">
+                        <Check className="size-3.5" strokeWidth={3} />
+                      </span>
+                    )}
+                  </div>
+                  <p className="mt-1 text-sm text-ink-2 flex flex-wrap items-center gap-x-3 gap-y-1">
+                    <span>{business.category}</span>
+                    <span className="opacity-50">·</span>
+                    <span className="flex items-center gap-1"><MapPin className="size-3.5" />{business.city}, {business.province}</span>
+                    <span className="opacity-50">·</span>
+                    <span className="flex items-center gap-1"><Star className="size-3.5 fill-accent text-accent" />{business.rating.toFixed(1)} ({business.reviewCount} reviews)</span>
+                  </p>
+                  <p className="mt-1 text-sm text-muted-foreground">{followers} followers</p>
+                </div>
+                <div className="flex gap-2">
+                  <Button variant={following ? "soft" : "default"} onClick={toggleFollow}>
+                    <UserPlus className="size-4" />
+                    {following ? "Following" : "Follow"}
+                  </Button>
+                  <Button variant="outline">
+                    <MessageCircle className="size-4" />
+                    Contact
+                  </Button>
+                </div>
+              </div>
+
+              {/* Tabs */}
+              <div className="mt-8 border-b border-border flex gap-1 -mx-6 px-6 md:-mx-8 md:px-8 overflow-x-auto">
+                {TABS.map((t) => (
+                  <button
+                    key={t.key}
+                    onClick={() => setTab(t.key)}
+                    className={cn(
+                      "px-4 py-3 text-sm font-semibold border-b-2 transition-colors -mb-px whitespace-nowrap",
+                      tab === t.key
+                        ? "border-primary text-foreground"
+                        : "border-transparent text-muted-foreground hover:text-foreground",
+                    )}
+                  >
+                    {t.label}
+                  </button>
+                ))}
+              </div>
+
+              {/* Tab content */}
+              <div className="mt-8">
+                {tab === "about" && (
+                  <div className="space-y-8">
+                    <div>
+                      <h2 className="font-display text-xl font-semibold mb-3">About</h2>
+                      <p className="text-ink-2 leading-relaxed">{business.description}</p>
+                    </div>
+                    <div>
+                      <h2 className="font-display text-xl font-semibold mb-4">Services overview</h2>
+                      <div className="grid sm:grid-cols-2 gap-3">
+                        {business.services.map((s) => (
+                          <div key={s.name} className="border border-border rounded-lg p-4">
+                            <p className="font-semibold text-sm">{s.name}</p>
+                            <p className="text-xs text-muted-foreground mt-1">{s.description}</p>
+                            <p className="mt-3 text-sm font-display font-semibold">
+                              {s.priceType === "quote"
+                                ? "On quote"
+                                : `${s.priceType === "from" ? "From " : ""}${formatRand(s.priceFrom)}`}
+                            </p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {tab === "services" && (
+                  <div className="space-y-3">
+                    {business.services.map((s) => (
+                      <div key={s.name} className="border border-border rounded-lg p-5 flex items-start justify-between gap-4">
+                        <div>
+                          <p className="font-semibold">{s.name}</p>
+                          <p className="text-sm text-ink-2 mt-1">{s.description}</p>
+                        </div>
+                        <p className="font-display font-semibold text-lg whitespace-nowrap">
+                          {s.priceType === "quote" ? "On quote" : `${s.priceType === "from" ? "From " : ""}${formatRand(s.priceFrom)}`}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {tab === "promotions" && (
+                  business.hasPromo ? (
+                    <div className="rounded-2xl p-7 bg-gradient-to-br from-primary to-emerald-600 text-white">
+                      <span className="text-[10px] font-bold uppercase tracking-widest bg-white/20 px-2 py-1 rounded">Active promo</span>
+                      <h3 className="font-display text-2xl font-semibold mt-4">Special offer running this month</h3>
+                      <p className="mt-2 text-white/85">Check this business's listing on the directory for the latest discount details.</p>
+                    </div>
+                  ) : (
+                    <p className="text-muted-foreground text-sm">No active promotions right now.</p>
+                  )
+                )}
+
+                {tab === "reviews" && (
+                  <div className="space-y-4">
+                    {business.reviews.map((r) => (
+                      <div key={r.id} className="border border-border rounded-lg p-5">
+                        <div className="flex items-center justify-between gap-3">
+                          <div>
+                            <p className="font-semibold text-sm">{r.reviewerName}</p>
+                            {r.reviewerCompany && (
+                              <p className="text-xs text-muted-foreground">{r.reviewerCompany}</p>
+                            )}
+                          </div>
+                          <div className="flex items-center gap-1 text-sm">
+                            <Star className="size-3.5 fill-accent text-accent" />
+                            <span className="font-semibold tabular-nums">{r.rating}.0</span>
+                          </div>
+                        </div>
+                        <p className="text-sm text-ink-2 mt-3 leading-relaxed">{r.body}</p>
+                        <p className="text-xs text-muted-foreground mt-3">{r.date}</p>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Sidebar */}
+          <aside className="space-y-5">
+            <div className="bg-card border border-border rounded-2xl p-6 shadow-card">
+              <h3 className="font-display text-lg font-semibold mb-4">Business details</h3>
+              <ul className="space-y-3 text-sm">
+                <li className="flex items-start gap-3"><MapPin className="size-4 text-muted-foreground mt-0.5 shrink-0" /><span>{business.address}</span></li>
+                <li className="flex items-start gap-3"><Phone className="size-4 text-muted-foreground mt-0.5 shrink-0" /><a href={`tel:${business.phone}`} className="hover:text-primary">{business.phone}</a></li>
+                <li className="flex items-start gap-3"><Mail className="size-4 text-muted-foreground mt-0.5 shrink-0" /><a href={`mailto:${business.email}`} className="hover:text-primary">{business.email}</a></li>
+                <li className="flex items-start gap-3"><Globe className="size-4 text-muted-foreground mt-0.5 shrink-0" /><a href="#" className="hover:text-primary">{business.website}</a></li>
+                <li className="flex items-start gap-3"><Clock className="size-4 text-muted-foreground mt-0.5 shrink-0" /><span className="text-ink-2">{business.hours}</span></li>
+              </ul>
+              <div className="mt-5 pt-5 border-t border-border">
+                <p className="text-xs text-muted-foreground">Response rate</p>
+                <div className="mt-2 flex items-center gap-2">
+                  <div className="flex-1 h-2 rounded-full bg-secondary overflow-hidden">
+                    <div className="h-full bg-primary" style={{ width: `${business.responseRate}%` }} />
+                  </div>
+                  <span className="text-sm font-semibold tabular-nums">{business.responseRate}%</span>
+                </div>
+              </div>
+              <div className="mt-5 grid grid-cols-2 gap-2">
+                <Button variant="default" className="w-full"><MessageCircle className="size-4" />Contact</Button>
+                <Button variant="outline" className="w-full" onClick={toggleFollow}>
+                  <UserPlus className="size-4" />
+                  {following ? "Following" : "Follow"}
+                </Button>
+              </div>
+            </div>
+
+            <div className="bg-card border border-border rounded-2xl p-6">
+              <h3 className="font-display text-lg font-semibold mb-2">Looking for similar?</h3>
+              <p className="text-sm text-ink-2 mb-4">Browse more {business.category} businesses in {business.province}.</p>
+              <Link to={`/directory?category=${business.categorySlug}`} className="text-sm font-semibold text-primary inline-flex items-center gap-1 hover:underline">
+                View all <ChevronRight className="size-4" />
+              </Link>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </SiteLayout>
+  );
+};
+
+export default BusinessProfile;

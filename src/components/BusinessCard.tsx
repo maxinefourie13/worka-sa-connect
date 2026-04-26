@@ -1,0 +1,100 @@
+import { Link } from "react-router-dom";
+import { Star, MapPin, Check, UserPlus } from "lucide-react";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import type { Business } from "@/lib/mockData";
+import { cn } from "@/lib/utils";
+
+interface BusinessCardProps {
+  business: Business;
+  className?: string;
+}
+
+export const BusinessCard = ({ business, className }: BusinessCardProps) => {
+  const [following, setFollowing] = useState(false);
+  const [followers, setFollowers] = useState(business.followers);
+
+  const toggle = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setFollowing((f) => {
+      const next = !f;
+      setFollowers((c) => (next ? c + 1 : c - 1));
+      return next;
+    });
+  };
+
+  return (
+    <Link
+      to={`/business/${business.slug}`}
+      className={cn(
+        "group block bg-card rounded-xl border border-border overflow-hidden shadow-card hover:shadow-pop hover:-translate-y-0.5 transition-all duration-300",
+        className,
+      )}
+    >
+      {/* Gradient header */}
+      <div className={cn("h-24 relative", business.gradient)}>
+        {business.hasPromo && (
+          <span className="absolute top-3 left-3 bg-accent text-accent-foreground text-[10px] font-bold tracking-widest uppercase px-2 py-1 rounded">
+            Promo
+          </span>
+        )}
+        {business.plan === "featured" && (
+          <span className="absolute top-3 right-3 bg-foreground/85 text-background text-[10px] font-bold tracking-widest uppercase px-2 py-1 rounded">
+            Featured
+          </span>
+        )}
+        <div className="absolute -bottom-7 left-5 size-14 rounded-xl bg-card border-4 border-card shadow-soft flex items-center justify-center font-display font-bold text-xl text-foreground">
+          {business.name.charAt(0)}
+        </div>
+      </div>
+
+      <div className="pt-10 px-5 pb-5">
+        <div className="flex items-start gap-2">
+          <h3 className="font-display text-lg font-semibold leading-snug flex-1 group-hover:text-primary transition-colors">
+            {business.name}
+          </h3>
+          {business.isVerified && (
+            <span className="shrink-0 mt-1 size-5 rounded-full bg-primary/10 text-primary flex items-center justify-center" title="Verified">
+              <Check className="size-3" strokeWidth={3} />
+            </span>
+          )}
+        </div>
+        <p className="mt-1 text-xs text-muted-foreground flex items-center gap-1.5">
+          <span>{business.category}</span>
+          <span className="opacity-50">·</span>
+          <MapPin className="size-3" />
+          <span>{business.city}</span>
+        </p>
+
+        <div className="mt-3 flex flex-wrap gap-1.5">
+          {business.tags.slice(0, 3).map((tag) => (
+            <span
+              key={tag}
+              className="text-[11px] font-medium px-2 py-0.5 rounded bg-secondary text-ink-2"
+            >
+              {tag}
+            </span>
+          ))}
+        </div>
+
+        <div className="mt-4 flex items-center justify-between gap-3">
+          <div className="flex items-center gap-1.5 text-sm">
+            <Star className="size-4 fill-accent text-accent" />
+            <span className="font-semibold">{business.rating.toFixed(1)}</span>
+            <span className="text-muted-foreground text-xs">({business.reviewCount})</span>
+          </div>
+          <Button
+            size="sm"
+            variant={following ? "soft" : "outline"}
+            onClick={toggle}
+            className="h-8 text-xs"
+          >
+            <UserPlus className="size-3.5" />
+            {following ? "Following" : "Follow"}
+            <span className="text-muted-foreground tabular-nums">· {followers}</span>
+          </Button>
+        </div>
+      </div>
+    </Link>
+  );
+};
