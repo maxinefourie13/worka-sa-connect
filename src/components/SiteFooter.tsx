@@ -40,8 +40,7 @@ export const SiteFooter = () => {
               Worka<span className="text-primary">.</span>
             </Link>
             <p className="text-sm text-muted-foreground max-w-xs leading-relaxed">
-              South Africa's directory for trades, professional services, and the businesses
-              building our communities.
+              Find someone who can do it properly. South Africa's directory for trusted service providers.
             </p>
           </div>
           {cols.map((col) => (

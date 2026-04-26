@@ -9,43 +9,44 @@ const TIERS = [
     name: "Free",
     price: "R 0",
     period: "/month",
-    blurb: "A basic listing to get you found.",
+    blurb: "Get listed. Start showing up.",
     features: [
-      "Basic listing (name, category, location, contact)",
-      "Searchable in directory",
-      "No expiry, no card required",
+      "Basic listing",
+      "Contact details",
+      "Search visibility",
+      "No expiry",
     ],
-    cta: "Create Free Listing",
+    cta: "Start free",
     variant: "outline" as const,
   },
   {
     name: "Standard",
-    price: "R 0",
-    period: " for 3 months, then R 50/month",
-    blurb: "Everything you need to run a serious profile.",
+    price: "R 50",
+    period: "/month — free for the first 3 months",
+    blurb: "For businesses ready to grow.",
     popular: true,
     features: [
-      "Full profile with photos and gallery",
-      "Post unlimited promotions",
-      "Receive and respond to opportunities",
+      "Full profile with photos",
+      "Post promotions",
+      "Apply to job opportunities",
+      "Collect reviews",
       "Follower notifications",
-      "Collect customer reviews",
     ],
-    cta: "Start Free — 3 Months on Us",
+    cta: "Start free for 3 months",
     variant: "default" as const,
   },
   {
     name: "Featured",
-    price: "R 150",
+    price: "R 250",
     period: "/month",
-    blurb: "Top-of-results placement and a featured badge.",
+    blurb: "Get seen first.",
     features: [
       "Everything in Standard",
-      "Top of search results in your category",
-      "Featured badge on your listing",
-      "Priority placement on the homepage grid",
+      "Appear at top of search",
+      "Featured badge",
+      "Priority homepage placement",
     ],
-    cta: "Get Featured",
+    cta: "Get featured",
     variant: "ink" as const,
   },
 ];
@@ -53,9 +54,9 @@ const TIERS = [
 const FAQS = [
   { q: "Can I cancel at any time?", a: "Yes. You can cancel or downgrade your plan from your dashboard at any time. There are no contracts or cancellation fees." },
   { q: "How does the 3-month free trial work?", a: "All new businesses on the Standard plan get the first three months free. We'll send a reminder before billing kicks in. No card required to start." },
-  { q: "What payment methods do you accept?", a: "We accept all major South African credit and debit cards via Stripe. Billing is in South African Rand (ZAR)." },
+  { q: "What payment methods do you accept?", a: "We accept all major South African credit and debit cards. Billing is in South African Rand (ZAR)." },
   { q: "Is my data protected?", a: "Yes. Worka is fully POPIA-compliant. We never sell your information and you can request deletion at any time." },
-  { q: "Do you charge commission on jobs?", a: "No. Worka is a directory and opportunity board — payments between businesses and clients happen off-platform. We charge businesses a flat monthly subscription only." },
+  { q: "Do you charge commission on jobs?", a: "No. Worka is a directory — payments between businesses and clients happen off-platform. We don't take a cut of your work. We just help the right clients find you." },
   { q: "What does verification involve?", a: "We check your business registration (CIPC), contact details, and any relevant trade certifications. Verified businesses get a badge on their profile." },
 ];
 
@@ -66,10 +67,10 @@ const Pricing = () => {
         <header className="text-center max-w-2xl mx-auto mb-14">
           <span className="text-xs font-bold uppercase tracking-widest text-primary">Pricing</span>
           <h1 className="font-display text-4xl md:text-5xl font-medium tracking-tight mt-3 text-balance">
-            Simple plans. No commission. No surprises.
+            No commission. No hidden fees.
           </h1>
           <p className="mt-4 text-lg text-ink-2">
-            Choose how visible you want to be. All prices in South African Rand.
+            You deal directly with your clients. Choose how visible you want to be.
           </p>
         </header>
 
