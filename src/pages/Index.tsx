@@ -8,10 +8,10 @@ import { JobCard } from "@/components/JobCard";
 import { BUSINESSES, OPPORTUNITIES, CATEGORIES, PROVINCES, PROMOTIONS, STATS } from "@/lib/mockData";
 
 const HOW_IT_WORKS = [
-  { icon: UserPlus, title: "List Your Business", body: "Create a profile in minutes. Free for the first three months on Standard." },
-  { icon: Briefcase, title: "Post an Opportunity", body: "Tell us what work you need done and let qualified businesses come to you." },
-  { icon: Search, title: "Search & Connect", body: "Find verified trades and professionals across all nine provinces." },
-  { icon: Users, title: "Follow Businesses", body: "Stay close to the people who do good work — get their promotions first." },
+  { icon: Search, title: "Tell us what you need", body: "Search the directory or post a job in seconds." },
+  { icon: Users, title: "Get real people", body: "Local businesses ready to help — across all nine provinces." },
+  { icon: UserPlus, title: "Choose who you trust", body: "Browse profiles, reviews, and active promotions." },
+  { icon: Briefcase, title: "Get it done", body: "Contact them directly. No middleman. No commission." },
 ];
 
 const HomePage = () => {
