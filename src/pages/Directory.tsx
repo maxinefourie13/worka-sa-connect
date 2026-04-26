@@ -57,10 +57,10 @@ const DirectoryPage = () => {
 
         <header className="mb-10 max-w-2xl">
           <h1 className="font-display text-4xl md:text-5xl font-medium tracking-tight">
-            Browse the directory
+            Find someone who can do it properly
           </h1>
           <p className="mt-3 text-ink-2">
-            Verified South African businesses across {PROVINCES.length} provinces and {CATEGORIES.length}+ categories.
+            Try: wedding photographer, electrician, steel fabrication. Trusted businesses across {PROVINCES.length} provinces.
           </p>
         </header>
 

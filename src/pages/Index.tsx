@@ -8,10 +8,10 @@ import { JobCard } from "@/components/JobCard";
 import { BUSINESSES, OPPORTUNITIES, CATEGORIES, PROVINCES, PROMOTIONS, STATS } from "@/lib/mockData";
 
 const HOW_IT_WORKS = [
-  { icon: UserPlus, title: "List Your Business", body: "Create a profile in minutes. Free for the first three months on Standard." },
-  { icon: Briefcase, title: "Post an Opportunity", body: "Tell us what work you need done and let qualified businesses come to you." },
-  { icon: Search, title: "Search & Connect", body: "Find verified trades and professionals across all nine provinces." },
-  { icon: Users, title: "Follow Businesses", body: "Stay close to the people who do good work — get their promotions first." },
+  { icon: Search, title: "Tell us what you need", body: "Search the directory or post a job in seconds." },
+  { icon: Users, title: "Get real people", body: "Local businesses ready to help — across all nine provinces." },
+  { icon: UserPlus, title: "Choose who you trust", body: "Browse profiles, reviews, and active promotions." },
+  { icon: Briefcase, title: "Get it done", body: "Contact them directly. No middleman. No commission." },
 ];
 
 const HomePage = () => {
@@ -38,13 +38,13 @@ const HomePage = () => {
         <div className="absolute inset-0 bg-grid-soft opacity-40 [mask-image:radial-gradient(ellipse_at_center,black_30%,transparent_75%)]" />
         <div className="container relative pt-20 pb-24 lg:pt-28 lg:pb-32 text-center">
           <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary-light text-primary text-xs font-semibold mb-6">
-            <Sparkles className="size-3.5" /> Free for the first 3 months on Standard
+            <Sparkles className="size-3.5" /> No commission. No middlemen. Direct contact.
           </span>
           <h1 className="font-display text-5xl md:text-6xl lg:text-7xl font-medium tracking-tight text-balance leading-[1.05] max-w-4xl mx-auto">
-            Find who does <span className="italic font-normal text-primary">the work</span>.
+            Find someone who can do it <span className="italic font-normal text-primary">properly</span>.
           </h1>
           <p className="mt-6 text-lg md:text-xl text-ink-2 max-w-xl mx-auto text-pretty">
-            The reliable directory for South African trades, professional services, and the people building our communities.
+            From plumbers to photographers to engineers — find trusted service providers across South Africa.
           </p>
 
           {/* Search */}
@@ -58,7 +58,7 @@ const HomePage = () => {
                 value={keyword}
                 onChange={(e) => setKeyword(e.target.value)}
                 type="text"
-                placeholder="Plumber, photographer, accountant…"
+                placeholder="What do you need done?"
                 className="w-full py-3.5 bg-transparent outline-none text-base placeholder:text-muted-foreground font-medium"
               />
             </div>
@@ -129,7 +129,7 @@ const HomePage = () => {
             How Worka works
           </h2>
           <p className="mt-3 text-ink-2">
-            Whether you're hiring or hustling, Worka brings the right people together.
+            Find someone → Contact them → Get it done. That's it.
           </p>
         </div>
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
@@ -275,10 +275,10 @@ const HomePage = () => {
       <section className="bg-primary text-primary-foreground">
         <div className="container py-16 text-center">
           <h2 className="font-display text-3xl md:text-5xl font-medium tracking-tight max-w-3xl mx-auto text-balance">
-            List your business free for 3 months.
+            Get found by people already looking.
           </h2>
           <p className="mt-4 text-primary-foreground/85 max-w-xl mx-auto">
-            No card required. Get found by the people looking for what you do.
+            List your business on Worka and start getting real enquiries from local clients. We don't take a cut of your work.
           </p>
           <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
             <Button variant="ink" size="lg" asChild>

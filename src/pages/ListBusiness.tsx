@@ -9,9 +9,9 @@ import { cn } from "@/lib/utils";
 const STEPS = ["Basics", "Profile", "Choose Plan", "Review", "Done"] as const;
 
 const PLANS = [
-  { id: "free", name: "Free", price: "R 0/mo", desc: "Basic listing, no expiry." },
+  { id: "free", name: "Free", price: "R 0/mo", desc: "Get listed. Start showing up." },
   { id: "standard", name: "Standard", price: "R 0 for 3 months", desc: "Full profile, promotions, opportunities.", recommended: true },
-  { id: "featured", name: "Featured", price: "R 150/mo", desc: "Top placement and featured badge." },
+  { id: "featured", name: "Featured", price: "R 250/mo", desc: "Get seen first. Top of search and homepage." },
 ];
 
 const ListBusiness = () => {
@@ -155,7 +155,7 @@ const ListBusiness = () => {
                 <p className="text-xs text-muted-foreground mt-1">
                   {plan === "free" && "R 0 / month — basic listing."}
                   {plan === "standard" && "R 0 for the first 3 months, then R 50 / month. Cancel anytime."}
-                  {plan === "featured" && "R 150 / month — top placement in your category."}
+                  {plan === "featured" && "R 250 / month — top of search and homepage placement."}
                 </p>
               </div>
               {plan !== "free" && (

@@ -26,10 +26,10 @@ const Opportunities = () => {
         <header className="mb-8 max-w-2xl">
           <span className="text-xs font-bold uppercase tracking-widest text-primary">Opportunity board</span>
           <h1 className="font-display text-4xl md:text-5xl font-medium tracking-tight mt-2">
-            Real work, posted by real people.
+            Tell people what you need done.
           </h1>
           <p className="mt-3 text-ink-2">
-            Browse opportunities from homeowners and businesses across South Africa. Apply directly — no middlemen.
+            Get responses from businesses ready to help. Contact them directly — no middleman, no commission.
           </p>
         </header>
 
@@ -42,12 +42,12 @@ const Opportunities = () => {
             <div>
               <h2 className="font-display text-xl md:text-2xl font-semibold">Need work done?</h2>
               <p className="text-primary-foreground/85 text-sm mt-1">
-                Post an opportunity and let qualified businesses come to you. It's free.
+                Post a job and let real people come to you. It's free.
               </p>
             </div>
           </div>
           <Button variant="ink" size="lg" asChild>
-            <Link to="/opportunities/new"><Plus className="size-4" />Post an Opportunity</Link>
+            <Link to="/opportunities/new"><Plus className="size-4" />Post a Job</Link>
           </Button>
         </div>
 

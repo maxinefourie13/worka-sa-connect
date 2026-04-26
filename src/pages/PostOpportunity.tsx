@@ -1,19 +1,26 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { ArrowLeft, CheckCircle2 } from "lucide-react";
+import { ArrowLeft, CheckCircle2, Zap } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
 import { Button } from "@/components/ui/button";
 import { CATEGORIES, PROVINCES } from "@/lib/mockData";
 import { toast } from "@/hooks/use-toast";
+import { cn } from "@/lib/utils";
 
 const PostOpportunity = () => {
   const navigate = useNavigate();
   const [submitted, setSubmitted] = useState(false);
+  const [urgent, setUrgent] = useState(false);
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitted(true);
-    toast({ title: "Opportunity posted", description: "Businesses can now apply (mock — backend coming soon)." });
+    toast({
+      title: urgent ? "Urgent job posted" : "Job posted",
+      description: urgent
+        ? "R50 urgent fee applied. Your job has priority visibility."
+        : "Real people will start responding shortly.",
+    });
     setTimeout(() => navigate("/opportunities"), 2000);
   };
 
@@ -24,8 +31,8 @@ const PostOpportunity = () => {
           <div className="size-16 rounded-full bg-primary-light text-primary mx-auto flex items-center justify-center mb-6">
             <CheckCircle2 className="size-8" />
           </div>
-          <h1 className="font-display text-3xl font-medium tracking-tight">Opportunity posted</h1>
-          <p className="mt-3 text-ink-2">Qualified businesses will start applying shortly.</p>
+          <h1 className="font-display text-3xl font-medium tracking-tight">Job posted</h1>
+          <p className="mt-3 text-ink-2">Real people will start responding shortly.</p>
         </div>
       </SiteLayout>
     );
@@ -39,17 +46,17 @@ const PostOpportunity = () => {
         </Link>
         <header className="mb-8">
           <h1 className="font-display text-3xl md:text-4xl font-medium tracking-tight">
-            Post an opportunity
+            Tell people what you need done
           </h1>
-          <p className="mt-2 text-ink-2">Tell us what you need. Verified businesses will apply.</p>
+          <p className="mt-2 text-ink-2">Get responses from businesses ready to help. You contact them directly — no middleman.</p>
         </header>
 
         <form onSubmit={onSubmit} className="bg-card border border-border rounded-2xl p-6 md:p-8 space-y-5 shadow-card">
-          <Field label="Job title" required>
-            <input required className="input" placeholder="e.g. Solar PV installation for office" />
+          <Field label="What do you need?" required>
+            <input required className="input" placeholder="e.g. Fix a leaking pipe in Centurion" />
           </Field>
           <Field label="Description" required>
-            <textarea required rows={4} className="input resize-none" placeholder="Describe the work, scope, location specifics, and any deadlines." />
+            <textarea required rows={4} className="input resize-none" placeholder="Describe the job clearly so the right people respond." />
           </Field>
           <div className="grid sm:grid-cols-2 gap-5">
             <Field label="Category" required>
@@ -68,16 +75,17 @@ const PostOpportunity = () => {
               <input required className="input" placeholder="e.g. Sandton" />
             </Field>
             <Field label="Budget (R)" required>
-              <input required type="number" min="0" className="input" placeholder="e.g. 25000" />
+              <input required type="number" min="0" className="input" placeholder="What are you willing to spend?" />
             </Field>
             <Field label="Deadline">
               <input type="date" className="input" />
             </Field>
             <Field label="Contact preference">
               <select className="input cursor-pointer">
-                <option>In-platform messages</option>
-                <option>Email</option>
+                <option>WhatsApp</option>
                 <option>Phone call</option>
+                <option>Email</option>
+                <option>In-platform messages</option>
               </select>
             </Field>
           </div>
@@ -85,8 +93,36 @@ const PostOpportunity = () => {
             <textarea rows={3} className="input resize-none" placeholder="Certifications, references, insurance, etc." />
           </Field>
 
+          {/* Urgent upgrade */}
+          <button
+            type="button"
+            onClick={() => setUrgent((u) => !u)}
+            className={cn(
+              "w-full text-left border rounded-xl p-4 flex items-start gap-3 transition-all",
+              urgent ? "border-accent bg-accent/10" : "border-border hover:border-accent/50",
+            )}
+          >
+            <span className={cn(
+              "size-5 rounded-md border-2 shrink-0 flex items-center justify-center mt-0.5",
+              urgent ? "border-accent bg-accent" : "border-border",
+            )}>
+              {urgent && <CheckCircle2 className="size-3.5 text-accent-foreground" strokeWidth={3} />}
+            </span>
+            <div className="flex-1">
+              <div className="flex items-center gap-2">
+                <Zap className="size-4 text-accent" />
+                <span className="font-semibold text-sm">Mark as urgent — R50</span>
+              </div>
+              <p className="text-xs text-ink-2 mt-1">
+                Your job gets priority visibility so businesses can respond faster. An <span className="font-bold tracking-wider text-accent">URGENT</span> badge appears on your post.
+              </p>
+            </div>
+          </button>
+
           <div className="pt-2 flex flex-col sm:flex-row gap-3">
-            <Button type="submit" size="lg" className="flex-1">Post Opportunity</Button>
+            <Button type="submit" size="lg" className="flex-1">
+              {urgent ? "Post job (R50 urgent)" : "Post job"}
+            </Button>
             <Button type="button" variant="outline" size="lg" onClick={() => navigate(-1)}>Cancel</Button>
           </div>
         </form>
