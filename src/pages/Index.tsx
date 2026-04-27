@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { BusinessCard } from "@/components/BusinessCard";
 import { JobCard } from "@/components/JobCard";
 import { Typewriter } from "@/components/Typewriter";
-import { BUSINESSES, OPPORTUNITIES, CATEGORIES, PROVINCES, PROMOTIONS, STATS } from "@/lib/mockData";
+import { BUSINESSES, OPPORTUNITIES, CATEGORIES, CATEGORY_GROUPS, PROVINCES, PROMOTIONS, STATS } from "@/lib/mockData";
 
 const HOW_IT_WORKS = [
   { title: "Tell us what you need", body: "Search the directory or post a job in seconds." },
