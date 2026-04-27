@@ -1,6 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { NavLink } from "@/components/NavLink";
 import { Button } from "@/components/ui/button";
+import { FlameButton } from "@/components/ui/flame-button";
 import { Menu, X, LayoutDashboard, LogOut } from "lucide-react";
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
@@ -99,9 +100,9 @@ export const SiteHeader = () => {
               <Button variant="ghost" size="sm" asChild>
                 <Link to="/login">Log In</Link>
               </Button>
-              <Button asChild>
+              <FlameButton asChild>
                 <Link to="/list">List Your Business</Link>
-              </Button>
+              </FlameButton>
             </>
           )}
         </div>
