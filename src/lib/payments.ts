@@ -11,11 +11,11 @@ async function startCheckout(
 ) {
   const { data: { session } } = await supabase.auth.getSession();
   if (!session) {
-    toast({ title: "Sign in required", description: "Log in to continue with payment.", variant: "destructive" });
+    toast({ title: "Sign in first, boet", description: "Log in to continue with payment.", variant: "destructive" });
     return null;
   }
 
-  toast({ title: loadingMsg, description: "Redirecting to Paystack…" });
+  toast({ title: loadingMsg, description: "Sorting the chankura…" });
 
   const { data, error } = await supabase.functions.invoke(fn, {
     body: { ...body, callback_url: window.location.origin + "/dashboard?paid=1" },
@@ -23,8 +23,8 @@ async function startCheckout(
 
   if (error || !data?.authorization_url) {
     toast({
-      title: "Payment couldn't start",
-      description: error?.message ?? "Try again in a moment.",
+      title: "Aikona!",
+      description: "Your card just bounced harder than a pothole on the N1. Check your balance and let's give it another gooi.",
       variant: "destructive",
     });
     return null;

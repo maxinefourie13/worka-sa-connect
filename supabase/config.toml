@@ -5,3 +5,6 @@ verify_jwt = false
 
 [functions.smile-id-webhook]
 verify_jwt = false
+
+[functions.sitemap-xml]
+verify_jwt = false

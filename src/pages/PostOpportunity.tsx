@@ -71,8 +71,8 @@ const PostOpportunity = () => {
 
     setSubmitted(true);
     toast({
-      title: "Job posted",
-      description: "Real people will start responding shortly.",
+      title: "Sharp-sharp!",
+      description: "Your job is live. The okes are warming up their bakkies.",
     });
     setTimeout(() => navigate("/opportunities"), 1500);
   };
@@ -84,8 +84,8 @@ const PostOpportunity = () => {
           <div className="size-16 rounded-full bg-primary-light text-primary mx-auto flex items-center justify-center mb-6">
             <CheckCircle2 className="size-8" />
           </div>
-          <h1 className="font-display text-3xl font-medium tracking-tight">Job posted</h1>
-          <p className="mt-3 text-ink-2">Real people will start responding shortly.</p>
+          <h1 className="font-display text-3xl font-medium tracking-tight">Sharp-sharp!</h1>
+          <p className="mt-3 text-ink-2">Your job is live. The okes are warming up their bakkies.</p>
         </div>
       </SiteLayout>
     );
@@ -99,17 +99,17 @@ const PostOpportunity = () => {
         </Link>
         <header className="mb-8">
           <h1 className="font-display text-3xl md:text-4xl font-medium tracking-tight">
-            Tell people what you need done
+            What's the damage?
           </h1>
-          <p className="mt-2 text-ink-2">Get responses from businesses ready to help. You contact them directly — no middleman.</p>
+          <p className="mt-2 text-ink-2">Get responses from real okes ready to help. You contact them directly — no middleman.</p>
         </header>
 
         <form onSubmit={onSubmit} className="bg-card border border-border rounded-2xl p-6 md:p-8 space-y-5 shadow-card">
           <Field label="What do you need?" required>
-            <input required name="title" className="input" placeholder="e.g. Fix a leaking pipe in Centurion" />
+            <input required name="title" className="input" placeholder="E.g., The geyser is crying, please help." />
           </Field>
           <Field label="Description" required>
-            <textarea required name="description" rows={4} className="input resize-none" placeholder="Describe the job clearly so the right people respond." />
+            <textarea required name="description" rows={4} className="input resize-none" placeholder="Don't hold back. Tell the okes exactly how bad the DIY disaster is..." />
           </Field>
           <div className="grid sm:grid-cols-2 gap-5">
             <Field label="Category group" required>
@@ -183,10 +183,10 @@ const PostOpportunity = () => {
             </span>
             <div className="flex-1">
               <span className="inline-flex items-center gap-1.5 font-bold text-sm">
-                🚨 Eish! Urgent — R20
+                🚨 Eish! It's a crisis. Wake everyone up! — R20
               </span>
               <p className="text-xs text-ink-2 mt-1.5 leading-relaxed">
-                We klaxon every verified pro in this category within 10km. Your job sits at the top of their feed wrapped in a flashing coral border with an <span className="font-bold tracking-wider text-accent">URGENT</span> tag. They know you're desperate and ready to pay emergency rates.
+                Pushes you to the top. We klaxon every verified pro in this category within 10km. Your job sits at the top of their feed wrapped in a flashing coral border with an <span className="font-bold tracking-wider text-accent">URGENT</span> tag. They know you're desperate and ready to pay emergency rates.
               </p>
             </div>
             <style>{`
@@ -200,7 +200,7 @@ const PostOpportunity = () => {
 
           <div className="pt-2 flex flex-col sm:flex-row gap-3">
             <Button type="submit" size="lg" className="flex-1" disabled={submitting}>
-              {submitting ? "Posting…" : urgent ? "Post job (R20 urgent)" : "Post job"}
+              {submitting ? "Just now, just now…" : urgent ? "Put it out there (R20 urgent)" : "Put it out there"}
             </Button>
             <Button type="button" variant="outline" size="lg" onClick={() => navigate(-1)}>Cancel</Button>
           </div>

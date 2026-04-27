@@ -193,29 +193,29 @@ export const Register = () => {
       toast({ title: "Couldn't create account", description: error.message, variant: "destructive" });
       return;
     }
-    toast({ title: "Account created", description: "You're signed in." });
+    toast({ title: "Sharp-sharp!", description: "You're in. Let's get to work." });
   };
 
   return (
     <AuthShell
-      title="Create your account"
-      subtitle="Start listing your business in minutes."
+      title="Pull in, boet."
+      subtitle="The graft is waiting. Let's get you set up."
       footer={<>Already have an account? <Link to="/login" className="text-primary font-semibold hover:underline">Log in</Link></>}
     >
       <form className="space-y-4" onSubmit={onSubmit}>
-        <Field label="Your name or business name">
-          <input required className="input" placeholder="Khumalo Electrical" value={displayName} onChange={(e) => setDisplayName(e.target.value)} />
+        <Field label="What does your Ma call you?">
+          <input required className="input" placeholder="First name + surname (or business name)" value={displayName} onChange={(e) => setDisplayName(e.target.value)} />
         </Field>
         <Field label="Email">
           <input type="email" required className="input" placeholder="you@business.co.za" value={email} onChange={(e) => setEmail(e.target.value)} />
         </Field>
         <Field label="Password">
-          <input type="password" required minLength={8} className="input" placeholder="At least 8 characters" value={password} onChange={(e) => setPassword(e.target.value)} />
+          <input type="password" required minLength={8} className="input" placeholder="Make it stronger than Ouma's rusks." value={password} onChange={(e) => setPassword(e.target.value)} />
         </Field>
         <p className="text-xs text-muted-foreground">By registering, you agree to our terms and POPIA privacy policy.</p>
         <Button className="w-full" size="lg" disabled={submitting}>
           {submitting ? <Loader2 className="size-4 animate-spin" /> : null}
-          Create Account
+          Let's Gooi
         </Button>
         <Divider />
         <SocialButtons />
