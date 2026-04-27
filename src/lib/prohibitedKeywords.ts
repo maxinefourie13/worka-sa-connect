@@ -62,8 +62,10 @@ export function normaliseForMatch(input: string): string {
     }
     // anything else (spaces, punctuation, dots, dashes, emoji) is dropped
   }
-  // Collapse 3+ repeats of the same letter down to 2 (English rarely has 3 in a row).
-  out = out.replace(/([a-z])\1{2,}/g, "$1$1");
+  // Collapse any run of the same character down to a single one. Applied to BOTH
+  // haystack and needle so "freeeee" still matches "free" and "ammmmunition"
+  // still matches "ammunition" (both become "amunition").
+  out = out.replace(/([a-z0-9])\1+/g, "$1");
   return out;
 }
 
