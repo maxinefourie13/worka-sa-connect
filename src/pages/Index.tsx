@@ -7,7 +7,8 @@ import { FlameButton } from "@/components/ui/flame-button";
 import { BusinessCard } from "@/components/BusinessCard";
 import { JobCard } from "@/components/JobCard";
 import { Typewriter } from "@/components/Typewriter";
-import { BUSINESSES, OPPORTUNITIES, CATEGORIES, CATEGORY_GROUPS, PROVINCES, STATS } from "@/lib/mockData";
+import { CATEGORIES, CATEGORY_GROUPS, PROVINCES, STATS } from "@/lib/mockData";
+import { useBusinesses, useOpportunities } from "@/hooks/useDirectory";
 import { getCategoryGroupIcon } from "@/lib/categoryIcons";
 
 const HOW_IT_WORKS = [
