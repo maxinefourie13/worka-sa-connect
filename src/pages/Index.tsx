@@ -5,6 +5,7 @@ import { SiteLayout } from "@/components/SiteLayout";
 import { Button } from "@/components/ui/button";
 import { BusinessCard } from "@/components/BusinessCard";
 import { JobCard } from "@/components/JobCard";
+import { Typewriter } from "@/components/Typewriter";
 import { BUSINESSES, OPPORTUNITIES, CATEGORIES, PROVINCES, PROMOTIONS, STATS } from "@/lib/mockData";
 
 const HOW_IT_WORKS = [
@@ -12,6 +13,30 @@ const HOW_IT_WORKS = [
   { icon: Users, title: "Get real people", body: "Local businesses ready to help — across all nine provinces." },
   { icon: UserPlus, title: "Choose who you trust", body: "Browse profiles, reviews, and active promotions." },
   { icon: Briefcase, title: "Get it done", body: "Contact them directly. No middleman. No commission." },
+];
+
+const HERO_PHRASES = [
+  "Sjoh! Your husband's DIY is a crime scene. Hire a real pro.",
+  "Sjoh! Kitchen looking like a swimming pool? Dala a plumber.",
+  "Sjoh! Don't let a pampoen tile your bathroom. Get quotes.",
+  "Sjoh! Because 14 phone calls is 13 too many. Just post the job.",
+  "Sjoh! DB board singing the load shedding blues? Find a sparky.",
+  "Sjoh! Still waiting for the 'Sober Monday' guy? Find vetted pros.",
+  "Sjoh! That company logo looks like MS Paint. Hire a designer.",
+  "Sjoh! Spreadsheets making you cry? Dala an Excel wizard.",
+  "Sjoh! Cousin's wiring giving you static shocks? Get an electrician.",
+  "Sjoh! Locked out in your 'poverty' PJs? We've got locksmiths.",
+  "Sjoh! The dog ate your garden... again. Find a landscaper.",
+  "Sjoh! Bank balance looking like a temperature? Sell your skills.",
+  "Sjoh! Too much month at the end of the money? Start a hustle.",
+  "Sjoh! Eskom bill giving you chest pains? Offer your services.",
+  "Sjoh! Tired of begging clients to pay you? Enjoy escrow protection.",
+  "Sjoh! Stop grafting for your uncle. Start your own business.",
+  "Sjoh! Got skills but no leads? List your services today.",
+  "Sjoh! Januworry hitting hard in October? Dala a side-hustle.",
+  "Sjoh! Can you fix what the tjops broke? We need you.",
+  "Sjoh! Turn your 'I know a guy' status into a legit business.",
+  "Sjoh! Good with numbers, bad with being broke? Offer tutoring.",
 ];
 
 const HomePage = () => {
@@ -34,23 +59,33 @@ const HomePage = () => {
   return (
     <SiteLayout>
       {/* Hero */}
-      <section className="relative overflow-hidden border-b border-border">
+      <section className="relative overflow-hidden border-b border-border bg-background">
         <div className="absolute inset-0 bg-grid-soft opacity-40 [mask-image:radial-gradient(ellipse_at_center,black_30%,transparent_75%)]" />
         <div className="container relative pt-20 pb-24 lg:pt-28 lg:pb-32 text-center">
-          <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary-light text-primary text-xs font-semibold mb-6">
+          <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary-light text-primary text-xs font-semibold mb-8">
             <Sparkles className="size-3.5" /> No commission. No middlemen. Direct contact.
           </span>
-          <h1 className="font-display text-5xl md:text-6xl lg:text-7xl font-medium tracking-tight text-balance leading-[1.05] max-w-4xl mx-auto">
-            Find someone who can do it <span className="italic font-normal text-primary">properly</span>.
+
+          {/* Static question */}
+          <h1 className="font-display text-5xl md:text-6xl lg:text-7xl font-semibold tracking-tight text-balance leading-[1.05] max-w-4xl mx-auto text-foreground">
+            What do you need?
           </h1>
-          <p className="mt-6 text-lg md:text-xl text-ink-2 max-w-xl mx-auto text-pretty">
-            From plumbers to photographers to engineers — find trusted service providers across South Africa.
-          </p>
+
+          {/* Rotating typewriter line — coral */}
+          <div className="mt-6 min-h-[5.5rem] md:min-h-[5rem] lg:min-h-[5.5rem] flex items-start justify-center">
+            <p className="font-display text-xl md:text-2xl lg:text-3xl font-medium leading-snug max-w-3xl mx-auto text-balance">
+              <Typewriter
+                phrases={HERO_PHRASES}
+                randomize
+                className="text-primary-glow"
+              />
+            </p>
+          </div>
 
           {/* Search */}
           <form
             onSubmit={onSearch}
-            className="mt-10 w-full max-w-3xl mx-auto bg-card p-2 rounded-2xl shadow-soft border border-border flex flex-col md:flex-row gap-2 transition-shadow focus-within:shadow-pop"
+            className="mt-8 w-full max-w-3xl mx-auto bg-card p-2 rounded-2xl shadow-soft border border-border flex flex-col md:flex-row gap-2 transition-shadow focus-within:shadow-pop"
           >
             <div className="flex-1 flex items-center gap-3 px-4">
               <Search className="size-4 text-muted-foreground shrink-0" />
@@ -58,7 +93,7 @@ const HomePage = () => {
                 value={keyword}
                 onChange={(e) => setKeyword(e.target.value)}
                 type="text"
-                placeholder="What do you need done?"
+                placeholder="Search plumbers, electricians, designers…"
                 className="w-full py-3.5 bg-transparent outline-none text-base placeholder:text-muted-foreground font-medium"
               />
             </div>

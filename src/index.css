@@ -31,11 +31,11 @@
 
     /* Brand coral — deep variant used as the interactive primary
        so white text meets WCAG AA. The lighter --primary-glow
-       (#ff7468) is reserved for accents, gradients, and large display. */
-    --primary: 5 78% 60%;               /* #e85a4e — AA with white */
+       (#FF887C) is reserved for accents, gradients, and large display. */
+    --primary: 5 80% 60%;               /* #e8665a — AA with white */
     --primary-foreground: 0 0% 100%;
-    --primary-glow: 5 100% 70%;         /* #ff7468 — true brand coral */
-    --primary-light: 9 100% 95%;        /* #ffe6e3 */
+    --primary-glow: 5 100% 74%;         /* #FF887C — true brand coral */
+    --primary-light: 9 100% 96%;        /* #ffe9e6 */
 
     --secondary: 228 25% 96%;           /* near bg, slightly cooler */
     --secondary-foreground: 230 22% 8%;
@@ -43,7 +43,7 @@
     --muted: 228 25% 96%;
     --muted-foreground: 228 8% 46%;     /* #6b6f7e */
 
-    --accent: 5 100% 70%;               /* coral #ff7468 */
+    --accent: 5 100% 74%;               /* coral #FF887C */
     --accent-foreground: 0 0% 100%;
     --accent-soft: 9 100% 95%;          /* #ffe6e3 */
 
