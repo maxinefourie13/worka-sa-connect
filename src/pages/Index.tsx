@@ -125,9 +125,9 @@ const HomePage = () => {
               </select>
               <span className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-muted-foreground text-xs">▾</span>
             </div>
-            <Button type="submit" variant="ink" size="lg" className="rounded-lg">
+            <FlameButton type="submit" size="lg">
               Search
-            </Button>
+            </FlameButton>
           </form>
 
           {/* Popular categories */}
