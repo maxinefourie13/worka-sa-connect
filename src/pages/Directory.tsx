@@ -49,7 +49,7 @@ const DirectoryPage = () => {
     : null;
 
   const filtered = useMemo(() => {
-    let list = BUSINESSES.filter((b) => {
+    let list = businesses.filter((b) => {
       if (keyword && !b.name.toLowerCase().includes(keyword.toLowerCase()) && !b.category.toLowerCase().includes(keyword.toLowerCase())) return false;
       if (cats.length && !cats.includes(b.categorySlug)) return false;
       if (provs.length && !provs.includes(b.province)) return false;
@@ -66,7 +66,7 @@ const DirectoryPage = () => {
         return order[a.plan] - order[b.plan];
       });
     return list;
-  }, [keyword, cats, provs, verifiedOnly, promoOnly, topRated, sort]);
+  }, [businesses, keyword, cats, provs, verifiedOnly, promoOnly, topRated, sort]);
 
   return (
     <SiteLayout>
