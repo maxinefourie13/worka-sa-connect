@@ -179,6 +179,8 @@ export interface Business {
   followers: number;
   plan: "free" | "standard" | "featured";
   gradient: string;
+  /** Optional cover/profile image URL (imported asset). Falls back to gradient when omitted. */
+  image?: string;
   responseRate: number;
   hours: string;
   services: Service[];
