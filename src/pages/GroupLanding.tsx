@@ -12,6 +12,8 @@ import { useBusinesses, useOpportunities } from "@/hooks/useDirectory";
 
 const GroupLanding = () => {
   const { groupSlug } = useParams<{ groupSlug: string }>();
+  const { data: allBusinesses } = useBusinesses();
+  const { data: allOpps } = useOpportunities();
   const group = CATEGORY_GROUPS.find((g) => g.slug === groupSlug);
 
   if (!group) {
