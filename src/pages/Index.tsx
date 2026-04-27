@@ -135,58 +135,6 @@ const HomePage = () => {
           </div>
         </div>
       </section>
-          <form
-            onSubmit={onSearch}
-            className="mt-10 w-full max-w-3xl mx-auto bg-card p-2 rounded-2xl shadow-soft border border-border flex flex-col md:flex-row gap-2 transition-shadow focus-within:shadow-pop"
-          >
-            <div className="flex-1 flex items-center gap-3 px-4">
-              <Search className="size-4 text-muted-foreground shrink-0" />
-              <input
-                value={keyword}
-                onChange={(e) => setKeyword(e.target.value)}
-                type="text"
-                placeholder="What do you need done?"
-                className="w-full py-3.5 bg-transparent outline-none text-base placeholder:text-muted-foreground font-medium"
-              />
-            </div>
-            <div className="hidden md:block w-px bg-border my-2" />
-            <div className="relative md:min-w-[200px]">
-              <select
-                value={province}
-                onChange={(e) => setProvince(e.target.value)}
-                className="w-full pl-4 pr-10 py-3.5 bg-transparent outline-none text-base font-medium appearance-none cursor-pointer text-foreground"
-              >
-                <option value="">All Provinces</option>
-                {PROVINCES.map((p) => (
-                  <option key={p} value={p}>
-                    {p}
-                  </option>
-                ))}
-              </select>
-              <span className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-muted-foreground text-xs">▾</span>
-            </div>
-            <Button type="submit" variant="ink" size="lg" className="rounded-lg">
-              Search
-            </Button>
-          </form>
-
-          {/* Popular categories */}
-          <div className="mt-8 flex flex-wrap justify-center gap-2 max-w-2xl mx-auto">
-            <span className="text-xs font-semibold uppercase tracking-widest text-muted-foreground self-center mr-1">
-              Popular:
-            </span>
-            {popularCats.map((c) => (
-              <Link
-                key={c.slug}
-                to={`/directory?category=${c.slug}`}
-                className="text-sm font-medium px-3.5 py-1.5 rounded-full border border-border bg-card hover:border-accent hover:bg-accent-soft transition-all"
-              >
-                {c.name}
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
 
       {/* Stats bar */}
       <section className="bg-card border-b border-border">
