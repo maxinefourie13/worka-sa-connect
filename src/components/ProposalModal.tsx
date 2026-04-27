@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { X, Zap, Video, Paperclip, FileDown, Lock, Sparkles, Check } from "lucide-react";
+import { X, Zap, Video, Paperclip, FileDown, Lock, Sparkles, Check, TrendingUp, Crown, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useKlap } from "@/lib/klapStore";
+import { useKlap, BOOST_OPTIONS, type BoostTier } from "@/lib/klapStore";
 import { toast } from "@/hooks/use-toast";
 import { TopUpModal } from "@/components/TopUpModal";
 import { downloadQuotation } from "@/lib/quotation";
@@ -21,7 +21,7 @@ interface Props {
 type PriceType = "fixed" | "from" | "quote";
 
 export const ProposalModal = ({ open, jobId, jobTitle, jobBudget, clientName, onClose, onSubmitted }: Props) => {
-  const { provider, klapJob } = useKlap();
+  const { provider, klapJob, previewBid } = useKlap();
   const [topUpOpen, setTopUpOpen] = useState(false);
 
   const [priceType, setPriceType] = useState<PriceType>("fixed");
@@ -31,10 +31,15 @@ export const ProposalModal = ({ open, jobId, jobTitle, jobBudget, clientName, on
   const [contactPref, setContactPref] = useState("WhatsApp");
   const [loomUrl, setLoomUrl] = useState("");
   const [attachments, setAttachments] = useState<File[]>([]);
+  const [boost, setBoost] = useState<BoostTier>("standard");
   const [submitted, setSubmitted] = useState(false);
+  const [resultRank, setResultRank] = useState<{ rank: number; total: number } | null>(null);
 
   const isMainOke = provider.tier === "main-oke";
   const priceNum = Number(price) || 0;
+  const boostOption = BOOST_OPTIONS.find((b) => b.id === boost)!;
+  const preview = previewBid(jobId, boost);
+  const canAfford = provider.klapsRemaining >= boostOption.cost;
   const canSubmit =
     scope.trim().length >= 20 &&
     (priceType === "quote" || priceNum > 0) &&
@@ -50,7 +55,9 @@ export const ProposalModal = ({ open, jobId, jobTitle, jobBudget, clientName, on
     setContactPref("WhatsApp");
     setLoomUrl("");
     setAttachments([]);
+    setBoost("standard");
     setSubmitted(false);
+    setResultRank(null);
   };
 
   const handleClose = () => {
@@ -60,15 +67,16 @@ export const ProposalModal = ({ open, jobId, jobTitle, jobBudget, clientName, on
 
   const handleSubmit = () => {
     if (!canSubmit) return;
-    const result = klapJob(jobId, jobTitle);
+    const result = klapJob(jobId, jobTitle, boost);
     if (!result.ok) {
       setTopUpOpen(true);
       return;
     }
     setSubmitted(true);
+    setResultRank({ rank: result.rank!, total: result.total! });
     toast({
-      title: "Proposal sent! 💥",
-      description: "1 Klap deducted. Client will see your pitch and contact you directly.",
+      title: boost === "top-spot" ? "Top Spot locked in 👑" : boost === "boost" ? "Boosted to top half ⚡" : "Proposal sent! 💥",
+      description: `${boostOption.cost} Klap${boostOption.cost > 1 ? "s" : ""} deducted. You're ranked #${result.rank} of ${result.total}.`,
     });
     onSubmitted?.();
   };
@@ -113,7 +121,7 @@ export const ProposalModal = ({ open, jobId, jobTitle, jobBudget, clientName, on
             </div>
             <h2 className="font-display text-xl md:text-2xl font-semibold tracking-tight pr-8">{jobTitle}</h2>
             <p className="text-xs text-muted-foreground mt-2">
-              Costs <strong className="text-accent">1 Klap</strong> to send. You have <strong className="tabular-nums">{provider.klapsRemaining}</strong> left.
+              Costs <strong className="text-accent">{boostOption.cost} Klap{boostOption.cost > 1 ? "s" : ""}</strong> to send ({boostOption.label}). You have <strong className="tabular-nums">{provider.klapsRemaining}</strong> left.
               {clientName && <> · For <strong>{clientName}</strong></>}
             </p>
           </div>
@@ -125,6 +133,8 @@ export const ProposalModal = ({ open, jobId, jobTitle, jobBudget, clientName, on
                 isMainOke={isMainOke}
                 onDownloadQuote={handleDownloadQuote}
                 onClose={handleClose}
+                resultRank={resultRank}
+                boostLabel={boostOption.label}
               />
             ) : (
               <>
@@ -270,6 +280,14 @@ export const ProposalModal = ({ open, jobId, jobTitle, jobBudget, clientName, on
                   </p>
                 </div>
 
+                {/* Boost step — Upwork-style outbid */}
+                <BoostSelector
+                  boost={boost}
+                  onChange={setBoost}
+                  preview={preview}
+                  klapsRemaining={provider.klapsRemaining}
+                />
+
                 {/* Quotation upsell card */}
                 <QuotationCard isMainOke={isMainOke} />
               </>
@@ -287,7 +305,9 @@ export const ProposalModal = ({ open, jobId, jobTitle, jobBudget, clientName, on
                 size="lg"
               >
                 <Zap className="size-4" strokeWidth={2.5} />
-                Send Proposal — 1 Klap
+                {!canAfford
+                  ? `Need ${boostOption.cost - provider.klapsRemaining} more Klap${boostOption.cost - provider.klapsRemaining > 1 ? "s" : ""}`
+                  : `Send Proposal — ${boostOption.cost} Klap${boostOption.cost > 1 ? "s" : ""}`}
               </Button>
             </div>
           )}
@@ -346,9 +366,13 @@ const QuotationCard = ({ isMainOke }: { isMainOke: boolean }) => {
 };
 
 const SuccessState = ({
-  isMainOke, onDownloadQuote, onClose,
+  isMainOke, onDownloadQuote, onClose, resultRank, boostLabel,
 }: {
-  isMainOke: boolean; onDownloadQuote: () => void; onClose: () => void;
+  isMainOke: boolean;
+  onDownloadQuote: () => void;
+  onClose: () => void;
+  resultRank: { rank: number; total: number } | null;
+  boostLabel: string;
 }) => (
   <div className="text-center py-6">
     <div className="size-16 rounded-full bg-primary-light text-primary flex items-center justify-center mx-auto mb-4">
@@ -358,6 +382,20 @@ const SuccessState = ({
     <p className="text-sm text-ink-2 mt-2 max-w-sm mx-auto">
       Your proposal is in. The client will see your pitch and reach out directly. No middleman, no commission.
     </p>
+
+    {resultRank && (
+      <div className="mt-5 mx-auto max-w-sm rounded-xl bg-foreground text-background px-4 py-3 flex items-center justify-between">
+        <div className="text-left">
+          <p className="text-[10px] font-bold uppercase tracking-widest text-accent">Your placement</p>
+          <p className="font-display text-lg font-semibold">
+            #{resultRank.rank} <span className="text-background/60 font-normal text-sm">of {resultRank.total} bids</span>
+          </p>
+        </div>
+        <span className="text-[10px] font-bold uppercase tracking-widest bg-accent text-accent-foreground px-2 py-1 rounded">
+          {boostLabel}
+        </span>
+      </div>
+    )}
 
     {isMainOke ? (
       <div className="mt-6 max-w-sm mx-auto">
@@ -387,3 +425,79 @@ const SuccessState = ({
     <Button variant="ghost" onClick={onClose} className="mt-6">Done</Button>
   </div>
 );
+
+const BoostSelector = ({
+  boost, onChange, preview, klapsRemaining,
+}: {
+  boost: BoostTier;
+  onChange: (b: BoostTier) => void;
+  preview: { total: number; projectedRank: number };
+  klapsRemaining: number;
+}) => {
+  const competition = preview.total;
+  return (
+    <div>
+      <label className="text-xs font-bold uppercase tracking-widest text-ink-2 block mb-2">
+        Boost your bid
+      </label>
+
+      {/* Competition banner */}
+      <div className="mb-3 flex items-center gap-2 text-xs text-ink-2 bg-secondary rounded-lg px-3 py-2">
+        <Users className="size-3.5 text-accent" />
+        <span>
+          <strong className="text-foreground tabular-nums">{competition}</strong> pro{competition !== 1 ? "s" : ""} have already klapped this job.
+          {competition >= 5 && <span className="text-accent font-semibold"> Standing out matters.</span>}
+        </span>
+      </div>
+
+      <div className="grid sm:grid-cols-3 gap-2">
+        {BOOST_OPTIONS.map((opt) => {
+          const isSelected = boost === opt.id;
+          const cantAfford = klapsRemaining < opt.cost;
+          const Icon = opt.id === "top-spot" ? Crown : opt.id === "boost" ? TrendingUp : Zap;
+          return (
+            <button
+              key={opt.id}
+              type="button"
+              onClick={() => onChange(opt.id)}
+              className={cn(
+                "text-left p-3 rounded-lg border-2 transition-all relative",
+                isSelected
+                  ? opt.id === "top-spot"
+                    ? "border-accent bg-accent/10"
+                    : opt.id === "boost"
+                    ? "border-foreground bg-foreground/5"
+                    : "border-foreground/40 bg-background"
+                  : "border-border bg-background hover:border-foreground/30",
+                cantAfford && "opacity-60",
+              )}
+            >
+              {opt.id === "top-spot" && (
+                <span className="absolute -top-2 right-2 bg-accent text-accent-foreground text-[9px] font-bold uppercase tracking-widest px-1.5 py-0.5 rounded">
+                  Win it
+                </span>
+              )}
+              <div className="flex items-center gap-1.5 mb-1.5">
+                <Icon className={cn("size-3.5", opt.id === "top-spot" ? "text-accent" : "text-foreground")} strokeWidth={2.5} />
+                <span className="font-display text-sm font-semibold">{opt.label}</span>
+              </div>
+              <div className="font-display text-lg font-medium tabular-nums">
+                {opt.cost} <span className="text-xs font-sans text-muted-foreground">Klap{opt.cost > 1 ? "s" : ""}</span>
+              </div>
+              <p className="text-[11px] text-ink-2 mt-1 leading-snug">{opt.blurb}</p>
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Projected rank */}
+      <div className="mt-3 flex items-center justify-between gap-2 px-3 py-2 rounded-lg bg-foreground text-background text-xs">
+        <span className="text-background/70 uppercase tracking-widest font-bold text-[10px]">Projected rank</span>
+        <span className="font-display text-base font-semibold tabular-nums">
+          #{preview.projectedRank} <span className="text-background/60 font-normal text-xs">of {competition + 1}</span>
+        </span>
+      </div>
+    </div>
+  );
+};
+
