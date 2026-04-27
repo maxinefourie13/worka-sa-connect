@@ -27,7 +27,7 @@ const Opportunities = () => {
   );
 
   const filtered = useMemo(() => {
-    const list = OPPORTUNITIES.filter((o) => {
+    const list = opportunities.filter((o) => {
       if (keyword && !o.title.toLowerCase().includes(keyword.toLowerCase())) return false;
       if (category && o.categorySlug !== category) return false;
       if (province && o.province !== province) return false;
@@ -36,9 +36,9 @@ const Opportunities = () => {
       return true;
     });
     return list;
-  }, [keyword, category, province, verifiedOnly, clientHireHistory]);
+  }, [opportunities, keyword, category, province, verifiedOnly, clientHireHistory]);
 
-  const verifiedCount = OPPORTUNITIES.filter((o) => clientHireHistory[o.id]).length;
+  const verifiedCount = opportunities.filter((o) => clientHireHistory[o.id]).length;
 
   return (
     <SiteLayout>
