@@ -32,8 +32,8 @@ const GroupLanding = () => {
   const subs = CATEGORIES.filter((c) => c.groupSlug === group.slug);
   const subSlugs = subs.map((s) => s.slug);
   const totalListings = subs.reduce((sum, c) => sum + c.count, 0);
-  const featured = BUSINESSES.filter((b) => subSlugs.includes(b.categorySlug)).slice(0, 3);
-  const jobs = OPPORTUNITIES.filter((o) => subSlugs.includes(o.categorySlug)).slice(0, 3);
+  const featured = allBusinesses.filter((b) => subSlugs.includes(b.categorySlug)).slice(0, 3);
+  const jobs = allOpps.filter((o) => subSlugs.includes(o.categorySlug)).slice(0, 3);
 
   return (
     <SiteLayout>
