@@ -208,6 +208,7 @@ const BusinessProfile = () => {
 
                 {tab === "reviews" && (
                   <div className="space-y-4">
+                    {live && <GoogleReviewsList businessId={live.id} business={live} />}
                     {business.reviews.map((r) => (
                       <div key={r.id} className="border border-border rounded-lg p-5">
                         <div className="flex items-center justify-between gap-3">
