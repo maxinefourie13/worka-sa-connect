@@ -66,26 +66,29 @@ const HomePage = () => {
             <Sparkles className="size-3.5" /> No commission. No middlemen. Direct contact.
           </span>
 
-          {/* Static question */}
-          <h1 className="font-display text-5xl md:text-6xl lg:text-7xl font-semibold tracking-tight text-balance leading-[1.05] max-w-4xl mx-auto text-foreground">
-            What do you need?
-          </h1>
-
-          {/* Rotating typewriter line — coral */}
-          <div className="mt-6 min-h-[5.5rem] md:min-h-[5rem] lg:min-h-[5.5rem] flex items-start justify-center">
-            <p className="font-display text-xl md:text-2xl lg:text-3xl font-medium leading-snug max-w-3xl mx-auto text-balance">
+          {/* Hero typewriter — the SA-flavoured Sjoh! line is the centrepiece */}
+          <div className="min-h-[14rem] sm:min-h-[12rem] md:min-h-[13rem] lg:min-h-[14rem] flex items-center justify-center">
+            <h1 className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-semibold tracking-tight leading-[1.05] max-w-5xl mx-auto text-balance text-foreground">
               <Typewriter
                 phrases={HERO_PHRASES}
                 randomize
+                typingSpeed={75}
+                erasingSpeed={35}
+                holdDuration={3200}
                 className="text-primary-glow"
               />
-            </p>
+            </h1>
           </div>
+
+          {/* Small label above the search */}
+          <p className="mt-10 mb-3 text-sm md:text-base font-semibold uppercase tracking-widest text-muted-foreground">
+            What do you need?
+          </p>
 
           {/* Search */}
           <form
             onSubmit={onSearch}
-            className="mt-8 w-full max-w-3xl mx-auto bg-card p-2 rounded-2xl shadow-soft border border-border flex flex-col md:flex-row gap-2 transition-shadow focus-within:shadow-pop"
+            className="w-full max-w-3xl mx-auto bg-card p-2 rounded-2xl shadow-soft border border-border flex flex-col md:flex-row gap-2 transition-shadow focus-within:shadow-pop"
           >
             <div className="flex-1 flex items-center gap-3 px-4">
               <Search className="size-4 text-muted-foreground shrink-0" />
