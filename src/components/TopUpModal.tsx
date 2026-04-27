@@ -2,8 +2,7 @@ import { Zap, X, Flame } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { KLAP_PACKS, formatRand } from "@/lib/mockData";
-import { useKlap } from "@/lib/klapStore";
-import { toast } from "@/hooks/use-toast";
+import { payments } from "@/lib/payments";
 
 interface Props {
   open: boolean;
@@ -11,15 +10,11 @@ interface Props {
 }
 
 export const TopUpModal = ({ open, onClose }: Props) => {
-  const { topUp } = useKlap();
   if (!open) return null;
 
-  const buy = (klaps: number, name: string, price: number) => {
-    topUp(klaps);
-    toast({
-      title: `KLAP HOM PAPPIE! 💥`,
-      description: `+${klaps} Klaps loaded (${name}, ${formatRand(price)}). Get back to grafting.`,
-    });
+  const buy = (packId: string) => {
+    const slug = packId === "crate" ? "crate" : "six-pack";
+    payments.buyKlapPack(slug);
     onClose();
   };
 
@@ -76,7 +71,7 @@ export const TopUpModal = ({ open, onClose }: Props) => {
                         : "mt-4 font-bold gap-1.5"
                     }
                     variant={isCrate ? "default" : "outline"}
-                    onClick={() => buy(p.klaps, p.name, p.price)}
+                    onClick={() => buy(p.id)}
                   >
                     <Zap className="size-3.5" strokeWidth={2.5} />
                     KLAP HOM PAPPIE! — {formatRand(p.price)}
@@ -107,7 +102,7 @@ export const TopUpModal = ({ open, onClose }: Props) => {
           </div>
 
           <p className="mt-4 text-[11px] text-muted-foreground text-center">
-            Demo only — no real charge. Real payments coming soon.
+            Secure payment via Paystack · ZAR
           </p>
         </div>
       </div>

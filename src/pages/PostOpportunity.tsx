@@ -6,26 +6,75 @@ import { Button } from "@/components/ui/button";
 import { CATEGORIES, CATEGORY_GROUPS, PROVINCES } from "@/lib/mockData";
 import { toast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
+import { payments } from "@/lib/payments";
 
 const PostOpportunity = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const [urgent, setUrgent] = useState(false);
   const [groupSlug, setGroupSlug] = useState("");
   const [categorySlug, setCategorySlug] = useState("");
 
   const subCats = groupSlug ? CATEGORIES.filter((c) => c.groupSlug === groupSlug) : [];
 
-  const onSubmit = (e: React.FormEvent) => {
+  const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!user) {
+      navigate("/auth");
+      return;
+    }
+    setSubmitting(true);
+
+    const form = new FormData(e.currentTarget as HTMLFormElement);
+    const category = CATEGORIES.find((c) => c.slug === categorySlug);
+    const group = CATEGORY_GROUPS.find((g) => g.slug === groupSlug);
+
+    const payload = {
+      client_id: user.id,
+      title: String(form.get("title") ?? ""),
+      description: String(form.get("description") ?? ""),
+      category_slug: categorySlug,
+      category_name: category?.name ?? group?.name ?? "Uncategorised",
+      province: String(form.get("province") ?? ""),
+      city: String(form.get("city") ?? ""),
+      budget: Number(form.get("budget") ?? 0),
+      budget_type: "estimate" as const,
+      deadline: form.get("deadline") ? String(form.get("deadline")) : null,
+      requirements: form.get("requirements")
+        ? [String(form.get("requirements"))]
+        : [],
+      is_urgent: false, // flipped to true by webhook on successful payment
+      posted_by_name: user.email?.split("@")[0] ?? null,
+    };
+
+    const { data: opp, error } = await supabase
+      .from("opportunities")
+      .insert(payload)
+      .select()
+      .single();
+
+    if (error) {
+      toast({ title: "Couldn't post job", description: error.message, variant: "destructive" });
+      setSubmitting(false);
+      return;
+    }
+
+    if (urgent) {
+      // Redirects user to Paystack; webhook will flip is_urgent on success.
+      await payments.payUrgentFee(opp.id);
+      return;
+    }
+
     setSubmitted(true);
     toast({
-      title: urgent ? "Urgent job posted" : "Job posted",
-      description: urgent
-        ? "R50 urgent fee applied. Your job has priority visibility."
-        : "Real people will start responding shortly.",
+      title: "Job posted",
+      description: "Real people will start responding shortly.",
     });
-    setTimeout(() => navigate("/opportunities"), 2000);
+    setTimeout(() => navigate("/opportunities"), 1500);
   };
 
   if (submitted) {
@@ -57,10 +106,10 @@ const PostOpportunity = () => {
 
         <form onSubmit={onSubmit} className="bg-card border border-border rounded-2xl p-6 md:p-8 space-y-5 shadow-card">
           <Field label="What do you need?" required>
-            <input required className="input" placeholder="e.g. Fix a leaking pipe in Centurion" />
+            <input required name="title" className="input" placeholder="e.g. Fix a leaking pipe in Centurion" />
           </Field>
           <Field label="Description" required>
-            <textarea required rows={4} className="input resize-none" placeholder="Describe the job clearly so the right people respond." />
+            <textarea required name="description" rows={4} className="input resize-none" placeholder="Describe the job clearly so the right people respond." />
           </Field>
           <div className="grid sm:grid-cols-2 gap-5">
             <Field label="Category group" required>
@@ -90,19 +139,19 @@ const PostOpportunity = () => {
               </select>
             </Field>
             <Field label="Province" required>
-              <select required className="input cursor-pointer">
+              <select required name="province" className="input cursor-pointer">
                 <option value="">Select a province</option>
                 {PROVINCES.map((p) => <option key={p} value={p}>{p}</option>)}
               </select>
             </Field>
             <Field label="City / suburb" required>
-              <input required className="input" placeholder="e.g. Sandton" />
+              <input required name="city" className="input" placeholder="e.g. Sandton" />
             </Field>
             <Field label="Budget (R)" required>
-              <input required type="number" min="0" className="input" placeholder="What are you willing to spend?" />
+              <input required name="budget" type="number" min="0" className="input" placeholder="What are you willing to spend?" />
             </Field>
             <Field label="Deadline">
-              <input type="date" className="input" />
+              <input name="deadline" type="date" className="input" />
             </Field>
             <Field label="Contact preference">
               <select className="input cursor-pointer">
@@ -114,7 +163,7 @@ const PostOpportunity = () => {
             </Field>
           </div>
           <Field label="Specific requirements">
-            <textarea rows={3} className="input resize-none" placeholder="Certifications, references, insurance, etc." />
+            <textarea name="requirements" rows={3} className="input resize-none" placeholder="Certifications, references, insurance, etc." />
           </Field>
 
           {/* Eish! Urgent upgrade */}
@@ -134,7 +183,7 @@ const PostOpportunity = () => {
             </span>
             <div className="flex-1">
               <span className="inline-flex items-center gap-1.5 font-bold text-sm">
-                🚨 Eish! Urgent — R50
+                🚨 Eish! Urgent — R20
               </span>
               <p className="text-xs text-ink-2 mt-1.5 leading-relaxed">
                 We klaxon every verified pro in this category within 10km. Your job sits at the top of their feed wrapped in a flashing coral border with an <span className="font-bold tracking-wider text-accent">URGENT</span> tag. They know you're desperate and ready to pay emergency rates.
@@ -150,8 +199,8 @@ const PostOpportunity = () => {
           </button>
 
           <div className="pt-2 flex flex-col sm:flex-row gap-3">
-            <Button type="submit" size="lg" className="flex-1">
-              {urgent ? "Post job (R50 urgent)" : "Post job"}
+            <Button type="submit" size="lg" className="flex-1" disabled={submitting}>
+              {submitting ? "Posting…" : urgent ? "Post job (R20 urgent)" : "Post job"}
             </Button>
             <Button type="button" variant="outline" size="lg" onClick={() => navigate(-1)}>Cancel</Button>
           </div>

@@ -1,1 +1,7 @@
 project_id = "zwgjbffesalpiaaycbac"
+
+[functions.paystack-webhook]
+verify_jwt = false
+
+[functions.smile-id-webhook]
+verify_jwt = false

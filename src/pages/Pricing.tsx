@@ -1,10 +1,12 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Check, Zap, Siren } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
 import { Button } from "@/components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { SJOH_TIERS, KLAP_PACKS, formatRand } from "@/lib/mockData";
 import { cn } from "@/lib/utils";
+import { payments } from "@/lib/payments";
+import { useAuth } from "@/hooks/useAuth";
 
 const FAQS = [
   { q: "What are Klaps?", a: "A Klap is one job pitch. Every time you want to bid on a job posted on Sjoh, it costs 1 Klap. Each tier comes with a monthly Klap allowance, and you can top up anytime with a Six-Pack or a Crate." },
@@ -16,6 +18,26 @@ const FAQS = [
 ];
 
 const Pricing = () => {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
+  const handleTierClick = (slug: string) => {
+    if (slug === "dala-trial") {
+      navigate(user ? "/list" : "/auth");
+      return;
+    }
+    if (!user) { navigate("/auth"); return; }
+    if (slug === "hustler" || slug === "main-oke") {
+      payments.startSubscription(slug);
+    }
+  };
+
+  const handlePackClick = (pack: { id: string }) => {
+    if (!user) { navigate("/auth"); return; }
+    const slug = pack.id === "crate" ? "crate" : "six-pack";
+    payments.buyKlapPack(slug);
+  };
+
   return (
     <SiteLayout>
       <div className="container py-16 md:py-20">
@@ -78,11 +100,9 @@ const Pricing = () => {
                 variant={t.popular ? "default" : t.featured ? "ink" : "outline"}
                 size="lg"
                 className="mt-7"
-                asChild
+                onClick={() => handleTierClick(t.slug)}
               >
-                <Link to="/list">
-                  {t.slug === "dala-trial" ? "Start free for 3 months" : `Choose ${t.name}`}
-                </Link>
+                {t.slug === "dala-trial" ? "Start free for 3 months" : `Choose ${t.name}`}
               </Button>
             </div>
           ))}
@@ -127,13 +147,16 @@ const Pricing = () => {
                   </p>
                   <p className="text-xs text-ink-2 mt-1">{p.blurb}</p>
                 </div>
-                <div className="text-right shrink-0">
+                <div className="text-right shrink-0 flex flex-col items-end gap-2">
                   <p className="font-display text-2xl font-semibold">{formatRand(p.price)}</p>
                   {i === 1 && (
-                    <span className="inline-block mt-1 text-[10px] font-bold uppercase tracking-widest text-accent">
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-accent">
                       Best value
                     </span>
                   )}
+                  <Button size="sm" variant={i === 1 ? "default" : "outline"} onClick={() => handlePackClick(p)}>
+                    Buy
+                  </Button>
                 </div>
               </div>
             ))}

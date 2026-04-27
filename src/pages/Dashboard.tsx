@@ -11,6 +11,7 @@ import { useKlap } from "@/lib/klapStore";
 import { TopUpModal } from "@/components/TopUpModal";
 import { VerificationBadges } from "@/components/VerificationBadges";
 import { toast } from "@/hooks/use-toast";
+import { useVerification } from "@/hooks/useVerification";
 import { cn } from "@/lib/utils";
 
 type SectionKey = "overview" | "klaps" | "profile" | "promotions" | "opportunities" | "followers" | "billing";
@@ -154,9 +155,30 @@ const OverviewSection = ({ onJump }: { onJump: (s: SectionKey) => void }) => {
 
 const KlapsSection = () => {
   const { provider, events, toggleUrgentAlerts } = useKlap();
+  const verification = useVerification();
   const [topUpOpen, setTopUpOpen] = useState(false);
   const tier = SJOH_TIERS.find((t) => t.slug === provider.tier)!;
   const pct = Math.round((provider.klapsRemaining / tier.klapsPerMonth) * 100);
+
+  const verifyLabel: Record<typeof verification.status, string> = {
+    not_required: "Upgrade to verify",
+    required: "Verify now",
+    pending: "Verifying…",
+    verified: "✓ Verified",
+    failed: "Try again",
+    expired: "Re-verify",
+  };
+
+  const verifyHint: Record<typeof verification.status, string> = {
+    not_required: "Available on paid tiers — your badge stays once verified.",
+    required: "Subscription active. Tap to verify your ID and unlock the Verified Pro badge.",
+    pending: "We're processing your verification. This usually takes under a minute.",
+    verified: verification.expiresAt
+      ? `Re-verify by ${new Date(verification.expiresAt).toLocaleDateString("en-ZA")}`
+      : "Verified — keep grafting.",
+    failed: "We couldn't verify your ID. Try again with a clearer photo.",
+    expired: "Your verification expired. Re-verify to bring back your badge.",
+  };
 
   return (
     <>
@@ -205,19 +227,28 @@ const KlapsSection = () => {
         </div>
         <div className="mt-5">
           <VerificationBadges
-            idVerified={provider.idVerified}
+            idVerified={verification.isIdVerified}
             certifiedPro={provider.certifiedPro}
             certifications={provider.certifications}
           />
         </div>
         <div className="mt-5 grid sm:grid-cols-2 gap-3">
           <div className="border border-border rounded-lg p-4">
-            <p className="text-sm font-semibold">ID & Phone</p>
-            <p className="text-xs text-muted-foreground mt-1">
-              {provider.idVerified ? "✓ Verified" : "Not verified yet"}
-            </p>
-            <Button size="sm" variant="outline" className="mt-3" onClick={() => toast({ title: "Already verified", description: "Your ID and phone are checked. Strong work." })}>
-              {provider.idVerified ? "Update details" : "Verify now"}
+            <p className="text-sm font-semibold">ID & Selfie</p>
+            <p className="text-xs text-muted-foreground mt-1">{verifyHint[verification.status]}</p>
+            <Button
+              size="sm"
+              variant="outline"
+              className="mt-3"
+              disabled={
+                verification.loading ||
+                verification.status === "pending" ||
+                verification.status === "verified" ||
+                verification.status === "not_required"
+              }
+              onClick={() => verification.startVerification()}
+            >
+              {verifyLabel[verification.status]}
             </Button>
           </div>
           <div className="border border-border rounded-lg p-4">
@@ -225,7 +256,7 @@ const KlapsSection = () => {
             <p className="text-xs text-muted-foreground mt-1">
               {provider.certifiedPro ? `✓ ${provider.certifications.join(", ")}` : "Upload to become a Certified Pro"}
             </p>
-            <Button size="sm" variant="outline" className="mt-3" onClick={() => toast({ title: "Upload (demo)", description: "Real certificate upload coming soon." })}>
+            <Button size="sm" variant="outline" className="mt-3" onClick={() => toast({ title: "Upload (coming soon)", description: "Certificate uploads land in the next update." })}>
               Upload certificate
             </Button>
           </div>
