@@ -27,9 +27,24 @@ const PostOpportunity = () => {
       navigate("/auth");
       return;
     }
+    if (!agreeTerms) {
+      toast({ title: "Tick the box, boet", description: "You need to agree to the Terms before posting.", variant: "destructive" });
+      return;
+    }
     setSubmitting(true);
 
     const form = new FormData(e.currentTarget as HTMLFormElement);
+    const titleVal = String(form.get("title") ?? "");
+    const descVal = String(form.get("description") ?? "");
+    const reqVal = String(form.get("requirements") ?? "");
+
+    const banned = findProhibited(`${titleVal}\n${descVal}\n${reqVal}`);
+    if (banned) {
+      toast({ title: "Aikona!", description: PROHIBITED_MESSAGE, variant: "destructive" });
+      setSubmitting(false);
+      return;
+    }
+
     const category = CATEGORIES.find((c) => c.slug === categorySlug);
     const group = CATEGORY_GROUPS.find((g) => g.slug === groupSlug);
 
