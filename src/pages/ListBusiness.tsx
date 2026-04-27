@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Check, ArrowRight, ArrowLeft, CheckCircle2, Upload } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
 import { Button } from "@/components/ui/button";
-import { CATEGORIES, PROVINCES } from "@/lib/mockData";
+import { CATEGORIES, CATEGORY_GROUPS, PROVINCES } from "@/lib/mockData";
 import { cn } from "@/lib/utils";
 
 const STEPS = ["Basics", "Profile", "Choose Plan", "Review", "Done"] as const;
@@ -17,7 +17,11 @@ const PLANS = [
 const ListBusiness = () => {
   const [step, setStep] = useState(0);
   const [plan, setPlan] = useState("standard");
+  const [groupSlug, setGroupSlug] = useState("");
+  const [categorySlug, setCategorySlug] = useState("");
   const navigate = useNavigate();
+
+  const subCats = groupSlug ? CATEGORIES.filter((c) => c.groupSlug === groupSlug) : [];
 
   const next = () => setStep((s) => Math.min(s + 1, STEPS.length - 1));
   const prev = () => setStep((s) => Math.max(s - 1, 0));
@@ -64,10 +68,28 @@ const ListBusiness = () => {
               </div>
               <Field label="Business name"><input className="input" placeholder="e.g. Khumalo Electrical Contractors" /></Field>
               <div className="grid sm:grid-cols-2 gap-4">
-                <Field label="Category">
-                  <select className="input cursor-pointer">
-                    <option value="">Select a category</option>
-                    {CATEGORIES.map((c) => <option key={c.slug} value={c.slug}>{c.name}</option>)}
+                <Field label="Category group">
+                  <select
+                    className="input cursor-pointer"
+                    value={groupSlug}
+                    onChange={(e) => {
+                      setGroupSlug(e.target.value);
+                      setCategorySlug("");
+                    }}
+                  >
+                    <option value="">Select a group</option>
+                    {CATEGORY_GROUPS.map((g) => <option key={g.slug} value={g.slug}>{g.name}</option>)}
+                  </select>
+                </Field>
+                <Field label="Service">
+                  <select
+                    className="input cursor-pointer"
+                    value={categorySlug}
+                    onChange={(e) => setCategorySlug(e.target.value)}
+                    disabled={!groupSlug}
+                  >
+                    <option value="">{groupSlug ? "Select a service" : "Pick a group first"}</option>
+                    {subCats.map((c) => <option key={c.slug} value={c.slug}>{c.name}</option>)}
                   </select>
                 </Field>
                 <Field label="Province">
