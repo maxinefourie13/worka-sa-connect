@@ -126,7 +126,7 @@ const HomePage = () => {
       <section className="container py-20">
         <div className="max-w-2xl mb-12">
           <h2 className="font-display text-3xl md:text-4xl font-medium tracking-tight">
-            How Worka works
+            How Sjoh works
           </h2>
           <p className="mt-3 text-ink-2">
             Find someone → Contact them → Get it done. That's it.
@@ -195,7 +195,7 @@ const HomePage = () => {
             <h2 className="font-display text-3xl md:text-4xl font-medium tracking-tight">
               Featured businesses
             </h2>
-            <p className="mt-3 text-ink-2">Verified, top-rated, and active on Worka.</p>
+            <p className="mt-3 text-ink-2">Verified, top-rated, and active on Sjoh.</p>
           </div>
           <Link to="/directory" className="text-sm font-semibold text-primary hover:underline hidden md:flex items-center gap-1">
             See all <ArrowRight className="size-4" />
@@ -278,7 +278,7 @@ const HomePage = () => {
             Get found by people already looking.
           </h2>
           <p className="mt-4 text-primary-foreground/85 max-w-xl mx-auto">
-            List your business on Worka and start getting real enquiries from local clients. We don't take a cut of your work.
+            List your business on Sjoh and start getting real enquiries from local clients. We don't take a cut of your work.
           </p>
           <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
             <Button variant="ink" size="lg" asChild>

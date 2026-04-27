@@ -13,7 +13,7 @@ export const AuthShell = ({ title, subtitle, footer, children }: AuthShellProps)
   <SiteLayout>
     <div className="container py-16 max-w-md">
       <Link to="/" className="font-display text-2xl font-semibold tracking-tight inline-block mb-10">
-        Worka<span className="text-primary">.</span>
+        Sjoh<span className="text-primary">.</span>
       </Link>
       <h1 className="font-display text-3xl font-medium tracking-tight">{title}</h1>
       <p className="mt-2 text-ink-2 text-sm">{subtitle}</p>

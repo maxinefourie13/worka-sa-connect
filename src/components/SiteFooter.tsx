@@ -22,7 +22,7 @@ const cols = [
   {
     title: "Company",
     links: [
-      { to: "#", label: "About Worka" },
+      { to: "#", label: "About Sjoh" },
       { to: "#", label: "Careers" },
       { to: "#", label: "Press" },
       { to: "#", label: "Partners" },
@@ -37,7 +37,7 @@ export const SiteFooter = () => {
         <div className="grid gap-12 lg:grid-cols-4">
           <div className="space-y-4">
             <Link to="/" className="font-display text-2xl font-semibold tracking-tight">
-              Worka<span className="text-primary">.</span>
+              Sjoh<span className="text-primary">.</span>
             </Link>
             <p className="text-sm text-muted-foreground max-w-xs leading-relaxed">
               Find someone who can do it properly. South Africa's directory for trusted service providers.
@@ -62,7 +62,7 @@ export const SiteFooter = () => {
         </div>
         <div className="mt-12 pt-8 border-t border-border flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <p className="text-xs text-muted-foreground">
-            © {new Date().getFullYear()} Worka. Proudly built in South Africa.
+            © {new Date().getFullYear()} Sjoh. Proudly built in South Africa.
           </p>
           <p className="text-xs text-muted-foreground">
             POPIA-compliant. We protect your personal information under South African law.

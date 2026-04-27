@@ -129,7 +129,7 @@ const ProfileSection = () => (
   <>
     <header>
       <h1 className="font-display text-3xl font-medium tracking-tight">My Profile</h1>
-      <p className="text-sm text-ink-2 mt-1">Edit how your business appears on Worka.</p>
+      <p className="text-sm text-ink-2 mt-1">Edit how your business appears on Sjoh.</p>
     </header>
     <div className="bg-card border border-border rounded-xl p-6 space-y-5">
       <div className="grid sm:grid-cols-2 gap-4">
