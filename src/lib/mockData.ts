@@ -631,7 +631,7 @@ export interface KlapEvent {
   id: string;
   jobId: string;
   jobTitle: string;
-  cost: 1;
+  cost: number;
   timestamp: string;
   outcome: "pending" | "won" | "lost";
 }
