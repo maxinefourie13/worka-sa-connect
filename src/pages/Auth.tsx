@@ -171,10 +171,15 @@ export const Register = () => {
   const [displayName, setDisplayName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [agreeTerms, setAgreeTerms] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!agreeTerms) {
+      toast({ title: "Tick the box, boet", description: "You need to agree to the Terms before registering.", variant: "destructive" });
+      return;
+    }
     if (password.length < 8) {
       toast({ title: "Password too short", description: "Use at least 8 characters.", variant: "destructive" });
       return;
@@ -212,8 +217,19 @@ export const Register = () => {
         <Field label="Password">
           <input type="password" required minLength={8} className="input" placeholder="Make it stronger than Ouma's rusks." value={password} onChange={(e) => setPassword(e.target.value)} />
         </Field>
-        <p className="text-xs text-muted-foreground">By registering, you agree to our terms and POPIA privacy policy.</p>
-        <Button className="w-full" size="lg" disabled={submitting}>
+        <label className="flex items-start gap-2.5 text-xs cursor-pointer select-none">
+          <input
+            type="checkbox"
+            checked={agreeTerms}
+            onChange={(e) => setAgreeTerms(e.target.checked)}
+            required
+            className="mt-0.5 size-4 rounded border-border text-primary focus:ring-primary cursor-pointer shrink-0"
+          />
+          <span className="text-muted-foreground leading-relaxed">
+            I agree to the <Link to="/terms" className="text-primary font-semibold hover:underline">Terms of Service</Link> and POPIA privacy policy, and confirm I will not offer or request illegal services.
+          </span>
+        </label>
+        <Button className="w-full" size="lg" disabled={submitting || !agreeTerms}>
           {submitting ? <Loader2 className="size-4 animate-spin" /> : null}
           Let's Gooi
         </Button>

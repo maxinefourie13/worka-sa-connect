@@ -5,11 +5,13 @@ import { Button } from "@/components/ui/button";
 import { useKlap, BOOST_OPTIONS, type BoostTier } from "@/lib/klapStore";
 import { toast } from "@/hooks/use-toast";
 import { TopUpModal } from "@/components/TopUpModal";
+import { LiabilityDisclaimer } from "@/components/LiabilityDisclaimer";
 import { downloadQuotation } from "@/lib/quotation";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useMyBusiness } from "@/hooks/useMyBusiness";
+import { findProhibited, PROHIBITED_MESSAGE } from "@/lib/prohibitedKeywords";
 
 interface Props {
   open: boolean;
@@ -72,6 +74,11 @@ export const ProposalModal = ({ open, jobId, jobTitle, jobBudget, clientName, on
 
   const handleSubmit = async () => {
     if (!canSubmit) return;
+    const banned = findProhibited(scope);
+    if (banned) {
+      toast({ title: "Aikona!", description: PROHIBITED_MESSAGE, variant: "destructive" });
+      return;
+    }
     const result = klapJob(jobId, jobTitle, boost);
     if (!result.ok) {
       setTopUpOpen(true);
@@ -332,9 +339,7 @@ export const ProposalModal = ({ open, jobId, jobTitle, jobBudget, clientName, on
           {/* Footer */}
           {!submitted && (
             <div className="px-6 md:px-8 py-4 border-t border-border bg-card rounded-b-none md:rounded-b-2xl">
-              <p className="text-[11px] text-muted-foreground mb-3 leading-relaxed">
-                Sjoh. is a matching platform. Always check your Pro's insurance before starting the graft.
-              </p>
+              <LiabilityDisclaimer variant="inline" className="mb-3" />
               <div className="flex items-center justify-between gap-3">
                 <Button variant="ghost" onClick={handleClose}>Cancel</Button>
                 <Button

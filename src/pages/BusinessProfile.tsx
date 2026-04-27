@@ -5,6 +5,7 @@ import { SiteLayout } from "@/components/SiteLayout";
 import { Button } from "@/components/ui/button";
 import { BUSINESSES, BUSINESS_VERIFICATION, formatRand } from "@/lib/mockData";
 import { VerificationBadges } from "@/components/VerificationBadges";
+import { ReportProfileButton } from "@/components/ReportProfileButton";
 import { cn } from "@/lib/utils";
 
 type TabKey = "about" | "services" | "promotions" | "reviews";
@@ -240,6 +241,9 @@ const BusinessProfile = () => {
               <p className="mt-4 text-xs text-muted-foreground leading-relaxed">
                 You deal with this business directly. Sjoh takes no commission.
               </p>
+              <div className="mt-3 pt-3 border-t border-border flex justify-center">
+                <ReportProfileButton businessId={business.id} businessName={business.name} />
+              </div>
             </div>
 
             <div className="bg-card border border-border rounded-2xl p-6">

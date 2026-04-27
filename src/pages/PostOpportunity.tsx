@@ -3,10 +3,12 @@ import { useNavigate, Link } from "react-router-dom";
 import { ArrowLeft, CheckCircle2 } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
 import { Button } from "@/components/ui/button";
+import { LiabilityDisclaimer } from "@/components/LiabilityDisclaimer";
 import { CATEGORIES, CATEGORY_GROUPS, PROVINCES } from "@/lib/mockData";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { findProhibited, PROHIBITED_MESSAGE } from "@/lib/prohibitedKeywords";
 
 const PostOpportunity = () => {
   const navigate = useNavigate();
@@ -15,6 +17,7 @@ const PostOpportunity = () => {
   const [submitting, setSubmitting] = useState(false);
   const [groupSlug, setGroupSlug] = useState("");
   const [categorySlug, setCategorySlug] = useState("");
+  const [agreeTerms, setAgreeTerms] = useState(false);
 
   const subCats = groupSlug ? CATEGORIES.filter((c) => c.groupSlug === groupSlug) : [];
 
@@ -24,16 +27,31 @@ const PostOpportunity = () => {
       navigate("/auth");
       return;
     }
+    if (!agreeTerms) {
+      toast({ title: "Tick the box, boet", description: "You need to agree to the Terms before posting.", variant: "destructive" });
+      return;
+    }
     setSubmitting(true);
 
     const form = new FormData(e.currentTarget as HTMLFormElement);
+    const titleVal = String(form.get("title") ?? "");
+    const descVal = String(form.get("description") ?? "");
+    const reqVal = String(form.get("requirements") ?? "");
+
+    const banned = findProhibited(`${titleVal}\n${descVal}\n${reqVal}`);
+    if (banned) {
+      toast({ title: "Aikona!", description: PROHIBITED_MESSAGE, variant: "destructive" });
+      setSubmitting(false);
+      return;
+    }
+
     const category = CATEGORIES.find((c) => c.slug === categorySlug);
     const group = CATEGORY_GROUPS.find((g) => g.slug === groupSlug);
 
     const payload = {
       client_id: user.id,
-      title: String(form.get("title") ?? ""),
-      description: String(form.get("description") ?? ""),
+      title: titleVal,
+      description: descVal,
       category_slug: categorySlug,
       category_name: category?.name ?? group?.name ?? "Uncategorised",
       province: String(form.get("province") ?? ""),
@@ -41,9 +59,7 @@ const PostOpportunity = () => {
       budget: Number(form.get("budget") ?? 0),
       budget_type: "estimate" as const,
       deadline: form.get("deadline") ? String(form.get("deadline")) : null,
-      requirements: form.get("requirements")
-        ? [String(form.get("requirements"))]
-        : [],
+      requirements: reqVal ? [reqVal] : [],
       posted_by_name: user.email?.split("@")[0] ?? null,
     };
 
@@ -161,8 +177,23 @@ const PostOpportunity = () => {
             <textarea name="requirements" rows={3} className="input resize-none" placeholder="Certifications, references, insurance, etc." />
           </Field>
 
+          <LiabilityDisclaimer />
+
+          <label className="flex items-start gap-2.5 text-sm cursor-pointer select-none">
+            <input
+              type="checkbox"
+              checked={agreeTerms}
+              onChange={(e) => setAgreeTerms(e.target.checked)}
+              className="mt-0.5 size-4 rounded border-border text-primary focus:ring-primary cursor-pointer"
+              required
+            />
+            <span className="text-ink-2 leading-relaxed">
+              I agree to the <Link to="/terms" className="text-primary font-semibold hover:underline">Terms of Service</Link> and confirm I will not offer or request illegal services.
+            </span>
+          </label>
+
           <div className="pt-2 flex flex-col sm:flex-row gap-3">
-            <Button type="submit" size="lg" className="flex-1" disabled={submitting}>
+            <Button type="submit" size="lg" className="flex-1" disabled={submitting || !agreeTerms}>
               {submitting ? "Just now, just now…" : "Let's Gooi"}
             </Button>
             <Button type="button" variant="outline" size="lg" onClick={() => navigate(-1)}>Cancel</Button>
