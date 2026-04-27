@@ -500,12 +500,15 @@ export type Database = {
       }
       provider_balances: {
         Row: {
+          email_alerts_optin: boolean
           id: string
           is_id_verified: boolean
           klaps_remaining: number
           klaps_this_month: number
+          onesignal_player_id: string | null
           paystack_customer_code: string | null
           paystack_subscription_code: string | null
+          push_alerts_optin: boolean
           smile_id_job_id: string | null
           tier: Database["public"]["Enums"]["sjoh_tier"]
           tier_expires_at: string | null
@@ -517,12 +520,15 @@ export type Database = {
           verification_status: Database["public"]["Enums"]["verification_status"]
         }
         Insert: {
+          email_alerts_optin?: boolean
           id?: string
           is_id_verified?: boolean
           klaps_remaining?: number
           klaps_this_month?: number
+          onesignal_player_id?: string | null
           paystack_customer_code?: string | null
           paystack_subscription_code?: string | null
+          push_alerts_optin?: boolean
           smile_id_job_id?: string | null
           tier?: Database["public"]["Enums"]["sjoh_tier"]
           tier_expires_at?: string | null
@@ -534,12 +540,15 @@ export type Database = {
           verification_status?: Database["public"]["Enums"]["verification_status"]
         }
         Update: {
+          email_alerts_optin?: boolean
           id?: string
           is_id_verified?: boolean
           klaps_remaining?: number
           klaps_this_month?: number
+          onesignal_player_id?: string | null
           paystack_customer_code?: string | null
           paystack_subscription_code?: string | null
+          push_alerts_optin?: boolean
           smile_id_job_id?: string | null
           tier?: Database["public"]["Enums"]["sjoh_tier"]
           tier_expires_at?: string | null
@@ -875,6 +884,14 @@ export type Database = {
       }
       mark_verification_pending: {
         Args: { _job_id: string }
+        Returns: undefined
+      }
+      set_email_alerts_optin: {
+        Args: { _enabled: boolean }
+        Returns: undefined
+      }
+      set_push_subscription: {
+        Args: { _enabled: boolean; _player_id: string }
         Returns: undefined
       }
       spend_klap: {

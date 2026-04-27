@@ -69,6 +69,11 @@ const PostOpportunity = () => {
       return;
     }
 
+    // Notify all matching providers (email + push). Fire and forget.
+    supabase.functions
+      .invoke("notify-new-job", { body: { opportunity_id: opp.id } })
+      .catch((e) => console.error("[notify-new-job]", e));
+
     setSubmitted(true);
     toast({
       title: "Sharp-sharp!",
