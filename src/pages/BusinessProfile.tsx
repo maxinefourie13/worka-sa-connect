@@ -32,12 +32,22 @@ const BusinessProfile = () => {
 
   return (
     <SiteLayout>
-      {/* Header / cover */}
-      <div className={cn("h-56 md:h-72 relative", business.gradient)}>
+      {/* Header / cover — photo when available, otherwise gradient */}
+      <div className={cn("h-56 md:h-72 relative overflow-hidden", !business.image && business.gradient)}>
+        {business.image && (
+          <>
+            <img
+              src={business.image}
+              alt={`${business.name} — ${business.category}`}
+              className="absolute inset-0 size-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/25 to-black/30" />
+          </>
+        )}
         <div className="container h-full relative">
           <Link
             to="/directory"
-            className="absolute top-5 left-6 inline-flex items-center gap-1.5 text-white/85 hover:text-white text-sm font-medium"
+            className="absolute top-5 left-6 inline-flex items-center gap-1.5 text-white/90 hover:text-white text-sm font-medium drop-shadow"
           >
             <ArrowLeft className="size-4" /> Back to directory
           </Link>
