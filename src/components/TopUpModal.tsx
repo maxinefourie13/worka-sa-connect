@@ -33,13 +33,13 @@ export const TopUpModal = ({ open, onClose }: Props) => {
         <div className="bg-foreground text-background px-6 md:px-8 pt-7 pb-6">
           <div className="flex items-center gap-2 mb-2">
             <Flame className="size-4 text-accent" />
-            <span className="text-xs font-bold uppercase tracking-widest text-accent">Out of ammo</span>
+            <span className="text-xs font-bold uppercase tracking-widest text-accent">Load the Kroon</span>
           </div>
           <h2 className="font-display text-3xl md:text-4xl font-semibold tracking-tight leading-tight">
             Sjoh! You're out of ammo, boet.
           </h2>
           <p className="text-sm text-background/80 mt-2">
-            No Klaps left to send a proposal. Top up below and get back in the ring.
+            For the price of a pie and a Coke, keep the graft rolling.
           </p>
         </div>
 
@@ -74,7 +74,7 @@ export const TopUpModal = ({ open, onClose }: Props) => {
                     onClick={() => buy(p.id)}
                   >
                     <Zap className="size-3.5" strokeWidth={2.5} />
-                    KLAP HOM PAPPIE! — {formatRand(p.price)}
+                    KLAP HOM PAPPIE — {formatRand(p.price)}
                   </Button>
                 </div>
               );
