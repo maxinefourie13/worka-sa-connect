@@ -50,8 +50,8 @@ const PostOpportunity = () => {
 
     const payload = {
       client_id: user.id,
-      title: String(form.get("title") ?? ""),
-      description: String(form.get("description") ?? ""),
+      title: titleVal,
+      description: descVal,
       category_slug: categorySlug,
       category_name: category?.name ?? group?.name ?? "Uncategorised",
       province: String(form.get("province") ?? ""),
@@ -59,9 +59,7 @@ const PostOpportunity = () => {
       budget: Number(form.get("budget") ?? 0),
       budget_type: "estimate" as const,
       deadline: form.get("deadline") ? String(form.get("deadline")) : null,
-      requirements: form.get("requirements")
-        ? [String(form.get("requirements"))]
-        : [],
+      requirements: reqVal ? [reqVal] : [],
       posted_by_name: user.email?.split("@")[0] ?? null,
     };
 
