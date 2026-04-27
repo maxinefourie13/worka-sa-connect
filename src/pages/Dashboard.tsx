@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import {
-  LayoutGrid, User, Sparkles, Briefcase, Users, CreditCard, Plus, Eye, MessageSquare, TrendingUp, Settings,
+  LayoutGrid, User, Sparkles, Briefcase, Users, CreditCard, Plus,
   Check,
 } from "lucide-react";
 import { SiteHeader } from "@/components/SiteHeader";
@@ -75,16 +75,13 @@ const Dashboard = () => {
   );
 };
 
-const StatCard = ({ icon: Icon, label, value, hint }: { icon: typeof Eye; label: string; value: string; hint?: string }) => (
+const StatCard = ({ label, value, hint }: { label: string; value: string; hint?: string }) => (
   <div className="bg-card border border-border rounded-xl p-5">
     <div className="flex items-center justify-between">
-      <span className="size-9 rounded-lg bg-primary-light text-primary flex items-center justify-center">
-        <Icon className="size-4" />
-      </span>
+      <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground">{label}</span>
       {hint && <span className="text-xs text-primary font-semibold">{hint}</span>}
     </div>
     <p className="font-display text-3xl font-medium tabular-nums mt-4">{value}</p>
-    <p className="text-xs text-muted-foreground mt-1">{label}</p>
   </div>
 );
 
@@ -100,24 +97,24 @@ const OverviewSection = () => (
       </Button>
     </header>
     <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-      <StatCard icon={Eye} label="Profile views" value="1,284" hint="+12%" />
-      <StatCard icon={MessageSquare} label="Enquiries" value="38" hint="+5" />
-      <StatCard icon={Users} label="Followers" value="318" hint="+24" />
-      <StatCard icon={Sparkles} label="Active promotions" value="2" />
+      <StatCard label="Profile views" value="1,284" hint="+12%" />
+      <StatCard label="Enquiries" value="38" hint="+5" />
+      <StatCard label="Followers" value="318" hint="+24" />
+      <StatCard label="Active promotions" value="2" />
     </div>
     <div className="bg-card border border-border rounded-xl p-6">
       <h2 className="font-display text-lg font-semibold mb-4">Recent activity</h2>
       <ul className="space-y-3 text-sm">
         <li className="flex items-center justify-between py-2 border-b border-border last:border-0">
-          <span className="flex items-center gap-2"><MessageSquare className="size-4 text-muted-foreground" /> New enquiry from <strong>Naledi Properties</strong></span>
+          <span>New enquiry from <strong>Naledi Properties</strong></span>
           <span className="text-xs text-muted-foreground">2h ago</span>
         </li>
         <li className="flex items-center justify-between py-2 border-b border-border last:border-0">
-          <span className="flex items-center gap-2"><Users className="size-4 text-muted-foreground" /> <strong>Sipho M.</strong> started following you</span>
+          <span><strong>Sipho M.</strong> started following you</span>
           <span className="text-xs text-muted-foreground">5h ago</span>
         </li>
         <li className="flex items-center justify-between py-2">
-          <span className="flex items-center gap-2"><TrendingUp className="size-4 text-muted-foreground" /> Your listing was viewed <strong>83 times</strong> yesterday</span>
+          <span>Your listing was viewed <strong>83 times</strong> yesterday</span>
           <span className="text-xs text-muted-foreground">1d ago</span>
         </li>
       </ul>

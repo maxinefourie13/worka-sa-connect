@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Check, ArrowRight, ArrowLeft, CheckCircle2, Upload, Sparkles } from "lucide-react";
+import { Check, ArrowRight, ArrowLeft, CheckCircle2, Upload } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
 import { Button } from "@/components/ui/button";
 import { CATEGORIES, PROVINCES } from "@/lib/mockData";
@@ -189,7 +189,7 @@ const ListBusiness = () => {
               </Button>
               <Button onClick={next}>
                 {step === 3 ? (
-                  <><Sparkles className="size-4" />Confirm and Publish</>
+                  <>Confirm and Publish</>
                 ) : (
                   <>Continue <ArrowRight className="size-4" /></>
                 )}

@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { MapPin, Clock, Users } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
 import { formatRand, type Opportunity } from "@/lib/mockData";
 import { cn } from "@/lib/utils";
@@ -39,18 +39,11 @@ export const JobCard = ({ job, className }: JobCardProps) => {
           </p>
 
           <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs text-ink-2">
-            <span className="flex items-center gap-1.5">
-              <MapPin className="size-3.5 text-muted-foreground" />
-              {job.city}, {job.province}
-            </span>
-            <span className="flex items-center gap-1.5">
-              <Clock className="size-3.5 text-muted-foreground" />
-              By {job.deadline}
-            </span>
-            <span className="flex items-center gap-1.5">
-              <Users className="size-3.5 text-muted-foreground" />
-              {job.applicants} applied
-            </span>
+            <span>{job.city}, {job.province}</span>
+            <span className="text-muted-foreground">·</span>
+            <span>By {job.deadline}</span>
+            <span className="text-muted-foreground">·</span>
+            <span>{job.applicants} applied</span>
           </div>
 
           <div className="mt-4 flex items-center justify-between gap-3">

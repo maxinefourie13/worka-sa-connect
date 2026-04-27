@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { ArrowLeft, CheckCircle2, Zap } from "lucide-react";
+import { ArrowLeft, CheckCircle2 } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
 import { Button } from "@/components/ui/button";
 import { CATEGORIES, PROVINCES } from "@/lib/mockData";
@@ -109,10 +109,7 @@ const PostOpportunity = () => {
               {urgent && <CheckCircle2 className="size-3.5 text-accent-foreground" strokeWidth={3} />}
             </span>
             <div className="flex-1">
-              <div className="flex items-center gap-2">
-                <Zap className="size-4 text-accent" />
-                <span className="font-semibold text-sm">Mark as urgent — R50</span>
-              </div>
+              <span className="font-semibold text-sm">Mark as urgent — R50</span>
               <p className="text-xs text-ink-2 mt-1">
                 Your job gets priority visibility so businesses can respond faster. An <span className="font-bold tracking-wider text-accent">URGENT</span> badge appears on your post.
               </p>

@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { Search, Plus, Briefcase } from "lucide-react";
+import { Search } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
 import { Button } from "@/components/ui/button";
 import { JobCard } from "@/components/JobCard";
@@ -34,20 +34,15 @@ const Opportunities = () => {
         </header>
 
         {/* Post CTA banner */}
-        <div className="rounded-2xl bg-gradient-to-r from-primary to-emerald-600 text-primary-foreground p-6 md:p-8 mb-10 flex flex-col md:flex-row md:items-center justify-between gap-5">
-          <div className="flex items-start gap-4">
-            <span className="size-12 rounded-xl bg-white/15 flex items-center justify-center">
-              <Briefcase className="size-6" />
-            </span>
-            <div>
-              <h2 className="font-display text-xl md:text-2xl font-semibold">Need work done?</h2>
-              <p className="text-primary-foreground/85 text-sm mt-1">
-                Post a job and let real people come to you. It's free.
-              </p>
-            </div>
+        <div className="rounded-2xl bg-gradient-to-r from-primary to-primary-glow text-primary-foreground p-6 md:p-8 mb-10 flex flex-col md:flex-row md:items-center justify-between gap-5">
+          <div>
+            <h2 className="font-display text-xl md:text-2xl font-semibold">Need work done?</h2>
+            <p className="text-primary-foreground/85 text-sm mt-1">
+              Post a job and let real people come to you. It's free.
+            </p>
           </div>
           <Button variant="ink" size="lg" asChild>
-            <Link to="/opportunities/new"><Plus className="size-4" />Post a Job</Link>
+            <Link to="/opportunities/new">Post a Job</Link>
           </Button>
         </div>
 

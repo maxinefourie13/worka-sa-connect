@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { ChevronRight, Search, SlidersHorizontal } from "lucide-react";
+import { Search, SlidersHorizontal } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
 import { BusinessCard } from "@/components/BusinessCard";
 import { BUSINESSES, CATEGORIES, PROVINCES } from "@/lib/mockData";
@@ -49,9 +49,9 @@ const DirectoryPage = () => {
     <SiteLayout>
       <div className="container py-8">
         {/* Breadcrumb */}
-        <nav className="flex items-center gap-1 text-xs text-muted-foreground mb-4">
+        <nav className="flex items-center gap-2 text-xs text-muted-foreground mb-4">
           <Link to="/" className="hover:text-foreground">Home</Link>
-          <ChevronRight className="size-3" />
+          <span>/</span>
           <span className="text-foreground font-medium">Directory</span>
         </nav>
 
