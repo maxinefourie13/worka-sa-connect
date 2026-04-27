@@ -68,10 +68,12 @@ export type Database = {
           created_at: string
           description: string | null
           email: string | null
+          flagged_for_review: boolean
           followers_count: number
           hours: string | null
           id: string
           image_url: string | null
+          is_suspended: boolean
           is_verified: boolean
           name: string
           owner_id: string
@@ -79,6 +81,7 @@ export type Database = {
           plan: Database["public"]["Enums"]["business_plan"]
           province: string
           rating: number
+          report_count: number
           response_rate: number
           review_count: number
           slug: string
@@ -97,10 +100,12 @@ export type Database = {
           created_at?: string
           description?: string | null
           email?: string | null
+          flagged_for_review?: boolean
           followers_count?: number
           hours?: string | null
           id?: string
           image_url?: string | null
+          is_suspended?: boolean
           is_verified?: boolean
           name: string
           owner_id: string
@@ -108,6 +113,7 @@ export type Database = {
           plan?: Database["public"]["Enums"]["business_plan"]
           province: string
           rating?: number
+          report_count?: number
           response_rate?: number
           review_count?: number
           slug: string
@@ -126,10 +132,12 @@ export type Database = {
           created_at?: string
           description?: string | null
           email?: string | null
+          flagged_for_review?: boolean
           followers_count?: number
           hours?: string | null
           id?: string
           image_url?: string | null
+          is_suspended?: boolean
           is_verified?: boolean
           name?: string
           owner_id?: string
@@ -137,6 +145,7 @@ export type Database = {
           plan?: Database["public"]["Enums"]["business_plan"]
           province?: string
           rating?: number
+          report_count?: number
           response_rate?: number
           review_count?: number
           slug?: string
@@ -668,6 +677,58 @@ export type Database = {
           },
         ]
       }
+      user_reports: {
+        Row: {
+          business_id: string
+          created_at: string
+          details: string | null
+          id: string
+          reason: string
+          reporter_id: string
+          status: string
+        }
+        Insert: {
+          business_id: string
+          created_at?: string
+          details?: string | null
+          id?: string
+          reason: string
+          reporter_id: string
+          status?: string
+        }
+        Update: {
+          business_id?: string
+          created_at?: string
+          details?: string | null
+          id?: string
+          reason?: string
+          reporter_id?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_reports_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "business_verified_status"
+            referencedColumns: ["business_id"]
+          },
+          {
+            foreignKeyName: "user_reports_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_reports_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -841,6 +902,10 @@ export type Database = {
       mark_verification_pending: {
         Args: { _job_id: string }
         Returns: undefined
+      }
+      report_business: {
+        Args: { _business_id: string; _details?: string; _reason: string }
+        Returns: string
       }
       set_email_alerts_optin: {
         Args: { _enabled: boolean }
