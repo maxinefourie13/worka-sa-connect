@@ -291,6 +291,7 @@ export const BUSINESSES: Business[] = [
     followers: 1240,
     plan: "standard",
     gradient: grads[2],
+    image: imgPhotographer,
     responseRate: 92,
     hours: "By appointment",
     services: [
