@@ -6,7 +6,8 @@ import { Button } from "@/components/ui/button";
 import { BusinessCard } from "@/components/BusinessCard";
 import { JobCard } from "@/components/JobCard";
 import { Typewriter } from "@/components/Typewriter";
-import { BUSINESSES, OPPORTUNITIES, CATEGORIES, CATEGORY_GROUPS, PROVINCES, PROMOTIONS, STATS } from "@/lib/mockData";
+import { BUSINESSES, OPPORTUNITIES, CATEGORIES, CATEGORY_GROUPS, PROVINCES, STATS } from "@/lib/mockData";
+import { getCategoryGroupIcon } from "@/lib/categoryIcons";
 
 const HOW_IT_WORKS = [
   { title: "Tell us what you need", body: "Search the directory or post a job in seconds." },
@@ -208,21 +209,26 @@ const HomePage = () => {
             </Link>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-            {groupCounts.map((g) => (
-              <Link
-                key={g.slug}
-                to={`/directory/g/${g.slug}`}
-                className="group bg-background border border-border rounded-lg p-5 flex items-center gap-4 hover:border-primary hover:bg-primary-light/40 transition-all"
-              >
-                <span className="text-3xl shrink-0">{g.emoji}</span>
-                <div className="min-w-0">
-                  <p className="font-semibold text-sm group-hover:text-primary transition-colors leading-snug">{g.name}</p>
-                  <p className="text-xs text-muted-foreground mt-0.5 tabular-nums">
-                    {g.subCount} services · {g.count.toLocaleString("en-ZA")} listings
-                  </p>
-                </div>
-              </Link>
-            ))}
+            {groupCounts.map((g) => {
+              const Icon = getCategoryGroupIcon(g.slug);
+              return (
+                <Link
+                  key={g.slug}
+                  to={`/directory/g/${g.slug}`}
+                  className="group bg-background border border-border rounded-lg p-5 flex items-center gap-4 hover:border-primary hover:bg-primary-light/40 transition-all"
+                >
+                  <span className="size-11 rounded-lg bg-primary-light text-primary flex items-center justify-center shrink-0 group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+                    <Icon className="size-5" strokeWidth={2} />
+                  </span>
+                  <div className="min-w-0">
+                    <p className="font-semibold text-sm group-hover:text-primary transition-colors leading-snug">{g.name}</p>
+                    <p className="text-xs text-muted-foreground mt-0.5 tabular-nums">
+                      {g.subCount} services · {g.count.toLocaleString("en-ZA")} listings
+                    </p>
+                  </div>
+                </Link>
+              );
+            })}
           </div>
         </div>
       </section>
@@ -269,59 +275,6 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* Active promotions */}
-      <section className="container py-20">
-        <div className="flex items-end justify-between mb-10">
-          <div className="max-w-xl">
-            <span className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-primary">
-              <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
-              Limited time
-            </span>
-            <h2 className="font-display text-3xl md:text-4xl font-medium tracking-tight mt-2">
-              Active promotions
-            </h2>
-            <p className="mt-3 text-ink-2">Deals running right now from businesses on Sjoh.</p>
-          </div>
-          <Link to="/directory" className="text-sm font-semibold text-primary hover:underline hidden md:inline-block">
-            See all deals
-          </Link>
-        </div>
-        <div className="grid md:grid-cols-3 gap-5">
-          {PROMOTIONS.map((p) => (
-            <article
-              key={p.id}
-              className="group relative bg-card border border-border rounded-lg p-6 flex flex-col min-h-[260px] hover:border-primary hover:shadow-[var(--shadow-card)] transition-all"
-            >
-              {/* Top row: tag + discount */}
-              <div className="flex items-start justify-between gap-3">
-                <span className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest bg-primary-light text-primary px-2 py-1 rounded">
-                  Promo
-                </span>
-                {p.discountPercent && (
-                  <span className="font-display text-3xl font-semibold tabular-nums text-primary leading-none">
-                    −{p.discountPercent}
-                    <span className="text-xl align-top">%</span>
-                  </span>
-                )}
-              </div>
-
-              {/* Body */}
-              <div className="mt-6 flex-1">
-                <h3 className="font-display text-lg font-semibold leading-snug text-foreground">
-                  {p.title}
-                </h3>
-                <p className="mt-2 text-sm text-ink-2 leading-relaxed">{p.description}</p>
-              </div>
-
-              {/* Footer meta */}
-              <div className="mt-6 pt-4 border-t border-border flex items-center justify-between text-xs">
-                <span className="font-semibold text-foreground truncate pr-2">{p.businessName}</span>
-                <span className="text-muted-foreground tabular-nums shrink-0">Ends {p.expiresAt}</span>
-              </div>
-            </article>
-          ))}
-        </div>
-      </section>
 
       {/* CTA strip */}
       <section className="bg-primary text-primary-foreground">
