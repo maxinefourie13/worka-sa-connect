@@ -121,7 +121,7 @@ export const ProposalModal = ({ open, jobId, jobTitle, jobBudget, clientName, on
             </div>
             <h2 className="font-display text-xl md:text-2xl font-semibold tracking-tight pr-8">{jobTitle}</h2>
             <p className="text-xs text-muted-foreground mt-2">
-              Costs <strong className="text-accent">1 Klap</strong> to send. You have <strong className="tabular-nums">{provider.klapsRemaining}</strong> left.
+              Costs <strong className="text-accent">{boostOption.cost} Klap{boostOption.cost > 1 ? "s" : ""}</strong> to send ({boostOption.label}). You have <strong className="tabular-nums">{provider.klapsRemaining}</strong> left.
               {clientName && <> · For <strong>{clientName}</strong></>}
             </p>
           </div>
@@ -133,6 +133,8 @@ export const ProposalModal = ({ open, jobId, jobTitle, jobBudget, clientName, on
                 isMainOke={isMainOke}
                 onDownloadQuote={handleDownloadQuote}
                 onClose={handleClose}
+                resultRank={resultRank}
+                boostLabel={boostOption.label}
               />
             ) : (
               <>
@@ -278,6 +280,14 @@ export const ProposalModal = ({ open, jobId, jobTitle, jobBudget, clientName, on
                   </p>
                 </div>
 
+                {/* Boost step — Upwork-style outbid */}
+                <BoostSelector
+                  boost={boost}
+                  onChange={setBoost}
+                  preview={preview}
+                  klapsRemaining={provider.klapsRemaining}
+                />
+
                 {/* Quotation upsell card */}
                 <QuotationCard isMainOke={isMainOke} />
               </>
@@ -295,7 +305,9 @@ export const ProposalModal = ({ open, jobId, jobTitle, jobBudget, clientName, on
                 size="lg"
               >
                 <Zap className="size-4" strokeWidth={2.5} />
-                Send Proposal — 1 Klap
+                {!canAfford
+                  ? `Need ${boostOption.cost - provider.klapsRemaining} more Klap${boostOption.cost - provider.klapsRemaining > 1 ? "s" : ""}`
+                  : `Send Proposal — ${boostOption.cost} Klap${boostOption.cost > 1 ? "s" : ""}`}
               </Button>
             </div>
           )}
