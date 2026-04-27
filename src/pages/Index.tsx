@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { Search, ArrowRight, Sparkles, Briefcase, UserPlus, Users } from "lucide-react";
+import { Search } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
 import { Button } from "@/components/ui/button";
 import { BusinessCard } from "@/components/BusinessCard";
@@ -9,10 +9,10 @@ import { Typewriter } from "@/components/Typewriter";
 import { BUSINESSES, OPPORTUNITIES, CATEGORIES, PROVINCES, PROMOTIONS, STATS } from "@/lib/mockData";
 
 const HOW_IT_WORKS = [
-  { icon: Search, title: "Tell us what you need", body: "Search the directory or post a job in seconds." },
-  { icon: Users, title: "Get real people", body: "Local businesses ready to help — across all nine provinces." },
-  { icon: UserPlus, title: "Choose who you trust", body: "Browse profiles, reviews, and active promotions." },
-  { icon: Briefcase, title: "Get it done", body: "Contact them directly. No middleman. No commission." },
+  { title: "Tell us what you need", body: "Search the directory or post a job in seconds." },
+  { title: "Get real people", body: "Local businesses ready to help — across all nine provinces." },
+  { title: "Choose who you trust", body: "Browse profiles, reviews, and active promotions." },
+  { title: "Get it done", body: "Contact them directly. No middleman. No commission." },
 ];
 
 const HERO_PHRASES = [
@@ -62,8 +62,8 @@ const HomePage = () => {
       <section className="relative overflow-hidden border-b border-border bg-background">
         <div className="absolute inset-0 bg-grid-soft opacity-40 [mask-image:radial-gradient(ellipse_at_center,black_30%,transparent_75%)]" />
         <div className="container relative pt-20 pb-24 lg:pt-28 lg:pb-32 text-center">
-          <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary-light text-primary text-xs font-semibold mb-8">
-            <Sparkles className="size-3.5" /> No commission. No middlemen. Direct contact.
+          <span className="inline-flex items-center px-3 py-1 rounded-full bg-primary-light text-primary text-xs font-semibold mb-8">
+            No commission. No middlemen. Direct contact.
           </span>
 
           {/* Hero typewriter — the SA-flavoured Sjoh! line is the centrepiece */}
@@ -75,7 +75,6 @@ const HomePage = () => {
                 typingSpeed={75}
                 erasingSpeed={35}
                 holdDuration={3200}
-                className="text-primary-glow"
               />
             </h1>
           </div>
@@ -171,26 +170,18 @@ const HomePage = () => {
           </p>
         </div>
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
-          {HOW_IT_WORKS.map((s, i) => {
-            const Icon = s.icon;
-            return (
-              <div
-                key={s.title}
-                className="bg-card border border-border rounded-xl p-6 hover:border-primary/30 hover:shadow-card transition-all"
-              >
-                <div className="flex items-center gap-3">
-                  <span className="size-10 rounded-lg bg-primary-light text-primary flex items-center justify-center">
-                    <Icon className="size-5" />
-                  </span>
-                  <span className="text-xs font-bold tracking-widest text-muted-foreground tabular-nums">
-                    0{i + 1}
-                  </span>
-                </div>
-                <h3 className="font-display text-lg font-semibold mt-5">{s.title}</h3>
-                <p className="mt-2 text-sm text-ink-2 leading-relaxed">{s.body}</p>
-              </div>
-            );
-          })}
+          {HOW_IT_WORKS.map((s, i) => (
+            <div
+              key={s.title}
+              className="bg-card border border-border rounded-xl p-6 hover:border-primary/30 hover:shadow-card transition-all"
+            >
+              <span className="font-display text-3xl font-bold text-primary tabular-nums">
+                0{i + 1}
+              </span>
+              <h3 className="font-display text-lg font-semibold mt-5">{s.title}</h3>
+              <p className="mt-2 text-sm text-ink-2 leading-relaxed">{s.body}</p>
+            </div>
+          ))}
         </div>
       </section>
 
@@ -204,8 +195,8 @@ const HomePage = () => {
               </h2>
               <p className="mt-3 text-ink-2">From electricians to event planners — everything you need.</p>
             </div>
-            <Link to="/directory" className="text-sm font-semibold text-primary hover:underline hidden md:flex items-center gap-1">
-              Browse all <ArrowRight className="size-4" />
+            <Link to="/directory" className="text-sm font-semibold text-primary hover:underline hidden md:inline-block">
+              Browse all
             </Link>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
@@ -235,8 +226,8 @@ const HomePage = () => {
             </h2>
             <p className="mt-3 text-ink-2">Verified, top-rated, and active on Sjoh.</p>
           </div>
-          <Link to="/directory" className="text-sm font-semibold text-primary hover:underline hidden md:flex items-center gap-1">
-            See all <ArrowRight className="size-4" />
+          <Link to="/directory" className="text-sm font-semibold text-primary hover:underline hidden md:inline-block">
+            See all
           </Link>
         </div>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -256,8 +247,8 @@ const HomePage = () => {
               </h2>
               <p className="mt-3 text-ink-2">Real jobs posted by people and businesses across SA.</p>
             </div>
-            <Link to="/opportunities" className="text-sm font-semibold text-primary hover:underline hidden md:flex items-center gap-1">
-              View board <ArrowRight className="size-4" />
+            <Link to="/opportunities" className="text-sm font-semibold text-primary hover:underline hidden md:inline-block">
+              View board
             </Link>
           </div>
           <div className="grid lg:grid-cols-3 gap-5">

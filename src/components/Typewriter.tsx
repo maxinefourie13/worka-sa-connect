@@ -11,12 +11,14 @@ interface TypewriterProps {
   /** Randomize order instead of sequential */
   randomize?: boolean;
   className?: string;
+  /** Tailwind class applied to "Sjoh" + punctuation (defaults to coral primary) */
+  accentClassName?: string;
 }
 
 /**
  * Looping typewriter that types one phrase, holds, erases, and moves to the next.
- * Renders an inline-block span with a blinking caret. Reserves vertical space
- * via the parent's line-height so the search bar below never jumps.
+ * Renders an inline-block span with a blinking caret. Accent-colors the word
+ * "Sjoh" (and its trailing "!") plus any punctuation as the text appears.
  */
 export const Typewriter = ({
   phrases,
@@ -25,6 +27,7 @@ export const Typewriter = ({
   holdDuration = 2200,
   randomize = false,
   className,
+  accentClassName = "text-primary",
 }: TypewriterProps) => {
   const [order] = useState(() => {
     if (!randomize) return phrases.map((_, i) => i);
@@ -70,9 +73,23 @@ export const Typewriter = ({
     return () => window.clearTimeout(timeoutId);
   }, [text, phase, orderIndex, order, phrases, typingSpeed, erasingSpeed, holdDuration]);
 
+  // Tokenize so "Sjoh" and punctuation render in the accent color while
+  // the rest stays in whatever color the parent sets (foreground/charcoal).
+  // Split keeps the matched delimiters as their own tokens.
+  const tokens = text.split(/(Sjoh|[!?.,;:'"\-—…])/g).filter(Boolean);
+
   return (
     <span className={className} aria-live="polite" aria-atomic="true">
-      {text}
+      {tokens.map((tok, i) => {
+        const isAccent = tok === "Sjoh" || /^[!?.,;:'"\-—…]$/.test(tok);
+        return isAccent ? (
+          <span key={i} className={accentClassName}>
+            {tok}
+          </span>
+        ) : (
+          <span key={i}>{tok}</span>
+        );
+      })}
       <span
         aria-hidden="true"
         className="inline-block w-[0.08em] ml-1 align-baseline animate-caret-blink"
