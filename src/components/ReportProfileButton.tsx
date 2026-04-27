@@ -36,7 +36,6 @@ export const ReportProfileButton = ({ businessId, businessName }: Props) => {
       return;
     }
     setSubmitting(true);
-    // @ts-expect-error rpc is generated post-migration
     const { error } = await supabase.rpc("report_business", {
       _business_id: businessId,
       _reason: reason,
