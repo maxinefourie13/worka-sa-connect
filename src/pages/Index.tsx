@@ -54,7 +54,15 @@ const HomePage = () => {
 
   const featured = BUSINESSES.slice(0, 6);
   const latest = OPPORTUNITIES.slice(0, 3);
-  const popularCats = CATEGORIES.slice(0, 6);
+  const popularCatSlugs = ["plumbing", "electrical", "home-cleaning", "garden-services", "mechanics", "web-design"];
+  const popularCats = popularCatSlugs
+    .map((s) => CATEGORIES.find((c) => c.slug === s))
+    .filter((c): c is NonNullable<typeof c> => Boolean(c));
+  const groupCounts = CATEGORY_GROUPS.map((g) => ({
+    ...g,
+    count: CATEGORIES.filter((c) => c.groupSlug === g.slug).reduce((sum, c) => sum + c.count, 0),
+    subCount: CATEGORIES.filter((c) => c.groupSlug === g.slug).length,
+  }));
 
   return (
     <SiteLayout>
@@ -200,16 +208,18 @@ const HomePage = () => {
             </Link>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-            {CATEGORIES.map((c) => (
+            {groupCounts.map((g) => (
               <Link
-                key={c.slug}
-                to={`/directory?category=${c.slug}`}
-                className="group bg-background border border-border rounded-lg p-4 flex items-center gap-3 hover:border-primary hover:bg-primary-light/40 transition-all"
+                key={g.slug}
+                to={`/directory?group=${g.slug}`}
+                className="group bg-background border border-border rounded-lg p-5 flex items-center gap-4 hover:border-primary hover:bg-primary-light/40 transition-all"
               >
-                <span className="text-2xl">{c.emoji}</span>
+                <span className="text-3xl shrink-0">{g.emoji}</span>
                 <div className="min-w-0">
-                  <p className="font-semibold text-sm group-hover:text-primary transition-colors truncate">{c.name}</p>
-                  <p className="text-xs text-muted-foreground tabular-nums">{c.count.toLocaleString("en-ZA")} listings</p>
+                  <p className="font-semibold text-sm group-hover:text-primary transition-colors leading-snug">{g.name}</p>
+                  <p className="text-xs text-muted-foreground mt-0.5 tabular-nums">
+                    {g.subCount} services · {g.count.toLocaleString("en-ZA")} listings
+                  </p>
                 </div>
               </Link>
             ))}
