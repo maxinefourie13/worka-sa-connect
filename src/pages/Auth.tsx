@@ -1,6 +1,12 @@
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { SiteLayout } from "@/components/SiteLayout";
 import { Button } from "@/components/ui/button";
+import { supabase } from "@/integrations/supabase/client";
+import { lovable } from "@/integrations/lovable";
+import { toast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/useAuth";
+import { Loader2 } from "lucide-react";
 
 interface AuthShellProps {
   title: string;
@@ -9,7 +15,7 @@ interface AuthShellProps {
   children: React.ReactNode;
 }
 
-export const AuthShell = ({ title, subtitle, footer, children }: AuthShellProps) => (
+const AuthShell = ({ title, subtitle, footer, children }: AuthShellProps) => (
   <SiteLayout>
     <div className="container py-16 max-w-md">
       <Link to="/" className="font-display text-2xl font-semibold tracking-tight inline-block mb-10">
@@ -23,69 +29,6 @@ export const AuthShell = ({ title, subtitle, footer, children }: AuthShellProps)
       <div className="mt-6 text-center text-sm text-muted-foreground">{footer}</div>
     </div>
   </SiteLayout>
-);
-
-export const Login = () => (
-  <AuthShell
-    title="Welcome back"
-    subtitle="Log in to manage your business and applications."
-    footer={
-      <>Don't have an account? <Link to="/register" className="text-primary font-semibold hover:underline">Register</Link></>
-    }
-  >
-    <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
-      <Field label="Email"><input type="email" className="input" placeholder="you@business.co.za" /></Field>
-      <Field label="Password"><input type="password" className="input" placeholder="••••••••" /></Field>
-      <div className="flex justify-end">
-        <Link to="/forgot-password" className="text-xs text-muted-foreground hover:text-foreground">Forgot password?</Link>
-      </div>
-      <Button className="w-full" size="lg">Log In</Button>
-      <div className="relative text-center my-2">
-        <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-border" /></div>
-        <span className="relative bg-card px-3 text-xs text-muted-foreground uppercase tracking-widest font-semibold">or</span>
-      </div>
-      <Button type="button" variant="outline" className="w-full" size="lg">
-        <span className="font-bold text-base">G</span>
-        Continue with Google
-      </Button>
-    </form>
-    <Style />
-  </AuthShell>
-);
-
-export const Register = () => (
-  <AuthShell
-    title="Create your account"
-    subtitle="Start listing your business in minutes."
-    footer={
-      <>Already have an account? <Link to="/login" className="text-primary font-semibold hover:underline">Log in</Link></>
-    }
-  >
-    <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
-      <Field label="Business name"><input className="input" placeholder="Your business" /></Field>
-      <Field label="Email"><input type="email" className="input" placeholder="you@business.co.za" /></Field>
-      <Field label="Password"><input type="password" className="input" placeholder="At least 8 characters" /></Field>
-      <p className="text-xs text-muted-foreground">By registering, you agree to our terms and POPIA privacy policy.</p>
-      <Button className="w-full" size="lg">Create Account</Button>
-    </form>
-    <Style />
-  </AuthShell>
-);
-
-export const ForgotPassword = () => (
-  <AuthShell
-    title="Reset your password"
-    subtitle="We'll send you a link to set a new password."
-    footer={
-      <>Remembered it? <Link to="/login" className="text-primary font-semibold hover:underline">Back to login</Link></>
-    }
-  >
-    <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
-      <Field label="Email"><input type="email" className="input" placeholder="you@business.co.za" /></Field>
-      <Button className="w-full" size="lg">Send Reset Link</Button>
-    </form>
-    <Style />
-  </AuthShell>
 );
 
 const Field = ({ label, children }: { label: string; children: React.ReactNode }) => (
@@ -104,3 +47,265 @@ const Style = () => (
     .input:focus { outline: none; border-color: hsl(var(--primary)); box-shadow: 0 0 0 3px hsl(var(--primary) / 0.15); }
   `}</style>
 );
+
+const SocialButtons = () => {
+  const [loading, setLoading] = useState<"google" | "apple" | null>(null);
+
+  const handle = async (provider: "google" | "apple") => {
+    setLoading(provider);
+    try {
+      const result = await lovable.auth.signInWithOAuth(provider, {
+        redirect_uri: window.location.origin,
+      });
+      if (result.error) {
+        toast({ title: "Sign-in failed", description: String(result.error), variant: "destructive" });
+        setLoading(null);
+        return;
+      }
+      if (result.redirected) return;
+      // Tokens received, session set — App will react via onAuthStateChange.
+      window.location.href = "/dashboard";
+    } catch (e) {
+      toast({ title: "Sign-in failed", description: e instanceof Error ? e.message : "Unknown error", variant: "destructive" });
+      setLoading(null);
+    }
+  };
+
+  return (
+    <div className="space-y-2">
+      <Button
+        type="button"
+        variant="outline"
+        className="w-full"
+        size="lg"
+        onClick={() => handle("google")}
+        disabled={loading !== null}
+      >
+        {loading === "google" ? <Loader2 className="size-4 animate-spin" /> : <span className="font-bold text-base">G</span>}
+        Continue with Google
+      </Button>
+      <Button
+        type="button"
+        variant="outline"
+        className="w-full"
+        size="lg"
+        onClick={() => handle("apple")}
+        disabled={loading !== null}
+      >
+        {loading === "apple" ? <Loader2 className="size-4 animate-spin" /> : <span className="font-bold text-base"></span>}
+        Continue with Apple
+      </Button>
+    </div>
+  );
+};
+
+const Divider = () => (
+  <div className="relative text-center my-2">
+    <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-border" /></div>
+    <span className="relative bg-card px-3 text-xs text-muted-foreground uppercase tracking-widest font-semibold">or</span>
+  </div>
+);
+
+// Redirect away from auth pages if already logged in
+const useRedirectIfAuthed = () => {
+  const { session, loading } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+  useEffect(() => {
+    if (!loading && session) {
+      const target = (location.state as { from?: string } | null)?.from || "/dashboard";
+      navigate(target, { replace: true });
+    }
+  }, [session, loading, navigate, location.state]);
+};
+
+export const Login = () => {
+  useRedirectIfAuthed();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+
+  const onSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSubmitting(true);
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    setSubmitting(false);
+    if (error) {
+      toast({ title: "Couldn't log in", description: error.message, variant: "destructive" });
+      return;
+    }
+    toast({ title: "Welcome back" });
+    // onAuthStateChange + useRedirectIfAuthed will route us
+  };
+
+  return (
+    <AuthShell
+      title="Welcome back"
+      subtitle="Log in to manage your business and applications."
+      footer={<>Don't have an account? <Link to="/register" className="text-primary font-semibold hover:underline">Register</Link></>}
+    >
+      <form className="space-y-4" onSubmit={onSubmit}>
+        <Field label="Email">
+          <input type="email" required className="input" placeholder="you@business.co.za" value={email} onChange={(e) => setEmail(e.target.value)} />
+        </Field>
+        <Field label="Password">
+          <input type="password" required className="input" placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} />
+        </Field>
+        <div className="flex justify-end">
+          <Link to="/forgot-password" className="text-xs text-muted-foreground hover:text-foreground">Forgot password?</Link>
+        </div>
+        <Button className="w-full" size="lg" disabled={submitting}>
+          {submitting ? <Loader2 className="size-4 animate-spin" /> : null}
+          Log In
+        </Button>
+        <Divider />
+        <SocialButtons />
+      </form>
+      <Style />
+    </AuthShell>
+  );
+};
+
+export const Register = () => {
+  useRedirectIfAuthed();
+  const [displayName, setDisplayName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+
+  const onSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (password.length < 8) {
+      toast({ title: "Password too short", description: "Use at least 8 characters.", variant: "destructive" });
+      return;
+    }
+    setSubmitting(true);
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        emailRedirectTo: window.location.origin,
+        data: { display_name: displayName },
+      },
+    });
+    setSubmitting(false);
+    if (error) {
+      toast({ title: "Couldn't create account", description: error.message, variant: "destructive" });
+      return;
+    }
+    toast({ title: "Account created", description: "You're signed in." });
+  };
+
+  return (
+    <AuthShell
+      title="Create your account"
+      subtitle="Start listing your business in minutes."
+      footer={<>Already have an account? <Link to="/login" className="text-primary font-semibold hover:underline">Log in</Link></>}
+    >
+      <form className="space-y-4" onSubmit={onSubmit}>
+        <Field label="Your name or business name">
+          <input required className="input" placeholder="Khumalo Electrical" value={displayName} onChange={(e) => setDisplayName(e.target.value)} />
+        </Field>
+        <Field label="Email">
+          <input type="email" required className="input" placeholder="you@business.co.za" value={email} onChange={(e) => setEmail(e.target.value)} />
+        </Field>
+        <Field label="Password">
+          <input type="password" required minLength={8} className="input" placeholder="At least 8 characters" value={password} onChange={(e) => setPassword(e.target.value)} />
+        </Field>
+        <p className="text-xs text-muted-foreground">By registering, you agree to our terms and POPIA privacy policy.</p>
+        <Button className="w-full" size="lg" disabled={submitting}>
+          {submitting ? <Loader2 className="size-4 animate-spin" /> : null}
+          Create Account
+        </Button>
+        <Divider />
+        <SocialButtons />
+      </form>
+      <Style />
+    </AuthShell>
+  );
+};
+
+export const ForgotPassword = () => {
+  const [email, setEmail] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [sent, setSent] = useState(false);
+
+  const onSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSubmitting(true);
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/reset-password`,
+    });
+    setSubmitting(false);
+    if (error) {
+      toast({ title: "Couldn't send reset", description: error.message, variant: "destructive" });
+      return;
+    }
+    setSent(true);
+  };
+
+  return (
+    <AuthShell
+      title="Reset your password"
+      subtitle="We'll send you a link to set a new password."
+      footer={<>Remembered it? <Link to="/login" className="text-primary font-semibold hover:underline">Back to login</Link></>}
+    >
+      {sent ? (
+        <p className="text-sm">Check your inbox at <strong>{email}</strong> for the reset link.</p>
+      ) : (
+        <form className="space-y-4" onSubmit={onSubmit}>
+          <Field label="Email">
+            <input type="email" required className="input" placeholder="you@business.co.za" value={email} onChange={(e) => setEmail(e.target.value)} />
+          </Field>
+          <Button className="w-full" size="lg" disabled={submitting}>
+            {submitting ? <Loader2 className="size-4 animate-spin" /> : null}
+            Send Reset Link
+          </Button>
+        </form>
+      )}
+      <Style />
+    </AuthShell>
+  );
+};
+
+export const ResetPassword = () => {
+  const [password, setPassword] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const navigate = useNavigate();
+
+  const onSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (password.length < 8) {
+      toast({ title: "Password too short", description: "Use at least 8 characters.", variant: "destructive" });
+      return;
+    }
+    setSubmitting(true);
+    const { error } = await supabase.auth.updateUser({ password });
+    setSubmitting(false);
+    if (error) {
+      toast({ title: "Couldn't update password", description: error.message, variant: "destructive" });
+      return;
+    }
+    toast({ title: "Password updated" });
+    navigate("/dashboard", { replace: true });
+  };
+
+  return (
+    <AuthShell
+      title="Set a new password"
+      subtitle="Enter your new password below."
+      footer={<Link to="/login" className="text-primary font-semibold hover:underline">Back to login</Link>}
+    >
+      <form className="space-y-4" onSubmit={onSubmit}>
+        <Field label="New password">
+          <input type="password" required minLength={8} className="input" placeholder="At least 8 characters" value={password} onChange={(e) => setPassword(e.target.value)} />
+        </Field>
+        <Button className="w-full" size="lg" disabled={submitting}>
+          {submitting ? <Loader2 className="size-4 animate-spin" /> : null}
+          Update Password
+        </Button>
+      </form>
+      <Style />
+    </AuthShell>
+  );
+};
