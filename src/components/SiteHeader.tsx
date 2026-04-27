@@ -100,9 +100,9 @@ export const SiteHeader = () => {
               <Button variant="ghost" size="sm" asChild>
                 <Link to="/login">Log In</Link>
               </Button>
-              <Button asChild>
+              <FlameButton asChild>
                 <Link to="/list">List Your Business</Link>
-              </Button>
+              </FlameButton>
             </>
           )}
         </div>
