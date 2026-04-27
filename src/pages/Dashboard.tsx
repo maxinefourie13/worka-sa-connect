@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import {
   LayoutGrid, User, Sparkles, Briefcase, Users, CreditCard, Plus,
-  Zap, ShieldCheck, Siren,
+  Zap, ShieldCheck, Siren, Bell, Mail,
 } from "lucide-react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Button } from "@/components/ui/button";
@@ -13,6 +13,8 @@ import { VerificationBadges } from "@/components/VerificationBadges";
 import { toast } from "@/hooks/use-toast";
 import { useVerification } from "@/hooks/useVerification";
 import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
+import { requestPushPermission, disablePush, isPushConfigured } from "@/lib/push";
 import { cn } from "@/lib/utils";
 
 type SectionKey = "overview" | "klaps" | "profile" | "promotions" | "opportunities" | "followers" | "billing";
@@ -283,35 +285,8 @@ const KlapsSection = () => {
         </div>
       </div>
 
-      {/* Urgent alerts */}
-      <div className="bg-card border border-border rounded-xl p-6">
-        <div className="flex items-start justify-between gap-3">
-          <div className="flex items-start gap-3">
-            <span className="size-10 rounded-lg bg-accent/15 text-accent flex items-center justify-center shrink-0">
-              <Siren className="size-5" />
-            </span>
-            <div>
-              <h2 className="font-display text-lg font-semibold">Eish! Urgent alerts</h2>
-              <p className="text-sm text-ink-2 mt-1">
-                Get a push notification 24/7 when an emergency job lands within 10km. Clients pay emergency rates.
-              </p>
-            </div>
-          </div>
-          <button
-            onClick={toggleUrgentAlerts}
-            className={cn(
-              "relative w-12 h-7 rounded-full transition-colors shrink-0",
-              provider.urgentAlertsOptIn ? "bg-accent" : "bg-secondary",
-            )}
-            aria-label="Toggle urgent alerts"
-          >
-            <span className={cn(
-              "absolute top-0.5 size-6 rounded-full bg-white shadow-sm transition-transform",
-              provider.urgentAlertsOptIn ? "translate-x-5" : "translate-x-0.5",
-            )} />
-          </button>
-        </div>
-      </div>
+      {/* Notification preferences */}
+      <NotificationPrefsCard />
 
       {/* Activity */}
       <div className="bg-card border border-border rounded-xl p-6">
