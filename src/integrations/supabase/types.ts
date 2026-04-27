@@ -38,6 +38,13 @@ export type Database = {
             foreignKeyName: "business_follows_business_id_fkey"
             columns: ["business_id"]
             isOneToOne: false
+            referencedRelation: "business_verified_status"
+            referencedColumns: ["business_id"]
+          },
+          {
+            foreignKeyName: "business_follows_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
             referencedRelation: "businesses"
             referencedColumns: ["id"]
           },
@@ -188,6 +195,42 @@ export type Database = {
           },
         ]
       }
+      klap_topups: {
+        Row: {
+          amount_cents: number
+          completed_at: string | null
+          created_at: string
+          id: string
+          klaps: number
+          pack_slug: string
+          paystack_reference: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          amount_cents: number
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          klaps: number
+          pack_slug: string
+          paystack_reference: string
+          status?: string
+          user_id: string
+        }
+        Update: {
+          amount_cents?: number
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          klaps?: number
+          pack_slug?: string
+          paystack_reference?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       opportunities: {
         Row: {
           applicants_count: number
@@ -248,6 +291,51 @@ export type Database = {
           status?: Database["public"]["Enums"]["opportunity_status"]
           title?: string
           updated_at?: string
+        }
+        Relationships: []
+      }
+      payment_events: {
+        Row: {
+          amount_cents: number | null
+          created_at: string
+          currency: string | null
+          error_message: string | null
+          id: string
+          kind: Database["public"]["Enums"]["payment_event_kind"]
+          paystack_event: string
+          paystack_reference: string
+          processed: boolean
+          processed_at: string | null
+          raw: Json
+          user_id: string | null
+        }
+        Insert: {
+          amount_cents?: number | null
+          created_at?: string
+          currency?: string | null
+          error_message?: string | null
+          id?: string
+          kind?: Database["public"]["Enums"]["payment_event_kind"]
+          paystack_event: string
+          paystack_reference: string
+          processed?: boolean
+          processed_at?: string | null
+          raw: Json
+          user_id?: string | null
+        }
+        Update: {
+          amount_cents?: number | null
+          created_at?: string
+          currency?: string | null
+          error_message?: string | null
+          id?: string
+          kind?: Database["public"]["Enums"]["payment_event_kind"]
+          paystack_event?: string
+          paystack_reference?: string
+          processed?: boolean
+          processed_at?: string | null
+          raw?: Json
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -323,6 +411,13 @@ export type Database = {
             foreignKeyName: "promotions_business_id_fkey"
             columns: ["business_id"]
             isOneToOne: false
+            referencedRelation: "business_verified_status"
+            referencedColumns: ["business_id"]
+          },
+          {
+            foreignKeyName: "promotions_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
             referencedRelation: "businesses"
             referencedColumns: ["id"]
           },
@@ -377,6 +472,13 @@ export type Database = {
             foreignKeyName: "proposals_business_id_fkey"
             columns: ["business_id"]
             isOneToOne: false
+            referencedRelation: "business_verified_status"
+            referencedColumns: ["business_id"]
+          },
+          {
+            foreignKeyName: "proposals_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
             referencedRelation: "businesses"
             referencedColumns: ["id"]
           },
@@ -399,33 +501,54 @@ export type Database = {
       provider_balances: {
         Row: {
           id: string
+          is_id_verified: boolean
           klaps_remaining: number
           klaps_this_month: number
+          paystack_customer_code: string | null
+          paystack_subscription_code: string | null
+          smile_id_job_id: string | null
           tier: Database["public"]["Enums"]["sjoh_tier"]
+          tier_expires_at: string | null
           trial_ends_at: string | null
           updated_at: string
           urgent_alerts_optin: boolean
           user_id: string
+          verification_expires_at: string | null
+          verification_status: Database["public"]["Enums"]["verification_status"]
         }
         Insert: {
           id?: string
+          is_id_verified?: boolean
           klaps_remaining?: number
           klaps_this_month?: number
+          paystack_customer_code?: string | null
+          paystack_subscription_code?: string | null
+          smile_id_job_id?: string | null
           tier?: Database["public"]["Enums"]["sjoh_tier"]
+          tier_expires_at?: string | null
           trial_ends_at?: string | null
           updated_at?: string
           urgent_alerts_optin?: boolean
           user_id: string
+          verification_expires_at?: string | null
+          verification_status?: Database["public"]["Enums"]["verification_status"]
         }
         Update: {
           id?: string
+          is_id_verified?: boolean
           klaps_remaining?: number
           klaps_this_month?: number
+          paystack_customer_code?: string | null
+          paystack_subscription_code?: string | null
+          smile_id_job_id?: string | null
           tier?: Database["public"]["Enums"]["sjoh_tier"]
+          tier_expires_at?: string | null
           trial_ends_at?: string | null
           updated_at?: string
           urgent_alerts_optin?: boolean
           user_id?: string
+          verification_expires_at?: string | null
+          verification_status?: Database["public"]["Enums"]["verification_status"]
         }
         Relationships: []
       }
@@ -461,6 +584,13 @@ export type Database = {
           reviewer_name?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "reviews_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "business_verified_status"
+            referencedColumns: ["business_id"]
+          },
           {
             foreignKeyName: "reviews_business_id_fkey"
             columns: ["business_id"]
@@ -513,6 +643,13 @@ export type Database = {
             foreignKeyName: "services_business_id_fkey"
             columns: ["business_id"]
             isOneToOne: false
+            referencedRelation: "business_verified_status"
+            referencedColumns: ["business_id"]
+          },
+          {
+            foreignKeyName: "services_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
             referencedRelation: "businesses"
             referencedColumns: ["id"]
           },
@@ -521,6 +658,47 @@ export type Database = {
             columns: ["business_id"]
             isOneToOne: false
             referencedRelation: "businesses_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      urgent_fees: {
+        Row: {
+          amount_cents: number
+          client_id: string
+          completed_at: string | null
+          created_at: string
+          id: string
+          opportunity_id: string | null
+          paystack_reference: string
+          status: string
+        }
+        Insert: {
+          amount_cents: number
+          client_id: string
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          opportunity_id?: string | null
+          paystack_reference: string
+          status?: string
+        }
+        Update: {
+          amount_cents?: number
+          client_id?: string
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          opportunity_id?: string | null
+          paystack_reference?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "urgent_fees_opportunity_id_fkey"
+            columns: ["opportunity_id"]
+            isOneToOne: false
+            referencedRelation: "opportunities"
             referencedColumns: ["id"]
           },
         ]
@@ -548,6 +726,13 @@ export type Database = {
       }
     }
     Views: {
+      business_verified_status: {
+        Row: {
+          business_id: string | null
+          is_verified_pro: boolean | null
+        }
+        Relationships: []
+      }
       businesses_public: {
         Row: {
           address: string | null
@@ -661,12 +846,36 @@ export type Database = {
       }
     }
     Functions: {
+      apply_klap_topup: { Args: { _topup_id: string }; Returns: undefined }
+      apply_subscription_payment: {
+        Args: {
+          _customer_code: string
+          _next_renewal: string
+          _subscription_code: string
+          _tier: Database["public"]["Enums"]["sjoh_tier"]
+          _user_id: string
+        }
+        Returns: undefined
+      }
+      apply_verification_result: {
+        Args: { _job_id: string; _user_id: string; _verified: boolean }
+        Returns: undefined
+      }
+      expire_stale_verifications: { Args: never; Returns: undefined }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
           _user_id: string
         }
         Returns: boolean
+      }
+      lapse_subscription: {
+        Args: { _subscription_code: string }
+        Returns: undefined
+      }
+      mark_verification_pending: {
+        Args: { _job_id: string }
+        Returns: undefined
       }
       spend_klap: {
         Args: { _job_title: string; _opportunity_id: string }
@@ -679,9 +888,23 @@ export type Database = {
       business_plan: "free" | "standard" | "featured"
       klap_outcome: "pending" | "won" | "lost"
       opportunity_status: "open" | "closed" | "awarded"
+      payment_event_kind:
+        | "subscription_charge"
+        | "subscription_disable"
+        | "subscription_payment_failed"
+        | "klap_topup_charge"
+        | "urgent_fee_charge"
+        | "other"
       price_type: "fixed" | "from" | "quote"
       proposal_status: "pending" | "shortlisted" | "won" | "lost" | "withdrawn"
       sjoh_tier: "dala-trial" | "hustler" | "main-oke"
+      verification_status:
+        | "not_required"
+        | "required"
+        | "pending"
+        | "verified"
+        | "failed"
+        | "expired"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -814,9 +1037,25 @@ export const Constants = {
       business_plan: ["free", "standard", "featured"],
       klap_outcome: ["pending", "won", "lost"],
       opportunity_status: ["open", "closed", "awarded"],
+      payment_event_kind: [
+        "subscription_charge",
+        "subscription_disable",
+        "subscription_payment_failed",
+        "klap_topup_charge",
+        "urgent_fee_charge",
+        "other",
+      ],
       price_type: ["fixed", "from", "quote"],
       proposal_status: ["pending", "shortlisted", "won", "lost", "withdrawn"],
       sjoh_tier: ["dala-trial", "hustler", "main-oke"],
+      verification_status: [
+        "not_required",
+        "required",
+        "pending",
+        "verified",
+        "failed",
+        "expired",
+      ],
     },
   },
 } as const
