@@ -69,9 +69,9 @@ Deno.serve(async () => {
     }
   }
 
-  for (const [k, lastmod] of catSeen) urls.push({ loc: `${SITE_URL}/services/${k}`, lastmod });
-  for (const [k, lastmod] of provSeen) urls.push({ loc: `${SITE_URL}/services/${k}`, lastmod });
-  for (const [k, lastmod] of seen) urls.push({ loc: `${SITE_URL}/services/${k}`, lastmod });
+  for (const [k, lastmod] of catSeen) urls.push({ loc: `${SITE_URL}/${k}`, lastmod });
+  for (const [k, lastmod] of provSeen) urls.push({ loc: `${SITE_URL}/${k}`, lastmod });
+  for (const [k, lastmod] of seen) urls.push({ loc: `${SITE_URL}/${k}`, lastmod });
 
   const xml =
     `<?xml version="1.0" encoding="UTF-8"?>\n` +
