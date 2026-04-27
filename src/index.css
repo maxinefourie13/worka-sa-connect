@@ -126,7 +126,13 @@
 
   h1, h2, h3, h4, h5, h6, .font-display {
     @apply font-sans font-bold tracking-tight;
+    /* Google Sans tops out at 700 — fake extra weight with a subtle stroke */
+    -webkit-text-stroke: 0.6px currentColor;
+    text-stroke: 0.6px currentColor;
+    font-feature-settings: "kern" 1;
   }
+  h1 { -webkit-text-stroke-width: 0.9px; text-stroke-width: 0.9px; }
+  h2 { -webkit-text-stroke-width: 0.7px; text-stroke-width: 0.7px; }
 }
 
 @layer components {
