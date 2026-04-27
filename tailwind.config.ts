@@ -15,7 +15,7 @@ export default {
     extend: {
       fontFamily: {
         sans: ['"Open Sans"', "ui-sans-serif", "system-ui", "sans-serif"],
-        display: ['"Fredoka"', '"Open Sans"', "ui-sans-serif", "system-ui", "sans-serif"],
+        display: ['"Open Sans"', "ui-sans-serif", "system-ui", "sans-serif"],
       },
       colors: {
         border: "hsl(var(--border))",
