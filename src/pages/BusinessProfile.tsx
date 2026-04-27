@@ -1,13 +1,13 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { ArrowLeft, Phone, Mail, MessageCircle, MapPin, Clock, Globe } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
 import { Button } from "@/components/ui/button";
-import { BUSINESSES, BUSINESS_VERIFICATION, formatRand } from "@/lib/mockData";
+import { BUSINESS_VERIFICATION, formatRand } from "@/lib/mockData";
 import { VerificationBadges } from "@/components/VerificationBadges";
 import { ReportProfileButton } from "@/components/ReportProfileButton";
 import { GoogleReviewsList } from "@/components/GoogleReviewsList";
-import { supabase } from "@/integrations/supabase/client";
+import { useBusinessBySlug } from "@/hooks/useBusinessBySlug";
 import { useReveal } from "@/hooks/useReveal";
 import { cn } from "@/lib/utils";
 
