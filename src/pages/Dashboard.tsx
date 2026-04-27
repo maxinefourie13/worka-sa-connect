@@ -337,6 +337,7 @@ const ProfileSection = () => (
         <Button>Save Changes</Button>
       </div>
     </div>
+    <GoogleReviewsCard />
     <DbStyle />
   </>
 );
