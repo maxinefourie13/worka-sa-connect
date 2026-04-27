@@ -1,6 +1,9 @@
+import { useEffect } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
+import { initOneSignal, isPushConfigured } from "@/lib/push";
+import EmailUnsubscribe from "./pages/EmailUnsubscribe.tsx";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -22,7 +25,11 @@ import { Login, Register, ForgotPassword, ResetPassword } from "./pages/Auth.tsx
 
 const queryClient = new QueryClient();
 
-const App = () => (
+const App = () => {
+  useEffect(() => {
+    if (isPushConfigured()) initOneSignal();
+  }, []);
+  return (
   <HelmetProvider>
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
@@ -50,6 +57,7 @@ const App = () => (
                 <Route path="/services/:categorySlug" element={<CategoryLocationPage />} />
                 <Route path="/services/:categorySlug/:provinceSlug" element={<CategoryLocationPage />} />
                 <Route path="/services/:categorySlug/:provinceSlug/:citySlug" element={<CategoryLocationPage />} />
+                <Route path="/email-preferences/unsubscribe" element={<EmailUnsubscribe />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>
@@ -59,6 +67,7 @@ const App = () => (
       </TooltipProvider>
     </QueryClientProvider>
   </HelmetProvider>
-);
+  );
+};
 
 export default App;
