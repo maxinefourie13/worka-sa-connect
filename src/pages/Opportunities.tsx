@@ -9,6 +9,7 @@ import { useOpportunities } from "@/hooks/useDirectory";
 import { cn } from "@/lib/utils";
 
 const Opportunities = () => {
+  const { data: opportunities } = useOpportunities();
   const [keyword, setKeyword] = useState("");
   const [category, setCategory] = useState("");
   const [province, setProvince] = useState("");
