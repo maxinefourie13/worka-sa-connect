@@ -7,6 +7,9 @@ import { toast } from "@/hooks/use-toast";
 import { TopUpModal } from "@/components/TopUpModal";
 import { downloadQuotation } from "@/lib/quotation";
 import { cn } from "@/lib/utils";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
+import { useMyBusiness } from "@/hooks/useMyBusiness";
 
 interface Props {
   open: boolean;
@@ -22,6 +25,8 @@ type PriceType = "fixed" | "from" | "quote";
 
 export const ProposalModal = ({ open, jobId, jobTitle, jobBudget, clientName, onClose, onSubmitted }: Props) => {
   const { provider, klapJob, previewBid } = useKlap();
+  const { user } = useAuth();
+  const { business: myBusiness } = useMyBusiness();
   const [topUpOpen, setTopUpOpen] = useState(false);
 
   const [priceType, setPriceType] = useState<PriceType>("fixed");
@@ -65,13 +70,43 @@ export const ProposalModal = ({ open, jobId, jobTitle, jobBudget, clientName, on
     setTimeout(reset, 300);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!canSubmit) return;
     const result = klapJob(jobId, jobTitle, boost);
     if (!result.ok) {
       setTopUpOpen(true);
       return;
     }
+
+    // Persist to database so the client can be notified and see the bid.
+    // We only persist when we have a real auth user + business profile;
+    // mock/anonymous flows still get the local UX.
+    if (user && myBusiness && jobId) {
+      const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(jobId);
+      if (isUuid) {
+        const { data: inserted, error } = await supabase
+          .from("proposals")
+          .insert({
+            opportunity_id: jobId,
+            business_id: myBusiness.id,
+            provider_id: user.id,
+            message: scope,
+            quote_amount: priceType === "quote" ? null : priceNum,
+            klaps_spent: boostOption.cost,
+          })
+          .select("id")
+          .maybeSingle();
+        if (error) {
+          console.error("[proposal] insert failed", error);
+        } else if (inserted?.id) {
+          // Fire and forget — email failure shouldn't block the success state.
+          supabase.functions
+            .invoke("notify-new-bid", { body: { proposal_id: inserted.id } })
+            .catch((e) => console.error("[notify-new-bid]", e));
+        }
+      }
+    }
+
     setSubmitted(true);
     setResultRank({ rank: result.rank!, total: result.total! });
     toast({
