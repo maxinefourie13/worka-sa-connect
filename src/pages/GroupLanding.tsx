@@ -7,9 +7,8 @@ import { Button } from "@/components/ui/button";
 import {
   CATEGORY_GROUPS,
   CATEGORIES,
-  BUSINESSES,
-  OPPORTUNITIES,
 } from "@/lib/mockData";
+import { useBusinesses, useOpportunities } from "@/hooks/useDirectory";
 
 const GroupLanding = () => {
   const { groupSlug } = useParams<{ groupSlug: string }>();
