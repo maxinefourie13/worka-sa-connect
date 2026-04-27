@@ -269,44 +269,57 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* Active promotions — dark section */}
-      <section className="bg-foreground text-background">
-        <div className="container py-20">
-          <div className="flex items-end justify-between mb-10">
-            <div>
-              <span className="text-xs font-bold uppercase tracking-widest text-accent">Limited time</span>
-              <h2 className="font-display text-3xl md:text-4xl font-medium tracking-tight mt-2">
-                Active promotions
-              </h2>
-            </div>
+      {/* Active promotions */}
+      <section className="container py-20">
+        <div className="flex items-end justify-between mb-10">
+          <div className="max-w-xl">
+            <span className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-primary">
+              <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
+              Limited time
+            </span>
+            <h2 className="font-display text-3xl md:text-4xl font-medium tracking-tight mt-2">
+              Active promotions
+            </h2>
+            <p className="mt-3 text-ink-2">Deals running right now from businesses on Sjoh.</p>
           </div>
-          <div className="grid md:grid-cols-3 gap-5">
-            {PROMOTIONS.map((p) => (
-              <div
-                key={p.id}
-                className={`rounded-2xl p-7 bg-gradient-to-br ${p.gradient} text-white flex flex-col min-h-[260px]`}
-              >
-                <div className="flex items-start justify-between mb-auto">
-                  <span className="text-[10px] font-bold uppercase tracking-widest bg-white/20 px-2 py-1 rounded">
-                    Promo
+          <Link to="/directory" className="text-sm font-semibold text-primary hover:underline hidden md:inline-block">
+            See all deals
+          </Link>
+        </div>
+        <div className="grid md:grid-cols-3 gap-5">
+          {PROMOTIONS.map((p) => (
+            <article
+              key={p.id}
+              className="group relative bg-card border border-border rounded-lg p-6 flex flex-col min-h-[260px] hover:border-primary hover:shadow-[var(--shadow-card)] transition-all"
+            >
+              {/* Top row: tag + discount */}
+              <div className="flex items-start justify-between gap-3">
+                <span className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest bg-primary-light text-primary px-2 py-1 rounded">
+                  Promo
+                </span>
+                {p.discountPercent && (
+                  <span className="font-display text-3xl font-semibold tabular-nums text-primary leading-none">
+                    −{p.discountPercent}
+                    <span className="text-xl align-top">%</span>
                   </span>
-                  {p.discountPercent && (
-                    <span className="font-display text-3xl font-bold tabular-nums">
-                      -{p.discountPercent}%
-                    </span>
-                  )}
-                </div>
-                <div className="mt-8">
-                  <h3 className="font-display text-xl font-semibold leading-snug">{p.title}</h3>
-                  <p className="mt-2 text-sm text-white/85">{p.description}</p>
-                  <div className="mt-5 pt-5 border-t border-white/20 flex items-center justify-between text-xs">
-                    <span className="font-semibold">{p.businessName}</span>
-                    <span className="text-white/75">Ends {p.expiresAt}</span>
-                  </div>
-                </div>
+                )}
               </div>
-            ))}
-          </div>
+
+              {/* Body */}
+              <div className="mt-6 flex-1">
+                <h3 className="font-display text-lg font-semibold leading-snug text-foreground">
+                  {p.title}
+                </h3>
+                <p className="mt-2 text-sm text-ink-2 leading-relaxed">{p.description}</p>
+              </div>
+
+              {/* Footer meta */}
+              <div className="mt-6 pt-4 border-t border-border flex items-center justify-between text-xs">
+                <span className="font-semibold text-foreground truncate pr-2">{p.businessName}</span>
+                <span className="text-muted-foreground tabular-nums shrink-0">Ends {p.expiresAt}</span>
+              </div>
+            </article>
+          ))}
         </div>
       </section>
 
