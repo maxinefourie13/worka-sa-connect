@@ -1,203 +1,116 @@
 ## What's changing
 
-Add **transactional notifications** so users actually hear about activity on the platform — the missing piece that makes a two-sided marketplace work. Two channels:
+Two independent upgrades:
 
-1. **Email** via Lovable Emails (built-in, no third-party API key needed) — for new-job and new-bid alerts.
-2. **Web Push** via OneSignal — for instant "fresh graft" alerts to providers.
-
-Plus one prerequisite fix: the bid flow currently only updates a local mock store (`klapStore`). Before we can email clients about new bids, we need to actually persist proposals to the `proposals` table in the database. That wiring is included.
+1. **Bidding becomes a true open auction.** Proposals are unlimited and free for every signed-in pro. Klaps stop being a "ticket to bid" and become **bid currency**: the pro picks any amount from 1 up to their balance, that's how much they pay, and the client's list is sorted by bid amount (highest first, ties broken by time). Spend more → ranked higher. Spend nothing → still on the list, just at the bottom.
+2. **Google Reviews import.** A business owner can link their Google Maps listing to their Sjoh profile. We pull their official Google rating, total review count, and up to 5 most recent reviews via the Google Places API. A "★ 4.8 on Google (152) — view on Google" badge shows on the profile, and the imported reviews appear in a new "From Google" section under the Reviews tab. Auto-refreshes weekly.
 
 ---
 
-## Recommendation: use Lovable Emails (built in) — not Resend
+## 1. Open-auction bidding
 
-You mentioned "Resend/Mailtrap" — Lovable already has built-in email infrastructure that does the same job with no API keys, no third-party signup, no Mailgun/Resend account, and proper SA deliverability. You just need a sender domain configured (which we'll set up using your `sjoh.co.za` once it's live, or a Lovable-issued subdomain in the meantime). It includes:
+### Behaviour
+- Every signed-in pro can submit unlimited proposals — no monthly cap, no Klap cost to enter.
+- In the proposal modal, the existing 3-tier "Standard / Boost / Top Spot" picker is replaced with a **single "Bid Klaps" slider + number input**: 0 to (your balance), default 0.
+- Live preview shows: *"You'd be ranked #N of M bidders with a 25-Klap bid. Top bid is currently 40 Klaps."*
+- On submit, Klaps are deducted immediately and locked to that proposal. No refunds, no escrow.
+- Client's bid list (in their job dashboard) is sorted **bid amount DESC, then created_at ASC**. Bid amount is shown as a coral chip on each proposal card. Bids of 0 still appear, just at the bottom under a "Other proposals" divider.
+- Pros can **top up an existing bid** from the dashboard ("Outbid by Khumalo Electrical — add Klaps?") with a one-click +5 / +10 / custom action. Top-up adds to `klaps_spent` on that proposal.
+- Empty-balance state on the modal: "Out of Klaps, eish! Submit free or top up to bid."
 
-- React Email templates (so we keep the Sjoh! voice consistent)
-- Built-in suppression list (bounces auto-blocked)
-- One-click unsubscribe + tracking
-- Retry queue (a transient failure won't lose an email)
+### Tier changes
+- The three monthly Klap allowances (5 / 50 / 200) **stay** — Klaps are still the perk you get with your subscription, just used differently.
+- "Verified Oke / Hustler / Main Oke" copy on the pricing page reframes Klaps as "bid budget" instead of "bids per month".
 
-If you have a strong reason to use Resend specifically (e.g. you already pay for it), say so and I'll wire that instead. Otherwise the plan below uses Lovable Emails.
+### Database
+- `proposals.klaps_spent` already exists (currently always 1). We allow `0..N` and use it as the bid amount.
+- New RPC `place_bid(_opportunity_id, _message, _quote_amount, _bid_klaps, _business_id)` — single transaction that creates the proposal AND deducts `_bid_klaps` from `provider_balances.klaps_remaining` (validates ≥ 0 and ≤ balance, allows 0). Replaces the current `spend_klap` flow for proposals.
+- New RPC `top_up_bid(_proposal_id, _additional_klaps)` — adds to `klaps_spent` on a proposal owned by the caller, deducts from balance. Only allowed while opportunity status is `open`.
+- Both RPCs `SECURITY DEFINER`, locked to `authenticated`, internal `FOR UPDATE` lock on `provider_balances` to prevent race overspend.
+- Drop the `spend_klap` RPC (or keep as no-op). Proposal RLS insert policy stays as-is (provider must own the business and not be suspended).
 
----
+### Code
+- `src/lib/klapStore.tsx` — replace `BoostTier` / `BOOST_OPTIONS` / `klapJob` with a `placeBid(jobId, jobTitle, bidAmount)` and `previewBid(jobId, bidAmount)` returning `{projectedRank, total, topBid}`.
+- `src/components/ProposalModal.tsx` — remove `BoostSelector`, add new `BidSlider` component (slider + numeric input + live rank preview + balance hint). Submit button copy: bid > 0 → "Klap this Job for N Klaps", bid = 0 → "Submit proposal (no bid)".
+- `src/components/JobCard.tsx` & client dashboard proposal list — sort by bid desc, render bid chip, add "Top up bid" button for the pro's own active proposals.
+- `src/pages/Pricing.tsx` (or wherever tiers display) — update Klap descriptions to "X Klaps/month bid budget".
+- Mock data: update seed bids so amounts vary (1–80 range).
 
-## Part 1 — Persist proposals to the database (prerequisite)
-
-Currently `ProposalModal.handleSubmit()` only calls `klapJob()` (mock store). To send a notification email to the client, the bid needs to live in the `proposals` table so an edge function can read it and look up the client's email.
-
-**Edits to `src/components/ProposalModal.tsx`:**
-- After `klapJob()` succeeds, insert a row into `public.proposals` with `opportunity_id`, `business_id`, `provider_id` (= `auth.uid()`), `message` (= scope), `quote_amount` (= priceNum or null for "quote on inspection"), `klaps_spent` (= boost cost).
-- Then invoke the new `notify-new-bid` edge function with the inserted proposal's id.
-- Show the existing success state.
-
-**Edits to `src/components/JobCard.tsx` / wherever `KlapButton` lives:**
-- The KlapButton needs the actual `business_id` of the logged-in provider. Right now it uses the mock provider. We'll source it from a small new helper hook `useMyBusiness()` that fetches the first row from `businesses where owner_id = auth.uid()`.
-
----
-
-## Part 2 — Email notifications
-
-### Setup (once)
-
-- Configure email sender domain (Lovable Emails infrastructure setup). If `sjoh.co.za` DNS isn't ready yet, we'll provision a Lovable subdomain so emails work immediately.
-- Scaffold the `send-transactional-email` edge function + email queue + unsubscribe handling.
-
-### Two new email templates (React Email .tsx, in Sjoh! voice)
-
-1. **`new-job-in-area.tsx`** — sent to providers when a job in their category + city is posted.
-   - Subject: `🔧 Fresh Graft! New {{categoryName}} job in {{city}}`
-   - Body: job title, short description, budget, link to "Klap this job" (deep-link to `/opportunities/{id}` with auto-open proposal modal)
-   - CTA button: "Go Klap it"
-2. **`new-bid-on-job.tsx`** — sent to client when any provider bids on their job.
-   - Subject: `Sharp! {{businessName}} just klapped your job`
-   - Body: business name (+ verified badge if applicable), quote amount or "Quote on inspection", short pitch preview (first 120 chars), CTA "View the bid"
-   - Link: `/opportunities/{id}` (where the client will see all bids — we'll need to add a basic bid-list view to that page; flagged below as a small follow-up)
-
-Both templates pull brand colors from `src/index.css` so they look like the app.
-
-### Two new edge functions
-
-#### `notify-new-job` (triggered by client posting a job)
-- Called from `PostOpportunity.tsx` immediately after the `opportunities` insert succeeds.
-- Body: `{ opportunity_id }`.
-- Logic:
-  1. Verify caller JWT.
-  2. Look up the opportunity (RLS allows owner read).
-  3. Use service role to query `businesses` table: `where category_slug = opp.category_slug and lower(city) = lower(opp.city) and is_verified = true` (cap at 200 recipients per send to avoid abuse).
-  4. For each business owner, look up their auth email (via `auth.admin.getUserById`).
-  5. Check `provider_balances.email_alerts_optin` (new column, default true) before sending.
-  6. Invoke `send-transactional-email` once per recipient with `templateName: 'new-job-in-area'`, `idempotencyKey: 'new-job-{opp_id}-{user_id}'`.
-- Throttle: skip recipients who already received a "new-job" email in the last 60 seconds for the same opportunity (idempotency key handles that for free).
-
-#### `notify-new-bid` (triggered by provider sending a proposal)
-- Called from `ProposalModal.tsx` immediately after the `proposals` insert succeeds.
-- Body: `{ proposal_id }`.
-- Logic:
-  1. Verify caller JWT.
-  2. Service-role load proposal → opportunity → client_id.
-  3. Look up client's auth email.
-  4. Invoke `send-transactional-email` with `templateName: 'new-bid-on-job'`, `idempotencyKey: 'new-bid-{proposal_id}'`.
-
-### Schema additions
-
-Add nullable columns (one migration):
-- `provider_balances.email_alerts_optin boolean default true`
-- `provider_balances.push_alerts_optin boolean default false` (set true when user grants push permission)
-- `provider_balances.onesignal_player_id text` (nullable; stores the OneSignal subscription ID per provider)
-
-### Unsubscribe page
-Required by Lovable's email system. New route `/email-preferences/unsubscribe` that posts the token to `handle-email-unsubscribe`. Branded in Sjoh! voice ("Aikona, you're unsubscribed. We'll respect that.").
-
-### Provider settings UI
-Small "Notifications" card in `Dashboard → Klaps & Verification` section with two toggles:
-- "Email me when new jobs land in my area" → updates `email_alerts_optin`
-- "Push notifications" → triggers OneSignal subscribe flow (see Part 3)
+### Edge cases
+- Submitting a proposal with 0 Klaps is valid → appears at bottom.
+- If two bids tie, earlier wins (existing behaviour).
+- Topping up after the opportunity closes is rejected by the RPC.
+- Suspended businesses still blocked by existing RLS check.
 
 ---
 
-## Part 3 — Web Push via OneSignal
+## 2. Google Reviews import
 
-OneSignal is correct for SA — free up to 10k subscribers, works on Chrome/Edge/Firefox/Safari iOS 16.4+, no Apple Developer fee for the web SDK.
+### Behaviour
+- New section in the business owner's dashboard: **"Link Google Reviews"**.
+- Owner pastes their Google Maps URL (e.g. `https://maps.app.goo.gl/...` or full place URL). We resolve the Place ID via the Places API and store it on the business.
+- Once linked, we fetch and cache: rating, total ratings count, up to 5 most recent reviews (author name, rating, text, time, profile photo URL), the Google Maps URL, and last-fetched timestamp.
+- On the public profile (`BusinessProfile.tsx`):
+  - Header rating chip shows both Sjoh rating and "★ 4.8 on Google (152)" with a "View on Google" link (required by Google policy).
+  - Reviews tab gets a **"From Google"** subsection above the native Sjoh reviews, with each review credited to "via Google" and a link out.
+- Auto-refresh weekly via `pg_cron` calling a refresh edge function. Owner can also click "Refresh now" (rate-limited to once per hour).
+- Owner can unlink at any time → Sjoh profile reverts to native reviews only.
 
-### Setup
+### Compliance with Google's Places API ToS
+- Show at most 5 reviews (Places API only returns up to 5 anyway).
+- Always include "View on Google" link on every imported review and on the badge.
+- Cache for max 30 days; we refresh weekly so we're well within.
+- Don't modify review text, don't strip author names/photos.
 
-You'll need to:
-1. Sign up at `onesignal.com` (free).
-2. Create a new app → choose **"Web Push"**.
-3. Choose **"Typical Site"** and enter your published URL (e.g. `https://sjoh.co.za` or the Lovable preview URL for testing).
-4. Skip the "Welcome notification" step (we'll handle our own copy).
-5. From the OneSignal dashboard → Settings → Keys & IDs, copy:
-   - **App ID** (UUID, public — safe in frontend)
-   - **REST API Key** (secret — server-side only)
-6. I'll save the App ID as `VITE_ONESIGNAL_APP_ID` (publishable) and the REST API Key as `ONESIGNAL_REST_API_KEY` secret.
+### Database
+- New columns on `businesses`:
+  - `google_place_id text`
+  - `google_maps_url text`
+  - `google_rating numeric`
+  - `google_review_count integer`
+  - `google_reviews_last_fetched_at timestamptz`
+- New table `business_google_reviews`:
+  - `id`, `business_id` (FK businesses.id, cascade), `author_name`, `author_photo_url`, `rating`, `text`, `relative_time` (Google's "2 weeks ago" string), `time` (timestamptz), `language`, `created_at`
+- RLS:
+  - `business_google_reviews` SELECT public (same as `businesses` reviews).
+  - INSERT/UPDATE/DELETE only via SECURITY DEFINER edge function (no client writes).
+- Owner can update `google_place_id` / `google_maps_url` on `businesses` via the existing UPDATE policy (already `auth.uid() = owner_id`); the protected-fields trigger doesn't need to lock these.
 
-### Frontend
+### Edge functions
+- `google-places-link` — POST `{ businessId, mapsUrl }`. Resolves URL → Place ID (handles short URLs by following redirects), calls Places **Place Details** endpoint, returns place name + rating + review count to the client for confirmation. Validates caller owns the business.
+- `google-places-import` — POST `{ businessId }`. Persists Place ID to the business, fetches details + reviews, upserts into `business_google_reviews` (replace-all strategy: delete existing, insert new), updates `businesses.google_*` columns, sets `last_fetched_at = now()`. Owner-only.
+- `google-places-refresh` — Internal cron target. No body. Loops over businesses with `google_place_id IS NOT NULL` and `last_fetched_at < now() - interval '7 days'`, refreshes each (with a small per-batch limit to stay within budget). Called by `pg_cron` daily.
+- `google-places-unlink` — POST `{ businessId }`. Clears columns + deletes review rows.
 
-- Add OneSignal Web SDK script to `index.html`:
-  ```html
-  <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
-  ```
-- New file `src/lib/push.ts` — tiny wrapper exposing:
-  - `initOneSignal()` — called once on app mount with the `VITE_ONESIGNAL_APP_ID`.
-  - `requestPushPermission()` — asks the browser, then on success captures the OneSignal `playerId` and saves it to `provider_balances.onesignal_player_id` via a new RPC `set_push_subscription(_player_id text)`.
-  - `unsubscribePush()` — clears the player ID server-side.
-- New button in **Dashboard** (Klaps & Verification section, replacing/augmenting the deleted "Urgent alerts" card from the previous task):
-  - **"🔔 Enable Job Alerts"** — when off, opens the browser permission prompt.
-  - When on, shows "✓ Job Alerts on — push to enable/disable".
-- Initialise OneSignal in `App.tsx` so the SDK loads before the dashboard renders.
+All four use the standard CORS + Zod validation + JWT verify pattern.
 
-### Backend
+### Cron
+Add a daily `pg_cron` job hitting `google-places-refresh` (uses `pg_net`, scheduled via insert tool not migration so it isn't re-run on remix).
 
-- Update `notify-new-job` edge function to ALSO send push notifications:
-  - For each matched provider with a `onesignal_player_id` AND `push_alerts_optin = true`, POST to OneSignal API:
-    ```
-    POST https://api.onesignal.com/notifications
-    headers: Authorization: Key {ONESIGNAL_REST_API_KEY}
-    body: {
-      app_id: ONESIGNAL_APP_ID,
-      include_player_ids: [playerId, ...],
-      headings: { en: "🔥 Fresh Graft!" },
-      contents: { en: "A {category} job was just posted in {city}. Klap it now!" },
-      url: "https://sjoh.co.za/opportunities/{id}",
-    }
-    ```
-  - Batch up to 2000 player IDs per request (OneSignal's limit).
+### Code
+- `src/components/dashboard/GoogleReviewsCard.tsx` — owner-side card: paste URL → preview → confirm → linked state with "Refresh now" / "Unlink" actions.
+- `src/pages/BusinessProfile.tsx`:
+  - Add Google rating chip next to the existing Sjoh rating.
+  - In Reviews tab, add `<GoogleReviewsList business={business} />` above the existing list.
+- `src/hooks/useBusiness.tsx` (or wherever business is fetched) — extend select to include the new google columns + a sub-select for `business_google_reviews` ordered by `time DESC`.
+- Move `BusinessProfile` off mock data for the Google fields (it currently uses `BUSINESSES` from `mockData`); fall back to mock if no Supabase row, but read Google fields from the live row when present.
 
-### New RPC (migration)
+### Required secret
+`GOOGLE_PLACES_API_KEY` — single key, server-side only, used by all four edge functions. The user will need to create this in Google Cloud Console (enable "Places API (New)" + billing). I'll prompt for it via `add_secret` after the plan is approved and edge function scaffolding is in place.
 
-```sql
-create function set_push_subscription(_player_id text, _enabled boolean) ...
--- updates provider_balances.onesignal_player_id and push_alerts_optin
--- security definer, asserts auth.uid()
-```
-
----
-
-## Open questions
-
-1. **Email frequency cap** — should a provider get an email for every single new job in their area, or batched (e.g. max 1 email/hour summarising all new jobs)? Per-job is simpler and matches your spec ("when a new job is posted") but could spam during busy hours. **My recommendation:** start per-job, add a simple "max 5 emails/day" hard cap per recipient, revisit after launch.
-2. **City matching** — exact string match, or fuzzy? Right now jobs and businesses both store free-text `city` ("Sandton" vs "Sandton, JHB"). I'll do a `lower(trim())` exact match and document the limitation; we can add a city-normalization pass later.
-3. **Bid email to client** — should it include the actual quote amount, or hide it until they click through ("see the bid")? **My recommendation:** show the amount inline — it's the most useful piece of info and gets opened more.
-4. **Push notification icon** — OneSignal needs a 192x192 PNG. I'll use the Sjoh! logo from `public/` if there is one; otherwise use the placeholder.svg, and you can swap later.
-5. **The bid-list view on `/opportunities/{id}`** — currently the client clicks the email link and lands on the opportunity detail page, but there's no UI yet to show incoming bids. Want me to add a basic "Bids received" section as part of this task, or scope that to a follow-up?
+### Cost note for the user
+Google Places "Place Details" calls cost ~$0.017 each. With weekly refreshes per linked business and ~1 link/preview call per onboarding, this stays well within Google's $200/month free credit until you have ~700+ businesses linked. We'll add per-business rate-limiting on manual refresh (1/hour) to prevent abuse.
 
 ---
 
-## Technical summary — files touched
+## Build order
 
-**New files**
-- `supabase/functions/notify-new-job/index.ts`
-- `supabase/functions/notify-new-bid/index.ts`
-- `supabase/functions/_shared/transactional-email-templates/new-job-in-area.tsx`
-- `supabase/functions/_shared/transactional-email-templates/new-bid-on-job.tsx`
-- `src/lib/push.ts`
-- `src/hooks/useMyBusiness.tsx`
-- `src/pages/EmailUnsubscribe.tsx` (route `/email-preferences/unsubscribe`)
-- `supabase/migrations/<ts>_notification_prefs_and_push.sql`
-
-**Edited**
-- `src/App.tsx` — init OneSignal, register unsubscribe route
-- `index.html` — OneSignal SDK script tag
-- `src/components/ProposalModal.tsx` — persist proposal to DB + invoke `notify-new-bid`
-- `src/components/KlapButton.tsx` — pass real business_id
-- `src/pages/PostOpportunity.tsx` — invoke `notify-new-job` after insert
-- `src/pages/Dashboard.tsx` — Notifications card with email + push toggles
-- `.env` — `VITE_ONESIGNAL_APP_ID`
-
-**Secrets needed (I'll request after plan approval)**
-- `ONESIGNAL_REST_API_KEY` (server-side)
-- `ONESIGNAL_APP_ID` (also stored as publishable `VITE_ONESIGNAL_APP_ID`)
-
-**Auto-set up (no action from you)**
-- Lovable email sender domain
-- `send-transactional-email`, `handle-email-unsubscribe`, `handle-email-suppression`, `process-email-queue` edge functions
-- pgmq queues, suppression table, unsubscribe tokens table
-
----
-
-## What you'll need to do after I approve and build
-
-1. Sign up at OneSignal, create the Web Push app, send me the App ID + REST API Key.
-2. If `sjoh.co.za` DNS is ready, I'll trigger the email domain setup dialog so you can plug in the records. If not, I'll use a Lovable subdomain and we swap to your domain later.
-3. Test by posting a fresh job from one account and watching another account receive both an email AND a push notification.
+1. Migration: add columns to `businesses`, create `business_google_reviews`, create `place_bid` + `top_up_bid` RPCs, drop/replace `spend_klap`.
+2. Refactor `klapStore` + `ProposalModal` + bid display in JobCard / dashboard.
+3. Update pricing page Klap copy.
+4. Scaffold the four `google-places-*` edge functions (with stub responses).
+5. Prompt user for `GOOGLE_PLACES_API_KEY`.
+6. Wire real Places API calls into the edge functions.
+7. Build `GoogleReviewsCard` + integrate into `BusinessProfile`.
+8. Schedule daily refresh cron via insert tool.
+9. Smoke test both flows.

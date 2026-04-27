@@ -57,6 +57,67 @@ export type Database = {
           },
         ]
       }
+      business_google_reviews: {
+        Row: {
+          author_name: string
+          author_photo_url: string | null
+          business_id: string
+          created_at: string
+          id: string
+          language: string | null
+          rating: number
+          relative_time: string | null
+          text: string | null
+          time: string | null
+        }
+        Insert: {
+          author_name: string
+          author_photo_url?: string | null
+          business_id: string
+          created_at?: string
+          id?: string
+          language?: string | null
+          rating: number
+          relative_time?: string | null
+          text?: string | null
+          time?: string | null
+        }
+        Update: {
+          author_name?: string
+          author_photo_url?: string | null
+          business_id?: string
+          created_at?: string
+          id?: string
+          language?: string | null
+          rating?: number
+          relative_time?: string | null
+          text?: string | null
+          time?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "business_google_reviews_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "business_verified_status"
+            referencedColumns: ["business_id"]
+          },
+          {
+            foreignKeyName: "business_google_reviews_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "business_google_reviews_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       businesses: {
         Row: {
           address: string | null
@@ -70,6 +131,11 @@ export type Database = {
           email: string | null
           flagged_for_review: boolean
           followers_count: number
+          google_maps_url: string | null
+          google_place_id: string | null
+          google_rating: number | null
+          google_review_count: number | null
+          google_reviews_last_fetched_at: string | null
           hours: string | null
           id: string
           image_url: string | null
@@ -102,6 +168,11 @@ export type Database = {
           email?: string | null
           flagged_for_review?: boolean
           followers_count?: number
+          google_maps_url?: string | null
+          google_place_id?: string | null
+          google_rating?: number | null
+          google_review_count?: number | null
+          google_reviews_last_fetched_at?: string | null
           hours?: string | null
           id?: string
           image_url?: string | null
@@ -134,6 +205,11 @@ export type Database = {
           email?: string | null
           flagged_for_review?: boolean
           followers_count?: number
+          google_maps_url?: string | null
+          google_place_id?: string | null
+          google_rating?: number | null
+          google_review_count?: number | null
+          google_reviews_last_fetched_at?: string | null
           hours?: string | null
           id?: string
           image_url?: string | null
@@ -903,6 +979,16 @@ export type Database = {
         Args: { _job_id: string }
         Returns: undefined
       }
+      place_bid: {
+        Args: {
+          _bid_klaps: number
+          _business_id: string
+          _message: string
+          _opportunity_id: string
+          _quote_amount: number
+        }
+        Returns: string
+      }
       report_business: {
         Args: { _business_id: string; _details?: string; _reason: string }
         Returns: string
@@ -915,9 +1001,9 @@ export type Database = {
         Args: { _enabled: boolean; _player_id: string }
         Returns: undefined
       }
-      spend_klap: {
-        Args: { _job_title: string; _opportunity_id: string }
-        Returns: string
+      top_up_bid: {
+        Args: { _additional_klaps: number; _proposal_id: string }
+        Returns: number
       }
     }
     Enums: {
