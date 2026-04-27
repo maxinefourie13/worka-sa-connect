@@ -41,6 +41,13 @@ export type Database = {
             referencedRelation: "businesses"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "business_follows_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses_public"
+            referencedColumns: ["id"]
+          },
         ]
       }
       businesses: {
@@ -319,6 +326,13 @@ export type Database = {
             referencedRelation: "businesses"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "promotions_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses_public"
+            referencedColumns: ["id"]
+          },
         ]
       }
       proposals: {
@@ -364,6 +378,13 @@ export type Database = {
             columns: ["business_id"]
             isOneToOne: false
             referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "proposals_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses_public"
             referencedColumns: ["id"]
           },
           {
@@ -447,6 +468,13 @@ export type Database = {
             referencedRelation: "businesses"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "reviews_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses_public"
+            referencedColumns: ["id"]
+          },
         ]
       }
       services: {
@@ -488,6 +516,13 @@ export type Database = {
             referencedRelation: "businesses"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "services_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses_public"
+            referencedColumns: ["id"]
+          },
         ]
       }
       user_roles: {
@@ -513,7 +548,117 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      businesses_public: {
+        Row: {
+          address: string | null
+          category_name: string | null
+          category_slug: string | null
+          certifications: string[] | null
+          certified_pro: boolean | null
+          city: string | null
+          created_at: string | null
+          description: string | null
+          followers_count: number | null
+          hours: string | null
+          id: string | null
+          image_url: string | null
+          is_verified: boolean | null
+          name: string | null
+          owner_id: string | null
+          plan: Database["public"]["Enums"]["business_plan"] | null
+          province: string | null
+          rating: number | null
+          response_rate: number | null
+          review_count: number | null
+          slug: string | null
+          tags: string[] | null
+          updated_at: string | null
+          website: string | null
+        }
+        Insert: {
+          address?: string | null
+          category_name?: string | null
+          category_slug?: string | null
+          certifications?: string[] | null
+          certified_pro?: boolean | null
+          city?: string | null
+          created_at?: string | null
+          description?: string | null
+          followers_count?: number | null
+          hours?: string | null
+          id?: string | null
+          image_url?: string | null
+          is_verified?: boolean | null
+          name?: string | null
+          owner_id?: string | null
+          plan?: Database["public"]["Enums"]["business_plan"] | null
+          province?: string | null
+          rating?: number | null
+          response_rate?: number | null
+          review_count?: number | null
+          slug?: string | null
+          tags?: string[] | null
+          updated_at?: string | null
+          website?: string | null
+        }
+        Update: {
+          address?: string | null
+          category_name?: string | null
+          category_slug?: string | null
+          certifications?: string[] | null
+          certified_pro?: boolean | null
+          city?: string | null
+          created_at?: string | null
+          description?: string | null
+          followers_count?: number | null
+          hours?: string | null
+          id?: string | null
+          image_url?: string | null
+          is_verified?: boolean | null
+          name?: string | null
+          owner_id?: string | null
+          plan?: Database["public"]["Enums"]["business_plan"] | null
+          province?: string | null
+          rating?: number | null
+          response_rate?: number | null
+          review_count?: number | null
+          slug?: string | null
+          tags?: string[] | null
+          updated_at?: string | null
+          website?: string | null
+        }
+        Relationships: []
+      }
+      profiles_public: {
+        Row: {
+          avatar_url: string | null
+          bio: string | null
+          city: string | null
+          created_at: string | null
+          display_name: string | null
+          id: string | null
+          province: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          bio?: string | null
+          city?: string | null
+          created_at?: string | null
+          display_name?: string | null
+          id?: string | null
+          province?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          bio?: string | null
+          city?: string | null
+          created_at?: string | null
+          display_name?: string | null
+          id?: string | null
+          province?: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       has_role: {
@@ -522,6 +667,10 @@ export type Database = {
           _user_id: string
         }
         Returns: boolean
+      }
+      spend_klap: {
+        Args: { _job_title: string; _opportunity_id: string }
+        Returns: string
       }
     }
     Enums: {
