@@ -645,8 +645,8 @@ export interface KlapPack {
 }
 
 export const KLAP_PACKS: KlapPack[] = [
-  { id: "six-pack", name: "Six-Pack", klaps: 10, price: 50, blurb: "Quick top-up to keep grafting." },
-  { id: "crate", name: "Crate", klaps: 40, price: 150, blurb: "Best value — for the busy weeks." },
+  { id: "six-pack", name: "Six-Pack", klaps: 20, price: 50, blurb: "Quick top-up to keep grafting." },
+  { id: "crate", name: "Crate", klaps: 80, price: 150, blurb: "Best value — for the busy weeks." },
 ];
 
 export interface SjohTier {
@@ -664,14 +664,14 @@ export interface SjohTier {
 export const SJOH_TIERS: SjohTier[] = [
   {
     slug: "dala-trial",
-    name: "The Dala Trial",
+    name: "Verified Oke",
     price: 0,
-    period: "Free for 3 months",
+    period: "Free trial",
     klapsPerMonth: 5,
     blurb: "Land your first job. Zero risk.",
     features: [
-      "Standard listing",
-      "ID verification badge",
+      "Standard listing in search",
+      "Manual ID upload to bid",
       "5 free Klaps per month",
       "No card required",
     ],
@@ -681,12 +681,12 @@ export const SJOH_TIERS: SjohTier[] = [
     name: "The Hustler",
     price: 50,
     period: "/month",
-    klapsPerMonth: 15,
+    klapsPerMonth: 50,
     blurb: "For side-hustlers and weekend pros.",
     popular: true,
     features: [
-      "Standard listing",
-      "15 Klaps per month",
+      "Boosted listing in search",
+      "50 Klaps per month",
       "Apply to all jobs",
       "Top-up packs available",
     ],
@@ -696,14 +696,14 @@ export const SJOH_TIERS: SjohTier[] = [
     name: "The Main Oke",
     price: 250,
     period: "/month",
-    klapsPerMonth: 100,
-    blurb: "Featured placement. Full-time grafters.",
+    klapsPerMonth: 200,
+    blurb: "AI-verified. Featured placement. Full-time grafters.",
     featured: true,
     features: [
-      "Featured at top of local search",
-      "100 Klaps per month",
-      "Priority Urgent SOS alerts",
-      "Featured profile badge",
+      "Coral Checkmark — AI ID verified",
+      "Top of local search results",
+      "200 Klaps per month",
+      "Branded PDF auto-quotations",
     ],
   },
 ];
