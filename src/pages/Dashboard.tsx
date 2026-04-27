@@ -478,4 +478,136 @@ const DbStyle = () => (
   `}</style>
 );
 
+const NotificationPrefsCard = () => {
+  const { user } = useAuth();
+  const [emailOn, setEmailOn] = useState(true);
+  const [pushOn, setPushOn] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [busy, setBusy] = useState<"email" | "push" | null>(null);
+
+  useEffect(() => {
+    if (!user) return;
+    (async () => {
+      const { data } = await supabase
+        .from("provider_balances")
+        .select("email_alerts_optin, push_alerts_optin")
+        .eq("user_id", user.id)
+        .maybeSingle();
+      if (data) {
+        setEmailOn(data.email_alerts_optin ?? true);
+        setPushOn(data.push_alerts_optin ?? false);
+      }
+      setLoading(false);
+    })();
+  }, [user]);
+
+  const toggleEmail = async () => {
+    setBusy("email");
+    const next = !emailOn;
+    const { error } = await supabase.rpc("set_email_alerts_optin", { _enabled: next });
+    if (error) {
+      toast({ title: "Eish, couldn't save", description: error.message, variant: "destructive" });
+    } else {
+      setEmailOn(next);
+      toast({ title: next ? "Email alerts on ⚡" : "Email alerts off", description: next ? "We'll holla when fresh graft lands." : "We'll keep schtum on email." });
+    }
+    setBusy(null);
+  };
+
+  const togglePush = async () => {
+    setBusy("push");
+    try {
+      if (!pushOn) {
+        if (!isPushConfigured()) {
+          toast({ title: "Push not ready yet", description: "Sjoh! is still wiring up push notifications. Try again soon.", variant: "destructive" });
+          setBusy(null);
+          return;
+        }
+        const id = await requestPushPermission();
+        if (id) {
+          setPushOn(true);
+          toast({ title: "Push alerts on 🔔", description: "We'll buzz you the second a job lands." });
+        } else {
+          toast({ title: "Permission needed", description: "Allow notifications in your browser to enable push.", variant: "destructive" });
+        }
+      } else {
+        await disablePush();
+        setPushOn(false);
+        toast({ title: "Push alerts off", description: "No more buzzes. Sharp." });
+      }
+    } catch (e: any) {
+      toast({ title: "Aikona, push failed", description: String(e?.message ?? e), variant: "destructive" });
+    }
+    setBusy(null);
+  };
+
+  return (
+    <div className="bg-card border border-border rounded-xl p-6">
+      <div className="flex items-start gap-3 mb-5">
+        <span className="size-10 rounded-lg bg-accent/15 text-accent flex items-center justify-center shrink-0">
+          <Bell className="size-5" />
+        </span>
+        <div>
+          <h2 className="font-display text-lg font-semibold">Job alerts</h2>
+          <p className="text-sm text-ink-2 mt-1">
+            Get notified the second new graft lands in your category &amp; city.
+          </p>
+        </div>
+      </div>
+
+      {/* Email */}
+      <div className="flex items-center justify-between gap-3 py-3 border-t border-border">
+        <div className="flex items-start gap-3 min-w-0">
+          <Mail className="size-4 text-ink-2 mt-0.5 shrink-0" />
+          <div className="min-w-0">
+            <p className="text-sm font-semibold">Email me when new jobs land</p>
+            <p className="text-xs text-muted-foreground mt-0.5">Inbox alert with the brief + budget. Capped at 5/day.</p>
+          </div>
+        </div>
+        <button
+          onClick={toggleEmail}
+          disabled={loading || busy === "email"}
+          className={cn(
+            "relative w-12 h-7 rounded-full transition-colors shrink-0 disabled:opacity-50",
+            emailOn ? "bg-accent" : "bg-secondary",
+          )}
+          aria-label="Toggle email alerts"
+        >
+          <span className={cn(
+            "absolute top-0.5 size-6 rounded-full bg-white shadow-sm transition-transform",
+            emailOn ? "translate-x-5" : "translate-x-0.5",
+          )} />
+        </button>
+      </div>
+
+      {/* Push */}
+      <div className="flex items-center justify-between gap-3 py-3 border-t border-border">
+        <div className="flex items-start gap-3 min-w-0">
+          <Bell className="size-4 text-ink-2 mt-0.5 shrink-0" />
+          <div className="min-w-0">
+            <p className="text-sm font-semibold">Browser push notifications</p>
+            <p className="text-xs text-muted-foreground mt-0.5">Instant buzz on your phone or laptop. No email noise.</p>
+          </div>
+        </div>
+        {pushOn ? (
+          <Button size="sm" variant="outline" onClick={togglePush} disabled={busy === "push"} className="shrink-0">
+            {busy === "push" ? "..." : "Disable"}
+          </Button>
+        ) : (
+          <Button
+            size="sm"
+            onClick={togglePush}
+            disabled={busy === "push"}
+            className="bg-accent text-accent-foreground hover:bg-accent/90 font-bold shrink-0 gap-1.5"
+          >
+            <Bell className="size-3.5" strokeWidth={2.5} />
+            {busy === "push" ? "..." : "Enable Job Alerts"}
+          </Button>
+        )}
+      </div>
+    </div>
+  );
+};
+
 export default Dashboard;
+
