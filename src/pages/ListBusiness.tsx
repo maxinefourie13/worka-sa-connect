@@ -145,7 +145,7 @@ const ListBusiness = () => {
                 <h2 className="font-display text-2xl font-semibold">Review and confirm</h2>
                 <p className="text-sm text-ink-2 mt-1">
                   {plan === "free"
-                    ? "You'll be listed on Worka in seconds."
+                    ? "You'll be listed on Sjoh in seconds."
                     : "We'll start your 3-month free Standard plan. No card required."}
                 </p>
               </div>
@@ -171,7 +171,7 @@ const ListBusiness = () => {
               <div className="size-16 rounded-full bg-primary-light text-primary mx-auto flex items-center justify-center mb-6">
                 <CheckCircle2 className="size-8" />
               </div>
-              <h2 className="font-display text-3xl font-medium tracking-tight">You're listed on Worka.</h2>
+              <h2 className="font-display text-3xl font-medium tracking-tight">You're listed on Sjoh.</h2>
               <p className="mt-3 text-ink-2 max-w-md mx-auto">
                 Your profile is live in the directory. Start posting promotions and applying to opportunities from your dashboard.
               </p>

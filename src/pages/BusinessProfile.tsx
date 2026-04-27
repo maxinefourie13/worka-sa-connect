@@ -234,7 +234,7 @@ const BusinessProfile = () => {
               </div>
               <p className="mt-4 flex items-start gap-2 text-xs text-muted-foreground leading-relaxed">
                 <Shield className="size-3.5 mt-0.5 shrink-0 text-primary" />
-                <span>You deal with this business directly. Worka takes no commission.</span>
+                <span>You deal with this business directly. Sjoh takes no commission.</span>
               </p>
             </div>
 

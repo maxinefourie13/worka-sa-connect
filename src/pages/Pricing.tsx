@@ -55,8 +55,8 @@ const FAQS = [
   { q: "Can I cancel at any time?", a: "Yes. You can cancel or downgrade your plan from your dashboard at any time. There are no contracts or cancellation fees." },
   { q: "How does the 3-month free trial work?", a: "All new businesses on the Standard plan get the first three months free. We'll send a reminder before billing kicks in. No card required to start." },
   { q: "What payment methods do you accept?", a: "We accept all major South African credit and debit cards. Billing is in South African Rand (ZAR)." },
-  { q: "Is my data protected?", a: "Yes. Worka is fully POPIA-compliant. We never sell your information and you can request deletion at any time." },
-  { q: "Do you charge commission on jobs?", a: "No. Worka is a directory — payments between businesses and clients happen off-platform. We don't take a cut of your work. We just help the right clients find you." },
+  { q: "Is my data protected?", a: "Yes. Sjoh is fully POPIA-compliant. We never sell your information and you can request deletion at any time." },
+  { q: "Do you charge commission on jobs?", a: "No. Sjoh is a directory — payments between businesses and clients happen off-platform. We don't take a cut of your work. We just help the right clients find you." },
   { q: "What does verification involve?", a: "We check your business registration (CIPC), contact details, and any relevant trade certifications. Verified businesses get a badge on their profile." },
 ];
 
