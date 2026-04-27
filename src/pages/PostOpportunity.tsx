@@ -63,10 +63,30 @@ const PostOpportunity = () => {
             <textarea required rows={4} className="input resize-none" placeholder="Describe the job clearly so the right people respond." />
           </Field>
           <div className="grid sm:grid-cols-2 gap-5">
-            <Field label="Category" required>
-              <select required className="input cursor-pointer">
-                <option value="">Select a category</option>
-                {CATEGORIES.map((c) => <option key={c.slug} value={c.slug}>{c.name}</option>)}
+            <Field label="Category group" required>
+              <select
+                required
+                className="input cursor-pointer"
+                value={groupSlug}
+                onChange={(e) => {
+                  setGroupSlug(e.target.value);
+                  setCategorySlug("");
+                }}
+              >
+                <option value="">Select a group</option>
+                {CATEGORY_GROUPS.map((g) => <option key={g.slug} value={g.slug}>{g.name}</option>)}
+              </select>
+            </Field>
+            <Field label="Service" required>
+              <select
+                required
+                className="input cursor-pointer"
+                value={categorySlug}
+                onChange={(e) => setCategorySlug(e.target.value)}
+                disabled={!groupSlug}
+              >
+                <option value="">{groupSlug ? "Select a service" : "Pick a group first"}</option>
+                {subCats.map((c) => <option key={c.slug} value={c.slug}>{c.name}</option>)}
               </select>
             </Field>
             <Field label="Province" required>
