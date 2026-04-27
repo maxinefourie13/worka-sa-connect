@@ -1,58 +1,68 @@
-# Hero typing color + icon cleanup
+# Restructure categories into 11 groups + 64 sub-categories
 
-## 1. Hero typewriter — color treatment
+Replace the flat 12-category list with a two-tier taxonomy. The 11 groups become primary navigation; sub-categories sit underneath.
 
-Update `src/components/Typewriter.tsx` so the typed text isn't a single flat color. Instead of just rendering `text`, the component will tokenize what's been typed and apply the coral accent to:
+## Data shape (`src/lib/mockData.ts`)
 
-- The word **"Sjoh"** (and its trailing **"!"**)
-- All punctuation marks: `! ? . , ' " — - : ;`
+Update the `Category` interface to support a parent group, and add a new `CATEGORY_GROUPS` array.
 
-Everything else stays in charcoal (`text-foreground`).
+```ts
+export interface CategoryGroup {
+  slug: string;     // e.g. "home-maintenance"
+  name: string;     // "Home & Maintenance"
+  emoji: string;    // placeholder until custom symbols arrive
+}
 
-How it will work:
-- Add an optional prop `accentClassName` (default `text-primary`).
-- During render, walk the current `text` string and wrap matched segments (`Sjoh!`, then individual punctuation chars) in `<span className={accentClassName}>`. Plain letters render as-is.
-- The blinking caret stays `currentColor` so it inherits whichever color it lands on.
-- In `src/pages/Index.tsx`, drop the `className="text-primary-glow"` on the Typewriter (so the base is foreground/charcoal) and rely on the new accent coloring inside.
+export interface Category {
+  slug: string;     // e.g. "plumbing"
+  name: string;     // "Plumbing"
+  groupSlug: string;// "home-maintenance"
+  emoji: string;
+  count: number;
+}
+```
 
-Result: each phrase reads as bold charcoal with the coral "Sjoh!" shouting at the front, plus little coral accents on the punctuation as the line types out.
+Replace the existing `CATEGORIES` array with the full 64 sub-cats below, each tagged with its group slug. Mock counts kept in a believable range.
 
-## 2. Icon cleanup — remove non-essential symbols
+**Groups:** home-maintenance, cleaning-domestic, garden-outdoor, automotive, construction-renovation, events-occasions, business-digital, personal-lifestyle, moving-logistics, pet-services, specialist-ondemand.
 
-Audit of current Lucide usage and what stays vs. goes:
+**Sub-categories:** all 64 from the approved list (Plumbing, Electrical, Handyman, …, Inspection Services).
 
-**Keep (functional / unavoidable):**
-- `SiteHeader`: `Menu`, `X` — mobile nav toggle.
-- `Index` hero: `Search` (inside the search input — it's the affordance).
-- `Directory`: `Search`, `SlidersHorizontal` (filter toggle).
-- `Opportunities`: `Search`, `Plus` (post-opportunity CTA).
-- `PostOpportunity` / `ListBusiness` / `BusinessProfile`: `ArrowLeft` back buttons, `Upload` file inputs.
-- Pricing checklist `Check` marks (these communicate "included" — keep).
-- shadcn/ui internals (`select`, `dialog`, `accordion`, etc.) — these are part of the components, leave untouched.
+## Existing mock business data
 
-**Remove (decorative):**
-- `Index.tsx`:
-  - `Sparkles` in the top "No commission" pill.
-  - `ArrowRight` next to "Browse all" / "See all" / "View board" section links.
-  - `UserPlus`, `Users`, `Briefcase`, `Search` icons inside the "How it works" cards — replace the icon badge with the existing `0{i+1}` step number as the visual anchor.
-- `BusinessCard.tsx`: `Star`, `MapPin`, `Check`, `UserPlus` — keep the text/labels (e.g. "4.8", city name, "Verified"), drop the leading icons. Verified can stay as a small coral text badge instead.
-- `JobCard.tsx`: `MapPin`, `Clock`, `Users` — same treatment, text only.
-- `BusinessProfile.tsx`: drop decorative `Star`, `MapPin`, `Phone`, `Globe`, `Mail`, `Clock`, `UserPlus`, `MessageCircle`, `ChevronRight`, `Shield`. Keep `ArrowLeft` (back) and `Check` (verified bullets if used in lists). Contact rows become plain "Phone: …", "Email: …" text labels.
-- `Directory.tsx`: drop `ChevronRight` breadcrumb chevron (use `/` text separator).
-- `Pricing.tsx`: keep `Check` only inside feature lists. Remove any decorative ones if present.
-- `ListBusiness.tsx`: keep `ArrowLeft`/`ArrowRight` (wizard nav), `Upload`, `CheckCircle2` for the success state. Drop `Sparkles`, decorative `Check` outside step lists.
-- `PostOpportunity.tsx`: keep `ArrowLeft`. Remove `Sparkles`/`Zap` decorative bits; keep `CheckCircle2` only on the success confirmation.
-- `Dashboard.tsx`: review imports — keep only icons attached to interactive controls (e.g. logout button if needed); strip purely decorative ones from cards and section headers.
-- `SiteFooter.tsx`: already icon-free — no change.
+Mock businesses currently use slugs like `electrical`, `photography`, `catering`, `it`, `transport`. Re-map them to the new sub-cat slugs:
+- `electrical` → `electrical` (kept)
+- `photography` → `photography` (kept, now under events-occasions)
+- `catering` → `catering` (kept, now under events-occasions)
+- `it` → `it-support`
+- `transport` → `furniture-removal`
+- `construction` (Cape Steel Works) → `steelwork-fabrication`
 
-After cleanup, prune the now-unused names from each file's `import { … } from "lucide-react"` line.
+Any other reference inside `BUSINESSES`/`OPPORTUNITIES` gets re-pointed accordingly so the seeded data still resolves.
+
+## UI updates
+
+1. **Homepage popular tiles** (`src/pages/Index.tsx`) — show the 11 **groups** as the "Browse by category" grid (instead of the first 6 sub-cats). Each tile links to `/directory?group=<slug>`.
+
+2. **Homepage popular pills** (the small row above the search) — show 6 high-intent sub-cats: Plumbing, Electrical, Home Cleaning, Garden Services, Mechanics, Web Design.
+
+3. **Directory page** (`src/pages/Directory.tsx`):
+   - Read both `?group=` and `?category=` from the URL.
+   - Sidebar Category filter becomes a collapsible accordion: 11 group headers, sub-cats nested. Checking a group selects all its sub-cats.
+   - Header crumbs show the active group when one is selected.
+
+4. **Listing wizard** (`src/pages/ListBusiness.tsx`) — Category select becomes two dropdowns: pick group → sub-category populates from that group.
+
+5. **Post-opportunity form** (`src/pages/PostOpportunity.tsx`) — same two-step group → sub-cat select.
 
 ## Out of scope
-- No category emoji changes yet (waiting on the custom symbols you mentioned uploading).
-- No image/photo swaps (waiting on uploads).
-- SEO work still paused — will prompt you to resume after this.
+- Custom icons/symbols (waiting on uploads — emojis remain as placeholders).
+- Imagery (waiting on uploads).
+- SEO — resumes after this. ← reminder
 
-## Technical notes
-- `Typewriter.tsx`: tokenizer is a simple regex split — `/(Sjoh!|[!?.,;:'"\-—])/g` — applied to `text` only (not `target`), so accents appear letter-by-letter as typing progresses. Caret rendering unchanged.
-- No new dependencies. No design tokens added; uses existing `text-primary` (coral `#FF887C`).
-- All icon removals are pure JSX edits + import pruning; layout/spacing of cards adjusted minimally (gap utilities stay, just the icon node is dropped).
+## Files
+- `src/lib/mockData.ts` — interfaces, `CATEGORY_GROUPS`, expanded `CATEGORIES`, business slug remap.
+- `src/pages/Index.tsx` — group grid + sub-cat pills.
+- `src/pages/Directory.tsx` — accordion filter, group URL param.
+- `src/pages/ListBusiness.tsx` — two-step category select.
+- `src/pages/PostOpportunity.tsx` — two-step category select.
