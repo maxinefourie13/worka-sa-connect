@@ -435,7 +435,7 @@ const BillingSection = () => {
         <p className="text-xs font-bold uppercase tracking-widest text-background/70">Current plan</p>
         <p className="font-display text-3xl font-semibold mt-2">{tier.name}</p>
         <p className="text-sm text-background/75 mt-1">
-          {tier.price === 0 ? "Free" : `${formatRand(tier.price)} ${tier.period}`} · {tier.klapsPerMonth} Klaps/month
+          {tier.price === 0 ? "Free" : `${formatRand(tier.price)} ${tier.period}`} · {tier.klapsPerMonth} Klaps/month bid budget
         </p>
         <div className="mt-5 flex gap-3">
           <Button variant="default" className="bg-accent text-accent-foreground hover:bg-accent/90" asChild>
