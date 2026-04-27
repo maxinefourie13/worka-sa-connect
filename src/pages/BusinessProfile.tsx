@@ -46,25 +46,41 @@ const Reveal = ({ children, delay = 0, className }: { children: React.ReactNode;
 
 const BusinessProfile = () => {
   const { slug } = useParams<{ slug: string }>();
-  const business = BUSINESSES.find((b) => b.slug === slug) ?? BUSINESSES[0];
+  const { business, googleRating, googleReviewCount, googleMapsUrl, loading } = useBusinessBySlug(slug);
   const [tab, setTab] = useState<TabKey>("about");
   const [following, setFollowing] = useState(false);
-  const [followers, setFollowers] = useState(business.followers);
-  const [live, setLive] = useState<LiveGoogleData | null>(null);
+  const [followers, setFollowers] = useState(0);
 
-  useEffect(() => {
-    let cancelled = false;
-    if (!slug) return;
-    supabase
-      .from("businesses")
-      .select("id, google_place_id, google_maps_url, google_rating, google_review_count")
-      .eq("slug", slug)
-      .maybeSingle()
-      .then(({ data }) => {
-        if (!cancelled && data) setLive(data as LiveGoogleData);
-      });
-    return () => { cancelled = true; };
-  }, [slug]);
+  // Sync follower count once business resolves.
+  if (business && followers === 0 && business.followers > 0) {
+    // initial set without an effect (idempotent under React 18 strict mode)
+    setFollowers(business.followers);
+  }
+
+  if (loading) {
+    return (
+      <SiteLayout>
+        <div className="container py-24 text-center text-muted-foreground">Loading…</div>
+      </SiteLayout>
+    );
+  }
+
+  if (!business) {
+    return (
+      <SiteLayout>
+        <div className="container py-24 text-center">
+          <h1 className="font-display text-3xl font-medium">Sjoh, can't find that one.</h1>
+          <Link to="/directory" className="text-primary hover:underline mt-4 inline-block">
+            Back to directory
+          </Link>
+        </div>
+      </SiteLayout>
+    );
+  }
+
+  const live: LiveGoogleData | null = googleRating !== null || googleMapsUrl
+    ? { id: business.id, google_maps_url: googleMapsUrl, google_rating: googleRating, google_review_count: googleReviewCount }
+    : null;
 
   const toggleFollow = () => {
     setFollowing((f) => {
