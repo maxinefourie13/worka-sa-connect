@@ -1,29 +1,50 @@
 import { useMemo, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { Search, SlidersHorizontal } from "lucide-react";
+import { Search, SlidersHorizontal, ChevronDown } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
 import { BusinessCard } from "@/components/BusinessCard";
-import { BUSINESSES, CATEGORIES, PROVINCES } from "@/lib/mockData";
+import { BUSINESSES, CATEGORIES, CATEGORY_GROUPS, PROVINCES } from "@/lib/mockData";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 const DirectoryPage = () => {
   const [params, setParams] = useSearchParams();
   const initialQ = params.get("q") ?? "";
   const initialCat = params.get("category");
+  const initialGroup = params.get("group");
   const initialProv = params.get("province");
 
+  // If a group is selected via URL, pre-select all its sub-cats.
+  const groupSubSlugs = (groupSlug: string) =>
+    CATEGORIES.filter((c) => c.groupSlug === groupSlug).map((c) => c.slug);
+
   const [keyword, setKeyword] = useState(initialQ);
-  const [cats, setCats] = useState<string[]>(initialCat ? [initialCat] : []);
+  const [cats, setCats] = useState<string[]>(
+    initialCat ? [initialCat] : initialGroup ? groupSubSlugs(initialGroup) : [],
+  );
   const [provs, setProvs] = useState<string[]>(initialProv ? [initialProv] : []);
   const [verifiedOnly, setVerifiedOnly] = useState(false);
   const [promoOnly, setPromoOnly] = useState(false);
   const [topRated, setTopRated] = useState(false);
   const [sort, setSort] = useState<"featured" | "rating" | "newest">("featured");
   const [filtersOpen, setFiltersOpen] = useState(false);
+  const [openGroups, setOpenGroups] = useState<Record<string, boolean>>(
+    initialGroup ? { [initialGroup]: true } : {},
+  );
 
   const toggle = (arr: string[], v: string, setter: (a: string[]) => void) => {
     setter(arr.includes(v) ? arr.filter((x) => x !== v) : [...arr, v]);
   };
+
+  const toggleGroup = (groupSlug: string) => {
+    const subs = groupSubSlugs(groupSlug);
+    const allSelected = subs.every((s) => cats.includes(s));
+    setCats(allSelected ? cats.filter((c) => !subs.includes(c)) : [...new Set([...cats, ...subs])]);
+  };
+
+  const activeGroup = initialGroup
+    ? CATEGORY_GROUPS.find((g) => g.slug === initialGroup)
+    : null;
 
   const filtered = useMemo(() => {
     let list = BUSINESSES.filter((b) => {
@@ -52,15 +73,23 @@ const DirectoryPage = () => {
         <nav className="flex items-center gap-2 text-xs text-muted-foreground mb-4">
           <Link to="/" className="hover:text-foreground">Home</Link>
           <span>/</span>
-          <span className="text-foreground font-medium">Directory</span>
+          <Link to="/directory" className="hover:text-foreground">Directory</Link>
+          {activeGroup && (
+            <>
+              <span>/</span>
+              <span className="text-foreground font-medium">{activeGroup.name}</span>
+            </>
+          )}
         </nav>
 
         <header className="mb-10 max-w-2xl">
           <h1 className="font-display text-4xl md:text-5xl font-medium tracking-tight">
-            Find someone who can do it properly
+            {activeGroup ? activeGroup.name : "Find someone who can do it properly"}
           </h1>
           <p className="mt-3 text-ink-2">
-            Try: wedding photographer, electrician, steel fabrication. Trusted businesses across {PROVINCES.length} provinces.
+            {activeGroup
+              ? `Browse trusted ${activeGroup.name.toLowerCase()} businesses across ${PROVINCES.length} provinces.`
+              : `Try: wedding photographer, electrician, steel fabrication. Trusted businesses across ${PROVINCES.length} provinces.`}
           </p>
         </header>
 
@@ -77,21 +106,58 @@ const DirectoryPage = () => {
           <aside className={`${filtersOpen ? "block" : "hidden"} lg:block space-y-8`}>
             <div>
               <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-3 font-sans">Category</h3>
-              <ul className="space-y-2 max-h-72 overflow-auto pr-1">
-                {CATEGORIES.map((c) => (
-                  <li key={c.slug}>
-                    <label className="flex items-center gap-2.5 text-sm cursor-pointer group">
-                      <input
-                        type="checkbox"
-                        checked={cats.includes(c.slug)}
-                        onChange={() => toggle(cats, c.slug, setCats)}
-                        className="size-4 accent-primary"
-                      />
-                      <span className="flex-1 group-hover:text-primary transition-colors">{c.name}</span>
-                      <span className="text-xs text-muted-foreground tabular-nums">{c.count}</span>
-                    </label>
-                  </li>
-                ))}
+              <ul className="space-y-1 max-h-[420px] overflow-auto pr-1">
+                {CATEGORY_GROUPS.map((g) => {
+                  const subs = CATEGORIES.filter((c) => c.groupSlug === g.slug);
+                  const isOpen = openGroups[g.slug] ?? false;
+                  const selectedCount = subs.filter((s) => cats.includes(s.slug)).length;
+                  const allSelected = selectedCount === subs.length && subs.length > 0;
+                  return (
+                    <li key={g.slug}>
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="checkbox"
+                          checked={allSelected}
+                          ref={(el) => {
+                            if (el) el.indeterminate = selectedCount > 0 && !allSelected;
+                          }}
+                          onChange={() => toggleGroup(g.slug)}
+                          className="size-4 accent-primary"
+                          aria-label={`Select all ${g.name}`}
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setOpenGroups((o) => ({ ...o, [g.slug]: !isOpen }))}
+                          className="flex-1 flex items-center justify-between gap-2 py-1.5 text-sm font-semibold text-left hover:text-primary transition-colors"
+                        >
+                          <span className="flex items-center gap-2">
+                            <span className="text-base">{g.emoji}</span>
+                            {g.name}
+                          </span>
+                          <ChevronDown className={cn("size-3.5 transition-transform", isOpen && "rotate-180")} />
+                        </button>
+                      </div>
+                      {isOpen && (
+                        <ul className="mt-1 ml-6 space-y-1.5 border-l border-border pl-3">
+                          {subs.map((c) => (
+                            <li key={c.slug}>
+                              <label className="flex items-center gap-2.5 text-sm cursor-pointer group">
+                                <input
+                                  type="checkbox"
+                                  checked={cats.includes(c.slug)}
+                                  onChange={() => toggle(cats, c.slug, setCats)}
+                                  className="size-3.5 accent-primary"
+                                />
+                                <span className="flex-1 group-hover:text-primary transition-colors">{c.name}</span>
+                                <span className="text-xs text-muted-foreground tabular-nums">{c.count}</span>
+                              </label>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </li>
+                  );
+                })}
               </ul>
             </div>
 

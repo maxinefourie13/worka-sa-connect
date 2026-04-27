@@ -3,7 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { ArrowLeft, CheckCircle2 } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
 import { Button } from "@/components/ui/button";
-import { CATEGORIES, PROVINCES } from "@/lib/mockData";
+import { CATEGORIES, CATEGORY_GROUPS, PROVINCES } from "@/lib/mockData";
 import { toast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 
@@ -11,6 +11,10 @@ const PostOpportunity = () => {
   const navigate = useNavigate();
   const [submitted, setSubmitted] = useState(false);
   const [urgent, setUrgent] = useState(false);
+  const [groupSlug, setGroupSlug] = useState("");
+  const [categorySlug, setCategorySlug] = useState("");
+
+  const subCats = groupSlug ? CATEGORIES.filter((c) => c.groupSlug === groupSlug) : [];
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -59,10 +63,30 @@ const PostOpportunity = () => {
             <textarea required rows={4} className="input resize-none" placeholder="Describe the job clearly so the right people respond." />
           </Field>
           <div className="grid sm:grid-cols-2 gap-5">
-            <Field label="Category" required>
-              <select required className="input cursor-pointer">
-                <option value="">Select a category</option>
-                {CATEGORIES.map((c) => <option key={c.slug} value={c.slug}>{c.name}</option>)}
+            <Field label="Category group" required>
+              <select
+                required
+                className="input cursor-pointer"
+                value={groupSlug}
+                onChange={(e) => {
+                  setGroupSlug(e.target.value);
+                  setCategorySlug("");
+                }}
+              >
+                <option value="">Select a group</option>
+                {CATEGORY_GROUPS.map((g) => <option key={g.slug} value={g.slug}>{g.name}</option>)}
+              </select>
+            </Field>
+            <Field label="Service" required>
+              <select
+                required
+                className="input cursor-pointer"
+                value={categorySlug}
+                onChange={(e) => setCategorySlug(e.target.value)}
+                disabled={!groupSlug}
+              >
+                <option value="">{groupSlug ? "Select a service" : "Pick a group first"}</option>
+                {subCats.map((c) => <option key={c.slug} value={c.slug}>{c.name}</option>)}
               </select>
             </Field>
             <Field label="Province" required>
