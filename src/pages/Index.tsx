@@ -55,8 +55,10 @@ const HomePage = () => {
     navigate(`/directory?${params.toString()}`);
   };
 
-  const featured = BUSINESSES.slice(0, 6);
-  const latest = OPPORTUNITIES.slice(0, 3);
+  const { data: allBusinesses } = useBusinesses();
+  const { data: allOpps } = useOpportunities();
+  const featured = allBusinesses.slice(0, 6);
+  const latest = allOpps.slice(0, 3);
   const popularCatSlugs = ["plumbing", "electrical", "home-cleaning", "garden-services", "mechanics", "web-design"];
   const popularCats = popularCatSlugs
     .map((s) => CATEGORIES.find((c) => c.slug === s))
