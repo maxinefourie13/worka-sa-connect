@@ -6,8 +6,9 @@ describe("normaliseForMatch", () => {
     expect(normaliseForMatch("Buy  DRUGS, now!")).toBe("buydrugsnow");
   });
   it("translates leetspeak digits and symbols", () => {
+    // note: repeated chars collapse to one, so 'cc' -> 'c', 'pp' -> 'p'
     expect(normaliseForMatch("c0c@ine")).toBe("cocaine");
-    expect(normaliseForMatch("h@ck wh4t$@pp")).toBe("hackwhatsapp");
+    expect(normaliseForMatch("h@ck wh4t$@pp")).toBe("hackwhatsap");
   });
   it("collapses repeated characters", () => {
     expect(normaliseForMatch("freeeeee moneyyy")).toBe("fremoney");
