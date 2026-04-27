@@ -53,61 +53,58 @@ export const FlameButton = React.forwardRef<HTMLButtonElement, FlameButtonProps>
         ref={wrapperRef}
         onMouseMove={handleMove}
         onMouseLeave={handleLeave}
-        className={cn("relative inline-block isolate", className)}
+        className={cn("relative inline-block isolate overflow-hidden rounded-full", className)}
       >
+        {/* Coral flame glow — sibling of the button so asChild/Slot only sees one child */}
+        <span
+          aria-hidden
+          className="pointer-events-none absolute inset-0 z-0 transition-opacity duration-300"
+          style={{ opacity: pos.ready ? 1 : 0.7 }}
+        >
+          {/* Inner hot core */}
+          <span
+            className="absolute rounded-full"
+            style={{
+              width: "140px",
+              height: "140px",
+              left: xPct,
+              top: yPct,
+              transform: "translate(-50%, -50%)",
+              background:
+                "radial-gradient(50% 50% at 50% 50%, hsl(5 100% 88% / 0.95) 0%, hsl(5 100% 74% / 0.85) 28%, hsl(5 100% 70% / 0.55) 50%, hsl(5 100% 70% / 0) 92%)",
+            }}
+          />
+          {/* Wide soft halo */}
+          <span
+            className="absolute rounded-full blur-md"
+            style={{
+              width: "240px",
+              height: "120px",
+              left: xPct,
+              top: yPct,
+              transform: "translate(-50%, -50%)",
+              background:
+                "radial-gradient(43% 44% at 50% 50%, hsl(5 100% 92% / 0.9) 28%, hsl(5 100% 80% / 0.55) 55%, hsl(5 100% 70% / 0) 100%)",
+            }}
+          />
+        </span>
+
         <Comp
           ref={ref}
           className={cn(
             "relative z-10 inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full",
-            "border border-white/10 bg-foreground text-background font-semibold uppercase tracking-wide",
+            "border border-white/10 bg-foreground/90 text-background font-semibold uppercase tracking-wide",
             "shadow-[0_8px_24px_-8px_hsl(230_22%_8%_/_0.45)]",
             "transition-[transform,box-shadow,background-color] duration-200",
             "hover:-translate-y-[1px] hover:shadow-[0_14px_36px_-10px_hsl(5_100%_70%_/_0.55)]",
             "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
             "disabled:pointer-events-none disabled:opacity-50",
-            "overflow-hidden",
+            "backdrop-blur-[1px]",
             sizeClasses[size],
           )}
           {...props}
         >
-          {/* Coral flame glow — moves with cursor */}
-          <span
-            aria-hidden
-            className="pointer-events-none absolute inset-0 -z-10 transition-opacity duration-300"
-            style={{ opacity: pos.ready ? 1 : 0.7 }}
-          >
-            {/* Inner hot core */}
-            <span
-              className="absolute rounded-full"
-              style={{
-                width: "140px",
-                height: "140px",
-                left: xPct,
-                top: yPct,
-                transform: "translate(-50%, -50%)",
-                background:
-                  "radial-gradient(50% 50% at 50% 50%, hsl(5 100% 88% / 0.95) 0%, hsl(5 100% 74% / 0.85) 28%, hsl(5 100% 70% / 0.55) 50%, hsl(5 100% 70% / 0) 92%)",
-              }}
-            />
-            {/* Wide soft halo */}
-            <span
-              className="absolute rounded-full blur-md"
-              style={{
-                width: "240px",
-                height: "120px",
-                left: xPct,
-                top: yPct,
-                transform: "translate(-50%, -50%)",
-                background:
-                  "radial-gradient(43% 44% at 50% 50%, hsl(5 100% 92% / 0.9) 28%, hsl(5 100% 80% / 0.55) 55%, hsl(5 100% 70% / 0) 100%)",
-              }}
-            />
-          </span>
-
-          {/* Foreground content sits above glow */}
-          <span className="relative z-10 inline-flex items-center gap-2">
-            {children}
-          </span>
+          {children}
         </Comp>
       </span>
     );
