@@ -4,7 +4,8 @@ import { Search, ShieldCheck } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
 import { Button } from "@/components/ui/button";
 import { JobCard } from "@/components/JobCard";
-import { OPPORTUNITIES, CATEGORIES, PROVINCES } from "@/lib/mockData";
+import { CATEGORIES, PROVINCES } from "@/lib/mockData";
+import { useOpportunities } from "@/hooks/useDirectory";
 import { cn } from "@/lib/utils";
 
 const Opportunities = () => {
