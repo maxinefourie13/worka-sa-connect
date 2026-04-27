@@ -5,6 +5,7 @@ import { SiteLayout } from "@/components/SiteLayout";
 import { Button } from "@/components/ui/button";
 import { BUSINESSES, BUSINESS_VERIFICATION, formatRand } from "@/lib/mockData";
 import { VerificationBadges } from "@/components/VerificationBadges";
+import { ReportProfileButton } from "@/components/ReportProfileButton";
 import { cn } from "@/lib/utils";
 
 type TabKey = "about" | "services" | "promotions" | "reviews";
