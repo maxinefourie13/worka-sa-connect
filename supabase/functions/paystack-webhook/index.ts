@@ -106,8 +106,9 @@ Deno.serve(async (req) => {
         processError = 'topup row missing';
       }
     } else if (kind === 'urgent_fee_charge') {
-      // Urgent SOS feature was removed — ignore any legacy webhooks gracefully.
+      // Urgent SOS feature was removed — ignore legacy webhooks gracefully.
       processError = null;
+    } else if (kind === 'subscription_disable' || kind === 'subscription_payment_failed') {
       const subCode = data.subscription_code ?? data.plan ?? null;
       if (subCode) {
         const { error } = await admin.rpc('lapse_subscription', { _subscription_code: subCode });
