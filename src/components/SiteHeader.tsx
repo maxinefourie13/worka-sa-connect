@@ -1,6 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { NavLink } from "@/components/NavLink";
 import { Button } from "@/components/ui/button";
+import { FlameButton } from "@/components/ui/flame-button";
 import { Menu, X, LayoutDashboard, LogOut } from "lucide-react";
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
