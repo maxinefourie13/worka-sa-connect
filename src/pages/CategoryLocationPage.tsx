@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, Navigate } from "react-router-dom";
 import { SiteLayout } from "@/components/SiteLayout";
 import { SeoHead } from "@/components/SeoHead";
 import { SjohSpinner } from "@/components/SjohSpinner";
@@ -11,6 +11,7 @@ import {
   slugify,
   buildLocationCanonical,
   buildLocationJsonLd,
+  isReservedSlug,
   type BusinessForJsonLd,
 } from "@/lib/seo";
 import { CATEGORIES, PROVINCES } from "@/lib/mockData";
@@ -39,6 +40,14 @@ const CategoryLocationPage = () => {
     provinceSlug?: string;
     citySlug?: string;
   }>();
+
+  // Guard: if the top-level slug is reserved (e.g. someone hits /api or /admin)
+  // OR isn't a known category, fall through to the 404 page. This prevents the
+  // root-level SEO route from accidentally swallowing real app paths.
+  const isKnownCategory = !!categorySlug && !!categoryFromSlug(categorySlug);
+  if (categorySlug && (isReservedSlug(categorySlug) || !isKnownCategory)) {
+    return <Navigate to="/404" replace />;
+  }
 
   const category = categorySlug ? categoryFromSlug(categorySlug) : undefined;
   const provinceName = provinceSlug ? provinceFromSlug(provinceSlug) : undefined;
