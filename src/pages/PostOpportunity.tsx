@@ -117,13 +117,13 @@ const PostOpportunity = () => {
             <textarea rows={3} className="input resize-none" placeholder="Certifications, references, insurance, etc." />
           </Field>
 
-          {/* Urgent upgrade */}
+          {/* Eish! Urgent upgrade */}
           <button
             type="button"
             onClick={() => setUrgent((u) => !u)}
             className={cn(
-              "w-full text-left border rounded-xl p-4 flex items-start gap-3 transition-all",
-              urgent ? "border-accent bg-accent/10" : "border-border hover:border-accent/50",
+              "w-full text-left border-2 rounded-xl p-5 flex items-start gap-3 transition-all",
+              urgent ? "border-accent bg-accent/10 urgent-preview" : "border-border hover:border-accent/50",
             )}
           >
             <span className={cn(
@@ -133,11 +133,20 @@ const PostOpportunity = () => {
               {urgent && <CheckCircle2 className="size-3.5 text-accent-foreground" strokeWidth={3} />}
             </span>
             <div className="flex-1">
-              <span className="font-semibold text-sm">Mark as urgent — R50</span>
-              <p className="text-xs text-ink-2 mt-1">
-                Your job gets priority visibility so businesses can respond faster. An <span className="font-bold tracking-wider text-accent">URGENT</span> badge appears on your post.
+              <span className="inline-flex items-center gap-1.5 font-bold text-sm">
+                🚨 Eish! Urgent — R50
+              </span>
+              <p className="text-xs text-ink-2 mt-1.5 leading-relaxed">
+                We klaxon every verified pro in this category within 10km. Your job sits at the top of their feed wrapped in a flashing coral border with an <span className="font-bold tracking-wider text-accent">URGENT</span> tag. They know you're desperate and ready to pay emergency rates.
               </p>
             </div>
+            <style>{`
+              .urgent-preview { animation: urgentPreview 1.6s ease-in-out infinite; }
+              @keyframes urgentPreview {
+                0%, 100% { box-shadow: 0 0 0 0 hsl(var(--accent) / 0.55); }
+                50%      { box-shadow: 0 0 0 6px hsl(var(--accent) / 0); }
+              }
+            `}</style>
           </button>
 
           <div className="pt-2 flex flex-col sm:flex-row gap-3">

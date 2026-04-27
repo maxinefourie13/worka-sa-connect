@@ -513,6 +513,46 @@ export const OPPORTUNITIES: Opportunity[] = [
     postedAt: "4 days ago",
     requirements: ["Halaal certification", "Onsite chef"],
   },
+  {
+    id: "o6",
+    title: "Burst geyser — 9pm emergency callout",
+    description:
+      "Geyser burst in roof, water everywhere. Need a plumber NOW. Centurion area, will pay emergency rates.",
+    category: "Plumbing",
+    categorySlug: "plumbing",
+    emoji: "🚨",
+    postedBy: "Sarah du Toit",
+    province: "Gauteng",
+    city: "Centurion",
+    budget: 3500,
+    budgetType: "estimate",
+    deadline: "Tonight",
+    isUrgent: true,
+    status: "open",
+    applicants: 3,
+    postedAt: "12 minutes ago",
+    requirements: ["After-hours availability", "Own equipment", "PIRB registered"],
+  },
+  {
+    id: "o7",
+    title: "Locked out of house — need locksmith ASAP",
+    description:
+      "Front door slammed shut, keys inside. Standing outside in PJs. Cape Town CBD.",
+    category: "Locksmiths",
+    categorySlug: "locksmiths",
+    emoji: "🔐",
+    postedBy: "James M.",
+    province: "Western Cape",
+    city: "Cape Town",
+    budget: 850,
+    budgetType: "fixed",
+    deadline: "Today",
+    isUrgent: true,
+    status: "open",
+    applicants: 5,
+    postedAt: "30 minutes ago",
+    requirements: ["Within 30 min", "Cash payment OK"],
+  },
 ];
 
 export const PROMOTIONS: Promotion[] = [
@@ -552,4 +592,134 @@ export const STATS = {
   opportunities: 2845,
   categories: 114,
   provinces: 9,
+};
+
+// =====================================================
+// "Klap it" system — verification, tiers, klaps, urgent
+// =====================================================
+
+export interface ProviderProfile {
+  id: string;
+  businessId: string;
+  idVerified: boolean;          // "Verified Oke"
+  certifiedPro: boolean;        // PIRB / Wireman's etc — coral checkmark
+  certifications: string[];
+  strikes: 0 | 1 | 2 | 3;
+  tier: "dala-trial" | "hustler" | "main-oke";
+  trialEndsAt?: string;
+  klapsRemaining: number;
+  klapsThisMonth: number;
+  urgentAlertsOptIn: boolean;
+}
+
+export interface KlapEvent {
+  id: string;
+  jobId: string;
+  jobTitle: string;
+  cost: 1;
+  timestamp: string;
+  outcome: "pending" | "won" | "lost";
+}
+
+export interface KlapPack {
+  id: string;
+  name: string;
+  klaps: number;
+  price: number;
+  blurb: string;
+}
+
+export const KLAP_PACKS: KlapPack[] = [
+  { id: "six-pack", name: "Six-Pack", klaps: 10, price: 50, blurb: "Quick top-up to keep grafting." },
+  { id: "crate", name: "Crate", klaps: 40, price: 150, blurb: "Best value — for the busy weeks." },
+];
+
+export interface SjohTier {
+  slug: "dala-trial" | "hustler" | "main-oke";
+  name: string;
+  price: number;
+  period: string;
+  klapsPerMonth: number;
+  blurb: string;
+  features: string[];
+  popular?: boolean;
+  featured?: boolean;
+}
+
+export const SJOH_TIERS: SjohTier[] = [
+  {
+    slug: "dala-trial",
+    name: "The Dala Trial",
+    price: 0,
+    period: "Free for 3 months",
+    klapsPerMonth: 5,
+    blurb: "Land your first job. Zero risk.",
+    features: [
+      "Standard listing",
+      "ID verification badge",
+      "5 free Klaps per month",
+      "No card required",
+    ],
+  },
+  {
+    slug: "hustler",
+    name: "The Hustler",
+    price: 50,
+    period: "/month",
+    klapsPerMonth: 15,
+    blurb: "For side-hustlers and weekend pros.",
+    popular: true,
+    features: [
+      "Standard listing",
+      "15 Klaps per month",
+      "Apply to all jobs",
+      "Top-up packs available",
+    ],
+  },
+  {
+    slug: "main-oke",
+    name: "The Main Oke",
+    price: 250,
+    period: "/month",
+    klapsPerMonth: 100,
+    blurb: "Featured placement. Full-time grafters.",
+    featured: true,
+    features: [
+      "Featured at top of local search",
+      "100 Klaps per month",
+      "Priority Urgent SOS alerts",
+      "Featured profile badge",
+    ],
+  },
+];
+
+// Mock provider profile (the "logged in" demo user — Khumalo Electrical)
+export const MY_PROVIDER: ProviderProfile = {
+  id: "pp1",
+  businessId: "b1",
+  idVerified: true,
+  certifiedPro: true,
+  certifications: ["Wireman's Licence", "PIRB"],
+  strikes: 0,
+  tier: "main-oke",
+  klapsRemaining: 87,
+  klapsThisMonth: 100,
+  urgentAlertsOptIn: true,
+};
+
+export const MOCK_KLAP_EVENTS: KlapEvent[] = [
+  { id: "k1", jobId: "o1", jobTitle: "Office solar PV installation — 8kW system", cost: 1, timestamp: "2 hours ago", outcome: "pending" },
+  { id: "k2", jobId: "o4", jobTitle: "Monthly IT support for 14-person agency", cost: 1, timestamp: "Yesterday", outcome: "lost" },
+  { id: "k3", jobId: "o3", jobTitle: "Custom steel balustrade — 18 metres", cost: 1, timestamp: "3 days ago", outcome: "won" },
+  { id: "k4", jobId: "o2", jobTitle: "Wedding photographer — 180 guests", cost: 1, timestamp: "5 days ago", outcome: "lost" },
+];
+
+// Per-business verification overlay (mock). Defaults to false for missing entries.
+export const BUSINESS_VERIFICATION: Record<string, { idVerified: boolean; certifiedPro: boolean; certifications: string[]; strikes: number }> = {
+  b1: { idVerified: true, certifiedPro: true, certifications: ["Wireman's Licence", "PIRB"], strikes: 0 },
+  b2: { idVerified: true, certifiedPro: true, certifications: ["SAISC Member"], strikes: 0 },
+  b3: { idVerified: true, certifiedPro: false, certifications: [], strikes: 0 },
+  b4: { idVerified: false, certifiedPro: false, certifications: [], strikes: 1 },
+  b5: { idVerified: true, certifiedPro: true, certifications: ["MCSE"], strikes: 0 },
+  b6: { idVerified: true, certifiedPro: false, certifications: [], strikes: 0 },
 };

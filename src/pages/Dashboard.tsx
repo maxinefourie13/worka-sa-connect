@@ -2,16 +2,21 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import {
   LayoutGrid, User, Sparkles, Briefcase, Users, CreditCard, Plus,
-  Check,
+  Zap, ShieldCheck, Siren,
 } from "lucide-react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Button } from "@/components/ui/button";
-import { BUSINESSES, formatRand, OPPORTUNITIES, PROMOTIONS } from "@/lib/mockData";
+import { BUSINESSES, formatRand, OPPORTUNITIES, PROMOTIONS, SJOH_TIERS } from "@/lib/mockData";
+import { useKlap } from "@/lib/klapStore";
+import { TopUpModal } from "@/components/TopUpModal";
+import { VerificationBadges } from "@/components/VerificationBadges";
+import { toast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 
-type SectionKey = "overview" | "profile" | "promotions" | "opportunities" | "followers" | "billing";
+type SectionKey = "overview" | "klaps" | "profile" | "promotions" | "opportunities" | "followers" | "billing";
 const SECTIONS: { key: SectionKey; label: string; icon: typeof LayoutGrid }[] = [
   { key: "overview", label: "Overview", icon: LayoutGrid },
+  { key: "klaps", label: "Klaps & Verification", icon: Zap },
   { key: "profile", label: "My Profile", icon: User },
   { key: "promotions", label: "Promotions", icon: Sparkles },
   { key: "opportunities", label: "Opportunities", icon: Briefcase },
@@ -35,7 +40,7 @@ const Dashboard = () => {
                 <div className={cn("size-10 rounded-lg flex items-center justify-center font-display font-bold text-foreground bg-card border border-border", me.gradient)} />
                 <div className="min-w-0">
                   <p className="text-sm font-semibold truncate">{me.name}</p>
-                  <p className="text-xs text-muted-foreground capitalize">{me.plan} plan</p>
+                  <p className="text-xs text-muted-foreground">The Main Oke</p>
                 </div>
               </div>
               <nav className="mt-3 space-y-0.5">
@@ -62,7 +67,8 @@ const Dashboard = () => {
 
           {/* Content */}
           <div className="space-y-6">
-            {section === "overview" && <OverviewSection />}
+            {section === "overview" && <OverviewSection onJump={setSection} />}
+            {section === "klaps" && <KlapsSection />}
             {section === "profile" && <ProfileSection />}
             {section === "promotions" && <PromotionsSection />}
             {section === "opportunities" && <OpportunitiesSection />}
@@ -85,42 +91,204 @@ const StatCard = ({ label, value, hint }: { label: string; value: string; hint?:
   </div>
 );
 
-const OverviewSection = () => (
-  <>
-    <header className="flex items-center justify-between">
-      <div>
-        <h1 className="font-display text-3xl font-medium tracking-tight">Overview</h1>
-        <p className="text-sm text-ink-2 mt-1">Your performance over the last 30 days.</p>
+const OverviewSection = ({ onJump }: { onJump: (s: SectionKey) => void }) => {
+  const { provider } = useKlap();
+  const tier = SJOH_TIERS.find((t) => t.slug === provider.tier)!;
+  return (
+    <>
+      <header className="flex items-center justify-between">
+        <div>
+          <h1 className="font-display text-3xl font-medium tracking-tight">Overview</h1>
+          <p className="text-sm text-ink-2 mt-1">Your performance over the last 30 days.</p>
+        </div>
+        <Button>
+          <Plus className="size-4" />Add Promotion
+        </Button>
+      </header>
+
+      {/* Klaps highlight */}
+      <button
+        onClick={() => onJump("klaps")}
+        className="w-full text-left bg-foreground text-background rounded-xl p-6 flex items-center justify-between gap-5 hover:opacity-95 transition-opacity"
+      >
+        <div className="flex items-center gap-4">
+          <span className="size-12 rounded-xl bg-accent text-accent-foreground flex items-center justify-center">
+            <Zap className="size-6" strokeWidth={2.5} />
+          </span>
+          <div>
+            <p className="text-xs font-bold uppercase tracking-widest text-background/70">Your Klaps</p>
+            <p className="font-display text-3xl font-semibold tabular-nums mt-1">
+              {provider.klapsRemaining} <span className="text-base text-background/60 font-normal">/ {tier.klapsPerMonth} this month</span>
+            </p>
+          </div>
+        </div>
+        <span className="text-sm font-semibold text-accent">Manage →</span>
+      </button>
+
+      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <StatCard label="Profile views" value="1,284" hint="+12%" />
+        <StatCard label="Enquiries" value="38" hint="+5" />
+        <StatCard label="Followers" value="318" hint="+24" />
+        <StatCard label="Klaps sent" value={String(13)} hint="this month" />
       </div>
-      <Button>
-        <Plus className="size-4" />Add Promotion
-      </Button>
-    </header>
-    <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-      <StatCard label="Profile views" value="1,284" hint="+12%" />
-      <StatCard label="Enquiries" value="38" hint="+5" />
-      <StatCard label="Followers" value="318" hint="+24" />
-      <StatCard label="Active promotions" value="2" />
-    </div>
-    <div className="bg-card border border-border rounded-xl p-6">
-      <h2 className="font-display text-lg font-semibold mb-4">Recent activity</h2>
-      <ul className="space-y-3 text-sm">
-        <li className="flex items-center justify-between py-2 border-b border-border last:border-0">
-          <span>New enquiry from <strong>Naledi Properties</strong></span>
-          <span className="text-xs text-muted-foreground">2h ago</span>
-        </li>
-        <li className="flex items-center justify-between py-2 border-b border-border last:border-0">
-          <span><strong>Sipho M.</strong> started following you</span>
-          <span className="text-xs text-muted-foreground">5h ago</span>
-        </li>
-        <li className="flex items-center justify-between py-2">
-          <span>Your listing was viewed <strong>83 times</strong> yesterday</span>
-          <span className="text-xs text-muted-foreground">1d ago</span>
-        </li>
-      </ul>
-    </div>
-  </>
-);
+      <div className="bg-card border border-border rounded-xl p-6">
+        <h2 className="font-display text-lg font-semibold mb-4">Recent activity</h2>
+        <ul className="space-y-3 text-sm">
+          <li className="flex items-center justify-between py-2 border-b border-border last:border-0">
+            <span>New enquiry from <strong>Naledi Properties</strong></span>
+            <span className="text-xs text-muted-foreground">2h ago</span>
+          </li>
+          <li className="flex items-center justify-between py-2 border-b border-border last:border-0">
+            <span><strong>Sipho M.</strong> started following you</span>
+            <span className="text-xs text-muted-foreground">5h ago</span>
+          </li>
+          <li className="flex items-center justify-between py-2">
+            <span>Your listing was viewed <strong>83 times</strong> yesterday</span>
+            <span className="text-xs text-muted-foreground">1d ago</span>
+          </li>
+        </ul>
+      </div>
+    </>
+  );
+};
+
+const KlapsSection = () => {
+  const { provider, events, toggleUrgentAlerts } = useKlap();
+  const [topUpOpen, setTopUpOpen] = useState(false);
+  const tier = SJOH_TIERS.find((t) => t.slug === provider.tier)!;
+  const pct = Math.round((provider.klapsRemaining / tier.klapsPerMonth) * 100);
+
+  return (
+    <>
+      <header>
+        <h1 className="font-display text-3xl font-medium tracking-tight">Klaps & Verification</h1>
+        <p className="text-sm text-ink-2 mt-1">Your wallet, your trust badges, your urgent alerts.</p>
+      </header>
+
+      {/* Wallet */}
+      <div className="bg-foreground text-background rounded-xl p-6 md:p-8">
+        <div className="flex items-start justify-between gap-4 flex-wrap">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-widest text-background/70">Klap wallet</p>
+            <p className="font-display text-5xl font-semibold tabular-nums mt-2">
+              {provider.klapsRemaining}
+              <span className="text-lg text-background/60 font-normal"> / {tier.klapsPerMonth}</span>
+            </p>
+            <p className="text-sm text-background/75 mt-1">
+              {tier.name} · resets in 18 days
+            </p>
+          </div>
+          <Button variant="default" className="bg-accent text-accent-foreground hover:bg-accent/90" onClick={() => setTopUpOpen(true)}>
+            <Zap className="size-4" /> Top up Klaps
+          </Button>
+        </div>
+        <div className="mt-5 h-2 rounded-full bg-background/15 overflow-hidden">
+          <div className="h-full bg-accent" style={{ width: `${pct}%` }} />
+        </div>
+      </div>
+
+      {/* Verification */}
+      <div className="bg-card border border-border rounded-xl p-6">
+        <div className="flex items-start justify-between gap-3 flex-wrap">
+          <div>
+            <h2 className="font-display text-lg font-semibold flex items-center gap-2">
+              <ShieldCheck className="size-5 text-primary" /> No Tjops verification
+            </h2>
+            <p className="text-sm text-ink-2 mt-1">Your trust badges, visible on every listing.</p>
+          </div>
+          <span className={cn(
+            "text-xs font-bold uppercase tracking-widest px-2.5 py-1 rounded",
+            provider.strikes === 0 ? "bg-primary-light text-primary" : "bg-accent/15 text-accent",
+          )}>
+            Strikes: {provider.strikes} / 3
+          </span>
+        </div>
+        <div className="mt-5">
+          <VerificationBadges
+            idVerified={provider.idVerified}
+            certifiedPro={provider.certifiedPro}
+            certifications={provider.certifications}
+          />
+        </div>
+        <div className="mt-5 grid sm:grid-cols-2 gap-3">
+          <div className="border border-border rounded-lg p-4">
+            <p className="text-sm font-semibold">ID & Phone</p>
+            <p className="text-xs text-muted-foreground mt-1">
+              {provider.idVerified ? "✓ Verified" : "Not verified yet"}
+            </p>
+            <Button size="sm" variant="outline" className="mt-3" onClick={() => toast({ title: "Already verified", description: "Your ID and phone are checked. Strong work." })}>
+              {provider.idVerified ? "Update details" : "Verify now"}
+            </Button>
+          </div>
+          <div className="border border-border rounded-lg p-4">
+            <p className="text-sm font-semibold">Trade certificates</p>
+            <p className="text-xs text-muted-foreground mt-1">
+              {provider.certifiedPro ? `✓ ${provider.certifications.join(", ")}` : "Upload to become a Certified Pro"}
+            </p>
+            <Button size="sm" variant="outline" className="mt-3" onClick={() => toast({ title: "Upload (demo)", description: "Real certificate upload coming soon." })}>
+              Upload certificate
+            </Button>
+          </div>
+        </div>
+      </div>
+
+      {/* Urgent alerts */}
+      <div className="bg-card border border-border rounded-xl p-6">
+        <div className="flex items-start justify-between gap-3">
+          <div className="flex items-start gap-3">
+            <span className="size-10 rounded-lg bg-accent/15 text-accent flex items-center justify-center shrink-0">
+              <Siren className="size-5" />
+            </span>
+            <div>
+              <h2 className="font-display text-lg font-semibold">Eish! Urgent alerts</h2>
+              <p className="text-sm text-ink-2 mt-1">
+                Get a push notification 24/7 when an emergency job lands within 10km. Clients pay emergency rates.
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={toggleUrgentAlerts}
+            className={cn(
+              "relative w-12 h-7 rounded-full transition-colors shrink-0",
+              provider.urgentAlertsOptIn ? "bg-accent" : "bg-secondary",
+            )}
+            aria-label="Toggle urgent alerts"
+          >
+            <span className={cn(
+              "absolute top-0.5 size-6 rounded-full bg-white shadow-sm transition-transform",
+              provider.urgentAlertsOptIn ? "translate-x-5" : "translate-x-0.5",
+            )} />
+          </button>
+        </div>
+      </div>
+
+      {/* Activity */}
+      <div className="bg-card border border-border rounded-xl p-6">
+        <h2 className="font-display text-lg font-semibold mb-4">Recent Klap activity</h2>
+        <ul className="divide-y divide-border">
+          {events.map((e) => (
+            <li key={e.id} className="py-3 flex items-center justify-between gap-3">
+              <div className="min-w-0">
+                <p className="text-sm font-medium truncate">{e.jobTitle}</p>
+                <p className="text-xs text-muted-foreground">{e.timestamp} · 1 Klap</p>
+              </div>
+              <span className={cn(
+                "text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded shrink-0",
+                e.outcome === "won" ? "bg-primary-light text-primary"
+                  : e.outcome === "lost" ? "bg-secondary text-muted-foreground"
+                  : "bg-accent/15 text-accent",
+              )}>
+                {e.outcome}
+              </span>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <TopUpModal open={topUpOpen} onClose={() => setTopUpOpen(false)} />
+    </>
+  );
+};
 
 const ProfileSection = () => (
   <>
@@ -181,7 +349,7 @@ const OpportunitiesSection = () => (
   <>
     <header>
       <h1 className="font-display text-3xl font-medium tracking-tight">Opportunities</h1>
-      <p className="text-sm text-ink-2 mt-1">Track jobs you've applied to.</p>
+      <p className="text-sm text-ink-2 mt-1">Track jobs you've Klapped.</p>
     </header>
     <div className="bg-card border border-border rounded-xl divide-y divide-border">
       {OPPORTUNITIES.slice(0, 4).map((o, i) => (
@@ -197,7 +365,7 @@ const OpportunitiesSection = () => (
             "text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded whitespace-nowrap",
             i === 0 ? "bg-accent/15 text-accent" : i === 1 ? "bg-primary-light text-primary" : "bg-secondary text-muted-foreground",
           )}>
-            {i === 0 ? "Pending" : i === 1 ? "Accepted" : "Awaiting reply"}
+            {i === 0 ? "Pending" : i === 1 ? "Won" : "Lost"}
           </span>
         </div>
       ))}
@@ -228,36 +396,44 @@ const FollowersSection = () => {
   );
 };
 
-const BillingSection = () => (
-  <>
-    <header>
-      <h1 className="font-display text-3xl font-medium tracking-tight">Billing</h1>
-      <p className="text-sm text-ink-2 mt-1">Manage your plan and payment details.</p>
-    </header>
-    <div className="bg-gradient-to-br from-primary to-emerald-600 text-primary-foreground rounded-xl p-6">
-      <p className="text-xs font-bold uppercase tracking-widest text-primary-foreground/85">Current plan</p>
-      <p className="font-display text-3xl font-semibold mt-2">Featured</p>
-      <p className="text-sm text-primary-foreground/85 mt-1">R 150 / month · next billing on 14 May 2026</p>
-      <div className="mt-5 flex gap-3">
-        <Button variant="ink">Change Plan</Button>
-        <Button variant="ghost" className="text-white hover:bg-white/10">Cancel Plan</Button>
-      </div>
-    </div>
-    <div className="bg-card border border-border rounded-xl p-6">
-      <h3 className="font-display text-lg font-semibold mb-4">Payment method</h3>
-      <div className="flex items-center justify-between p-4 border border-border rounded-lg">
-        <div className="flex items-center gap-3">
-          <div className="size-10 rounded bg-secondary flex items-center justify-center font-bold text-xs">VISA</div>
-          <div>
-            <p className="text-sm font-semibold">Visa ending 4242</p>
-            <p className="text-xs text-muted-foreground">Expires 09/27</p>
-          </div>
+const BillingSection = () => {
+  const { provider } = useKlap();
+  const tier = SJOH_TIERS.find((t) => t.slug === provider.tier)!;
+  return (
+    <>
+      <header>
+        <h1 className="font-display text-3xl font-medium tracking-tight">Billing</h1>
+        <p className="text-sm text-ink-2 mt-1">Manage your plan and payment details.</p>
+      </header>
+      <div className="bg-foreground text-background rounded-xl p-6">
+        <p className="text-xs font-bold uppercase tracking-widest text-background/70">Current plan</p>
+        <p className="font-display text-3xl font-semibold mt-2">{tier.name}</p>
+        <p className="text-sm text-background/75 mt-1">
+          {tier.price === 0 ? "Free" : `${formatRand(tier.price)} ${tier.period}`} · {tier.klapsPerMonth} Klaps/month
+        </p>
+        <div className="mt-5 flex gap-3">
+          <Button variant="default" className="bg-accent text-accent-foreground hover:bg-accent/90" asChild>
+            <Link to="/pricing">Change Plan</Link>
+          </Button>
+          <Button variant="ghost" className="text-white hover:bg-white/10">Cancel Plan</Button>
         </div>
-        <Button variant="outline" size="sm">Update</Button>
       </div>
-    </div>
-  </>
-);
+      <div className="bg-card border border-border rounded-xl p-6">
+        <h3 className="font-display text-lg font-semibold mb-4">Payment method</h3>
+        <div className="flex items-center justify-between p-4 border border-border rounded-lg">
+          <div className="flex items-center gap-3">
+            <div className="size-10 rounded bg-secondary flex items-center justify-center font-bold text-xs">VISA</div>
+            <div>
+              <p className="text-sm font-semibold">Visa ending 4242</p>
+              <p className="text-xs text-muted-foreground">Expires 09/27</p>
+            </div>
+          </div>
+          <Button variant="outline" size="sm">Update</Button>
+        </div>
+      </div>
+    </>
+  );
+};
 
 const Field = ({ label, children }: { label: string; children: React.ReactNode }) => (
   <label className="block">

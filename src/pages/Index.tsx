@@ -211,7 +211,7 @@ const HomePage = () => {
             {groupCounts.map((g) => (
               <Link
                 key={g.slug}
-                to={`/directory?group=${g.slug}`}
+                to={`/directory/g/${g.slug}`}
                 className="group bg-background border border-border rounded-lg p-5 flex items-center gap-4 hover:border-primary hover:bg-primary-light/40 transition-all"
               >
                 <span className="text-3xl shrink-0">{g.emoji}</span>

@@ -3,7 +3,8 @@ import { Link, useParams } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
 import { Button } from "@/components/ui/button";
-import { BUSINESSES, formatRand } from "@/lib/mockData";
+import { BUSINESSES, BUSINESS_VERIFICATION, formatRand } from "@/lib/mockData";
+import { VerificationBadges } from "@/components/VerificationBadges";
 import { cn } from "@/lib/utils";
 
 type TabKey = "about" | "services" | "promotions" | "reviews";
@@ -62,16 +63,14 @@ const BusinessProfile = () => {
                     <h1 className="font-display text-3xl md:text-4xl font-semibold tracking-tight leading-tight">
                       {business.name}
                     </h1>
-                    {business.isVerified && (
-                      <span
-                        className="mt-2 text-[10px] font-bold uppercase tracking-widest text-primary bg-primary/10 px-2 py-0.5 rounded"
-                        title="Verified"
-                      >
-                        Verified
-                      </span>
-                    )}
                   </div>
-                  <p className="mt-1 text-sm text-ink-2 flex flex-wrap items-center gap-x-3 gap-y-1">
+                  <VerificationBadges
+                    idVerified={BUSINESS_VERIFICATION[business.id]?.idVerified ?? business.isVerified}
+                    certifiedPro={BUSINESS_VERIFICATION[business.id]?.certifiedPro ?? false}
+                    certifications={BUSINESS_VERIFICATION[business.id]?.certifications ?? []}
+                    className="mt-2"
+                  />
+                  <p className="mt-2 text-sm text-ink-2 flex flex-wrap items-center gap-x-3 gap-y-1">
                     <span>{business.category}</span>
                     <span className="opacity-50">·</span>
                     <span>{business.city}, {business.province}</span>
