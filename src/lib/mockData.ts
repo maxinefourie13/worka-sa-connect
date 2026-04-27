@@ -360,6 +360,7 @@ export const BUSINESSES: Business[] = [
     followers: 92,
     plan: "standard",
     gradient: grads[4],
+    image: imgItSupport,
     responseRate: 96,
     hours: "Mon–Fri 8:00–17:00",
     services: [
