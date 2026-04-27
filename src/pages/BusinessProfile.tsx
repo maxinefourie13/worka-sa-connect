@@ -21,7 +21,7 @@ const TABS: { key: TabKey; label: string }[] = [
 
 interface LiveGoogleData {
   id: string;
-  google_place_id: string | null;
+  google_place_id?: string | null;
   google_maps_url: string | null;
   google_rating: number | null;
   google_review_count: number | null;
