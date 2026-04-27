@@ -84,10 +84,12 @@ const DirectoryPage = () => {
 
         <header className="mb-10 max-w-2xl">
           <h1 className="font-display text-4xl md:text-5xl font-medium tracking-tight">
-            Find someone who can do it properly
+            {activeGroup ? activeGroup.name : "Find someone who can do it properly"}
           </h1>
           <p className="mt-3 text-ink-2">
-            Try: wedding photographer, electrician, steel fabrication. Trusted businesses across {PROVINCES.length} provinces.
+            {activeGroup
+              ? `Browse trusted ${activeGroup.name.toLowerCase()} businesses across ${PROVINCES.length} provinces.`
+              : `Try: wedding photographer, electrician, steel fabrication. Trusted businesses across ${PROVINCES.length} provinces.`}
           </p>
         </header>
 
