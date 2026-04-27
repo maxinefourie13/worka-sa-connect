@@ -5,7 +5,7 @@ type Tier = "hustler" | "main-oke";
 type Pack = "six-pack" | "crate";
 
 async function startCheckout(
-  fn: "paystack-create-subscription" | "paystack-create-topup" | "paystack-create-urgent-fee",
+  fn: "paystack-create-subscription" | "paystack-create-topup",
   body: Record<string, unknown>,
   loadingMsg: string,
 ) {
@@ -40,7 +40,4 @@ export const payments = {
 
   buyKlapPack: (pack: Pack) =>
     startCheckout("paystack-create-topup", { pack }, "Loading Klaps"),
-
-  payUrgentFee: (opportunityId: string) =>
-    startCheckout("paystack-create-urgent-fee", { opportunity_id: opportunityId }, "Charging urgent fee"),
 };

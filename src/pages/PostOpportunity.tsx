@@ -5,17 +5,14 @@ import { SiteLayout } from "@/components/SiteLayout";
 import { Button } from "@/components/ui/button";
 import { CATEGORIES, CATEGORY_GROUPS, PROVINCES } from "@/lib/mockData";
 import { toast } from "@/hooks/use-toast";
-import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
-import { payments } from "@/lib/payments";
 
 const PostOpportunity = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const [urgent, setUrgent] = useState(false);
   const [groupSlug, setGroupSlug] = useState("");
   const [categorySlug, setCategorySlug] = useState("");
 
@@ -47,7 +44,6 @@ const PostOpportunity = () => {
       requirements: form.get("requirements")
         ? [String(form.get("requirements"))]
         : [],
-      is_urgent: false, // flipped to true by webhook on successful payment
       posted_by_name: user.email?.split("@")[0] ?? null,
     };
 
@@ -60,12 +56,6 @@ const PostOpportunity = () => {
     if (error) {
       toast({ title: "Couldn't post job", description: error.message, variant: "destructive" });
       setSubmitting(false);
-      return;
-    }
-
-    if (urgent) {
-      // Redirects user to Paystack; webhook will flip is_urgent on success.
-      await payments.payUrgentFee(opp.id);
       return;
     }
 
@@ -171,41 +161,9 @@ const PostOpportunity = () => {
             <textarea name="requirements" rows={3} className="input resize-none" placeholder="Certifications, references, insurance, etc." />
           </Field>
 
-          {/* Eish! Urgent upgrade */}
-          <button
-            type="button"
-            onClick={() => setUrgent((u) => !u)}
-            className={cn(
-              "w-full text-left border-2 rounded-xl p-5 flex items-start gap-3 transition-all",
-              urgent ? "border-accent bg-accent/10 urgent-preview" : "border-border hover:border-accent/50",
-            )}
-          >
-            <span className={cn(
-              "size-5 rounded-md border-2 shrink-0 flex items-center justify-center mt-0.5",
-              urgent ? "border-accent bg-accent" : "border-border",
-            )}>
-              {urgent && <CheckCircle2 className="size-3.5 text-accent-foreground" strokeWidth={3} />}
-            </span>
-            <div className="flex-1">
-              <span className="inline-flex items-center gap-1.5 font-bold text-sm">
-                🚨 Eish! It's a crisis. Wake everyone up! — R20
-              </span>
-              <p className="text-xs text-ink-2 mt-1.5 leading-relaxed">
-                Pushes you to the top. We klaxon every verified pro in this category within 10km. Your job sits at the top of their feed wrapped in a flashing coral border with an <span className="font-bold tracking-wider text-accent">URGENT</span> tag. They know you're desperate and ready to pay emergency rates.
-              </p>
-            </div>
-            <style>{`
-              .urgent-preview { animation: urgentPreview 1.6s ease-in-out infinite; }
-              @keyframes urgentPreview {
-                0%, 100% { box-shadow: 0 0 0 0 hsl(var(--accent) / 0.55); }
-                50%      { box-shadow: 0 0 0 6px hsl(var(--accent) / 0); }
-              }
-            `}</style>
-          </button>
-
           <div className="pt-2 flex flex-col sm:flex-row gap-3">
             <Button type="submit" size="lg" className="flex-1" disabled={submitting}>
-              {submitting ? "Just now, just now…" : urgent ? "Put it out there (R20 urgent)" : "Put it out there"}
+              {submitting ? "Just now, just now…" : "Let's Gooi"}
             </Button>
             <Button type="button" variant="outline" size="lg" onClick={() => navigate(-1)}>Cancel</Button>
           </div>

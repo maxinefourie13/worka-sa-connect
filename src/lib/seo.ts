@@ -37,11 +37,40 @@ export const buildLocationCanonical = (
   provinceSlug?: string,
   citySlug?: string,
 ): string => {
-  let path = `/services/${categorySlug}`;
+  let path = `/${categorySlug}`;
   if (provinceSlug) path += `/${provinceSlug}`;
   if (citySlug) path += `/${citySlug}`;
   return SITE_URL + path;
 };
+
+/**
+ * Reserved top-level slugs that must NOT be matched by the programmatic
+ * SEO category route. Keep in sync with the routes in App.tsx.
+ */
+export const RESERVED_TOP_LEVEL_SLUGS = new Set<string>([
+  "directory",
+  "business",
+  "opportunities",
+  "pricing",
+  "list",
+  "dashboard",
+  "login",
+  "register",
+  "forgot-password",
+  "reset-password",
+  "auth",
+  "email-preferences",
+  "api",
+  "admin",
+  "assets",
+  "static",
+  "robots.txt",
+  "sitemap.xml",
+  "favicon.ico",
+]);
+
+export const isReservedSlug = (slug: string | undefined): boolean =>
+  !!slug && RESERVED_TOP_LEVEL_SLUGS.has(slug.toLowerCase());
 
 export interface BusinessForJsonLd {
   id: string;

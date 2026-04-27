@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { Search, Siren } from "lucide-react";
+import { Search, ShieldCheck } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
 import { Button } from "@/components/ui/button";
 import { JobCard } from "@/components/JobCard";
@@ -11,21 +11,32 @@ const Opportunities = () => {
   const [keyword, setKeyword] = useState("");
   const [category, setCategory] = useState("");
   const [province, setProvince] = useState("");
-  const [urgentOnly, setUrgentOnly] = useState(false);
+  const [verifiedOnly, setVerifiedOnly] = useState(false);
+
+  // Mock client hiring history — keyed by job id. In production this comes from a server-side count.
+  const clientHireHistory = useMemo<Record<string, number>>(
+    () => ({
+      "o1": 4,
+      "o3": 7,
+      "o5": 2,
+      "o6": 1,
+    }),
+    [],
+  );
 
   const filtered = useMemo(() => {
     const list = OPPORTUNITIES.filter((o) => {
       if (keyword && !o.title.toLowerCase().includes(keyword.toLowerCase())) return false;
       if (category && o.categorySlug !== category) return false;
       if (province && o.province !== province) return false;
-      if (urgentOnly && !o.isUrgent) return false;
+      // "Verified Pros only" filter — keeps jobs where the client has prior history (proxy for trust).
+      if (verifiedOnly && !clientHireHistory[o.id]) return false;
       return true;
     });
-    // Always sort urgent jobs first
-    return [...list].sort((a, b) => Number(b.isUrgent) - Number(a.isUrgent));
-  }, [keyword, category, province, urgentOnly]);
+    return list;
+  }, [keyword, category, province, verifiedOnly, clientHireHistory]);
 
-  const urgentCount = OPPORTUNITIES.filter((o) => o.isUrgent).length;
+  const verifiedCount = OPPORTUNITIES.filter((o) => clientHireHistory[o.id]).length;
 
   return (
     <SiteLayout>
@@ -36,7 +47,7 @@ const Opportunities = () => {
             Tell people what you need done.
           </h1>
           <p className="mt-3 text-ink-2">
-            Get responses from businesses ready to help. Contact them directly — no middleman, no commission.
+            Get responses from real okes ready to graft. Contact them directly — no middleman, no commission.
           </p>
         </header>
 
@@ -45,7 +56,7 @@ const Opportunities = () => {
           <div>
             <h2 className="font-display text-xl md:text-2xl font-semibold">Need work done?</h2>
             <p className="text-primary-foreground/85 text-sm mt-1">
-              Post a job and let real people come to you. Mark it Urgent for instant response.
+              Post a job and let real people come to you. Pull in, boet.
             </p>
           </div>
           <Button variant="ink" size="lg" asChild>
@@ -86,19 +97,20 @@ const Opportunities = () => {
           </select>
         </div>
 
-        {/* Urgent filter chip */}
+        {/* Verified Pros filter chip */}
         <div className="flex items-center gap-2 mb-6">
           <button
-            onClick={() => setUrgentOnly((u) => !u)}
+            onClick={() => setVerifiedOnly((v) => !v)}
             className={cn(
               "inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest px-3 py-1.5 rounded-full border transition-all",
-              urgentOnly
-                ? "bg-accent text-accent-foreground border-accent"
-                : "bg-card text-ink-2 border-border hover:border-accent",
+              verifiedOnly
+                ? "bg-primary text-primary-foreground border-primary"
+                : "bg-card text-ink-2 border-border hover:border-primary",
             )}
+            title="Only show jobs from clients who've hired on Sjoh before"
           >
-            <Siren className="size-3.5" />
-            {urgentOnly ? "Showing urgent only" : `Eish! Urgent (${urgentCount})`}
+            <ShieldCheck className="size-3.5" strokeWidth={2.5} />
+            {verifiedOnly ? "Showing trusted clients only" : `Show only Verified Pros (${verifiedCount})`}
           </button>
         </div>
 
@@ -108,12 +120,12 @@ const Opportunities = () => {
 
         {filtered.length === 0 ? (
           <div className="bg-card border border-border rounded-xl p-12 text-center">
-            <p className="text-ink-2">No opportunities match your filters.</p>
+            <p className="text-ink-2">Aikona — no opportunities match your filters.</p>
           </div>
         ) : (
           <div className="grid lg:grid-cols-2 gap-5">
             {filtered.map((o) => (
-              <JobCard key={o.id} job={o} />
+              <JobCard key={o.id} job={o} clientHireCount={clientHireHistory[o.id]} />
             ))}
           </div>
         )}

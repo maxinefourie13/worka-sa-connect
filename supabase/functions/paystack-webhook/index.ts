@@ -106,19 +106,8 @@ Deno.serve(async (req) => {
         processError = 'topup row missing';
       }
     } else if (kind === 'urgent_fee_charge') {
-      const oppId = meta.opportunity_id;
-      if (oppId) {
-        const { error: opErr } = await admin
-          .from('opportunities')
-          .update({ is_urgent: true })
-          .eq('id', oppId);
-        if (opErr) processError = opErr.message;
-
-        await admin
-          .from('urgent_fees')
-          .update({ status: 'completed', completed_at: new Date().toISOString() })
-          .eq('paystack_reference', reference);
-      }
+      // Urgent SOS feature was removed — ignore legacy webhooks gracefully.
+      processError = null;
     } else if (kind === 'subscription_disable' || kind === 'subscription_payment_failed') {
       const subCode = data.subscription_code ?? data.plan ?? null;
       if (subCode) {

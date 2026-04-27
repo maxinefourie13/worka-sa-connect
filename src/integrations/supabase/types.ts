@@ -244,7 +244,6 @@ export type Database = {
           deadline: string | null
           description: string
           id: string
-          is_urgent: boolean
           posted_by_name: string | null
           province: string
           requirements: string[]
@@ -264,7 +263,6 @@ export type Database = {
           deadline?: string | null
           description: string
           id?: string
-          is_urgent?: boolean
           posted_by_name?: string | null
           province: string
           requirements?: string[]
@@ -284,7 +282,6 @@ export type Database = {
           deadline?: string | null
           description?: string
           id?: string
-          is_urgent?: boolean
           posted_by_name?: string | null
           province?: string
           requirements?: string[]
@@ -667,47 +664,6 @@ export type Database = {
             columns: ["business_id"]
             isOneToOne: false
             referencedRelation: "businesses_public"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      urgent_fees: {
-        Row: {
-          amount_cents: number
-          client_id: string
-          completed_at: string | null
-          created_at: string
-          id: string
-          opportunity_id: string | null
-          paystack_reference: string
-          status: string
-        }
-        Insert: {
-          amount_cents: number
-          client_id: string
-          completed_at?: string | null
-          created_at?: string
-          id?: string
-          opportunity_id?: string | null
-          paystack_reference: string
-          status?: string
-        }
-        Update: {
-          amount_cents?: number
-          client_id?: string
-          completed_at?: string | null
-          created_at?: string
-          id?: string
-          opportunity_id?: string | null
-          paystack_reference?: string
-          status?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "urgent_fees_opportunity_id_fkey"
-            columns: ["opportunity_id"]
-            isOneToOne: false
-            referencedRelation: "opportunities"
             referencedColumns: ["id"]
           },
         ]

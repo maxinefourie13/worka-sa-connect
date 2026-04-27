@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, Navigate } from "react-router-dom";
 import { SiteLayout } from "@/components/SiteLayout";
 import { SeoHead } from "@/components/SeoHead";
 import { SjohSpinner } from "@/components/SjohSpinner";
@@ -11,6 +11,7 @@ import {
   slugify,
   buildLocationCanonical,
   buildLocationJsonLd,
+  isReservedSlug,
   type BusinessForJsonLd,
 } from "@/lib/seo";
 import { CATEGORIES, PROVINCES } from "@/lib/mockData";
@@ -39,6 +40,14 @@ const CategoryLocationPage = () => {
     provinceSlug?: string;
     citySlug?: string;
   }>();
+
+  // Guard: if the top-level slug is reserved (e.g. someone hits /api or /admin)
+  // OR isn't a known category, fall through to the 404 page. This prevents the
+  // root-level SEO route from accidentally swallowing real app paths.
+  const isKnownCategory = !!categorySlug && !!categoryFromSlug(categorySlug);
+  if (categorySlug && (isReservedSlug(categorySlug) || !isKnownCategory)) {
+    return <Navigate to="/404" replace />;
+  }
 
   const category = categorySlug ? categoryFromSlug(categorySlug) : undefined;
   const provinceName = provinceSlug ? provinceFromSlug(provinceSlug) : undefined;
@@ -158,11 +167,11 @@ const CategoryLocationPage = () => {
         <nav className="text-xs text-muted-foreground mb-4 flex flex-wrap gap-1.5">
           <Link to="/" className="hover:text-foreground">Home</Link>
           <span>/</span>
-          <Link to={`/services/${categorySlug}`} className="hover:text-foreground">{categoryName}</Link>
+          <Link to={`/${categorySlug}`} className="hover:text-foreground">{categoryName}</Link>
           {provinceName && (
             <>
               <span>/</span>
-              <Link to={`/services/${categorySlug}/${provinceSlug}`} className="hover:text-foreground">
+              <Link to={`/${categorySlug}/${provinceSlug}`} className="hover:text-foreground">
                 {provinceName}
               </Link>
             </>
@@ -250,7 +259,7 @@ const CategoryLocationPage = () => {
                 {siblingCities.map((c) => (
                   <li key={c}>
                     <Link
-                      to={`/services/${categorySlug}/${provinceSlug}/${slugify(c)}`}
+                      to={`/${categorySlug}/${provinceSlug}/${slugify(c)}`}
                       className="inline-block text-sm bg-card border border-border rounded-full px-3 py-1 hover:border-primary"
                     >
                       {c}
@@ -269,7 +278,7 @@ const CategoryLocationPage = () => {
                 {PROVINCES.map((p) => (
                   <li key={p}>
                     <Link
-                      to={`/services/${categorySlug}/${slugify(p)}`}
+                      to={`/${categorySlug}/${slugify(p)}`}
                       className="inline-block text-sm bg-card border border-border rounded-full px-3 py-1 hover:border-primary"
                     >
                       {p}
@@ -291,10 +300,10 @@ const CategoryLocationPage = () => {
                     <Link
                       to={
                         cityName
-                          ? `/services/${c.slug}/${provinceSlug}/${citySlug}`
+                          ? `/${c.slug}/${provinceSlug}/${citySlug}`
                           : provinceName
-                          ? `/services/${c.slug}/${provinceSlug}`
-                          : `/services/${c.slug}`
+                          ? `/${c.slug}/${provinceSlug}`
+                          : `/${c.slug}`
                       }
                       className="inline-block text-sm bg-card border border-border rounded-full px-3 py-1 hover:border-primary"
                     >
