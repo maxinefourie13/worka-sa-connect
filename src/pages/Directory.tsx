@@ -3,7 +3,8 @@ import { Link, useSearchParams } from "react-router-dom";
 import { Search, SlidersHorizontal, ChevronDown } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
 import { BusinessCard } from "@/components/BusinessCard";
-import { BUSINESSES, CATEGORIES, CATEGORY_GROUPS, PROVINCES } from "@/lib/mockData";
+import { CATEGORIES, CATEGORY_GROUPS, PROVINCES } from "@/lib/mockData";
+import { useBusinesses } from "@/hooks/useDirectory";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
