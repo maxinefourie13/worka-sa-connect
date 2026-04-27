@@ -7,7 +7,8 @@ import { FlameButton } from "@/components/ui/flame-button";
 import { BusinessCard } from "@/components/BusinessCard";
 import { JobCard } from "@/components/JobCard";
 import { Typewriter } from "@/components/Typewriter";
-import { BUSINESSES, OPPORTUNITIES, CATEGORIES, CATEGORY_GROUPS, PROVINCES, STATS } from "@/lib/mockData";
+import { CATEGORIES, CATEGORY_GROUPS, PROVINCES, STATS } from "@/lib/mockData";
+import { useBusinesses, useOpportunities } from "@/hooks/useDirectory";
 import { getCategoryGroupIcon } from "@/lib/categoryIcons";
 
 const HOW_IT_WORKS = [
@@ -54,8 +55,10 @@ const HomePage = () => {
     navigate(`/directory?${params.toString()}`);
   };
 
-  const featured = BUSINESSES.slice(0, 6);
-  const latest = OPPORTUNITIES.slice(0, 3);
+  const { data: allBusinesses } = useBusinesses();
+  const { data: allOpps } = useOpportunities();
+  const featured = allBusinesses.slice(0, 6);
+  const latest = allOpps.slice(0, 3);
   const popularCatSlugs = ["plumbing", "electrical", "home-cleaning", "garden-services", "mechanics", "web-design"];
   const popularCats = popularCatSlugs
     .map((s) => CATEGORIES.find((c) => c.slug === s))

@@ -3,11 +3,13 @@ import { Link, useSearchParams } from "react-router-dom";
 import { Search, SlidersHorizontal, ChevronDown } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
 import { BusinessCard } from "@/components/BusinessCard";
-import { BUSINESSES, CATEGORIES, CATEGORY_GROUPS, PROVINCES } from "@/lib/mockData";
+import { CATEGORIES, CATEGORY_GROUPS, PROVINCES } from "@/lib/mockData";
+import { useBusinesses } from "@/hooks/useDirectory";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 const DirectoryPage = () => {
+  const { data: businesses } = useBusinesses();
   const [params, setParams] = useSearchParams();
   const initialQ = params.get("q") ?? "";
   const initialCat = params.get("category");
@@ -47,7 +49,7 @@ const DirectoryPage = () => {
     : null;
 
   const filtered = useMemo(() => {
-    let list = BUSINESSES.filter((b) => {
+    let list = businesses.filter((b) => {
       if (keyword && !b.name.toLowerCase().includes(keyword.toLowerCase()) && !b.category.toLowerCase().includes(keyword.toLowerCase())) return false;
       if (cats.length && !cats.includes(b.categorySlug)) return false;
       if (provs.length && !provs.includes(b.province)) return false;
@@ -64,7 +66,7 @@ const DirectoryPage = () => {
         return order[a.plan] - order[b.plan];
       });
     return list;
-  }, [keyword, cats, provs, verifiedOnly, promoOnly, topRated, sort]);
+  }, [businesses, keyword, cats, provs, verifiedOnly, promoOnly, topRated, sort]);
 
   return (
     <SiteLayout>
