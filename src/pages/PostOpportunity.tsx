@@ -3,10 +3,12 @@ import { useNavigate, Link } from "react-router-dom";
 import { ArrowLeft, CheckCircle2 } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
 import { Button } from "@/components/ui/button";
+import { LiabilityDisclaimer } from "@/components/LiabilityDisclaimer";
 import { CATEGORIES, CATEGORY_GROUPS, PROVINCES } from "@/lib/mockData";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { findProhibited, PROHIBITED_MESSAGE } from "@/lib/prohibitedKeywords";
 
 const PostOpportunity = () => {
   const navigate = useNavigate();
@@ -15,6 +17,7 @@ const PostOpportunity = () => {
   const [submitting, setSubmitting] = useState(false);
   const [groupSlug, setGroupSlug] = useState("");
   const [categorySlug, setCategorySlug] = useState("");
+  const [agreeTerms, setAgreeTerms] = useState(false);
 
   const subCats = groupSlug ? CATEGORIES.filter((c) => c.groupSlug === groupSlug) : [];
 
