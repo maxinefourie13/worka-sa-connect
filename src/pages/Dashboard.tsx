@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useSearchParams } from "react-router-dom";
 import {
   LayoutGrid, User, Sparkles, Briefcase, Users, CreditCard, Plus,
   Zap, ShieldCheck, Siren,
@@ -12,6 +12,7 @@ import { TopUpModal } from "@/components/TopUpModal";
 import { VerificationBadges } from "@/components/VerificationBadges";
 import { toast } from "@/hooks/use-toast";
 import { useVerification } from "@/hooks/useVerification";
+import { useAuth } from "@/hooks/useAuth";
 import { cn } from "@/lib/utils";
 
 type SectionKey = "overview" | "klaps" | "profile" | "promotions" | "opportunities" | "followers" | "billing";
@@ -28,6 +29,18 @@ const SECTIONS: { key: SectionKey; label: string; icon: typeof LayoutGrid }[] = 
 const Dashboard = () => {
   const [section, setSection] = useState<SectionKey>("overview");
   const me = BUSINESSES[0]; // mock "logged in" business
+  const [params, setParams] = useSearchParams();
+
+  useEffect(() => {
+    if (params.get("paid") === "1") {
+      toast({
+        title: "Chankura sorted.",
+        description: "Your account is topped up. Back to work!",
+      });
+      params.delete("paid");
+      setParams(params, { replace: true });
+    }
+  }, [params, setParams]);
 
   return (
     <div className="flex min-h-dvh flex-col bg-background">
@@ -94,12 +107,19 @@ const StatCard = ({ label, value, hint }: { label: string; value: string; hint?:
 
 const OverviewSection = ({ onJump }: { onJump: (s: SectionKey) => void }) => {
   const { provider } = useKlap();
+  const { user } = useAuth();
   const tier = SJOH_TIERS.find((t) => t.slug === provider.tier)!;
+  const firstName =
+    (user?.user_metadata?.display_name as string | undefined)?.split(" ")[0] ||
+    user?.email?.split("@")[0] ||
+    "boet";
   return (
     <>
       <header className="flex items-center justify-between">
         <div>
-          <h1 className="font-display text-3xl font-medium tracking-tight">Overview</h1>
+          <h1 className="font-display text-3xl font-medium tracking-tight">
+            Howzit, {firstName}. Ready to dala what you must?
+          </h1>
           <p className="text-sm text-ink-2 mt-1">Your performance over the last 30 days.</p>
         </div>
         <Button>
