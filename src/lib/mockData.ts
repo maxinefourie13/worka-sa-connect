@@ -189,6 +189,13 @@ export interface Business {
 
 const grads = ["bg-grad-1", "bg-grad-2", "bg-grad-3", "bg-grad-4", "bg-grad-5", "bg-grad-6"];
 
+import imgSolar from "@/assets/solar-installer.jpg";
+import imgSteelwork from "@/assets/business/steelwork.jpg";
+import imgPhotographer from "@/assets/business/photographer.jpg";
+import imgBaker from "@/assets/business/baker.jpg";
+import imgItSupport from "@/assets/business/it-support.jpg";
+import imgMovers from "@/assets/business/movers.jpg";
+
 export const BUSINESSES: Business[] = [
   {
     id: "b1",
