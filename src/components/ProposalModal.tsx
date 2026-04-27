@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { X, Zap, Video, Paperclip, FileDown, Lock, Sparkles, Check } from "lucide-react";
+import { X, Zap, Video, Paperclip, FileDown, Lock, Sparkles, Check, TrendingUp, Crown, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useKlap } from "@/lib/klapStore";
+import { useKlap, BOOST_OPTIONS, type BoostTier } from "@/lib/klapStore";
 import { toast } from "@/hooks/use-toast";
 import { TopUpModal } from "@/components/TopUpModal";
 import { downloadQuotation } from "@/lib/quotation";
@@ -21,7 +21,7 @@ interface Props {
 type PriceType = "fixed" | "from" | "quote";
 
 export const ProposalModal = ({ open, jobId, jobTitle, jobBudget, clientName, onClose, onSubmitted }: Props) => {
-  const { provider, klapJob } = useKlap();
+  const { provider, klapJob, previewBid } = useKlap();
   const [topUpOpen, setTopUpOpen] = useState(false);
 
   const [priceType, setPriceType] = useState<PriceType>("fixed");
@@ -31,10 +31,15 @@ export const ProposalModal = ({ open, jobId, jobTitle, jobBudget, clientName, on
   const [contactPref, setContactPref] = useState("WhatsApp");
   const [loomUrl, setLoomUrl] = useState("");
   const [attachments, setAttachments] = useState<File[]>([]);
+  const [boost, setBoost] = useState<BoostTier>("standard");
   const [submitted, setSubmitted] = useState(false);
+  const [resultRank, setResultRank] = useState<{ rank: number; total: number } | null>(null);
 
   const isMainOke = provider.tier === "main-oke";
   const priceNum = Number(price) || 0;
+  const boostOption = BOOST_OPTIONS.find((b) => b.id === boost)!;
+  const preview = previewBid(jobId, boost);
+  const canAfford = provider.klapsRemaining >= boostOption.cost;
   const canSubmit =
     scope.trim().length >= 20 &&
     (priceType === "quote" || priceNum > 0) &&
@@ -50,7 +55,9 @@ export const ProposalModal = ({ open, jobId, jobTitle, jobBudget, clientName, on
     setContactPref("WhatsApp");
     setLoomUrl("");
     setAttachments([]);
+    setBoost("standard");
     setSubmitted(false);
+    setResultRank(null);
   };
 
   const handleClose = () => {
@@ -60,15 +67,16 @@ export const ProposalModal = ({ open, jobId, jobTitle, jobBudget, clientName, on
 
   const handleSubmit = () => {
     if (!canSubmit) return;
-    const result = klapJob(jobId, jobTitle);
+    const result = klapJob(jobId, jobTitle, boost);
     if (!result.ok) {
       setTopUpOpen(true);
       return;
     }
     setSubmitted(true);
+    setResultRank({ rank: result.rank!, total: result.total! });
     toast({
-      title: "Proposal sent! 💥",
-      description: "1 Klap deducted. Client will see your pitch and contact you directly.",
+      title: boost === "top-spot" ? "Top Spot locked in 👑" : boost === "boost" ? "Boosted to top half ⚡" : "Proposal sent! 💥",
+      description: `${boostOption.cost} Klap${boostOption.cost > 1 ? "s" : ""} deducted. You're ranked #${result.rank} of ${result.total}.`,
     });
     onSubmitted?.();
   };
