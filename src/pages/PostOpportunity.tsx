@@ -177,8 +177,23 @@ const PostOpportunity = () => {
             <textarea name="requirements" rows={3} className="input resize-none" placeholder="Certifications, references, insurance, etc." />
           </Field>
 
+          <LiabilityDisclaimer />
+
+          <label className="flex items-start gap-2.5 text-sm cursor-pointer select-none">
+            <input
+              type="checkbox"
+              checked={agreeTerms}
+              onChange={(e) => setAgreeTerms(e.target.checked)}
+              className="mt-0.5 size-4 rounded border-border text-primary focus:ring-primary cursor-pointer"
+              required
+            />
+            <span className="text-ink-2 leading-relaxed">
+              I agree to the <Link to="/terms" className="text-primary font-semibold hover:underline">Terms of Service</Link> and confirm I will not offer or request illegal services.
+            </span>
+          </label>
+
           <div className="pt-2 flex flex-col sm:flex-row gap-3">
-            <Button type="submit" size="lg" className="flex-1" disabled={submitting}>
+            <Button type="submit" size="lg" className="flex-1" disabled={submitting || !agreeTerms}>
               {submitting ? "Just now, just now…" : "Let's Gooi"}
             </Button>
             <Button type="button" variant="outline" size="lg" onClick={() => navigate(-1)}>Cancel</Button>
