@@ -127,6 +127,12 @@
   h1, h2, h3, h4, h5, h6, .font-display {
     @apply font-sans font-extrabold tracking-tight;
   }
+  /* Main hero headings — push past 800 visually with a hairline stroke */
+  h1, .font-display {
+    -webkit-text-stroke: 0.5px currentColor;
+    text-stroke: 0.5px currentColor;
+    letter-spacing: -0.02em;
+  }
 }
 
 @layer components {
