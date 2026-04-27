@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 const DirectoryPage = () => {
+  const { data: businesses } = useBusinesses();
   const [params, setParams] = useSearchParams();
   const initialQ = params.get("q") ?? "";
   const initialCat = params.get("category");
