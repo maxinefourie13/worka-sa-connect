@@ -181,9 +181,8 @@ const BusinessProfile = () => {
                               <p className="text-xs text-muted-foreground">{r.reviewerCompany}</p>
                             )}
                           </div>
-                          <div className="flex items-center gap-1 text-sm">
-                            <Star className="size-3.5 fill-accent text-accent" />
-                            <span className="font-semibold tabular-nums">{r.rating}.0</span>
+                          <div className="flex items-baseline gap-1 text-sm">
+                            <span className="font-semibold tabular-nums text-accent">{r.rating}.0</span>
                           </div>
                         </div>
                         <p className="text-sm text-ink-2 mt-3 leading-relaxed">{r.body}</p>
@@ -201,11 +200,11 @@ const BusinessProfile = () => {
             <div className="bg-card border border-border rounded-2xl p-6 shadow-card">
               <h3 className="font-display text-lg font-semibold mb-4">Business details</h3>
               <ul className="space-y-3 text-sm">
-                <li className="flex items-start gap-3"><MapPin className="size-4 text-muted-foreground mt-0.5 shrink-0" /><span>{business.address}</span></li>
-                <li className="flex items-start gap-3"><Phone className="size-4 text-muted-foreground mt-0.5 shrink-0" /><a href={`tel:${business.phone}`} className="hover:text-primary">{business.phone}</a></li>
-                <li className="flex items-start gap-3"><Mail className="size-4 text-muted-foreground mt-0.5 shrink-0" /><a href={`mailto:${business.email}`} className="hover:text-primary">{business.email}</a></li>
-                <li className="flex items-start gap-3"><Globe className="size-4 text-muted-foreground mt-0.5 shrink-0" /><a href="#" className="hover:text-primary">{business.website}</a></li>
-                <li className="flex items-start gap-3"><Clock className="size-4 text-muted-foreground mt-0.5 shrink-0" /><span className="text-ink-2">{business.hours}</span></li>
+                <li><span className="text-muted-foreground">Address: </span><span>{business.address}</span></li>
+                <li><span className="text-muted-foreground">Phone: </span><a href={`tel:${business.phone}`} className="hover:text-primary">{business.phone}</a></li>
+                <li><span className="text-muted-foreground">Email: </span><a href={`mailto:${business.email}`} className="hover:text-primary">{business.email}</a></li>
+                <li><span className="text-muted-foreground">Website: </span><a href="#" className="hover:text-primary">{business.website}</a></li>
+                <li><span className="text-muted-foreground">Hours: </span><span className="text-ink-2">{business.hours}</span></li>
               </ul>
               <div className="mt-5 pt-5 border-t border-border">
                 <p className="text-xs text-muted-foreground">Response rate</p>
@@ -218,29 +217,27 @@ const BusinessProfile = () => {
               </div>
               <div className="mt-5 grid grid-cols-3 gap-2">
                 <Button variant="default" className="w-full" asChild>
-                  <a href={`tel:${business.phone}`}><Phone className="size-4" />Call</a>
+                  <a href={`tel:${business.phone}`}>Call</a>
                 </Button>
                 <Button variant="outline" className="w-full" asChild>
                   <a href={`https://wa.me/${business.phone.replace(/\D/g, "")}`} target="_blank" rel="noopener noreferrer">
-                    <svg className="size-4" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884"/></svg>
                     WhatsApp
                   </a>
                 </Button>
                 <Button variant="outline" className="w-full" asChild>
-                  <a href={`mailto:${business.email}`}><Mail className="size-4" />Email</a>
+                  <a href={`mailto:${business.email}`}>Email</a>
                 </Button>
               </div>
-              <p className="mt-4 flex items-start gap-2 text-xs text-muted-foreground leading-relaxed">
-                <Shield className="size-3.5 mt-0.5 shrink-0 text-primary" />
-                <span>You deal with this business directly. Sjoh takes no commission.</span>
+              <p className="mt-4 text-xs text-muted-foreground leading-relaxed">
+                You deal with this business directly. Sjoh takes no commission.
               </p>
             </div>
 
             <div className="bg-card border border-border rounded-2xl p-6">
               <h3 className="font-display text-lg font-semibold mb-2">Looking for similar?</h3>
               <p className="text-sm text-ink-2 mb-4">Browse more {business.category} businesses in {business.province}.</p>
-              <Link to={`/directory?category=${business.categorySlug}`} className="text-sm font-semibold text-primary inline-flex items-center gap-1 hover:underline">
-                View all <ChevronRight className="size-4" />
+              <Link to={`/directory?category=${business.categorySlug}`} className="text-sm font-semibold text-primary hover:underline">
+                View all →
               </Link>
             </div>
           </aside>
