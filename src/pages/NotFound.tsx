@@ -1,5 +1,8 @@
-import { useLocation } from "react-router-dom";
+import { useLocation, Link } from "react-router-dom";
 import { useEffect } from "react";
+import { SiteLayout } from "@/components/SiteLayout";
+import { Button } from "@/components/ui/button";
+import { SeoHead } from "@/components/SeoHead";
 
 const NotFound = () => {
   const location = useLocation();
@@ -9,15 +12,25 @@ const NotFound = () => {
   }, [location.pathname]);
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-muted">
-      <div className="text-center">
-        <h1 className="mb-4 text-4xl font-bold">404</h1>
-        <p className="mb-4 text-xl text-muted-foreground">Oops! Page not found</p>
-        <a href="/" className="text-primary underline hover:text-primary/90">
-          Return to Home
-        </a>
+    <SiteLayout>
+      <SeoHead
+        title="Eish! Page not found | Sjoh!"
+        description="The page you're looking for doesn't exist. Head back to the graft."
+        noindex
+      />
+      <div className="container py-24 max-w-lg text-center">
+        <p className="font-display text-7xl font-semibold text-primary tracking-tight">404</p>
+        <h1 className="font-display text-3xl md:text-4xl font-medium tracking-tight mt-4">
+          Eish! We took a wrong turn.
+        </h1>
+        <p className="mt-3 text-ink-2">
+          We can't find the page you're looking for. The taxi definitely dropped us at the wrong rank.
+        </p>
+        <Button asChild size="lg" className="mt-7">
+          <Link to="/">Take me back to the graft</Link>
+        </Button>
       </div>
-    </div>
+    </SiteLayout>
   );
 };
 
