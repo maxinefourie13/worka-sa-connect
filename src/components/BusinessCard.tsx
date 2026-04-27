@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Star, MapPin, Check, UserPlus } from "lucide-react";
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import type { Business } from "@/lib/mockData";
@@ -54,16 +54,16 @@ export const BusinessCard = ({ business, className }: BusinessCardProps) => {
             {business.name}
           </h3>
           {business.isVerified && (
-            <span className="shrink-0 mt-1 size-5 rounded-full bg-primary/10 text-primary flex items-center justify-center" title="Verified">
-              <Check className="size-3" strokeWidth={3} />
+            <span
+              className="shrink-0 mt-1 text-[10px] font-bold uppercase tracking-widest text-primary bg-primary/10 px-2 py-0.5 rounded"
+              title="Verified"
+            >
+              Verified
             </span>
           )}
         </div>
-        <p className="mt-1 text-xs text-muted-foreground flex items-center gap-1.5">
-          <span>{business.category}</span>
-          <span className="opacity-50">·</span>
-          <MapPin className="size-3" />
-          <span>{business.city}</span>
+        <p className="mt-1 text-xs text-muted-foreground">
+          {business.category} <span className="opacity-50">·</span> {business.city}
         </p>
 
         <div className="mt-3 flex flex-wrap gap-1.5">
@@ -78,10 +78,9 @@ export const BusinessCard = ({ business, className }: BusinessCardProps) => {
         </div>
 
         <div className="mt-4 flex items-center justify-between gap-3">
-          <div className="flex items-center gap-1.5 text-sm">
-            <Star className="size-4 fill-accent text-accent" />
-            <span className="font-semibold">{business.rating.toFixed(1)}</span>
-            <span className="text-muted-foreground text-xs">({business.reviewCount})</span>
+          <div className="flex items-baseline gap-1.5 text-sm">
+            <span className="font-semibold text-accent">{business.rating.toFixed(1)}</span>
+            <span className="text-muted-foreground text-xs">({business.reviewCount} reviews)</span>
           </div>
           <Button
             size="sm"
@@ -89,7 +88,6 @@ export const BusinessCard = ({ business, className }: BusinessCardProps) => {
             onClick={toggle}
             className="h-8 text-xs"
           >
-            <UserPlus className="size-3.5" />
             {following ? "Following" : "Follow"}
             <span className="text-muted-foreground tabular-nums">· {followers}</span>
           </Button>
