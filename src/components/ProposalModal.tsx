@@ -331,19 +331,24 @@ export const ProposalModal = ({ open, jobId, jobTitle, jobBudget, clientName, on
 
           {/* Footer */}
           {!submitted && (
-            <div className="px-6 md:px-8 py-4 border-t border-border bg-card flex items-center justify-between gap-3 rounded-b-none md:rounded-b-2xl">
-              <Button variant="ghost" onClick={handleClose}>Cancel</Button>
-              <Button
-                onClick={handleSubmit}
-                disabled={!canSubmit}
-                className="bg-accent text-accent-foreground hover:bg-accent/90 font-bold gap-1.5"
-                size="lg"
-              >
-                <Zap className="size-4" strokeWidth={2.5} />
-                {!canAfford
-                  ? `Need ${boostOption.cost - provider.klapsRemaining} more Klap${boostOption.cost - provider.klapsRemaining > 1 ? "s" : ""}`
-                  : `Send Proposal — ${boostOption.cost} Klap${boostOption.cost > 1 ? "s" : ""}`}
-              </Button>
+            <div className="px-6 md:px-8 py-4 border-t border-border bg-card rounded-b-none md:rounded-b-2xl">
+              <p className="text-[11px] text-muted-foreground mb-3 leading-relaxed">
+                Sjoh. is a matching platform. Always check your Pro's insurance before starting the graft.
+              </p>
+              <div className="flex items-center justify-between gap-3">
+                <Button variant="ghost" onClick={handleClose}>Cancel</Button>
+                <Button
+                  onClick={handleSubmit}
+                  disabled={!canSubmit}
+                  className="bg-accent text-accent-foreground hover:bg-accent/90 font-bold gap-1.5"
+                  size="lg"
+                >
+                  <Zap className="size-4" strokeWidth={2.5} />
+                  {!canAfford
+                    ? `Need ${boostOption.cost - provider.klapsRemaining} more Klap${boostOption.cost - provider.klapsRemaining > 1 ? "s" : ""}`
+                    : `Klap this Job — ${boostOption.cost} Klap${boostOption.cost > 1 ? "s" : ""}`}
+                </Button>
+              </div>
             </div>
           )}
         </div>
