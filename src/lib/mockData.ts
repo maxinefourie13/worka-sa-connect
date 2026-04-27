@@ -179,6 +179,8 @@ export interface Business {
   followers: number;
   plan: "free" | "standard" | "featured";
   gradient: string;
+  /** Optional cover/profile image URL (imported asset). Falls back to gradient when omitted. */
+  image?: string;
   responseRate: number;
   hours: string;
   services: Service[];
@@ -186,6 +188,13 @@ export interface Business {
 }
 
 const grads = ["bg-grad-1", "bg-grad-2", "bg-grad-3", "bg-grad-4", "bg-grad-5", "bg-grad-6"];
+
+import imgSolar from "@/assets/solar-installer.jpg";
+import imgSteelwork from "@/assets/business/steelwork.jpg";
+import imgPhotographer from "@/assets/business/photographer.jpg";
+import imgBaker from "@/assets/business/baker.jpg";
+import imgItSupport from "@/assets/business/it-support.jpg";
+import imgMovers from "@/assets/business/movers.jpg";
 
 export const BUSINESSES: Business[] = [
   {
@@ -210,6 +219,7 @@ export const BUSINESSES: Business[] = [
     followers: 318,
     plan: "featured",
     gradient: grads[0],
+    image: imgSolar,
     responseRate: 98,
     hours: "Mon–Fri 7:00–17:00, Sat 8:00–13:00",
     services: [
@@ -246,6 +256,7 @@ export const BUSINESSES: Business[] = [
     followers: 204,
     plan: "featured",
     gradient: grads[1],
+    image: imgSteelwork,
     responseRate: 94,
     hours: "Mon–Fri 7:30–16:30",
     services: [
@@ -280,6 +291,7 @@ export const BUSINESSES: Business[] = [
     followers: 1240,
     plan: "standard",
     gradient: grads[2],
+    image: imgPhotographer,
     responseRate: 92,
     hours: "By appointment",
     services: [
@@ -314,6 +326,7 @@ export const BUSINESSES: Business[] = [
     followers: 187,
     plan: "standard",
     gradient: grads[3],
+    image: imgBaker,
     responseRate: 88,
     hours: "Mon–Sat 8:00–18:00",
     services: [
@@ -347,6 +360,7 @@ export const BUSINESSES: Business[] = [
     followers: 92,
     plan: "standard",
     gradient: grads[4],
+    image: imgItSupport,
     responseRate: 96,
     hours: "Mon–Fri 8:00–17:00",
     services: [
@@ -380,6 +394,7 @@ export const BUSINESSES: Business[] = [
     followers: 156,
     plan: "free",
     gradient: grads[5],
+    image: imgMovers,
     responseRate: 85,
     hours: "Mon–Sat 7:00–18:00",
     services: [

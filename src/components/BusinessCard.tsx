@@ -31,19 +31,30 @@ export const BusinessCard = ({ business, className }: BusinessCardProps) => {
         className,
       )}
     >
-      {/* Gradient header */}
-      <div className={cn("h-24 relative", business.gradient)}>
+      {/* Cover — photo when available, otherwise gradient */}
+      <div className={cn("h-28 relative overflow-hidden", !business.image && business.gradient)}>
+        {business.image && (
+          <>
+            <img
+              src={business.image}
+              alt={`${business.name} — ${business.category}`}
+              loading="lazy"
+              className="absolute inset-0 size-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-black/10 to-transparent" />
+          </>
+        )}
         {business.hasPromo && (
-          <span className="absolute top-3 left-3 bg-accent text-accent-foreground text-[10px] font-bold tracking-widest uppercase px-2 py-1 rounded">
+          <span className="absolute top-3 left-3 z-10 bg-accent text-accent-foreground text-[10px] font-bold tracking-widest uppercase px-2 py-1 rounded">
             Promo
           </span>
         )}
         {business.plan === "featured" && (
-          <span className="absolute top-3 right-3 bg-foreground/85 text-background text-[10px] font-bold tracking-widest uppercase px-2 py-1 rounded">
+          <span className="absolute top-3 right-3 z-10 bg-foreground/85 text-background text-[10px] font-bold tracking-widest uppercase px-2 py-1 rounded">
             Featured
           </span>
         )}
-        <div className="absolute -bottom-7 left-5 size-14 rounded-xl bg-card border-4 border-card shadow-soft flex items-center justify-center font-display font-bold text-xl text-foreground">
+        <div className="absolute -bottom-7 left-5 z-10 size-14 rounded-xl bg-card border-4 border-card shadow-soft flex items-center justify-center font-display font-bold text-xl text-foreground">
           {business.name.charAt(0)}
         </div>
       </div>
