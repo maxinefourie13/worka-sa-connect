@@ -1,24 +1,31 @@
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { Search } from "lucide-react";
+import { Search, Siren } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
 import { Button } from "@/components/ui/button";
 import { JobCard } from "@/components/JobCard";
 import { OPPORTUNITIES, CATEGORIES, PROVINCES } from "@/lib/mockData";
+import { cn } from "@/lib/utils";
 
 const Opportunities = () => {
   const [keyword, setKeyword] = useState("");
   const [category, setCategory] = useState("");
   const [province, setProvince] = useState("");
+  const [urgentOnly, setUrgentOnly] = useState(false);
 
   const filtered = useMemo(() => {
-    return OPPORTUNITIES.filter((o) => {
+    const list = OPPORTUNITIES.filter((o) => {
       if (keyword && !o.title.toLowerCase().includes(keyword.toLowerCase())) return false;
       if (category && o.categorySlug !== category) return false;
       if (province && o.province !== province) return false;
+      if (urgentOnly && !o.isUrgent) return false;
       return true;
     });
-  }, [keyword, category, province]);
+    // Always sort urgent jobs first
+    return [...list].sort((a, b) => Number(b.isUrgent) - Number(a.isUrgent));
+  }, [keyword, category, province, urgentOnly]);
+
+  const urgentCount = OPPORTUNITIES.filter((o) => o.isUrgent).length;
 
   return (
     <SiteLayout>
@@ -38,7 +45,7 @@ const Opportunities = () => {
           <div>
             <h2 className="font-display text-xl md:text-2xl font-semibold">Need work done?</h2>
             <p className="text-primary-foreground/85 text-sm mt-1">
-              Post a job and let real people come to you. It's free.
+              Post a job and let real people come to you. Mark it Urgent for instant response.
             </p>
           </div>
           <Button variant="ink" size="lg" asChild>
@@ -47,7 +54,7 @@ const Opportunities = () => {
         </div>
 
         {/* Filters */}
-        <div className="bg-card border border-border rounded-xl p-3 flex flex-col md:flex-row gap-3 mb-8">
+        <div className="bg-card border border-border rounded-xl p-3 flex flex-col md:flex-row gap-3 mb-4">
           <div className="flex-1 flex items-center gap-2 px-3">
             <Search className="size-4 text-muted-foreground" />
             <input
@@ -77,6 +84,22 @@ const Opportunities = () => {
               <option key={p} value={p}>{p}</option>
             ))}
           </select>
+        </div>
+
+        {/* Urgent filter chip */}
+        <div className="flex items-center gap-2 mb-6">
+          <button
+            onClick={() => setUrgentOnly((u) => !u)}
+            className={cn(
+              "inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest px-3 py-1.5 rounded-full border transition-all",
+              urgentOnly
+                ? "bg-accent text-accent-foreground border-accent"
+                : "bg-card text-ink-2 border-border hover:border-accent",
+            )}
+          >
+            <Siren className="size-3.5" />
+            {urgentOnly ? "Showing urgent only" : `Eish! Urgent (${urgentCount})`}
+          </button>
         </div>
 
         <div className="text-sm text-muted-foreground mb-4 tabular-nums">
