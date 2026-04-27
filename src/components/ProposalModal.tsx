@@ -339,9 +339,7 @@ export const ProposalModal = ({ open, jobId, jobTitle, jobBudget, clientName, on
           {/* Footer */}
           {!submitted && (
             <div className="px-6 md:px-8 py-4 border-t border-border bg-card rounded-b-none md:rounded-b-2xl">
-              <p className="text-[11px] text-muted-foreground mb-3 leading-relaxed">
-                Sjoh. is a matching platform. Always check your Pro's insurance before starting the graft.
-              </p>
+              <LiabilityDisclaimer variant="inline" className="mb-3" />
               <div className="flex items-center justify-between gap-3">
                 <Button variant="ghost" onClick={handleClose}>Cancel</Button>
                 <Button
