@@ -4,6 +4,8 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { KlapProvider } from "@/lib/klapStore";
+import { AuthProvider } from "@/hooks/useAuth";
+import { ProtectedRoute } from "@/components/ProtectedRoute";
 import Index from "./pages/Index.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import Directory from "./pages/Directory.tsx";
@@ -14,36 +16,39 @@ import PostOpportunity from "./pages/PostOpportunity.tsx";
 import Pricing from "./pages/Pricing.tsx";
 import ListBusiness from "./pages/ListBusiness.tsx";
 import Dashboard from "./pages/Dashboard.tsx";
-import { Login, Register, ForgotPassword } from "./pages/Auth.tsx";
+import { Login, Register, ForgotPassword, ResetPassword } from "./pages/Auth.tsx";
 
 const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
-      <KlapProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/directory" element={<Directory />} />
-            <Route path="/directory/g/:groupSlug" element={<GroupLanding />} />
-            <Route path="/business/:slug" element={<BusinessProfile />} />
-            <Route path="/opportunities" element={<Opportunities />} />
-            <Route path="/opportunities/new" element={<PostOpportunity />} />
-            <Route path="/opportunities/:id" element={<Opportunities />} />
-            <Route path="/pricing" element={<Pricing />} />
-            <Route path="/list" element={<ListBusiness />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/forgot-password" element={<ForgotPassword />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-      </KlapProvider>
+      <AuthProvider>
+        <KlapProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/directory" element={<Directory />} />
+              <Route path="/directory/g/:groupSlug" element={<GroupLanding />} />
+              <Route path="/business/:slug" element={<BusinessProfile />} />
+              <Route path="/opportunities" element={<Opportunities />} />
+              <Route path="/opportunities/new" element={<ProtectedRoute><PostOpportunity /></ProtectedRoute>} />
+              <Route path="/opportunities/:id" element={<Opportunities />} />
+              <Route path="/pricing" element={<Pricing />} />
+              <Route path="/list" element={<ProtectedRoute><ListBusiness /></ProtectedRoute>} />
+              <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
+              <Route path="/reset-password" element={<ResetPassword />} />
+              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+        </KlapProvider>
+      </AuthProvider>
     </TooltipProvider>
   </QueryClientProvider>
 );
