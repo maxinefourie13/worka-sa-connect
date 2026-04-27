@@ -2,54 +2,48 @@ import { useState } from "react";
 import { Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useKlap } from "@/lib/klapStore";
-import { TopUpModal } from "@/components/TopUpModal";
-import { toast } from "@/hooks/use-toast";
+import { ProposalModal } from "@/components/ProposalModal";
 import { cn } from "@/lib/utils";
 
 interface Props {
   jobId: string;
   jobTitle: string;
+  jobBudget?: number;
+  clientName?: string;
   size?: "sm" | "default" | "lg";
   className?: string;
 }
 
-export const KlapButton = ({ jobId, jobTitle, size = "sm", className }: Props) => {
-  const { provider, klapJob } = useKlap();
-  const [topUpOpen, setTopUpOpen] = useState(false);
-  const [klapped, setKlapped] = useState(false);
-
-  const onClick = () => {
-    if (klapped) return;
-    const result = klapJob(jobId, jobTitle);
-    if (!result.ok) {
-      setTopUpOpen(true);
-      return;
-    }
-    setKlapped(true);
-    toast({
-      title: "Klap sent! 💥",
-      description: "The client will see your pitch. 1 Klap deducted.",
-    });
-  };
+export const KlapButton = ({ jobId, jobTitle, jobBudget, clientName, size = "sm", className }: Props) => {
+  const [proposalOpen, setProposalOpen] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
 
   return (
     <>
       <Button
         size={size}
-        onClick={onClick}
-        disabled={klapped}
+        onClick={() => setProposalOpen(true)}
+        disabled={submitted}
         className={cn(
           "font-bold tracking-wide gap-1.5",
-          klapped
+          submitted
             ? "bg-primary-light text-primary hover:bg-primary-light"
             : "bg-accent text-accent-foreground hover:bg-accent/90",
           className,
         )}
       >
         <Zap className="size-3.5" strokeWidth={2.5} />
-        {klapped ? "Klapped ✓" : "Klap it — 1 Klap"}
+        {submitted ? "Proposal sent ✓" : "Klap it — Send proposal"}
       </Button>
-      <TopUpModal open={topUpOpen} onClose={() => setTopUpOpen(false)} />
+      <ProposalModal
+        open={proposalOpen}
+        jobId={jobId}
+        jobTitle={jobTitle}
+        jobBudget={jobBudget}
+        clientName={clientName}
+        onClose={() => setProposalOpen(false)}
+        onSubmitted={() => setSubmitted(true)}
+      />
     </>
   );
 };

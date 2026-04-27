@@ -47,7 +47,7 @@ const Inner = ({ job }: { job: Opportunity }) => (
               {job.budgetType === "fixed" ? "Fixed budget" : job.budgetType === "estimate" ? "Estimated" : "Negotiable"}
             </div>
           </div>
-          <KlapButton jobId={job.id} jobTitle={job.title} />
+          <KlapButton jobId={job.id} jobTitle={job.title} jobBudget={job.budget} clientName={job.postedBy} />
         </div>
       </div>
     </div>
