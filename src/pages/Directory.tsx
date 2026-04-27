@@ -1,29 +1,50 @@
 import { useMemo, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { Search, SlidersHorizontal } from "lucide-react";
+import { Search, SlidersHorizontal, ChevronDown } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
 import { BusinessCard } from "@/components/BusinessCard";
-import { BUSINESSES, CATEGORIES, PROVINCES } from "@/lib/mockData";
+import { BUSINESSES, CATEGORIES, CATEGORY_GROUPS, PROVINCES } from "@/lib/mockData";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 const DirectoryPage = () => {
   const [params, setParams] = useSearchParams();
   const initialQ = params.get("q") ?? "";
   const initialCat = params.get("category");
+  const initialGroup = params.get("group");
   const initialProv = params.get("province");
 
+  // If a group is selected via URL, pre-select all its sub-cats.
+  const groupSubSlugs = (groupSlug: string) =>
+    CATEGORIES.filter((c) => c.groupSlug === groupSlug).map((c) => c.slug);
+
   const [keyword, setKeyword] = useState(initialQ);
-  const [cats, setCats] = useState<string[]>(initialCat ? [initialCat] : []);
+  const [cats, setCats] = useState<string[]>(
+    initialCat ? [initialCat] : initialGroup ? groupSubSlugs(initialGroup) : [],
+  );
   const [provs, setProvs] = useState<string[]>(initialProv ? [initialProv] : []);
   const [verifiedOnly, setVerifiedOnly] = useState(false);
   const [promoOnly, setPromoOnly] = useState(false);
   const [topRated, setTopRated] = useState(false);
   const [sort, setSort] = useState<"featured" | "rating" | "newest">("featured");
   const [filtersOpen, setFiltersOpen] = useState(false);
+  const [openGroups, setOpenGroups] = useState<Record<string, boolean>>(
+    initialGroup ? { [initialGroup]: true } : {},
+  );
 
   const toggle = (arr: string[], v: string, setter: (a: string[]) => void) => {
     setter(arr.includes(v) ? arr.filter((x) => x !== v) : [...arr, v]);
   };
+
+  const toggleGroup = (groupSlug: string) => {
+    const subs = groupSubSlugs(groupSlug);
+    const allSelected = subs.every((s) => cats.includes(s));
+    setCats(allSelected ? cats.filter((c) => !subs.includes(c)) : [...new Set([...cats, ...subs])]);
+  };
+
+  const activeGroup = initialGroup
+    ? CATEGORY_GROUPS.find((g) => g.slug === initialGroup)
+    : null;
 
   const filtered = useMemo(() => {
     let list = BUSINESSES.filter((b) => {
