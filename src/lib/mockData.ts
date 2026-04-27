@@ -631,7 +631,7 @@ export interface KlapEvent {
   id: string;
   jobId: string;
   jobTitle: string;
-  cost: 1;
+  cost: number;
   timestamp: string;
   outcome: "pending" | "won" | "lost";
 }
@@ -670,9 +670,10 @@ export const SJOH_TIERS: SjohTier[] = [
     klapsPerMonth: 5,
     blurb: "Land your first job. Zero risk.",
     features: [
+      "Unlimited free proposals",
       "Standard listing in search",
-      "Manual ID upload to bid",
-      "5 free Klaps per month",
+      "Manual ID upload",
+      "5 Klaps/month bid budget",
       "No card required",
     ],
   },
@@ -685,9 +686,9 @@ export const SJOH_TIERS: SjohTier[] = [
     blurb: "For side-hustlers and weekend pros.",
     popular: true,
     features: [
+      "Unlimited free proposals",
       "Boosted listing in search",
-      "50 Klaps per month",
-      "Apply to all jobs",
+      "50 Klaps/month bid budget",
       "Top-up packs available",
     ],
   },
@@ -701,8 +702,9 @@ export const SJOH_TIERS: SjohTier[] = [
     featured: true,
     features: [
       "Coral Checkmark — AI ID verified",
+      "Unlimited free proposals",
       "Top of local search results",
-      "200 Klaps per month",
+      "200 Klaps/month bid budget",
       "Branded PDF auto-quotations",
     ],
   },

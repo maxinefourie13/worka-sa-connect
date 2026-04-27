@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { X, Zap, Video, Paperclip, FileDown, Lock, Sparkles, Check, TrendingUp, Crown, Users } from "lucide-react";
+import { X, Zap, Video, Paperclip, FileDown, Lock, Sparkles, Check, Users, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useKlap, BOOST_OPTIONS, type BoostTier } from "@/lib/klapStore";
+import { useKlap } from "@/lib/klapStore";
 import { toast } from "@/hooks/use-toast";
 import { TopUpModal } from "@/components/TopUpModal";
 import { LiabilityDisclaimer } from "@/components/LiabilityDisclaimer";
@@ -26,7 +26,7 @@ interface Props {
 type PriceType = "fixed" | "from" | "quote";
 
 export const ProposalModal = ({ open, jobId, jobTitle, jobBudget, clientName, onClose, onSubmitted }: Props) => {
-  const { provider, klapJob, previewBid } = useKlap();
+  const { provider, placeBid, previewBid } = useKlap();
   const { user } = useAuth();
   const { business: myBusiness } = useMyBusiness();
   const [topUpOpen, setTopUpOpen] = useState(false);
@@ -38,15 +38,14 @@ export const ProposalModal = ({ open, jobId, jobTitle, jobBudget, clientName, on
   const [contactPref, setContactPref] = useState("WhatsApp");
   const [loomUrl, setLoomUrl] = useState("");
   const [attachments, setAttachments] = useState<File[]>([]);
-  const [boost, setBoost] = useState<BoostTier>("standard");
+  const [bid, setBid] = useState<number>(0);
   const [submitted, setSubmitted] = useState(false);
-  const [resultRank, setResultRank] = useState<{ rank: number; total: number } | null>(null);
+  const [resultRank, setResultRank] = useState<{ rank: number; total: number; bid: number } | null>(null);
 
   const isMainOke = provider.tier === "main-oke";
   const priceNum = Number(price) || 0;
-  const boostOption = BOOST_OPTIONS.find((b) => b.id === boost)!;
-  const preview = previewBid(jobId, boost);
-  const canAfford = provider.klapsRemaining >= boostOption.cost;
+  const safeBid = Math.max(0, Math.min(bid, provider.klapsRemaining));
+  const preview = previewBid(jobId, safeBid);
   const canSubmit =
     scope.trim().length >= 20 &&
     (priceType === "quote" || priceNum > 0) &&
@@ -62,7 +61,7 @@ export const ProposalModal = ({ open, jobId, jobTitle, jobBudget, clientName, on
     setContactPref("WhatsApp");
     setLoomUrl("");
     setAttachments([]);
-    setBoost("standard");
+    setBid(0);
     setSubmitted(false);
     setResultRank(null);
   };
@@ -79,46 +78,44 @@ export const ProposalModal = ({ open, jobId, jobTitle, jobBudget, clientName, on
       toast({ title: "Aikona!", description: PROHIBITED_MESSAGE, variant: "destructive" });
       return;
     }
-    const result = klapJob(jobId, jobTitle, boost);
+    const result = placeBid(jobId, jobTitle, safeBid);
     if (!result.ok) {
+      toast({ title: "Out of Klaps, eish!", description: "Top up to bid higher — or submit free with no bid.", variant: "destructive" });
       setTopUpOpen(true);
       return;
     }
 
-    // Persist to database so the client can be notified and see the bid.
-    // We only persist when we have a real auth user + business profile;
-    // mock/anonymous flows still get the local UX.
+    // Persist to database via the place_bid RPC (atomic deduct + insert).
     if (user && myBusiness && jobId) {
       const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(jobId);
       if (isUuid) {
-        const { data: inserted, error } = await supabase
-          .from("proposals")
-          .insert({
-            opportunity_id: jobId,
-            business_id: myBusiness.id,
-            provider_id: user.id,
-            message: scope,
-            quote_amount: priceType === "quote" ? null : priceNum,
-            klaps_spent: boostOption.cost,
-          })
-          .select("id")
-          .maybeSingle();
+        const { data: insertedId, error } = await supabase.rpc("place_bid", {
+          _opportunity_id: jobId,
+          _business_id: myBusiness.id,
+          _message: scope,
+          _quote_amount: priceType === "quote" ? null : priceNum,
+          _bid_klaps: safeBid,
+        });
         if (error) {
-          console.error("[proposal] insert failed", error);
-        } else if (inserted?.id) {
-          // Fire and forget — email failure shouldn't block the success state.
+          console.error("[place_bid] failed", error);
+          toast({ title: "Aikona!", description: error.message, variant: "destructive" });
+          return;
+        }
+        if (insertedId) {
           supabase.functions
-            .invoke("notify-new-bid", { body: { proposal_id: inserted.id } })
+            .invoke("notify-new-bid", { body: { proposal_id: insertedId } })
             .catch((e) => console.error("[notify-new-bid]", e));
         }
       }
     }
 
     setSubmitted(true);
-    setResultRank({ rank: result.rank!, total: result.total! });
+    setResultRank({ rank: result.rank!, total: result.total!, bid: safeBid });
     toast({
-      title: boost === "top-spot" ? "Top Spot locked in 👑" : boost === "boost" ? "Boosted to top half ⚡" : "Proposal sent! 💥",
-      description: `${boostOption.cost} Klap${boostOption.cost > 1 ? "s" : ""} deducted. You're ranked #${result.rank} of ${result.total}.`,
+      title: safeBid === 0 ? "Proposal sent!" : safeBid >= 20 ? "Big bid in! 👑" : "Bid placed ⚡",
+      description: safeBid === 0
+        ? `You're #${result.rank} of ${result.total}. Bid Klaps next time to push higher.`
+        : `${safeBid} Klap${safeBid > 1 ? "s" : ""} bid · ranked #${result.rank} of ${result.total}.`,
     });
     onSubmitted?.();
   };
@@ -163,7 +160,8 @@ export const ProposalModal = ({ open, jobId, jobTitle, jobBudget, clientName, on
             </div>
             <h2 className="font-display text-xl md:text-2xl font-semibold tracking-tight pr-8">{jobTitle}</h2>
             <p className="text-xs text-muted-foreground mt-2">
-              Costs <strong className="text-accent">{boostOption.cost} Klap{boostOption.cost > 1 ? "s" : ""}</strong> to send ({boostOption.label}). You have <strong className="tabular-nums">{provider.klapsRemaining}</strong> left.
+              Proposals are <strong className="text-foreground">free & unlimited</strong>. Bid Klaps to push your proposal higher in the client's list.
+              You have <strong className="tabular-nums text-foreground">{provider.klapsRemaining}</strong> Klap{provider.klapsRemaining !== 1 ? "s" : ""} left.
               {clientName && <> · For <strong>{clientName}</strong></>}
             </p>
           </div>
@@ -176,7 +174,6 @@ export const ProposalModal = ({ open, jobId, jobTitle, jobBudget, clientName, on
                 onDownloadQuote={handleDownloadQuote}
                 onClose={handleClose}
                 resultRank={resultRank}
-                boostLabel={boostOption.label}
               />
             ) : (
               <>
@@ -322,12 +319,13 @@ export const ProposalModal = ({ open, jobId, jobTitle, jobBudget, clientName, on
                   </p>
                 </div>
 
-                {/* Boost step — Upwork-style outbid */}
-                <BoostSelector
-                  boost={boost}
-                  onChange={setBoost}
+                {/* Bid step — open auction */}
+                <BidInput
+                  bid={bid}
+                  onChange={setBid}
                   preview={preview}
                   klapsRemaining={provider.klapsRemaining}
+                  onTopUp={() => setTopUpOpen(true)}
                 />
 
                 {/* Quotation upsell card */}
@@ -349,9 +347,9 @@ export const ProposalModal = ({ open, jobId, jobTitle, jobBudget, clientName, on
                   size="lg"
                 >
                   <Zap className="size-4" strokeWidth={2.5} />
-                  {!canAfford
-                    ? `Need ${boostOption.cost - provider.klapsRemaining} more Klap${boostOption.cost - provider.klapsRemaining > 1 ? "s" : ""}`
-                    : `Klap this Job — ${boostOption.cost} Klap${boostOption.cost > 1 ? "s" : ""}`}
+                  {safeBid > 0
+                    ? `Klap this Job — bid ${safeBid} Klap${safeBid > 1 ? "s" : ""}`
+                    : "Submit proposal — Free"}
                 </Button>
               </div>
             </div>
@@ -411,19 +409,20 @@ const QuotationCard = ({ isMainOke }: { isMainOke: boolean }) => {
 };
 
 const SuccessState = ({
-  isMainOke, onDownloadQuote, onClose, resultRank, boostLabel,
+  isMainOke, onDownloadQuote, onClose, resultRank,
 }: {
   isMainOke: boolean;
   onDownloadQuote: () => void;
   onClose: () => void;
-  resultRank: { rank: number; total: number } | null;
-  boostLabel: string;
+  resultRank: { rank: number; total: number; bid: number } | null;
 }) => (
   <div className="text-center py-6">
     <div className="size-16 rounded-full bg-primary-light text-primary flex items-center justify-center mx-auto mb-4">
       <Check className="size-8" strokeWidth={3} />
     </div>
-    <h3 className="font-display text-2xl font-semibold tracking-tight">Klapped! ⚡</h3>
+    <h3 className="font-display text-2xl font-semibold tracking-tight">
+      {resultRank && resultRank.bid > 0 ? "Klapped! ⚡" : "Proposal sent!"}
+    </h3>
     <p className="text-sm text-ink-2 mt-2 max-w-sm mx-auto">
       Your proposal is in. The client will see your pitch and reach out directly. No middleman, no commission.
     </p>
@@ -437,7 +436,7 @@ const SuccessState = ({
           </p>
         </div>
         <span className="text-[10px] font-bold uppercase tracking-widest bg-accent text-accent-foreground px-2 py-1 rounded">
-          {boostLabel}
+          {resultRank.bid} Klap{resultRank.bid !== 1 ? "s" : ""}
         </span>
       </div>
     )}
@@ -471,78 +470,115 @@ const SuccessState = ({
   </div>
 );
 
-const BoostSelector = ({
-  boost, onChange, preview, klapsRemaining,
+const QUICK_BIDS = [0, 5, 10, 25, 50];
+
+const BidInput = ({
+  bid, onChange, preview, klapsRemaining, onTopUp,
 }: {
-  boost: BoostTier;
-  onChange: (b: BoostTier) => void;
-  preview: { total: number; projectedRank: number };
+  bid: number;
+  onChange: (n: number) => void;
+  preview: { total: number; projectedRank: number; topBid: number };
   klapsRemaining: number;
+  onTopUp: () => void;
 }) => {
-  const competition = preview.total;
+  const safeBid = Math.max(0, Math.min(bid, klapsRemaining));
+  const topBidNote = preview.topBid > 0
+    ? `Top bid right now: ${preview.topBid} Klap${preview.topBid > 1 ? "s" : ""}`
+    : "No-one's bid yet — even 1 Klap puts you on top.";
+  const beatsTop = safeBid > preview.topBid;
+
   return (
     <div>
       <label className="text-xs font-bold uppercase tracking-widest text-ink-2 block mb-2">
-        Boost your bid
+        Bid Klaps to rank higher
       </label>
 
       {/* Competition banner */}
       <div className="mb-3 flex items-center gap-2 text-xs text-ink-2 bg-secondary rounded-lg px-3 py-2">
         <Users className="size-3.5 text-accent" />
         <span>
-          <strong className="text-foreground tabular-nums">{competition}</strong> pro{competition !== 1 ? "s" : ""} have already klapped this job.
-          {competition >= 5 && <span className="text-accent font-semibold"> Standing out matters.</span>}
+          <strong className="text-foreground tabular-nums">{preview.total - 1}</strong> other pro{preview.total - 1 !== 1 ? "s have" : " has"} bid on this job.
+          {" "}<span className="text-muted-foreground">{topBidNote}</span>
         </span>
       </div>
 
-      <div className="grid sm:grid-cols-3 gap-2">
-        {BOOST_OPTIONS.map((opt) => {
-          const isSelected = boost === opt.id;
-          const cantAfford = klapsRemaining < opt.cost;
-          const Icon = opt.id === "top-spot" ? Crown : opt.id === "boost" ? TrendingUp : Zap;
+      {/* Quick chips + custom input */}
+      <div className="flex flex-wrap gap-2 mb-3">
+        {QUICK_BIDS.map((n) => {
+          const disabled = n > klapsRemaining;
+          const selected = safeBid === n;
           return (
             <button
-              key={opt.id}
+              key={n}
               type="button"
-              onClick={() => onChange(opt.id)}
+              disabled={disabled}
+              onClick={() => onChange(n)}
               className={cn(
-                "text-left p-3 rounded-lg border-2 transition-all relative",
-                isSelected
-                  ? opt.id === "top-spot"
-                    ? "border-accent bg-accent/10"
-                    : opt.id === "boost"
-                    ? "border-foreground bg-foreground/5"
-                    : "border-foreground/40 bg-background"
-                  : "border-border bg-background hover:border-foreground/30",
-                cantAfford && "opacity-60",
+                "text-xs font-bold px-3 py-1.5 rounded-full border transition-all tabular-nums",
+                selected
+                  ? "bg-accent text-accent-foreground border-accent"
+                  : "bg-card text-ink-2 border-border hover:border-accent",
+                disabled && "opacity-40 cursor-not-allowed",
               )}
             >
-              {opt.id === "top-spot" && (
-                <span className="absolute -top-2 right-2 bg-accent text-accent-foreground text-[9px] font-bold uppercase tracking-widest px-1.5 py-0.5 rounded">
-                  Win it
-                </span>
-              )}
-              <div className="flex items-center gap-1.5 mb-1.5">
-                <Icon className={cn("size-3.5", opt.id === "top-spot" ? "text-accent" : "text-foreground")} strokeWidth={2.5} />
-                <span className="font-display text-sm font-semibold">{opt.label}</span>
-              </div>
-              <div className="font-display text-lg font-medium tabular-nums">
-                {opt.cost} <span className="text-xs font-sans text-muted-foreground">Klap{opt.cost > 1 ? "s" : ""}</span>
-              </div>
-              <p className="text-[11px] text-ink-2 mt-1 leading-snug">{opt.blurb}</p>
+              {n === 0 ? "Free" : `${n} Klap${n > 1 ? "s" : ""}`}
             </button>
           );
         })}
+        <div className="relative">
+          <input
+            type="number"
+            min={0}
+            max={klapsRemaining}
+            value={bid}
+            onChange={(e) => onChange(Math.max(0, Math.min(Number(e.target.value) || 0, klapsRemaining)))}
+            className="w-24 pl-3 pr-2 py-1.5 bg-background border border-border rounded-full text-xs font-bold tabular-nums outline-none focus:border-accent text-center"
+            placeholder="Custom"
+          />
+        </div>
       </div>
 
+      {/* Slider */}
+      <input
+        type="range"
+        min={0}
+        max={Math.max(klapsRemaining, 1)}
+        value={safeBid}
+        onChange={(e) => onChange(Number(e.target.value))}
+        disabled={klapsRemaining === 0}
+        className="w-full accent-accent"
+        aria-label="Bid amount"
+      />
+      <div className="flex justify-between text-[10px] text-muted-foreground mt-1 tabular-nums font-semibold">
+        <span>0</span>
+        <span>Your balance: {klapsRemaining}</span>
+      </div>
+
+      {klapsRemaining === 0 && (
+        <button
+          type="button"
+          onClick={onTopUp}
+          className="mt-2 text-[11px] font-bold text-accent hover:underline"
+        >
+          Out of Klaps, eish! → Top up to bid
+        </button>
+      )}
+
       {/* Projected rank */}
-      <div className="mt-3 flex items-center justify-between gap-2 px-3 py-2 rounded-lg bg-foreground text-background text-xs">
-        <span className="text-background/70 uppercase tracking-widest font-bold text-[10px]">Projected rank</span>
+      <div className="mt-3 flex items-center justify-between gap-2 px-3 py-2.5 rounded-lg bg-foreground text-background text-xs">
+        <div className="flex items-center gap-2">
+          <TrendingUp className="size-3.5 text-accent" />
+          <span className="text-background/70 uppercase tracking-widest font-bold text-[10px]">Projected rank</span>
+        </div>
         <span className="font-display text-base font-semibold tabular-nums">
-          #{preview.projectedRank} <span className="text-background/60 font-normal text-xs">of {competition + 1}</span>
+          #{preview.projectedRank} <span className="text-background/60 font-normal text-xs">of {preview.total}</span>
+          {beatsTop && safeBid > 0 && (
+            <span className="ml-2 text-[9px] bg-accent text-accent-foreground font-bold px-1.5 py-0.5 rounded uppercase tracking-widest">
+              Top spot
+            </span>
+          )}
         </span>
       </div>
     </div>
   );
 };
-

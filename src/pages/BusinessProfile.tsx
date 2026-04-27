@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import { BUSINESSES, BUSINESS_VERIFICATION, formatRand } from "@/lib/mockData";
 import { VerificationBadges } from "@/components/VerificationBadges";
 import { ReportProfileButton } from "@/components/ReportProfileButton";
+import { GoogleReviewsList } from "@/components/GoogleReviewsList";
+import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 
 type TabKey = "about" | "services" | "promotions" | "reviews";
@@ -16,12 +18,36 @@ const TABS: { key: TabKey; label: string }[] = [
   { key: "reviews", label: "Reviews" },
 ];
 
+interface LiveGoogleData {
+  id: string;
+  google_place_id: string | null;
+  google_maps_url: string | null;
+  google_rating: number | null;
+  google_review_count: number | null;
+}
+
 const BusinessProfile = () => {
   const { slug } = useParams<{ slug: string }>();
   const business = BUSINESSES.find((b) => b.slug === slug) ?? BUSINESSES[0];
   const [tab, setTab] = useState<TabKey>("about");
   const [following, setFollowing] = useState(false);
   const [followers, setFollowers] = useState(business.followers);
+  const [live, setLive] = useState<LiveGoogleData | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    if (!slug) return;
+    supabase
+      .from("businesses")
+      .select("id, google_place_id, google_maps_url, google_rating, google_review_count")
+      .eq("slug", slug)
+      .maybeSingle()
+      .then(({ data }) => {
+        if (!cancelled && data) setLive(data as LiveGoogleData);
+      });
+    return () => { cancelled = true; };
+  }, [slug]);
+
 
   const toggleFollow = () => {
     setFollowing((f) => {
@@ -182,6 +208,7 @@ const BusinessProfile = () => {
 
                 {tab === "reviews" && (
                   <div className="space-y-4">
+                    {live && <GoogleReviewsList businessId={live.id} business={live} />}
                     {business.reviews.map((r) => (
                       <div key={r.id} className="border border-border rounded-lg p-5">
                         <div className="flex items-center justify-between gap-3">

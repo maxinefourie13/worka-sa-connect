@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 
@@ -8,6 +8,11 @@ export interface MyBusiness {
   category_slug: string;
   city: string;
   province: string;
+  google_place_id: string | null;
+  google_maps_url: string | null;
+  google_rating: number | null;
+  google_review_count: number | null;
+  google_reviews_last_fetched_at: string | null;
 }
 
 /**
@@ -19,29 +24,33 @@ export function useMyBusiness() {
   const [business, setBusiness] = useState<MyBusiness | null>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    let cancelled = false;
+  const refresh = useCallback(async () => {
     if (!user) {
       setBusiness(null);
       setLoading(false);
       return;
     }
-    (async () => {
-      const { data } = await supabase
-        .from("businesses")
-        .select("id, name, category_slug, city, province")
-        .eq("owner_id", user.id)
-        .limit(1)
-        .maybeSingle();
-      if (!cancelled) {
-        setBusiness((data as MyBusiness) ?? null);
-        setLoading(false);
-      }
+    setLoading(true);
+    const { data } = await supabase
+      .from("businesses")
+      .select("id, name, category_slug, city, province, google_place_id, google_maps_url, google_rating, google_review_count, google_reviews_last_fetched_at")
+      .eq("owner_id", user.id)
+      .limit(1)
+      .maybeSingle();
+    setBusiness((data as MyBusiness) ?? null);
+    setLoading(false);
+  }, [user]);
+
+  useEffect(() => {
+    let cancelled = false;
+    void (async () => {
+      if (cancelled) return;
+      await refresh();
     })();
     return () => {
       cancelled = true;
     };
-  }, [user]);
+  }, [refresh]);
 
-  return { business, loading };
+  return { business, loading, refresh };
 }
