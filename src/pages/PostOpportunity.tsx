@@ -3,7 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { ArrowLeft, CheckCircle2 } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
 import { Button } from "@/components/ui/button";
-import { CATEGORIES, PROVINCES } from "@/lib/mockData";
+import { CATEGORIES, CATEGORY_GROUPS, PROVINCES } from "@/lib/mockData";
 import { toast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 
@@ -11,6 +11,10 @@ const PostOpportunity = () => {
   const navigate = useNavigate();
   const [submitted, setSubmitted] = useState(false);
   const [urgent, setUrgent] = useState(false);
+  const [groupSlug, setGroupSlug] = useState("");
+  const [categorySlug, setCategorySlug] = useState("");
+
+  const subCats = groupSlug ? CATEGORIES.filter((c) => c.groupSlug === groupSlug) : [];
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
