@@ -232,6 +232,30 @@ export type Database = {
         }
         Relationships: []
       }
+      early_access_signups: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          role: string
+          source: string | null
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          role: string
+          source?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          role?: string
+          source?: string | null
+        }
+        Relationships: []
+      }
       klap_events: {
         Row: {
           cost: number
