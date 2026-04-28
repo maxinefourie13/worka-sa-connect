@@ -5,9 +5,18 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/hooks/use-toast";
 import { Check, Loader2 } from "lucide-react";
-import mascot from "@/assets/sjoh-mascot.png";
+import mascot from "@/assets/sjoh-mascot-glow.png";
+import { Typewriter } from "@/components/Typewriter";
 
 type Role = "pro" | "customer";
+
+const HERO_PHRASES = [
+  "hiring mamparas?",
+  "ghosting tradies?",
+  "half-done jobs?",
+  "no-shows on Saturday?",
+  "paying twice for one job?",
+];
 
 const PERKS: Record<Role, string[]> = {
   pro: [
