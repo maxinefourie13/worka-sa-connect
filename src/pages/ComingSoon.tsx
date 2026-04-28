@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { toast } from "@/hooks/use-toast";
 import { Check, Loader2 } from "lucide-react";
 import mascot from "@/assets/sjoh-mascot-glow.png";
+import sjohLogo from "@/assets/sjoh-logo-white.png";
 import { Typewriter } from "@/components/Typewriter";
 
 type Role = "pro" | "customer";
