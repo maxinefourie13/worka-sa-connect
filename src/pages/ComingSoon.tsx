@@ -72,10 +72,11 @@ const ComingSoonPage = () => {
         <link rel="canonical" href="https://sjoh.co.za/" />
       </Helmet>
 
-      <div className="min-h-dvh bg-[#0a0a0a] text-white relative overflow-hidden">
-        {/* Subtle coral glow */}
+      <div className="min-h-dvh text-white relative overflow-hidden bg-[radial-gradient(ellipse_at_top,#2a2a2e_0%,#141416_45%,#08080a_100%)]">
+        {/* Subtle charcoal vignette + faint coral edge */}
         <div className="pointer-events-none absolute inset-0">
-          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 size-[680px] rounded-full bg-primary/15 blur-[140px]" />
+          <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
+          <div className="absolute -bottom-40 left-1/2 -translate-x-1/2 size-[800px] rounded-full bg-primary/[0.06] blur-[160px]" />
         </div>
 
         <div className="relative container max-w-6xl py-10 md:py-14">
@@ -175,7 +176,7 @@ const ComingSoonPage = () => {
             {/* Right — mascot */}
             <div className="order-1 lg:order-2 flex justify-center lg:justify-end">
               <div className="relative">
-                <div className="absolute inset-0 bg-primary/30 blur-3xl rounded-full scale-75" />
+                <div className="absolute inset-x-8 bottom-4 h-12 bg-black/60 blur-2xl rounded-full" />
                 <img
                   src={mascot}
                   alt="Sjoh mascot — a French bulldog in a coral Sjoh hoodie"
