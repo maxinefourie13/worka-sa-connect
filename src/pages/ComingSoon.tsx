@@ -102,7 +102,7 @@ const ComingSoonPage = () => {
                 <span className="block text-white text-4xl sm:text-5xl md:text-6xl mt-5">
                   Tired of
                 </span>
-                <span className="block text-primary text-5xl sm:text-6xl md:text-7xl mt-2 min-h-[1.1em]">
+                <span className="block text-primary text-5xl sm:text-6xl md:text-7xl mt-2 min-h-[2.2em] leading-[1.1]">
                   <Typewriter
                     phrases={HERO_PHRASES}
                     typingSpeed={70}
