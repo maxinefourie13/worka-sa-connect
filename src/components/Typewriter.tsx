@@ -13,6 +13,8 @@ interface TypewriterProps {
   className?: string;
   /** Tailwind class applied to "Sjoh" + punctuation (defaults to coral primary) */
   accentClassName?: string;
+  /** Reserve the current full phrase's wrapped layout before it finishes typing */
+  reserveCurrentPhraseSpace?: boolean;
 }
 
 /**
@@ -28,6 +30,7 @@ export const Typewriter = ({
   randomize = false,
   className,
   accentClassName = "text-primary",
+  reserveCurrentPhraseSpace = false,
 }: TypewriterProps) => {
   const [order] = useState(() => {
     if (!randomize) return phrases.map((_, i) => i);
@@ -42,9 +45,9 @@ export const Typewriter = ({
   const [orderIndex, setOrderIndex] = useState(0);
   const [text, setText] = useState("");
   const [phase, setPhase] = useState<"typing" | "holding" | "erasing">("typing");
+  const target = phrases[order[orderIndex]] ?? "";
 
   useEffect(() => {
-    const target = phrases[order[orderIndex]] ?? "";
     let timeoutId: number;
 
     if (phase === "typing") {
@@ -71,34 +74,56 @@ export const Typewriter = ({
     }
 
     return () => window.clearTimeout(timeoutId);
-  }, [text, phase, orderIndex, order, phrases, typingSpeed, erasingSpeed, holdDuration]);
+  }, [text, phase, orderIndex, order, phrases, typingSpeed, erasingSpeed, holdDuration, target]);
 
   // Tokenize so "Sjoh" and punctuation render in the accent color while
   // the rest stays in whatever color the parent sets (foreground/charcoal).
   // Split keeps the matched delimiters as their own tokens.
-  const tokens = text.split(/(Sjoh|[!?.,;:'"\-—…])/g).filter(Boolean);
+  const splitTokens = (value: string) => value.split(/(Sjoh|[!?.,;:'"\-—…])/g).filter(Boolean);
+
+  const renderTokens = (value: string) =>
+    splitTokens(value).map((tok, i) => {
+      const isAccent = tok === "Sjoh" || /^[!?.,;:'"\-—…]$/.test(tok);
+      return isAccent ? (
+        <span key={i} className={accentClassName}>
+          {tok}
+        </span>
+      ) : (
+        <span key={i}>{tok}</span>
+      );
+    });
+
+  const caret = (
+    <span
+      aria-hidden="true"
+      className="inline-block w-[0.08em] ml-1 align-baseline animate-caret-blink"
+      style={{
+        height: "0.95em",
+        backgroundColor: "currentColor",
+        transform: "translateY(0.12em)",
+      }}
+    />
+  );
+
+  if (reserveCurrentPhraseSpace) {
+    return (
+      <span className={`${className ?? ""} grid w-full`} aria-live="polite" aria-atomic="true">
+        <span className="invisible col-start-1 row-start-1" aria-hidden="true">
+          {renderTokens(target)}
+          {caret}
+        </span>
+        <span className="col-start-1 row-start-1">
+          {renderTokens(text)}
+          {caret}
+        </span>
+      </span>
+    );
+  }
 
   return (
     <span className={className} aria-live="polite" aria-atomic="true">
-      {tokens.map((tok, i) => {
-        const isAccent = tok === "Sjoh" || /^[!?.,;:'"\-—…]$/.test(tok);
-        return isAccent ? (
-          <span key={i} className={accentClassName}>
-            {tok}
-          </span>
-        ) : (
-          <span key={i}>{tok}</span>
-        );
-      })}
-      <span
-        aria-hidden="true"
-        className="inline-block w-[0.08em] ml-1 align-baseline animate-caret-blink"
-        style={{
-          height: "0.95em",
-          backgroundColor: "currentColor",
-          transform: "translateY(0.12em)",
-        }}
-      />
+      {renderTokens(text)}
+      {caret}
     </span>
   );
 };
