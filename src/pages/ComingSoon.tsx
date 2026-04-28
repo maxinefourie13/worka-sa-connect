@@ -93,8 +93,9 @@ const ComingSoonPage = () => {
             {/* Left — copy + form */}
             <div className="text-center lg:text-left order-2 lg:order-1">
               <h1 className="font-display font-extrabold tracking-tight leading-[0.95]">
-                <span className="block text-white text-4xl sm:text-5xl md:text-6xl">
-                  Tired of
+                <span className="block text-4xl sm:text-5xl md:text-6xl">
+                  <span className="text-primary">Sjoh!</span>{" "}
+                  <span className="text-white">Tired of</span>
                 </span>
                 <span className="block text-primary text-5xl sm:text-6xl md:text-7xl mt-2 min-h-[1.1em]">
                   <Typewriter
