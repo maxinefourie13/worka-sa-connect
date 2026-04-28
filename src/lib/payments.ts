@@ -36,7 +36,7 @@ async function startCheckout(
 
 export const payments = {
   startSubscription: (tier: Tier) =>
-    startCheckout("paystack-create-subscription", { tier }, `Starting ${tier === "hustler" ? "Hustler" : "Main Oke"} subscription`),
+    startCheckout("paystack-create-subscription", { tier }, `Starting ${tier === "hustler" ? "Hustler" : "The Pro"} subscription`),
 
   buyKlapPack: (pack: Pack) =>
     startCheckout("paystack-create-topup", { pack }, "Loading Klaps"),

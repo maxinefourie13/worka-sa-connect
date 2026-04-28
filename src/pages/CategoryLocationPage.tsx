@@ -116,7 +116,7 @@ const CategoryLocationPage = () => {
 
   const heading = `Find the Best ${categoryName} in ${locationLabel}`;
   const title = `Top ${categoryName} in ${locationLabel} | Verified Pros | Sjoh!`;
-  const description = `Looking for a trusted ${categoryName} in ${locationLabel}? Get quotes from verified professionals. No scammers, just real okes.`;
+  const description = `Looking for a trusted ${categoryName} in ${locationLabel}? Get quotes from vetted professionals. No ghosters, no half-jobs — just actual pros.`;
   const canonical = buildLocationCanonical(categorySlug ?? "", provinceSlug, citySlug);
 
   const jsonLd = useMemo<BusinessForJsonLd[]>(

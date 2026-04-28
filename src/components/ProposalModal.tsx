@@ -373,7 +373,7 @@ const QuotationCard = ({ isMainOke }: { isMainOke: boolean }) => {
           <div className="flex-1">
             <p className="font-display text-sm font-semibold flex items-center gap-2">
               Auto-Quotation unlocked
-              <span className="text-[9px] bg-accent text-accent-foreground font-bold px-1.5 py-0.5 rounded uppercase tracking-widest">Main Oke</span>
+              <span className="text-[9px] bg-accent text-accent-foreground font-bold px-1.5 py-0.5 rounded uppercase tracking-widest">The Pro</span>
             </p>
             <p className="text-xs text-background/80 mt-1">
               We'll generate a branded PDF quotation from your business info + this proposal. Available right after you send.
@@ -394,13 +394,13 @@ const QuotationCard = ({ isMainOke }: { isMainOke: boolean }) => {
             Want to send a branded PDF quotation? <Sparkles className="size-3.5 inline text-accent -mt-0.5" />
           </p>
           <p className="text-xs text-ink-2 mt-1">
-            Auto-Quotation builds a professional PDF from your business info — only on <strong>The Main Oke</strong>. Pros who quote in PDF land 2x more jobs.
+            Auto-Quotation builds a professional PDF from your business info — only on <strong>The Pro</strong>. Pros who quote in PDF land 2x more jobs.
           </p>
           <Link
             to="/pricing"
             className="inline-flex items-center gap-1 text-xs font-bold text-accent mt-2 hover:underline"
           >
-            Upgrade to Main Oke →
+            Upgrade to The Pro →
           </Link>
         </div>
       </div>
@@ -458,10 +458,10 @@ const SuccessState = ({
           Send a branded PDF quote next time
         </p>
         <p className="text-xs text-ink-2 mt-1">
-          Main Oke pros automatically generate a polished PDF quote with their logo, address, and pricing — done in 1 click.
+          The Pro tier automatically generates a polished PDF quote with your logo, address, and pricing — done in 1 click.
         </p>
         <Link to="/pricing" className="inline-flex items-center gap-1 text-xs font-bold text-accent mt-2 hover:underline">
-          Upgrade to Main Oke →
+          Upgrade to The Pro →
         </Link>
       </div>
     )}

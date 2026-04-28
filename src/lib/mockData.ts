@@ -664,7 +664,7 @@ export interface SjohTier {
 export const SJOH_TIERS: SjohTier[] = [
   {
     slug: "dala-trial",
-    name: "Verified Oke",
+    name: "Verified Pro",
     price: 0,
     period: "Free trial",
     klapsPerMonth: 5,
@@ -694,7 +694,7 @@ export const SJOH_TIERS: SjohTier[] = [
   },
   {
     slug: "main-oke",
-    name: "The Main Oke",
+    name: "The Pro",
     price: 250,
     period: "/month",
     klapsPerMonth: 200,

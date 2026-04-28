@@ -13,7 +13,7 @@ const FAQS = [
   { q: "How does the Dala Trial work?", a: "All new providers get 3 months free with 5 Klaps a month — enough to land your first job. No card required to start." },
   { q: "What happens if I run out of Klaps?", a: "You'll see a top-up prompt next time you try to Klap a job. Buy a Six-Pack (R50 = 10 Klaps) or a Crate (R150 = 40 Klaps) and keep grafting." },
   { q: "Do you take commission on the work I do?", a: "Never. Sjoh is a directory and a bidding platform — payments happen directly between you and your client. We don't touch your money." },
-  { q: "What is Sjoh's Law?", a: "Three strikes and you're out. Flake on a job, do dangerous work, or refuse to pay for completed work — that's a strike. Three strikes and your ID is permanently banned. Zero pampoens allowed." },
+  { q: "What is Sjoh's Law?", a: "Three strikes and you're out. Flake on a job, do dangerous work, or refuse to pay for completed work — that's a strike. Three strikes and your ID is permanently banned. Zero mamparas allowed." },
   { q: "Can I cancel any time?", a: "Yes. Cancel or downgrade from your dashboard. No contracts, no cancellation fees." },
 ];
 
@@ -72,7 +72,7 @@ const Pricing = () => {
               )}
               {t.featured && (
                 <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-foreground text-background text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full">
-                  For the main okes
+                  For the actual pros
                 </span>
               )}
               <h3 className="font-display text-2xl font-semibold">{t.name}</h3>
