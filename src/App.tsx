@@ -11,6 +11,7 @@ import { KlapProvider } from "@/lib/klapStore";
 import { AuthProvider } from "@/hooks/useAuth";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import Index from "./pages/Index.tsx";
+import ComingSoon from "./pages/ComingSoon.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import Directory from "./pages/Directory.tsx";
 import GroupLanding from "./pages/GroupLanding.tsx";
@@ -40,6 +41,7 @@ const App = () => {
             <BrowserRouter>
               <Routes>
                 <Route path="/" element={<Index />} />
+                <Route path="/soon" element={<ComingSoon />} />
                 <Route path="/directory" element={<Directory />} />
                 <Route path="/directory/g/:groupSlug" element={<GroupLanding />} />
                 <Route path="/business/:slug" element={<BusinessProfile />} />
