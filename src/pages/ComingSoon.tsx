@@ -17,8 +17,8 @@ const PERKS: Record<Role, string[]> = {
   ],
   customer: [
     "Early access before public launch",
-    "R100 off your first booked job",
     "First dibs on vetted pros in your area",
+    "Be the first to skip the mamparas",
   ],
 };
 
