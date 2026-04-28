@@ -19,25 +19,25 @@ const HOW_IT_WORKS = [
 ];
 
 const HERO_PHRASES = [
-  "Sjoh! Your husband's DIY is a crime scene. Hire a real pro.",
-  "Sjoh! Kitchen looking like a swimming pool? Dala a plumber.",
-  "Sjoh! Don't let a pampoen tile your bathroom. Get quotes.",
+  "Sjoh! Your husband's DIY is a crime scene. Hire an actual professional.",
+  "Sjoh! Kitchen looking like a swimming pool? Dala a vetted plumber.",
+  "Sjoh! Don't let a mampara tile your bathroom. Get real quotes.",
   "Sjoh! Because 14 phone calls is 13 too many. Just post the job.",
-  "Sjoh! DB board singing the load shedding blues? Find a sparky.",
-  "Sjoh! Still waiting for the 'Sober Monday' guy? Find vetted pros.",
-  "Sjoh! That company logo looks like MS Paint. Hire a designer.",
-  "Sjoh! Spreadsheets making you cry? Dala an Excel wizard.",
-  "Sjoh! Cousin's wiring giving you static shocks? Get an electrician.",
-  "Sjoh! Locked out in your 'poverty' PJs? We've got locksmiths.",
-  "Sjoh! The dog ate your garden... again. Find a landscaper.",
+  "Sjoh! DB board singing the load shedding blues? Find a vetted sparky.",
+  "Sjoh! Still waiting on the 'Sober Monday' guy? Hire vetted pros instead.",
+  "Sjoh! That company logo looks like MS Paint. Hire a real designer.",
+  "Sjoh! Spreadsheets making you cry? Dala an Excel pro.",
+  "Sjoh! Cousin's wiring giving you static shocks? Get a qualified electrician.",
+  "Sjoh! Locked out in your old PJs? We've got vetted locksmiths.",
+  "Sjoh! The dog ate your garden... again. Find a proper landscaper.",
   "Sjoh! Bank balance looking like a temperature? Sell your skills.",
   "Sjoh! Too much month at the end of the money? Start a hustle.",
   "Sjoh! Eskom bill giving you chest pains? Offer your services.",
-  "Sjoh! Tired of begging clients to pay you? Enjoy escrow protection.",
+  "Sjoh! Tired of begging clients to pay? Get on a platform built for pros.",
   "Sjoh! Stop grafting for your uncle. Start your own business.",
   "Sjoh! Got skills but no leads? List your services today.",
-  "Sjoh! Januworry hitting hard in October? Dala a side-hustle.",
-  "Sjoh! Can you fix what the tjops broke? We need you.",
+  "Sjoh! Januworry hitting in October? Dala a side-hustle.",
+  "Sjoh! Can fix what the chancers broke? We need you.",
   "Sjoh! Turn your 'I know a guy' status into a legit business.",
   "Sjoh! Good with numbers, bad with being broke? Offer tutoring.",
 ];
@@ -79,21 +79,29 @@ const HomePage = () => {
             No commission. No middlemen. Direct contact.
           </span>
 
-          {/* Hero typewriter — the SA-flavoured Sjoh! line is the centrepiece */}
-          <div className="min-h-[14rem] sm:min-h-[12rem] md:min-h-[13rem] lg:min-h-[14rem] flex items-center justify-center">
-            <h1 className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-semibold tracking-tight leading-[1.05] max-w-5xl mx-auto text-balance text-foreground">
+          {/* Static headline */}
+          <h1 className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight leading-[1.05] max-w-5xl mx-auto text-balance text-foreground">
+            Tired of hiring mamparas? <span aria-hidden>😒</span>
+          </h1>
+          <p className="mt-5 text-lg md:text-xl text-ink-2 max-w-2xl mx-auto leading-relaxed">
+            No ghosters. No half-jobs. Just vetted pros to help you get it sorted.
+          </p>
+
+          {/* Coral typewriter line below sub-headline */}
+          <div className="mt-8 min-h-[3.5rem] flex items-center justify-center">
+            <p className="text-base md:text-lg font-semibold text-foreground/80 max-w-3xl mx-auto">
               <Typewriter
                 phrases={HERO_PHRASES}
                 randomize
-                typingSpeed={75}
-                erasingSpeed={35}
-                holdDuration={3200}
+                typingSpeed={45}
+                erasingSpeed={22}
+                holdDuration={2400}
               />
-            </h1>
+            </p>
           </div>
 
           {/* Small label above the search */}
-          <p className="mt-10 mb-3 text-sm md:text-base font-semibold uppercase tracking-widest text-muted-foreground">
+          <p className="mt-8 mb-3 text-sm md:text-base font-semibold uppercase tracking-widest text-muted-foreground">
             What do you need?
           </p>
 
@@ -129,7 +137,7 @@ const HomePage = () => {
               <span className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-muted-foreground text-xs">▾</span>
             </div>
             <FlameButton type="submit" size="lg">
-              Search
+              Find a Pro
             </FlameButton>
           </form>
 
@@ -283,7 +291,7 @@ const HomePage = () => {
       {/* CTA strip */}
       <section className="bg-primary text-primary-foreground">
         <div className="container py-16 text-center">
-          <h2 className="font-display text-3xl md:text-5xl font-medium tracking-tight max-w-3xl mx-auto text-balance">
+          <h2 className="font-display text-3xl md:text-5xl font-extrabold tracking-tight max-w-3xl mx-auto text-balance">
             Get found by people already looking.
           </h2>
           <p className="mt-4 text-primary-foreground/85 max-w-xl mx-auto">
@@ -291,10 +299,10 @@ const HomePage = () => {
           </p>
           <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
             <Button variant="ink" size="lg" asChild>
-              <Link to="/list">List Your Business</Link>
+              <Link to="/list">Apply as a Pro</Link>
             </Button>
             <Button variant="outline" size="lg" className="bg-transparent border-white/30 text-white hover:bg-white/10" asChild>
-              <Link to="/pricing">See Pricing</Link>
+              <Link to="/pricing">Claim your 30-Day Trial</Link>
             </Button>
           </div>
         </div>

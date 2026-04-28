@@ -5,6 +5,7 @@ import { FlameButton } from "@/components/ui/flame-button";
 import { Menu, X, LayoutDashboard, LogOut } from "lucide-react";
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
+import sjohLogo from "@/assets/sjoh-logo.png";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -48,8 +49,8 @@ export const SiteHeader = () => {
     <header className="sticky top-0 z-50 w-full border-b border-border/70 bg-background/85 backdrop-blur-md">
       <div className="container flex h-16 items-center justify-between gap-6">
         <div className="flex items-center gap-10">
-          <Link to="/" className="font-display text-2xl font-semibold tracking-tight">
-            Sjoh<span className="text-primary">.</span>
+          <Link to="/" className="flex items-center" aria-label="Sjoh home">
+            <img src={sjohLogo} alt="Sjoh!" className="h-7 md:h-8 w-auto" />
           </Link>
           <nav className="hidden lg:flex items-center gap-7">
             {NAV.map((n) => (
@@ -68,7 +69,7 @@ export const SiteHeader = () => {
           {session ? (
             <>
               <Button variant="outline" size="sm" asChild>
-                <Link to="/list">List Your Business</Link>
+                <Link to="/list">Apply as a Pro</Link>
               </Button>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -101,7 +102,7 @@ export const SiteHeader = () => {
                 <Link to="/login">Log In</Link>
               </Button>
               <FlameButton asChild>
-                <Link to="/list">List Your Business</Link>
+                <Link to="/list">Apply as a Pro</Link>
               </FlameButton>
             </>
           )}
@@ -143,7 +144,7 @@ export const SiteHeader = () => {
                     <Link to="/login" onClick={() => setOpen(false)}>Log In</Link>
                   </Button>
                   <Button className="flex-1" asChild>
-                    <Link to="/list" onClick={() => setOpen(false)}>List Business</Link>
+                    <Link to="/list" onClick={() => setOpen(false)}>Apply as a Pro</Link>
                   </Button>
                 </>
               )}

@@ -89,7 +89,7 @@ export const TopUpModal = ({ open, onClose }: Props) => {
             <div className="flex-1 min-w-0">
               <p className="font-display text-sm font-semibold">Stop topping up — upgrade instead</p>
               <p className="text-xs text-ink-2 mt-0.5">
-                <strong>The Main Oke</strong> gets 200 Klaps a month + Coral Checkmark for R 250.
+                <strong>The Pro</strong> gets 200 Klaps a month + Coral Checkmark for R 250.
               </p>
             </div>
             <Link

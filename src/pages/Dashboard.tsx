@@ -57,7 +57,7 @@ const Dashboard = () => {
                 <div className={cn("size-10 rounded-lg flex items-center justify-center font-display font-bold text-foreground bg-card border border-border", me.gradient)} />
                 <div className="min-w-0">
                   <p className="text-sm font-semibold truncate">{me.name}</p>
-                  <p className="text-xs text-muted-foreground">The Main Oke</p>
+                  <p className="text-xs text-muted-foreground">The Pro</p>
                 </div>
               </div>
               <nav className="mt-3 space-y-0.5">
