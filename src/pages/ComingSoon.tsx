@@ -175,12 +175,15 @@ const ComingSoonPage = () => {
 
             {/* Right — mascot */}
             <div className="order-1 lg:order-2 flex justify-center lg:justify-end">
-              <div className="relative">
-                <div className="absolute inset-x-8 bottom-4 h-12 bg-black/60 blur-2xl rounded-full" />
+              <div className="relative flex items-center justify-center">
+                {/* Layered grey gradient halo */}
+                <div className="absolute inset-0 -m-20 rounded-full bg-[radial-gradient(circle_at_center,#3a3a3f_0%,#26262a_35%,transparent_70%)] blur-2xl" />
+                <div className="absolute inset-0 -m-10 rounded-full bg-[radial-gradient(circle_at_center,#4a4a50_0%,transparent_60%)] blur-xl opacity-80" />
+                <div className="absolute inset-x-10 bottom-6 h-16 bg-black/70 blur-3xl rounded-full" />
                 <img
                   src={mascot}
                   alt="Sjoh mascot — a French bulldog in a coral Sjoh hoodie"
-                  className="relative w-[280px] sm:w-[360px] md:w-[440px] lg:w-[500px] h-auto drop-shadow-2xl"
+                  className="relative w-[360px] sm:w-[460px] md:w-[560px] lg:w-[640px] xl:w-[720px] h-auto drop-shadow-2xl"
                   loading="eager"
                 />
               </div>
