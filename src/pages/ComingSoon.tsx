@@ -155,9 +155,9 @@ const ComingSoonPage = () => {
               {/* Form */}
               {done ? (
                 <div className="mt-8 p-5 rounded-2xl bg-primary/10 border border-primary/30 max-w-md mx-auto lg:mx-0">
-                  <p className="font-semibold text-white">You're on the list.</p>
+                  <p className="font-semibold text-white">Lekker — you're on the list.</p>
                   <p className="text-sm text-white/70 mt-1">
-                    Keep an eye on your inbox — we'll holla the moment we launch.
+                    We'll holla when we launch, plus the odd promo and your bonus perks (extra free days & Klaps). Unsubscribe anytime.
                   </p>
                 </div>
               ) : (
@@ -190,8 +190,8 @@ const ComingSoonPage = () => {
                 </form>
               )}
 
-              <p className="mt-3 text-xs text-white/40 max-w-md mx-auto lg:mx-0">
-                One email when we launch. No spam, no nonsense.
+              <p className="mt-3 text-xs text-white/50 max-w-md mx-auto lg:mx-0 leading-relaxed">
+                By signing up you're opting in to launch news and the occasional promo from Sjoh — and you'll score bonus perks (extra free days & Klaps) for being on the list. No spam, unsubscribe anytime.
               </p>
             </div>
 
