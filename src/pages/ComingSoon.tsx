@@ -94,10 +94,16 @@ const ComingSoonPage = () => {
             <div className="text-center lg:text-left order-2 lg:order-1">
               <h1 className="font-display font-extrabold tracking-tight leading-[0.95]">
                 <span className="block text-white text-4xl sm:text-5xl md:text-6xl">
-                  Tired of hiring
+                  Tired of
                 </span>
-                <span className="block text-primary text-6xl sm:text-7xl md:text-8xl mt-1">
-                  mamparas?
+                <span className="block text-primary text-5xl sm:text-6xl md:text-7xl mt-2 min-h-[1.1em]">
+                  <Typewriter
+                    phrases={HERO_PHRASES}
+                    typingSpeed={70}
+                    erasingSpeed={35}
+                    holdDuration={1800}
+                    accentClassName="text-primary"
+                  />
                 </span>
               </h1>
 
