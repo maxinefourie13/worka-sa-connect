@@ -25,9 +25,9 @@ const PERKS: Record<Role, string[]> = {
     "First-in-line for vetting & verification",
   ],
   customer: [
-    "Early access before public launch",
+    "Post a job with your own budget — pros send you quotes",
     "First dibs on vetted pros in your area",
-    "Be the first to skip the mamparas",
+    "Skip the WhatsApp group hunt and the mamparas",
   ],
 };
 
