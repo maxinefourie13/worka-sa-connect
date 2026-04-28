@@ -109,6 +109,7 @@ const ComingSoonPage = () => {
                     erasingSpeed={35}
                     holdDuration={1800}
                     accentClassName="text-primary"
+                    reserveCurrentPhraseSpace
                   />
                 </span>
               </h1>
