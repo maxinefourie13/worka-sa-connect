@@ -17,8 +17,8 @@ const PERKS: Record<Role, string[]> = {
   ],
   customer: [
     "Early access before public launch",
-    "R100 off your first booked job",
     "First dibs on vetted pros in your area",
+    "Be the first to skip the mamparas",
   ],
 };
 
@@ -67,7 +67,7 @@ const ComingSoonPage = () => {
         <title>Sjoh! is launching soon — Tired of hiring mamparas?</title>
         <meta
           name="description"
-          content="Sjoh.co.za is launching soon. South Africa's directory of vetted service pros. Sign up for early access — pros get an extra free month, customers get R100 off."
+          content="Sjoh.co.za is launching soon. South Africa's directory of vetted service pros. Sign up for early access — pros get an extra free month."
         />
         <link rel="canonical" href="https://sjoh.co.za/" />
       </Helmet>

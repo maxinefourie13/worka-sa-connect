@@ -40,8 +40,8 @@ const App = () => {
             <Sonner />
             <BrowserRouter>
               <Routes>
-                <Route path="/" element={<Index />} />
-                <Route path="/soon" element={<ComingSoon />} />
+                <Route path="/" element={<ComingSoon />} />
+                <Route path="/preview-home" element={<Index />} />
                 <Route path="/directory" element={<Directory />} />
                 <Route path="/directory/g/:groupSlug" element={<GroupLanding />} />
                 <Route path="/business/:slug" element={<BusinessProfile />} />
