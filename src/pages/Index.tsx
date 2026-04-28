@@ -19,9 +19,11 @@ const HOW_IT_WORKS = [
 ];
 
 const HERO_PHRASES = [
+  "Sjoh! Tired of hiring mamparas? Find a vetted pro.",
   "Sjoh! Your husband's DIY is a crime scene. Hire an actual professional.",
   "Sjoh! Kitchen looking like a swimming pool? Dala a vetted plumber.",
   "Sjoh! Don't let a mampara tile your bathroom. Get real quotes.",
+  "Sjoh! No ghosters. No half-jobs. Just vetted pros.",
   "Sjoh! Because 14 phone calls is 13 too many. Just post the job.",
   "Sjoh! DB board singing the load shedding blues? Find a vetted sparky.",
   "Sjoh! Still waiting on the 'Sober Monday' guy? Hire vetted pros instead.",
@@ -79,29 +81,21 @@ const HomePage = () => {
             No commission. No middlemen. Direct contact.
           </span>
 
-          {/* Static headline */}
-          <h1 className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight leading-[1.05] max-w-5xl mx-auto text-balance text-foreground">
-            Tired of hiring mamparas? <span aria-hidden>😒</span>
-          </h1>
-          <p className="mt-5 text-lg md:text-xl text-ink-2 max-w-2xl mx-auto leading-relaxed">
-            No ghosters. No half-jobs. Just vetted pros to help you get it sorted.
-          </p>
-
-          {/* Coral typewriter line below sub-headline */}
-          <div className="mt-8 min-h-[3.5rem] flex items-center justify-center">
-            <p className="text-base md:text-lg font-semibold text-foreground/80 max-w-3xl mx-auto">
+          {/* Hero typewriter — the SA-flavoured Sjoh! line is the centrepiece */}
+          <div className="min-h-[14rem] sm:min-h-[12rem] md:min-h-[13rem] lg:min-h-[14rem] flex items-center justify-center">
+            <h1 className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight leading-[1.05] max-w-5xl mx-auto text-balance text-foreground">
               <Typewriter
                 phrases={HERO_PHRASES}
                 randomize
-                typingSpeed={45}
-                erasingSpeed={22}
-                holdDuration={2400}
+                typingSpeed={75}
+                erasingSpeed={35}
+                holdDuration={3200}
               />
-            </p>
+            </h1>
           </div>
 
           {/* Small label above the search */}
-          <p className="mt-8 mb-3 text-sm md:text-base font-semibold uppercase tracking-widest text-muted-foreground">
+          <p className="mt-10 mb-3 text-sm md:text-base font-semibold uppercase tracking-widest text-muted-foreground">
             What do you need?
           </p>
 
