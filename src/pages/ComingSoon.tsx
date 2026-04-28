@@ -94,17 +94,15 @@ const ComingSoonPage = () => {
             {/* Left — copy + form */}
             <div className="text-center lg:text-left order-2 lg:order-1">
               <h1 className="font-display font-extrabold tracking-tight leading-[0.95]">
-                <span className="flex items-center gap-3 sm:gap-4 justify-center lg:justify-start flex-wrap">
-                  <img
-                    src={sjohLogo}
-                    alt="Sjoh!"
-                    className="h-14 sm:h-16 md:h-20 w-auto"
-                  />
-                  <span className="text-white text-4xl sm:text-5xl md:text-6xl">
-                    Tired of
-                  </span>
+                <img
+                  src={sjohLogo}
+                  alt="Sjoh!"
+                  className="block h-20 sm:h-24 md:h-28 w-auto mx-auto lg:mx-0"
+                />
+                <span className="block text-white text-4xl sm:text-5xl md:text-6xl mt-5">
+                  Tired of
                 </span>
-                <span className="block text-primary text-5xl sm:text-6xl md:text-7xl mt-3 min-h-[1.1em]">
+                <span className="block text-primary text-5xl sm:text-6xl md:text-7xl mt-2 min-h-[1.1em]">
                   <Typewriter
                     phrases={HERO_PHRASES}
                     typingSpeed={70}
