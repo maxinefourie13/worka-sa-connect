@@ -1,10 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/hooks/use-toast";
-import { Check, Loader2 } from "lucide-react";
+import { Check, Loader2, Flame } from "lucide-react";
 import mascot from "@/assets/sjoh-mascot-glow.png";
 import sjohLogo from "@/assets/sjoh-logo-white.png";
 import { Typewriter } from "@/components/Typewriter";
@@ -21,22 +21,50 @@ const HERO_PHRASES = [
 
 const PERKS: Record<Role, string[]> = {
   pro: [
-    "Extra month free on top of your 30-day trial",
-    "Founding Pro badge on your profile",
+    "3 months FREE on R50 Basic Listing (Founding Members only)",
+    "Founding Member badge on your profile",
     "First-in-line for vetting & verification",
   ],
   customer: [
-    "Post a job with your own budget — pros send you quotes",
+    "Free R50 Urgent Boost voucher (first 500 customers)",
     "First dibs on vetted pros in your area",
-    "Skip the WhatsApp group hunt and the mamparas",
+    "Post jobs free with your own budget — pros come to you",
   ],
 };
+
+type SpotCount = { role: string; claimed: number; cap: number; remaining: number };
 
 const ComingSoonPage = () => {
   const [role, setRole] = useState<Role>("pro");
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [done, setDone] = useState(false);
+  const [claimedFounding, setClaimedFounding] = useState<boolean | null>(null);
+  const [spots, setSpots] = useState<Record<Role, SpotCount | null>>({
+    pro: null,
+    customer: null,
+  });
+
+  // Pull live counts on mount + after each successful signup
+  const refreshCounts = async () => {
+    const { data } = await supabase.rpc("get_founding_spot_counts");
+    if (data) {
+      const next: Record<Role, SpotCount | null> = { pro: null, customer: null };
+      for (const row of data as SpotCount[]) {
+        if (row.role === "pro" || row.role === "customer") {
+          next[row.role as Role] = row;
+        }
+      }
+      setSpots(next);
+    }
+  };
+
+  useEffect(() => {
+    refreshCounts();
+  }, []);
+
+  const currentRemaining = spots[role]?.remaining ?? 500;
+  const spotsGone = currentRemaining <= 0;
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -64,8 +92,22 @@ const ComingSoonPage = () => {
       return;
     }
 
-    // Fire the welcome email (non-blocking — UI completes even if email is slow)
-    const templateName = role === "pro" ? "early-access-pro" : "early-access-customer";
+    // Try to claim a founding spot — server-side, atomic, capped at 500 per role
+    const { data: claimed } = await supabase.rpc("claim_founding_spot", {
+      _signup_id: signupId,
+    });
+    const gotSpot = claimed === true;
+    setClaimedFounding(gotSpot);
+
+    // Send the right welcome email based on whether they got a founding spot
+    const templateName = gotSpot
+      ? role === "pro"
+        ? "early-access-pro"
+        : "early-access-customer"
+      : role === "pro"
+        ? "early-access-pro-waitlist"
+        : "early-access-customer-waitlist";
+
     supabase.functions
       .invoke("send-transactional-email", {
         body: {
@@ -75,18 +117,19 @@ const ComingSoonPage = () => {
         },
       })
       .catch((err) => {
-        // Log but don't surface — they're already on the list
         console.warn("Welcome email queue failed", err);
       });
 
     setLoading(false);
     setDone(true);
+    refreshCounts();
     toast({
-      title: "You're in",
-      description:
-        role === "pro"
-          ? "Check your inbox — extra free month locked in."
-          : "Check your inbox — we'll holla when we launch.",
+      title: gotSpot ? "You're a Founding Member 🎉" : "You're on the list",
+      description: gotSpot
+        ? role === "pro"
+          ? "Check your inbox — 3 months free on Basic locked in."
+          : "Check your inbox — your free R50 voucher is locked in."
+        : "Founding spots are gone, but you're on the waitlist. Check your inbox.",
     });
   };
 
@@ -96,7 +139,7 @@ const ComingSoonPage = () => {
         <title>Sjoh! is launching soon — Tired of hiring mamparas?</title>
         <meta
           name="description"
-          content="Sjoh.co.za is launching soon. South Africa's directory of vetted service pros. Sign up for early access — pros get an extra free month."
+          content="Sjoh.co.za is launching soon. South Africa's directory of vetted service pros. Sign up for early access — first 500 pros get 3 months free."
         />
         <link rel="canonical" href="https://sjoh.co.za/" />
       </Helmet>
@@ -147,6 +190,7 @@ const ComingSoonPage = () => {
                     onClick={() => {
                       setRole(r);
                       setDone(false);
+                      setClaimedFounding(null);
                     }}
                     className={`px-5 py-2 text-sm font-semibold rounded-full transition-all ${
                       role === r
@@ -158,6 +202,23 @@ const ComingSoonPage = () => {
                   </button>
                 ))}
               </div>
+
+              {/* Live founding-spot counter */}
+              {spots[role] && (
+                <div className="mt-5 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/15 border border-primary/30 text-sm font-semibold">
+                  <Flame className="size-4 text-primary" strokeWidth={2.5} />
+                  {spotsGone ? (
+                    <span className="text-white/80">
+                      Founding spots gone — waitlist still open
+                    </span>
+                  ) : (
+                    <span className="text-white">
+                      <span className="text-primary">{currentRemaining}</span>
+                      <span className="text-white/70"> / 500 founding spots left</span>
+                    </span>
+                  )}
+                </div>
+              )}
 
               {/* Perks */}
               <ul className="mt-6 space-y-2.5 text-sm md:text-base text-white/80 max-w-md mx-auto lg:mx-0">
@@ -174,10 +235,28 @@ const ComingSoonPage = () => {
               {/* Form */}
               {done ? (
                 <div className="mt-8 p-5 rounded-2xl bg-primary/10 border border-primary/30 max-w-md mx-auto lg:mx-0">
-                  <p className="font-semibold text-white">Lekker — you're on the list.</p>
-                  <p className="text-sm text-white/70 mt-1">
-                    We'll holla when we launch, plus the odd promo and your bonus perks (extra free days & Klaps). Unsubscribe anytime.
-                  </p>
+                  {claimedFounding ? (
+                    <>
+                      <p className="font-semibold text-white">
+                        Lekker — you're a Founding Member 🎉
+                      </p>
+                      <p className="text-sm text-white/70 mt-1">
+                        {role === "pro"
+                          ? "3 months free on Basic Listing locked in. Check your inbox — we'll holla when we go live."
+                          : "Your free R50 Urgent Boost voucher is locked in. Check your inbox — we'll send the code at launch."}
+                      </p>
+                    </>
+                  ) : (
+                    <>
+                      <p className="font-semibold text-white">
+                        You're on the waitlist.
+                      </p>
+                      <p className="text-sm text-white/70 mt-1">
+                        Founding spots are gone, but you'll still be first in
+                        line when we open to the public. Check your inbox.
+                      </p>
+                    </>
+                  )}
                 </div>
               ) : (
                 <form
@@ -200,17 +279,19 @@ const ComingSoonPage = () => {
                   >
                     {loading ? (
                       <Loader2 className="size-4 animate-spin" />
+                    ) : spotsGone ? (
+                      "Join the waitlist"
                     ) : role === "pro" ? (
-                      "Claim my free month"
+                      "Claim my 3 months free"
                     ) : (
-                      "Get early access"
+                      "Claim my R50 voucher"
                     )}
                   </Button>
                 </form>
               )}
 
               <p className="mt-3 text-xs text-white/50 max-w-md mx-auto lg:mx-0 leading-relaxed">
-                By signing up you're opting in to launch news and the occasional promo from Sjoh — and you'll score bonus perks (extra free days & Klaps) for being on the list. No spam, unsubscribe anytime.
+                By signing up you're opting in to launch news and the occasional promo from Sjoh — and Founding Members score bonus perks. No spam, unsubscribe anytime.
               </p>
             </div>
 
