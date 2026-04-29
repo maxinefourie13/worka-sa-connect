@@ -16,6 +16,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { requestPushPermission, disablePush, isPushConfigured } from "@/lib/push";
 import { GoogleReviewsCard } from "@/components/dashboard/GoogleReviewsCard";
+import { SubscriptionGapBanner } from "@/components/SubscriptionGapBanner";
 import { cn } from "@/lib/utils";
 
 type SectionKey = "overview" | "klaps" | "profile" | "promotions" | "opportunities" | "followers" | "billing";
