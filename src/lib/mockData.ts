@@ -185,6 +185,8 @@ export interface Business {
   hours: string;
   services: Service[];
   reviews: Review[];
+  /** True while the business is in pre-launch (Workshop Mode) and hidden from the public directory. */
+  preLaunch?: boolean;
 }
 
 const grads = ["bg-grad-1", "bg-grad-2", "bg-grad-3", "bg-grad-4", "bg-grad-5", "bg-grad-6"];
