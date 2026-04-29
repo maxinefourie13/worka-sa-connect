@@ -994,6 +994,7 @@ export type Database = {
           name: string | null
           owner_id: string | null
           plan: Database["public"]["Enums"]["business_plan"] | null
+          pre_launch: boolean | null
           province: string | null
           rating: number | null
           response_rate: number | null
@@ -1020,6 +1021,7 @@ export type Database = {
           name?: string | null
           owner_id?: string | null
           plan?: Database["public"]["Enums"]["business_plan"] | null
+          pre_launch?: boolean | null
           province?: string | null
           rating?: number | null
           response_rate?: number | null
@@ -1046,6 +1048,7 @@ export type Database = {
           name?: string | null
           owner_id?: string | null
           plan?: Database["public"]["Enums"]["business_plan"] | null
+          pre_launch?: boolean | null
           province?: string | null
           rating?: number | null
           response_rate?: number | null
@@ -1177,6 +1180,10 @@ export type Database = {
       report_business: {
         Args: { _business_id: string; _details?: string; _reason: string }
         Returns: string
+      }
+      set_business_pre_launch: {
+        Args: { _business_id: string; _pre_launch: boolean }
+        Returns: boolean
       }
       set_email_alerts_optin: {
         Args: { _enabled: boolean }
