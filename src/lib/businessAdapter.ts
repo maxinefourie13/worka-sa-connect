@@ -31,6 +31,7 @@ export function mapBusinessRow(row: any, idx = 0): Business {
     hours: row.hours ?? "",
     services: [],
     reviews: [],
+    preLaunch: !!row.pre_launch,
   };
 }
 

@@ -17,7 +17,7 @@ const SITE_URL = 'https://sjoh.co.za'
 const EarlyAccessProEmail = () => (
   <Html lang="en" dir="ltr">
     <Head />
-    <Preview>Founding Pro spot locked in — 3 months free on Basic Listing</Preview>
+    <Preview>Founding Pro spot locked in — your profile is in Workshop Mode</Preview>
     <Body style={main}>
       <Container style={container}>
         <Section style={brandSection}>
@@ -29,33 +29,40 @@ const EarlyAccessProEmail = () => (
         <Heading style={h1}>You're a Founding Pro, ous.</Heading>
 
         <Text style={lead}>
-          Welkom — you're one of the first 500 to claim a Founding Member spot.
-          That means three months free on Sjoh, on us, the moment we open the doors.
+          Welkom — you're one of the first 500 Founding Members on Sjoh.
+          Your account's set up and your profile is in <strong>Workshop Mode</strong>:
+          you can polish it, add photos and services, and get it sharp before
+          we open the doors to customers.
         </Text>
 
         <Section style={perksBox}>
           <Text style={perkLine}>
-            <span style={tick}>✓</span> 3 months FREE on the R50 Basic Listing
+            <span style={tick}>✓</span> 3 months FREE on the R50 Basic Listing (kicks in at launch)
           </Text>
           <Text style={perkLine}>
             <span style={tick}>✓</span> Founding Member badge on your profile
           </Text>
           <Text style={perkLine}>
-            <span style={tick}>✓</span> Early access to job leads before public launch
+            <span style={tick}>✓</span> First-in-line for vetting & verification
           </Text>
         </Section>
 
         <Heading as="h2" style={h2}>What happens next?</Heading>
         <Text style={text}>
-          We'll holla the moment Sjoh goes live — usually with a heads-up a day
-          or two before so you can claim your free 3 months before the rush.
-          No spam in between, just the important stuff.
+          Log into your dashboard whenever you've got 5 minutes — upload a logo,
+          write your description, list your services, link your Google profile.
+          The more polished it is on launch day, the faster the leads come in.
         </Text>
 
         <Text style={text}>
-          In the meantime, sharpen up that pitch. Sjoh is built for ous who do the
-          graft properly — no commission games, no middlemen, just clients
-          finding the right person for the job.
+          We'll holla the moment Sjoh goes live. Until then, no jobs are posted
+          yet (we're filling up the pro side first) — your profile stays hidden
+          from the public until launch day, when everyone goes live at once.
+        </Text>
+
+        <Text style={text}>
+          No mamparas. No half-jobs. Just people who actually deliver. That's
+          the Sjoh Way — and you're a founding part of it.
         </Text>
 
         <Text style={signoff}>
@@ -64,7 +71,7 @@ const EarlyAccessProEmail = () => (
         </Text>
 
         <Text style={footer}>
-          You're getting this because you signed up for early access at{' '}
+          You're getting this because you signed up as a Founding Pro at{' '}
           <a href={SITE_URL} style={link}>sjoh.co.za</a>.
         </Text>
       </Container>

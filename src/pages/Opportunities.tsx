@@ -1,15 +1,18 @@
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { Search, ShieldCheck } from "lucide-react";
+import { Search, ShieldCheck, Construction } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
 import { Button } from "@/components/ui/button";
 import { JobCard } from "@/components/JobCard";
 import { CATEGORIES, PROVINCES } from "@/lib/mockData";
 import { useOpportunities } from "@/hooks/useDirectory";
+import { useMyBusiness } from "@/hooks/useMyBusiness";
 import { cn } from "@/lib/utils";
 
 const Opportunities = () => {
   const { data: opportunities } = useOpportunities();
+  const { business: myBiz } = useMyBusiness();
+  const isWorkshopMode = !!myBiz?.pre_launch;
   const [keyword, setKeyword] = useState("");
   const [category, setCategory] = useState("");
   const [province, setProvince] = useState("");
@@ -53,18 +56,34 @@ const Opportunities = () => {
           </p>
         </header>
 
-        {/* Post CTA banner */}
-        <div className="rounded-2xl bg-gradient-to-r from-primary to-primary-glow text-primary-foreground p-6 md:p-8 mb-10 flex flex-col md:flex-row md:items-center justify-between gap-5">
-          <div>
-            <h2 className="font-display text-xl md:text-2xl font-semibold">Need work done?</h2>
-            <p className="text-primary-foreground/85 text-sm mt-1">
-              Post a job and let real people come to you. Pull in, boet.
-            </p>
+        {isWorkshopMode && (
+          <div className="rounded-2xl border-2 border-dashed border-primary/40 bg-primary/5 p-6 md:p-8 mb-10 flex items-start gap-4">
+            <span className="size-10 rounded-xl bg-primary/15 text-primary flex items-center justify-center shrink-0">
+              <Construction className="size-5" strokeWidth={2.5} />
+            </span>
+            <div>
+              <h2 className="font-display text-lg font-semibold">No jobs yet — we haven't opened the doors to customers.</h2>
+              <p className="text-sm text-ink-2 mt-1.5">
+                When we launch, this is where new jobs in your area land. Until then, get your profile sharp so you're first in line. We'll holla the moment we open.
+              </p>
+            </div>
           </div>
-          <Button variant="ink" size="lg" asChild>
-            <Link to="/opportunities/new">Post a Job</Link>
-          </Button>
-        </div>
+        )}
+
+        {/* Post CTA banner */}
+        {!isWorkshopMode && (
+          <div className="rounded-2xl bg-gradient-to-r from-primary to-primary-glow text-primary-foreground p-6 md:p-8 mb-10 flex flex-col md:flex-row md:items-center justify-between gap-5">
+            <div>
+              <h2 className="font-display text-xl md:text-2xl font-semibold">Need work done?</h2>
+              <p className="text-primary-foreground/85 text-sm mt-1">
+                Post a job and let real people come to you. Pull in, boet.
+              </p>
+            </div>
+            <Button variant="ink" size="lg" asChild>
+              <Link to="/opportunities/new">Post a Job</Link>
+            </Button>
+          </div>
+        )}
 
         {/* Filters */}
         <div className="bg-card border border-border rounded-xl p-3 flex flex-col md:flex-row gap-3 mb-4">
