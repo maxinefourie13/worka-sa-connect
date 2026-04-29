@@ -1,0 +1,41 @@
+import { BadgeCheck } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { cn } from "@/lib/utils";
+
+interface Props {
+  size?: "sm" | "md" | "lg";
+  className?: string;
+  withLabel?: boolean;
+}
+
+/**
+ * Coral verification badge. Shown on every surface where a verified business appears.
+ * Tooltip explains what it means. Encourages non-verified pros to upgrade to Ready for Work.
+ */
+export const VerifiedBadge = ({ size = "sm", className, withLabel = false }: Props) => {
+  const dims = size === "lg" ? "size-5" : size === "md" ? "size-4" : "size-3.5";
+  const text = size === "lg" ? "text-sm" : "text-xs";
+
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <span
+          className={cn(
+            "inline-flex items-center gap-1 font-bold text-accent",
+            withLabel && "bg-accent/10 px-2 py-0.5 rounded-full",
+            text,
+            className,
+          )}
+        >
+          <BadgeCheck className={cn(dims, "fill-accent text-accent-foreground")} strokeWidth={2.5} />
+          {withLabel && <span className="uppercase tracking-widest text-[10px]">Verified</span>}
+        </span>
+      </TooltipTrigger>
+      <TooltipContent side="top" className="max-w-xs">
+        <p className="text-xs">
+          <strong>ID-verified by Sjoh.</strong> This pro has gone through our verification process and is on the Ready for Work plan.
+        </p>
+      </TooltipContent>
+    </Tooltip>
+  );
+};
