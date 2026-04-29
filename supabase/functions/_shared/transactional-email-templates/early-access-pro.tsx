@@ -17,7 +17,7 @@ const SITE_URL = 'https://sjoh.co.za'
 const EarlyAccessProEmail = () => (
   <Html lang="en" dir="ltr">
     <Head />
-    <Preview>First dibs when Sjoh opens its doors — your free month is locked in</Preview>
+    <Preview>Founding Pro spot locked in — 3 months free on Basic Listing</Preview>
     <Body style={main}>
       <Container style={container}>
         <Section style={brandSection}>
@@ -26,30 +26,30 @@ const EarlyAccessProEmail = () => (
           </Text>
         </Section>
 
-        <Heading style={h1}>You're in, ous.</Heading>
+        <Heading style={h1}>You're a Founding Pro, ous.</Heading>
 
         <Text style={lead}>
-          Welkom to the Founding Pros list. You're officially first-in-line when
-          we open the doors — and your perks are locked in.
+          Welkom — you're one of the first 500 to claim a Founding Member spot.
+          That means three months free on Sjoh, on us, the moment we open the doors.
         </Text>
 
         <Section style={perksBox}>
           <Text style={perkLine}>
-            <span style={tick}>✓</span> An extra month free, on top of your 30-day trial
+            <span style={tick}>✓</span> 3 months FREE on the R50 Basic Listing
           </Text>
           <Text style={perkLine}>
-            <span style={tick}>✓</span> Founding Pro badge on your profile — clients see it first
+            <span style={tick}>✓</span> Founding Member badge on your profile
           </Text>
           <Text style={perkLine}>
-            <span style={tick}>✓</span> First-in-line for vetting & verification
+            <span style={tick}>✓</span> Early access to job leads before public launch
           </Text>
         </Section>
 
         <Heading as="h2" style={h2}>What happens next?</Heading>
         <Text style={text}>
           We'll holla the moment Sjoh goes live — usually with a heads-up a day
-          or two before so you can claim your spot before the rush. No spam in
-          between, just the important stuff.
+          or two before so you can claim your free 3 months before the rush.
+          No spam in between, just the important stuff.
         </Text>
 
         <Text style={text}>
@@ -74,8 +74,8 @@ const EarlyAccessProEmail = () => (
 
 export const template = {
   component: EarlyAccessProEmail,
-  subject: "You're on the list, ous — your free month is locked in",
-  displayName: 'Early access — Pro welcome',
+  subject: "Founding Pro spot locked in — 3 months free on us",
+  displayName: 'Early access — Pro (Founding Member)',
   previewData: {},
 } satisfies TemplateEntry
 

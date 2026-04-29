@@ -17,7 +17,7 @@ const SITE_URL = 'https://sjoh.co.za'
 const EarlyAccessCustomerEmail = () => (
   <Html lang="en" dir="ltr">
     <Head />
-    <Preview>No more WhatsApp mampara hunts — Sjoh is on the way</Preview>
+    <Preview>You're on the list — R50 Urgent Boost voucher waiting for you at launch</Preview>
     <Body style={main}>
       <Container style={container}>
         <Section style={brandSection}>
@@ -26,30 +26,32 @@ const EarlyAccessCustomerEmail = () => (
           </Text>
         </Section>
 
-        <Heading style={h1}>You're on the list.</Heading>
+        <Heading style={h1}>You're on the list — and you've scored a freebie.</Heading>
 
         <Text style={lead}>
-          Lekker — you'll be first to know when Sjoh goes live. No more chasing
-          ous in WhatsApp groups or hoping someone pitches up on Saturday.
+          Lekker — you're one of the first 500 customers on the Sjoh list.
+          That means a free R50 Urgent Boost voucher waiting for you at launch,
+          plus first dibs the moment we go live.
         </Text>
 
         <Section style={perksBox}>
           <Text style={perkLine}>
+            <span style={tick}>✓</span> Free R50 Urgent Boost voucher (use it on your first urgent job)
+          </Text>
+          <Text style={perkLine}>
             <span style={tick}>✓</span> First dibs on vetted pros in your area
           </Text>
           <Text style={perkLine}>
-            <span style={tick}>✓</span> Post a job with your own budget — pros come to you
-          </Text>
-          <Text style={perkLine}>
-            <span style={tick}>✓</span> No commission, no middleman — you talk to them direct
+            <span style={tick}>✓</span> Post jobs for free, with your own budget — pros come to you
           </Text>
         </Section>
 
         <Heading as="h2" style={h2}>What happens next?</Heading>
         <Text style={text}>
-          The moment we open the doors, we'll let you know — usually with a
-          heads-up a day or two before. From there it's a few clicks to find
-          someone who'll actually do the job properly.
+          The moment we open the doors, we'll let you know — and your
+          R50 voucher code will land in a separate email so you can use it
+          straight away. From there it's a few clicks to find someone who'll
+          actually do the job properly.
         </Text>
 
         <Text style={text}>
@@ -74,8 +76,8 @@ const EarlyAccessCustomerEmail = () => (
 
 export const template = {
   component: EarlyAccessCustomerEmail,
-  subject: "You're on the Sjoh list — first dibs incoming",
-  displayName: 'Early access — Customer welcome',
+  subject: "You're in — free R50 Urgent Boost voucher locked in",
+  displayName: 'Early access — Customer (Founding Member)',
   previewData: {},
 } satisfies TemplateEntry
 
