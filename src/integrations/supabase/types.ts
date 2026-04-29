@@ -355,90 +355,6 @@ export type Database = {
         }
         Relationships: []
       }
-      klap_events: {
-        Row: {
-          cost: number
-          created_at: string
-          id: string
-          job_title: string
-          opportunity_id: string | null
-          outcome: Database["public"]["Enums"]["klap_outcome"]
-          proposal_id: string | null
-          user_id: string
-        }
-        Insert: {
-          cost?: number
-          created_at?: string
-          id?: string
-          job_title: string
-          opportunity_id?: string | null
-          outcome?: Database["public"]["Enums"]["klap_outcome"]
-          proposal_id?: string | null
-          user_id: string
-        }
-        Update: {
-          cost?: number
-          created_at?: string
-          id?: string
-          job_title?: string
-          opportunity_id?: string | null
-          outcome?: Database["public"]["Enums"]["klap_outcome"]
-          proposal_id?: string | null
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "klap_events_opportunity_id_fkey"
-            columns: ["opportunity_id"]
-            isOneToOne: false
-            referencedRelation: "opportunities"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "klap_events_proposal_id_fkey"
-            columns: ["proposal_id"]
-            isOneToOne: false
-            referencedRelation: "proposals"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      klap_topups: {
-        Row: {
-          amount_cents: number
-          completed_at: string | null
-          created_at: string
-          id: string
-          klaps: number
-          pack_slug: string
-          paystack_reference: string
-          status: string
-          user_id: string
-        }
-        Insert: {
-          amount_cents: number
-          completed_at?: string | null
-          created_at?: string
-          id?: string
-          klaps: number
-          pack_slug: string
-          paystack_reference: string
-          status?: string
-          user_id: string
-        }
-        Update: {
-          amount_cents?: number
-          completed_at?: string | null
-          created_at?: string
-          id?: string
-          klaps?: number
-          pack_slug?: string
-          paystack_reference?: string
-          status?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
       opportunities: {
         Row: {
           applicants_count: number
@@ -458,6 +374,8 @@ export type Database = {
           status: Database["public"]["Enums"]["opportunity_status"]
           title: string
           updated_at: string
+          urgent_boost_amount_cents: number | null
+          urgent_boost_paid_at: string | null
         }
         Insert: {
           applicants_count?: number
@@ -477,6 +395,8 @@ export type Database = {
           status?: Database["public"]["Enums"]["opportunity_status"]
           title: string
           updated_at?: string
+          urgent_boost_amount_cents?: number | null
+          urgent_boost_paid_at?: string | null
         }
         Update: {
           applicants_count?: number
@@ -496,6 +416,8 @@ export type Database = {
           status?: Database["public"]["Enums"]["opportunity_status"]
           title?: string
           updated_at?: string
+          urgent_boost_amount_cents?: number | null
+          urgent_boost_paid_at?: string | null
         }
         Relationships: []
       }
@@ -640,7 +562,6 @@ export type Database = {
           business_id: string
           created_at: string
           id: string
-          klaps_spent: number
           message: string
           opportunity_id: string
           provider_id: string
@@ -652,7 +573,6 @@ export type Database = {
           business_id: string
           created_at?: string
           id?: string
-          klaps_spent?: number
           message: string
           opportunity_id: string
           provider_id: string
@@ -664,7 +584,6 @@ export type Database = {
           business_id?: string
           created_at?: string
           id?: string
-          klaps_spent?: number
           message?: string
           opportunity_id?: string
           provider_id?: string
@@ -708,8 +627,6 @@ export type Database = {
           email_alerts_optin: boolean
           id: string
           is_id_verified: boolean
-          klaps_remaining: number
-          klaps_this_month: number
           onesignal_player_id: string | null
           paystack_customer_code: string | null
           paystack_subscription_code: string | null
@@ -728,8 +645,6 @@ export type Database = {
           email_alerts_optin?: boolean
           id?: string
           is_id_verified?: boolean
-          klaps_remaining?: number
-          klaps_this_month?: number
           onesignal_player_id?: string | null
           paystack_customer_code?: string | null
           paystack_subscription_code?: string | null
@@ -748,8 +663,6 @@ export type Database = {
           email_alerts_optin?: boolean
           id?: string
           is_id_verified?: boolean
-          klaps_remaining?: number
-          klaps_this_month?: number
           onesignal_player_id?: string | null
           paystack_customer_code?: string | null
           paystack_subscription_code?: string | null
@@ -1107,7 +1020,6 @@ export type Database = {
       }
     }
     Functions: {
-      apply_klap_topup: { Args: { _topup_id: string }; Returns: undefined }
       apply_subscription_payment: {
         Args: {
           _customer_code: string
@@ -1142,6 +1054,10 @@ export type Database = {
           role: string
         }[]
       }
+      has_active_listing_access: {
+        Args: { _user_id: string }
+        Returns: boolean
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -1149,6 +1065,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      has_verified_pro_access: { Args: { _user_id: string }; Returns: boolean }
       lapse_subscription: {
         Args: { _subscription_code: string }
         Returns: undefined
@@ -1165,16 +1082,6 @@ export type Database = {
           source_queue: string
         }
         Returns: number
-      }
-      place_bid: {
-        Args: {
-          _bid_klaps: number
-          _business_id: string
-          _message: string
-          _opportunity_id: string
-          _quote_amount: number
-        }
-        Returns: string
       }
       reactivate_listing: { Args: { _business_id: string }; Returns: boolean }
       read_email_batch: {
@@ -1201,9 +1108,14 @@ export type Database = {
         Args: { _enabled: boolean; _player_id: string }
         Returns: undefined
       }
-      top_up_bid: {
-        Args: { _additional_klaps: number; _proposal_id: string }
-        Returns: number
+      submit_proposal: {
+        Args: {
+          _business_id: string
+          _message: string
+          _opportunity_id: string
+          _quote_amount: number
+        }
+        Returns: string
       }
       transition_listing_states: {
         Args: never
@@ -1217,7 +1129,6 @@ export type Database = {
       app_role: "admin" | "business_owner" | "client"
       budget_type: "fixed" | "estimate" | "negotiable"
       business_plan: "free" | "standard" | "featured"
-      klap_outcome: "pending" | "won" | "lost"
       opportunity_status: "open" | "closed" | "awarded"
       payment_event_kind:
         | "subscription_charge"
@@ -1228,7 +1139,12 @@ export type Database = {
         | "other"
       price_type: "fixed" | "from" | "quote"
       proposal_status: "pending" | "shortlisted" | "won" | "lost" | "withdrawn"
-      sjoh_tier: "dala-trial" | "hustler" | "main-oke"
+      sjoh_tier:
+        | "none"
+        | "basic_trial"
+        | "basic"
+        | "verified_pro_trial"
+        | "verified_pro"
       verification_status:
         | "not_required"
         | "required"
@@ -1366,7 +1282,6 @@ export const Constants = {
       app_role: ["admin", "business_owner", "client"],
       budget_type: ["fixed", "estimate", "negotiable"],
       business_plan: ["free", "standard", "featured"],
-      klap_outcome: ["pending", "won", "lost"],
       opportunity_status: ["open", "closed", "awarded"],
       payment_event_kind: [
         "subscription_charge",
@@ -1378,7 +1293,13 @@ export const Constants = {
       ],
       price_type: ["fixed", "from", "quote"],
       proposal_status: ["pending", "shortlisted", "won", "lost", "withdrawn"],
-      sjoh_tier: ["dala-trial", "hustler", "main-oke"],
+      sjoh_tier: [
+        "none",
+        "basic_trial",
+        "basic",
+        "verified_pro_trial",
+        "verified_pro",
+      ],
       verification_status: [
         "not_required",
         "required",
