@@ -141,6 +141,8 @@ export type Database = {
           image_url: string | null
           is_suspended: boolean
           is_verified: boolean
+          last_active_at: string
+          listing_status: string
           name: string
           owner_id: string
           phone: string | null
@@ -179,6 +181,8 @@ export type Database = {
           image_url?: string | null
           is_suspended?: boolean
           is_verified?: boolean
+          last_active_at?: string
+          listing_status?: string
           name: string
           owner_id: string
           phone?: string | null
@@ -217,6 +221,8 @@ export type Database = {
           image_url?: string | null
           is_suspended?: boolean
           is_verified?: boolean
+          last_active_at?: string
+          listing_status?: string
           name?: string
           owner_id?: string
           phone?: string | null
@@ -1116,6 +1122,7 @@ export type Database = {
         Args: { _job_id: string; _user_id: string; _verified: boolean }
         Returns: undefined
       }
+      bump_last_active: { Args: never; Returns: undefined }
       claim_founding_spot: { Args: { _signup_id: string }; Returns: boolean }
       delete_email: {
         Args: { message_id: number; queue_name: string }
@@ -1169,6 +1176,7 @@ export type Database = {
         }
         Returns: string
       }
+      reactivate_listing: { Args: { _business_id: string }; Returns: boolean }
       read_email_batch: {
         Args: { batch_size: number; queue_name: string; vt: number }
         Returns: {
@@ -1196,6 +1204,13 @@ export type Database = {
       top_up_bid: {
         Args: { _additional_klaps: number; _proposal_id: string }
         Returns: number
+      }
+      transition_listing_states: {
+        Args: never
+        Returns: {
+          to_archived: number
+          to_dormant: number
+        }[]
       }
     }
     Enums: {
