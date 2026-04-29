@@ -17,6 +17,12 @@ export interface ProviderAccess {
   isOnTrial: boolean;
   /** Days left of trial (0 if not on trial / expired). */
   trialDaysLeft: number;
+  /** Founding-member perk fields */
+  isFoundingMember: boolean;
+  /** True if founding member AND hasn't used their 1 free proposal this calendar month. */
+  foundingProposalAvailable: boolean;
+  /** First day of next calendar month — when the credit resets. */
+  foundingProposalsResetAt: Date | null;
 }
 
 const DEFAULT: ProviderAccess = {
@@ -28,7 +34,20 @@ const DEFAULT: ProviderAccess = {
   hasVerifiedProAccess: false,
   isOnTrial: false,
   trialDaysLeft: 0,
+  isFoundingMember: false,
+  foundingProposalAvailable: false,
+  foundingProposalsResetAt: null,
 };
+
+function nextMonthStart(): Date {
+  const now = new Date();
+  return new Date(now.getFullYear(), now.getMonth() + 1, 1);
+}
+
+function currentMonthStart(): Date {
+  const now = new Date();
+  return new Date(now.getFullYear(), now.getMonth(), 1);
+}
 
 export function useProviderAccess(): ProviderAccess {
   const { user } = useAuth();
@@ -37,17 +56,31 @@ export function useProviderAccess(): ProviderAccess {
   useEffect(() => {
     if (!user) { setState({ ...DEFAULT, loading: false }); return; }
     (async () => {
-      const { data } = await supabase
-        .from("provider_balances")
-        .select("tier, trial_ends_at, tier_expires_at")
-        .eq("user_id", user.id)
-        .maybeSingle();
+      const [{ data: bal }, { data: foundingFlag }] = await Promise.all([
+        supabase
+          .from("provider_balances")
+          .select("tier, trial_ends_at, tier_expires_at, founding_proposals_used_this_month, founding_proposals_period_start")
+          .eq("user_id", user.id)
+          .maybeSingle(),
+        supabase.rpc("is_founding_member", { _user_id: user.id }),
+      ]);
 
-      if (!data) { setState({ ...DEFAULT, loading: false }); return; }
+      const isFoundingMember = !!foundingFlag;
 
-      const tier = (data.tier ?? "none") as Tier;
-      const trialEndsAt = data.trial_ends_at ?? null;
-      const tierExpiresAt = data.tier_expires_at ?? null;
+      if (!bal) {
+        setState({
+          ...DEFAULT,
+          loading: false,
+          isFoundingMember,
+          foundingProposalAvailable: isFoundingMember,
+          foundingProposalsResetAt: isFoundingMember ? nextMonthStart() : null,
+        });
+        return;
+      }
+
+      const tier = (bal.tier ?? "none") as Tier;
+      const trialEndsAt = bal.trial_ends_at ?? null;
+      const tierExpiresAt = bal.tier_expires_at ?? null;
 
       const now = Date.now();
       const trialLive = !!trialEndsAt && new Date(trialEndsAt).getTime() > now;
@@ -62,6 +95,14 @@ export function useProviderAccess(): ProviderAccess {
         ? Math.max(0, Math.ceil((new Date(trialEndsAt!).getTime() - now) / (1000 * 60 * 60 * 24)))
         : 0;
 
+      // Founding-member credit check (mirror of can_use_founding_proposal SQL helper)
+      const periodStart = bal.founding_proposals_period_start
+        ? new Date(bal.founding_proposals_period_start)
+        : null;
+      const periodIsCurrent = periodStart && periodStart >= currentMonthStart();
+      const usedThisMonth = periodIsCurrent ? (bal.founding_proposals_used_this_month ?? 0) : 0;
+      const foundingProposalAvailable = isFoundingMember && usedThisMonth < 1;
+
       setState({
         loading: false,
         tier,
@@ -71,6 +112,9 @@ export function useProviderAccess(): ProviderAccess {
         hasVerifiedProAccess: isPaidPro || isTrialPro,
         isOnTrial: isTrialBasic || isTrialPro,
         trialDaysLeft,
+        isFoundingMember,
+        foundingProposalAvailable,
+        foundingProposalsResetAt: isFoundingMember ? nextMonthStart() : null,
       });
     })();
   }, [user]);
