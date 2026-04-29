@@ -2,9 +2,10 @@ import { Link, useNavigate } from "react-router-dom";
 import { NavLink } from "@/components/NavLink";
 import { Button } from "@/components/ui/button";
 import { FlameButton } from "@/components/ui/flame-button";
-import { Menu, X, LayoutDashboard, LogOut } from "lucide-react";
+import { Menu, X, LayoutDashboard, LogOut, Shield } from "lucide-react";
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
+import { useUserRoles } from "@/hooks/useUserRoles";
 import sjohLogo from "@/assets/sjoh-logo.png";
 import { ListingStatusBanner } from "@/components/ListingStatusBanner";
 import { useBumpLastActive } from "@/hooks/useBumpLastActive";
@@ -34,6 +35,7 @@ const initials = (input: string) =>
 export const SiteHeader = () => {
   const [open, setOpen] = useState(false);
   const { session, user, signOut } = useAuth();
+  const { isAdmin } = useUserRoles();
   const navigate = useNavigate();
   useBumpLastActive();
 
@@ -93,6 +95,11 @@ export const SiteHeader = () => {
                   <DropdownMenuItem asChild>
                     <Link to="/dashboard"><LayoutDashboard className="size-4 mr-2" />Dashboard</Link>
                   </DropdownMenuItem>
+                  {isAdmin && (
+                    <DropdownMenuItem asChild>
+                      <Link to="/admin/founding-members"><Shield className="size-4 mr-2" />Admin · Founding</Link>
+                    </DropdownMenuItem>
+                  )}
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={handleSignOut}>
                     <LogOut className="size-4 mr-2" />Log out
