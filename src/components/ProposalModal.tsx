@@ -89,22 +89,16 @@ export const ProposalModal = ({ open, jobId, jobTitle, jobBudget, clientName, on
     if (user && myBusiness && jobId) {
       const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(jobId);
       if (isUuid) {
-        const { data: insertedId, error } = await supabase.rpc("place_bid", {
+        const { data: insertedId, error } = await supabase.rpc("submit_proposal", {
           _opportunity_id: jobId,
           _business_id: myBusiness.id,
           _message: scope,
           _quote_amount: priceType === "quote" ? null : priceNum,
-          _bid_klaps: safeBid,
         });
         if (error) {
-          console.error("[place_bid] failed", error);
+          console.error("[submit_proposal] failed", error);
           toast({ title: "Aikona!", description: error.message, variant: "destructive" });
           return;
-        }
-        if (insertedId) {
-          supabase.functions
-            .invoke("notify-new-bid", { body: { proposal_id: insertedId } })
-            .catch((e) => console.error("[notify-new-bid]", e));
         }
       }
     }

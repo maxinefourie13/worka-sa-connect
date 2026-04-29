@@ -22,20 +22,17 @@ const Pricing = () => {
   const navigate = useNavigate();
 
   const handleTierClick = (slug: string) => {
-    if (slug === "dala-trial") {
-      navigate(user ? "/list" : "/auth");
-      return;
-    }
     if (!user) { navigate("/auth"); return; }
-    if (slug === "hustler" || slug === "main-oke") {
+    if (slug === "basic" || slug === "verified_pro") {
       payments.startSubscription(slug);
+    } else {
+      navigate("/list");
     }
   };
 
-  const handlePackClick = (pack: { id: string }) => {
+  const handlePackClick = (_pack: { id: string }) => {
+    // Top-up packs removed with the Klap system.
     if (!user) { navigate("/auth"); return; }
-    const slug = pack.id === "crate" ? "crate" : "six-pack";
-    payments.buyKlapPack(slug);
   };
 
   return (
