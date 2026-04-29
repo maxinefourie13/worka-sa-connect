@@ -1,54 +1,96 @@
-## What's changing
+## What you're asking for
 
-### 1. Honest consent copy (replace "one email when we launch")
-Replace the small print under the form with copy that:
-- Tells the user they're opting in to occasional promotional / launch updates from Sjoh
-- Mentions they may get extra perks (e.g. more free Klaps / extra free days) for being on the list
-- Keeps the SA voice ("no spam, just the goods")
-- Stays one short line so the layout doesn't shift
+1. **Two CSV exports** — one for Pros, one for Clients — pulled from the `early_access_signups` table, so you can do bulk launch/marketing blasts manually from your own tool (Gmail, Mailchimp free, whatever).
+2. **One transactional email per signup** — sent automatically via Lovable Emails the moment someone joins the list. No follow-ups, no drip, no marketing — just one "you're on the list" confirmation.
 
-Proposed copy (in Sjoh voice):
-> "By signing up you're opting in to launch news and the occasional promo from Sjoh — and you'll get bonus perks (extra free days, more Klaps) for being on the list. Unsubscribe anytime."
+That keeps you fully on the right side of the transactional/marketing line: Lovable handles the 1:1 confirmation, you handle the bulk blasts yourself.
 
-Also update the success state ("You're on the list") to match the same expectation.
+## Part 1 — CSV exports (Pro + Client)
 
-### 2. Email storage — what already exists (no code change)
-Signups are already saved to the `early_access_signups` table in your backend with these fields:
-- `email`
-- `role` — either `pro` or `customer` (this is how Pros and Clients are kept separate)
-- `source` — currently `coming-soon`
-- `created_at`
+You actually have two options here. I'll ask you which after the plan is approved, but here's both:
 
-You can view and export them at any time from **Cloud → Database → early_access_signups → Export**. Filter by `role` to get the two lists separately.
+**Option A — Self-serve from Cloud (zero code, easy)**
+You go to Cloud → Database → `early_access_signups`, filter by `role = 'pro'`, hit Export CSV. Repeat with `role = 'customer'`. Done. Takes 30 seconds whenever you want fresh data.
 
-I'll also add a tiny tweak so the same email signing up as both a Pro and a Customer is allowed (right now the unique constraint is on email alone, so the second role gets silently swallowed). I'll change the uniqueness to `(email, role)` so each list is clean.
+**Option B — In-app admin page at `/admin/signups`**
+A protected page (only your admin user can see it) with two big "Download Pros CSV" / "Download Clients CSV" buttons. Click → CSV downloads to your machine. Nicer if you'll be doing this often or from your phone.
 
-### 3. Email marketing integration — decision needed
-Nothing is connected yet. Pick one of these and I'll wire it up in the next step (this plan does NOT include the integration yet — I want your call first):
+Both pull from the same table — no data difference, just convenience. My recommendation: **start with A** since it's free and you already have it. We add B later if you find yourself doing it weekly.
 
-| Option | What you get | Effort |
-|---|---|---|
-| **A. Database only (default)** | Export CSV from Cloud whenever you want to send a blast. Free. | None |
-| **B. Mailchimp / Brevo / ConvertKit via webhook** | Each signup auto-syncs to a list/audience there, tagged `pro` or `customer`. You compose campaigns in their UI. | Small edge function + your API key |
-| **C. Send emails directly from Sjoh** | Use Lovable's built-in email infra to send launch announcements from `notify@sjoh.co.za`. Needs a sender domain set up. | Medium |
+## Part 2 — Single transactional email after signup
 
-I'll ask you to pick one in chat after you approve this plan. My recommendation: **B with Brevo** (free tier, generous limits, SA-friendly).
+One email, sent immediately when someone submits the Coming Soon form. Different copy depending on whether they signed up as a Pro or a Client.
 
-### 4. How to deploy to sjoh.co.za
-Your custom domain is already connected to this project. To make this Coming Soon page live:
-1. Click **Publish** in the top-right of the editor (desktop) or the **…** menu → Publish (mobile).
-2. First time → click **Publish**. After that, every change needs **Update** in the same dialog to push live.
-3. Within a minute, https://sjoh.co.za and https://www.sjoh.co.za will serve this page.
+```text
+User submits form
+       │
+       ▼
+Insert row into early_access_signups
+       │
+       ▼
+Call send-transactional-email
+       │
+       ▼
+Recipient gets ONE email, in Sjoh voice, branded
+       │
+       ▼
+Done. No further automated emails until you blast manually.
+```
 
-The route is already set up: `/` renders `ComingSoonPage`, and the old marketing home is moved to `/preview-home` so you can still preview it.
+**Pro email** (subject: "You're on the list, ous — your free month is locked in")
+- Lekker, you're in.
+- Quick reminder of perks: extra free month, Founding Pro badge, first-in-line for vetting.
+- "We'll holla when the doors open. In the meantime, no spam."
 
-No code change needed for deployment — it's a one-click action you do yourself.
+**Client email** (subject: "You're on the Sjoh list — first dibs incoming")
+- You're on.
+- Reminder: first dibs on vetted pros, post a job with your own budget, skip the WhatsApp mampara hunt.
+- "We'll let you know the moment we go live."
 
-## Technical changes summary
+Both emails:
+- White background, Sjoh coral accents, Plus Jakarta Sans fallback to Arial
+- Sjoh mascot/wordmark at the top
+- SA voice ("lekker", "ous", "no mamparas")
+- System auto-appends the unsubscribe footer (legally required, can't skip)
 
-- **`src/pages/ComingSoon.tsx`**: rewrite the consent line under the form + the success-state subline.
-- **Database migration**: drop the unique constraint on `early_access_signups.email`, add unique constraint on `(email, role)`. Update the duplicate-handling in `onSubmit` accordingly (already handles `23505`, no logic change needed).
+## What I need to set up
 
-## Out of scope for this plan
-- Wiring up Mailchimp/Brevo/etc. — waiting on your choice.
-- Actually clicking Publish — that's on you.
+### Email infrastructure (one-time)
+1. Set up an email sending domain (`notify.sjoh.co.za` or similar — you'll add a few DNS records at your domain registrar). The setup dialog walks you through it.
+2. Set up the email infra (queues, suppression list, unsubscribe handling) — automated.
+3. Scaffold the transactional email system — automated.
+
+### Templates
+4. Create two React Email templates in `supabase/functions/_shared/transactional-email-templates/`:
+   - `early-access-pro.tsx`
+   - `early-access-customer.tsx`
+5. Register both in `registry.ts`.
+
+### Wiring + unsubscribe page
+6. In `ComingSoon.tsx`, after the successful insert, call `send-transactional-email` with the right template name based on `role`.
+7. Create the `/email-unsubscribe` page so the unsubscribe link in emails lands on a branded Sjoh page.
+
+### Deploy
+8. Deploy the edge functions. DNS verification can finish in the background.
+
+## What's NOT in this plan (deliberately)
+- **No marketing/blast emails from Lovable** — you do those manually with the CSV.
+- **No drip sequences, no "we miss you" emails** — those would be marketing and we wouldn't build them anyway.
+- **No Brevo/Mailchimp integration** — you're handling the bulk side yourself.
+- **No job-alert emails yet** — separate feature, post-launch.
+
+## One thing to confirm before I build
+
+**Sender domain choice.** I'll need to set up an email-sending subdomain. Recommended: `notify.sjoh.co.za` (the "From" address will display as `hey@sjoh.co.za` though, so it still looks clean to the recipient). You'll need to add ~4 DNS records at wherever your domain is registered. Setup takes ~5 minutes of your time + a few hours for DNS to propagate.
+
+If you want a different subdomain (e.g. `mail.sjoh.co.za`), let me know when you approve.
+
+## Files that will change
+
+- **New**: `supabase/functions/_shared/transactional-email-templates/early-access-pro.tsx`
+- **New**: `supabase/functions/_shared/transactional-email-templates/early-access-customer.tsx`
+- **New**: `supabase/functions/_shared/transactional-email-templates/registry.ts`
+- **New**: `supabase/functions/send-transactional-email/index.ts` (+ siblings) — scaffolded
+- **New**: `src/pages/EmailUnsubscribe.tsx` — wait, this already exists. I'll wire it up properly to the new unsubscribe handler.
+- **Edit**: `src/pages/ComingSoon.tsx` — add the `functions.invoke` call after successful insert
+- **Edit**: `src/App.tsx` — confirm `/email-unsubscribe` route exists (it does)
