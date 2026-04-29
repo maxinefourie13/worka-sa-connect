@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
-import { Check, Zap, Siren } from "lucide-react";
+import { Check, Zap, Siren, Sparkles } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
 import { Button } from "@/components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
@@ -104,6 +104,12 @@ const Pricing = () => {
             </div>
           ))}
         </div>
+
+        {/* Founding-member perk */}
+        <p className="mt-6 text-center text-sm text-ink-2 max-w-2xl mx-auto">
+          <Sparkles className="size-4 text-accent inline -mt-0.5 mr-1" strokeWidth={2.5} />
+          <strong className="text-foreground">Founding members</strong> get <strong>1 free proposal a month</strong> — even on the On the Map plan. Our thank-you for showing up early.
+        </p>
 
         {/* What are Klaps */}
         <section className="mt-20 max-w-4xl mx-auto bg-card border border-border rounded-2xl p-8 md:p-10">
