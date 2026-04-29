@@ -1026,6 +1026,14 @@ export type Database = {
       }
     }
     Functions: {
+      admin_create_founding_signup: {
+        Args: { _email: string; _role: string }
+        Returns: string
+      }
+      admin_set_founding_spot: {
+        Args: { _claimed: boolean; _signup_id: string }
+        Returns: boolean
+      }
       apply_subscription_payment: {
         Args: {
           _customer_code: string
@@ -1035,6 +1043,15 @@ export type Database = {
           _user_id: string
         }
         Returns: undefined
+      }
+      apply_urgent_boost: {
+        Args: {
+          _amount_cents: number
+          _opportunity_id: string
+          _reference: string
+          _user_id: string
+        }
+        Returns: boolean
       }
       apply_verification_result: {
         Args: { _job_id: string; _user_id: string; _verified: boolean }
@@ -1107,6 +1124,7 @@ export type Database = {
         Args: { _business_id: string; _details?: string; _reason: string }
         Returns: string
       }
+      run_lifecycle_sweep: { Args: never; Returns: Json }
       set_business_pre_launch: {
         Args: { _business_id: string; _pre_launch: boolean }
         Returns: boolean
@@ -1148,6 +1166,7 @@ export type Database = {
         | "klap_topup_charge"
         | "urgent_fee_charge"
         | "other"
+        | "urgent_boost"
       price_type: "fixed" | "from" | "quote"
       proposal_status: "pending" | "shortlisted" | "won" | "lost" | "withdrawn"
       sjoh_tier:
@@ -1301,6 +1320,7 @@ export const Constants = {
         "klap_topup_charge",
         "urgent_fee_charge",
         "other",
+        "urgent_boost",
       ],
       price_type: ["fixed", "from", "quote"],
       proposal_status: ["pending", "shortlisted", "won", "lost", "withdrawn"],
