@@ -234,6 +234,7 @@ export type Database = {
       }
       early_access_signups: {
         Row: {
+          claimed_founding_spot: boolean
           created_at: string
           email: string
           id: string
@@ -241,6 +242,7 @@ export type Database = {
           source: string | null
         }
         Insert: {
+          claimed_founding_spot?: boolean
           created_at?: string
           email: string
           id?: string
@@ -248,6 +250,7 @@ export type Database = {
           source?: string | null
         }
         Update: {
+          claimed_founding_spot?: boolean
           created_at?: string
           email?: string
           id?: string
@@ -1051,6 +1054,15 @@ export type Database = {
         }
         Relationships: []
       }
+      founding_spot_counts: {
+        Row: {
+          cap: number | null
+          claimed: number | null
+          remaining: number | null
+          role: string | null
+        }
+        Relationships: []
+      }
       profiles_public: {
         Row: {
           avatar_url: string | null
@@ -1098,6 +1110,7 @@ export type Database = {
         Args: { _job_id: string; _user_id: string; _verified: boolean }
         Returns: undefined
       }
+      claim_founding_spot: { Args: { _signup_id: string }; Returns: boolean }
       delete_email: {
         Args: { message_id: number; queue_name: string }
         Returns: boolean
@@ -1107,6 +1120,15 @@ export type Database = {
         Returns: number
       }
       expire_stale_verifications: { Args: never; Returns: undefined }
+      get_founding_spot_counts: {
+        Args: never
+        Returns: {
+          cap: number
+          claimed: number
+          remaining: number
+          role: string
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
