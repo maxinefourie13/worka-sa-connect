@@ -96,6 +96,7 @@ export function useOpportunities(): State<Opportunity> {
         .from("opportunities")
         .select("*")
         .eq("status", "open")
+        .order("urgent_boost_paid_at", { ascending: false, nullsFirst: false })
         .order("created_at", { ascending: false })
         .limit(200);
       if (cancelled) return;
