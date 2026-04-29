@@ -44,6 +44,14 @@ const Dashboard = () => {
       params.delete("paid");
       setParams(params, { replace: true });
     }
+    if (params.get("boost") === "success") {
+      toast({
+        title: "Boosted, boet!",
+        description: "Your job is now pinned to the top of the feed for 72 hours.",
+      });
+      params.delete("boost");
+      setParams(params, { replace: true });
+    }
   }, [params, setParams]);
 
   return (
