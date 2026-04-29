@@ -145,6 +145,7 @@ export type Database = {
           owner_id: string
           phone: string | null
           plan: Database["public"]["Enums"]["business_plan"]
+          pre_launch: boolean
           province: string
           rating: number
           report_count: number
@@ -182,6 +183,7 @@ export type Database = {
           owner_id: string
           phone?: string | null
           plan?: Database["public"]["Enums"]["business_plan"]
+          pre_launch?: boolean
           province: string
           rating?: number
           report_count?: number
@@ -219,6 +221,7 @@ export type Database = {
           owner_id?: string
           phone?: string | null
           plan?: Database["public"]["Enums"]["business_plan"]
+          pre_launch?: boolean
           province?: string
           rating?: number
           report_count?: number
