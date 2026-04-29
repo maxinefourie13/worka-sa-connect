@@ -668,7 +668,7 @@ export interface SjohTier {
 export const SJOH_TIERS: SjohTier[] = [
   {
     slug: "dala-trial",
-    name: "Verified Pro",
+    name: "Ready for Work",
     price: 0,
     period: "Free trial",
     klapsPerMonth: 5,

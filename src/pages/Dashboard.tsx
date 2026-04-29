@@ -194,7 +194,7 @@ const KlapsSection = () => {
 
   const verifyHint: Record<typeof verification.status, string> = {
     not_required: "Available on paid tiers — your badge stays once verified.",
-    required: "Subscription active. Tap to verify your ID and unlock the Verified Pro badge.",
+    required: "Subscription active. Tap to verify your ID and unlock the Ready for Work badge.",
     pending: "We're processing your verification. This usually takes under a minute.",
     verified: verification.expiresAt
       ? `Re-verify by ${new Date(verification.expiresAt).toLocaleDateString("en-ZA")}`
