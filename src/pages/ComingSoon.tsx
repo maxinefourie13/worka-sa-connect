@@ -46,13 +46,15 @@ const ComingSoonPage = () => {
       return;
     }
     setLoading(true);
+    const signupId = crypto.randomUUID();
     const { error } = await supabase.from("early_access_signups").insert({
+      id: signupId,
       email: trimmed,
       role,
       source: "coming-soon",
     });
-    setLoading(false);
     if (error) {
+      setLoading(false);
       if (error.code === "23505") {
         setDone(true);
         toast({ title: "You're already on the list", description: "We'll be in touch when we launch." });
@@ -61,13 +63,30 @@ const ComingSoonPage = () => {
       toast({ title: "Sjoh, something broke", description: error.message });
       return;
     }
+
+    // Fire the welcome email (non-blocking — UI completes even if email is slow)
+    const templateName = role === "pro" ? "early-access-pro" : "early-access-customer";
+    supabase.functions
+      .invoke("send-transactional-email", {
+        body: {
+          templateName,
+          recipientEmail: trimmed,
+          idempotencyKey: `early-access-${signupId}`,
+        },
+      })
+      .catch((err) => {
+        // Log but don't surface — they're already on the list
+        console.warn("Welcome email queue failed", err);
+      });
+
+    setLoading(false);
     setDone(true);
     toast({
       title: "You're in",
       description:
         role === "pro"
-          ? "We'll email you when the doors open — extra free month locked in."
-          : "We'll let you know the moment we launch.",
+          ? "Check your inbox — extra free month locked in."
+          : "Check your inbox — we'll holla when we launch.",
     });
   };
 
