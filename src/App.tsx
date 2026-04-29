@@ -60,6 +60,7 @@ const App = () => {
                 <Route path="/:categorySlug/:provinceSlug" element={<CategoryLocationPage />} />
                 <Route path="/:categorySlug/:provinceSlug/:citySlug" element={<CategoryLocationPage />} />
                 <Route path="/email-preferences/unsubscribe" element={<EmailUnsubscribe />} />
+                <Route path="/unsubscribe" element={<EmailUnsubscribe />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>
