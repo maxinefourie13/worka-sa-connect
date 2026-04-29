@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { VerifiedBadge } from "@/components/VerifiedBadge";
 import type { Business } from "@/lib/mockData";
 import { cn } from "@/lib/utils";
 
