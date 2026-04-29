@@ -411,15 +411,15 @@ const FollowersSection = () => {
       </header>
       <div className="bg-card border border-border rounded-xl divide-y divide-border">
         {followers.map((f) => (
-          <div key={f} className="p-4 flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="size-9 rounded-full bg-secondary flex items-center justify-center text-sm font-semibold">{f.charAt(0)}</div>
-              <span className="text-sm font-medium">{f}</span>
-            </div>
-            <Button variant="ghost" size="sm">Message</Button>
+          <div key={f} className="p-4 flex items-center gap-3">
+            <div className="size-9 rounded-full bg-secondary flex items-center justify-center text-sm font-semibold">{f.charAt(0)}</div>
+            <span className="text-sm font-medium">{f}</span>
           </div>
         ))}
       </div>
+      <p className="text-xs text-ink-2 mt-3">
+        Followers see your updates and promotions in their feed. Direct messaging isn't part of Sjoh — keep contact on the public profile so customers reach you on your terms.
+      </p>
     </>
   );
 };

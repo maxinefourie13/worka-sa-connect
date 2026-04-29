@@ -8,6 +8,7 @@ export const PROVINCES = [
   "Free State",
   "North West",
   "Northern Cape",
+  "Remote (South Africa)",
 ] as const;
 
 export type Province = (typeof PROVINCES)[number];
@@ -129,6 +130,7 @@ export const CATEGORIES: Category[] = [
   { slug: "pest-control", name: "Pest Control", groupSlug: "specialist-ondemand", emoji: "🐜", count: 217 },
   { slug: "emergency-repairs", name: "Emergency Repairs", groupSlug: "specialist-ondemand", emoji: "🚨", count: 198 },
   { slug: "inspection-services", name: "Inspection Services", groupSlug: "specialist-ondemand", emoji: "🔍", count: 134 },
+  { slug: "other", name: "Other", groupSlug: "specialist-ondemand", emoji: "✨", count: 0 },
 ];
 
 export interface Service {
