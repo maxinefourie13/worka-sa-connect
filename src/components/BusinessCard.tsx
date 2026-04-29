@@ -66,11 +66,8 @@ export const BusinessCard = ({ business, className }: BusinessCardProps) => {
             {business.name}
           </h3>
           {business.isVerified && (
-            <span
-              className="shrink-0 mt-1 text-[10px] font-bold uppercase tracking-widest text-primary bg-primary/10 px-2 py-0.5 rounded"
-              title="Verified"
-            >
-              Verified
+            <span className="shrink-0 mt-1">
+              <VerifiedBadge size="sm" withLabel />
             </span>
           )}
         </div>
