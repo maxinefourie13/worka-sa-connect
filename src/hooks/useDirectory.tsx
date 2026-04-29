@@ -26,6 +26,7 @@ export function useBusinesses(): State<Business> {
       const { data, error } = await supabase
         .from("businesses_public")
         .select("*")
+        .order("is_verified", { ascending: false })
         .order("created_at", { ascending: false })
         .limit(500);
       if (cancelled) return;
