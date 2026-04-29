@@ -429,6 +429,10 @@ export interface Opportunity {
   applicants: number;
   postedAt: string;
   requirements: string[];
+  /** Client (owner) user id — only present from live data. */
+  clientId?: string;
+  /** When the urgent boost was paid; if within 72h, treated as boosted. */
+  urgentBoostPaidAt?: string | null;
 }
 
 export const OPPORTUNITIES: Opportunity[] = [

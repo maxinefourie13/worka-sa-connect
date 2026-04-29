@@ -16,6 +16,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { requestPushPermission, disablePush, isPushConfigured } from "@/lib/push";
 import { GoogleReviewsCard } from "@/components/dashboard/GoogleReviewsCard";
+import { SubscriptionGapBanner } from "@/components/SubscriptionGapBanner";
 import { cn } from "@/lib/utils";
 
 type SectionKey = "overview" | "klaps" | "profile" | "promotions" | "opportunities" | "followers" | "billing";
@@ -41,6 +42,14 @@ const Dashboard = () => {
         description: "Your account is topped up. Back to work!",
       });
       params.delete("paid");
+      setParams(params, { replace: true });
+    }
+    if (params.get("boost") === "success") {
+      toast({
+        title: "Boosted, boet!",
+        description: "Your job is now pinned to the top of the feed for 72 hours.",
+      });
+      params.delete("boost");
       setParams(params, { replace: true });
     }
   }, [params, setParams]);
@@ -118,6 +127,7 @@ const OverviewSection = ({ onJump }: { onJump: (s: SectionKey) => void }) => {
     "boet";
   return (
     <>
+      <SubscriptionGapBanner />
       <header className="flex items-center justify-between">
         <div>
           <h1 className="font-display text-3xl font-medium tracking-tight">
