@@ -23,7 +23,7 @@ const HERO_PHRASES = [
 
 const PERKS: Record<Role, string[]> = {
   pro: [
-    "3 months FREE on R50 Basic Listing (Founding Members only)",
+    "2 months FREE on R50 On the Map listing (Founding Members only)",
     "Founding Member badge on your profile",
     "First-in-line for vetting & verification",
   ],

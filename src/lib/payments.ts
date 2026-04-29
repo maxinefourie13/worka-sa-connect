@@ -38,6 +38,6 @@ export const payments = {
     startCheckout(
       "paystack-create-subscription",
       { tier },
-      `Starting ${tier === "basic" ? "Basic" : "Verified Pro"} subscription`,
+      `Starting ${tier === "basic" ? "On the Map" : "Ready for Work"} subscription`,
     ),
 };
