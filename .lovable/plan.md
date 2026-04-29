@@ -1,111 +1,173 @@
+# Workshop Mode + Profile Lifecycle
+
 ## Goal
 
-Founding members can sign up properly on the landing page, build their full business profile, and access their dashboard immediately — but every authenticated screen makes it impossible to miss that we're in **Workshop Mode** (pre-launch, no customers yet, jobs unlock at launch).
+Founding pros can sign up properly on the landing page, build their full profile, and access their dashboard immediately — but every authenticated screen makes it impossible to miss that we're in **Workshop Mode** (pre-launch, no customers yet). When the trial ends, **nothing is auto-billed** — but profiles that go quiet auto-hide from the directory so we never look like a graveyard.
 
-## The flow
+---
 
-1. Visitor lands on `sjoh.co.za` — sees coming-soon page with role toggle (existing).
-2. **"I'm a Pro"** → form expands to: business name, email, password, province, city, category, **Claim my Founding Pro spot** button.
-3. Submit → creates auth account → claims founding spot → creates `businesses` row marked `pre_launch = true` → redirects to existing onboarding wizard (`/list`) to add description, photos, services.
-4. After onboarding → lands in `/dashboard` with persistent **Workshop Mode banner** at top.
-5. Welcome email arrives in inbox as confirmation (no link required to act on).
-6. **"I need a Pro"** → unchanged (email-only capture).
+## Part 1 — Workshop Mode (founding-pro signup + pre-launch UX)
 
-## Workshop Mode treatment (everywhere a logged-in pro looks)
+### The flow
 
-**Persistent coral banner on every authenticated page:**
-> 🚧 Workshop Mode — Sjoh hasn't launched yet. Customers can't see your profile or post jobs. We'll let you know the moment we open the doors.
+1. Visitor lands on `sjoh.co.za` — sees coming-soon page with role toggle.
+2. **"I'm a Pro"** (default — filling 500 founding spots is the priority): form expands to business name, email, password, province, city, category → **Claim my Founding Pro spot**.
+3. Submit → creates auth account → claims founding spot → creates `businesses` row marked `pre_launch = true` → redirects to onboarding wizard (`/list`) for description, photos, services.
+4. After onboarding → `/dashboard` with persistent **Workshop Mode banner**.
+5. Welcome email confirms — no action required.
+6. **"I need a Pro"** → unchanged email-only capture.
 
-**Empty-state copy on each section:**
-- **Dashboard home:** Big "You're a Founding Pro" card — *"Your profile is ready and waiting. Until launch, polish your listing — first impressions matter."*
-- **Opportunities/Jobs:** *"No jobs yet — we haven't opened the doors to customers. When we launch, this is where new jobs in your area land. Get your profile sharp so you're first in line."*
-- **Profile/Business page:** *"This is exactly what customers will see at launch. Make it count."*
-- **Pricing/billing:** *"Your 3 months free starts on launch day, not now. Nothing to pay yet."*
-- **Reviews:** *"Reviews unlock at launch."*
+### Workshop Mode treatment (every authenticated screen)
 
-**Hidden until launch (pre_launch = true):**
-- Place-bid buttons / proposal modal
-- Klap top-ups / payment CTAs
-- Public directory listing (filtered out of public queries)
+Persistent coral banner:
+> Workshop Mode — Sjoh hasn't launched yet. Customers can't see your profile or post jobs. We'll holla the moment we open the doors.
 
-**Visible (encouraged):**
-- Edit profile, upload photos, add services, set hours, link Google Place ID
-- Browse other founding pros' profiles (helps signal "we're real")
+Empty states:
+- **Dashboard:** "You're a Founding Pro. Your profile is ready and waiting. Until launch, polish your listing — first impressions matter."
+- **Opportunities:** "No jobs yet — we haven't opened the doors to customers. When we launch, this is where new jobs land."
+- **Profile:** "This is exactly what customers will see at launch. Make it count."
+- **Pricing:** "Your 3 months free starts on launch day, not now."
+- **Reviews:** "Reviews unlock at launch."
+
+Hidden while `pre_launch = true`: bid buttons, Klap top-ups, payment CTAs, public directory listing, sitemap entry.
+Visible: edit profile, photos, services, hours, Google Place link.
+
+### Auth setup
+
+Email + password, Google sign-in. Email verification on. HIBP check on. No auto-confirm.
+
+---
+
+## Part 2 — Profile Lifecycle (the "no dead profiles" layer)
+
+### Why
+
+The trial is free and won't auto-bill (CPA risk + "you charged me before any customer came" complaints aren't worth it). But that means some profiles will go quiet. Solution: **active profiles stay visible, dormant ones quietly disappear, archived ones vanish.** Owners can reactivate with one click.
+
+### The states
+
+A new column on `businesses` — `listing_status` — drives everything:
+
+| Status | Trigger | Public sees | Owner sees |
+|---|---|---|---|
+| `workshop` | `pre_launch = true` | Hidden | Workshop Mode banner |
+| `active` | `pre_launch = false` AND logged in within 60 days | Listed normally | Normal dashboard |
+| `dormant` | No login in 60 days | Hidden from search; profile page shows "currently unavailable, check back soon" | Yellow banner: "Your listing is paused — log in once a month to stay visible. Click here to reactivate." |
+| `archived` | No login in 6 months | Fully hidden (404) | Banner: "Your listing is archived. Reactivate to go live again." |
+
+`last_active_at` is bumped on every authenticated request (cheap — server-side update on session refresh).
+
+### The trial-ending nudge sequence
+
+Three emails, fully informational, no surprise charges:
+
+- **T-15 days** (75 days into trial): "Heads up — your free Workshop Mode trial ends in 15 days. After that, your profile stays live but you'll need to subscribe to refill Klaps for bidding. Nothing happens automatically."
+- **T-5 days** (85 days): "5 days left on your free trial. Pick a plan now or stay on the free tier — your call. No card, no auto-charge."
+- **T-day** (90 days): "Your free trial just ended. Your profile is still live, but you're on the free tier (no monthly Klaps). Subscribe anytime to start bidding again."
+
+Plus the dormancy nudges:
+- **Day 45** (no login): "Quick check-in — log in to keep your Sjoh listing visible. Profiles inactive for 60 days get paused."
+- **Day 60** (auto-paused): "Your listing is paused. One click reactivates it — link below."
+- **Day 150** (warning): "Your paused listing will be archived in 30 days unless you log back in."
+- **Day 180** (archived): "Your listing has been archived. Reactivate anytime in the next 6 months and we'll bring it back exactly as it was."
+
+### Reactivation
+
+A single button in the dashboard banner. Sets `last_active_at = now()`, recomputes `listing_status` to `active` (or `workshop` if still pre-launch). No re-onboarding, no data loss.
+
+---
 
 ## Database changes
 
-```
+```sql
+-- Workshop Mode
 ALTER TABLE businesses ADD COLUMN pre_launch boolean NOT NULL DEFAULT true;
-CREATE INDEX idx_businesses_pre_launch ON businesses(pre_launch) WHERE pre_launch = false;
+
+-- Lifecycle
+ALTER TABLE businesses
+  ADD COLUMN last_active_at timestamptz NOT NULL DEFAULT now(),
+  ADD COLUMN listing_status text NOT NULL DEFAULT 'workshop'
+    CHECK (listing_status IN ('workshop','active','dormant','archived'));
+
+CREATE INDEX idx_businesses_listing_status ON businesses(listing_status);
+CREATE INDEX idx_businesses_last_active ON businesses(last_active_at);
 ```
 
-Update public-facing queries (directory, search, category pages, sitemap, business profile public view) to filter `WHERE pre_launch = false`. Owner-side queries (dashboard, edit) ignore the flag — owners always see their own business.
+RPCs:
+- `set_business_pre_launch(business_id, pre_launch)` — flip workshop → active
+- `bump_last_active()` — called on session refresh
+- `reactivate_listing(business_id)` — owner one-click revive
+- `transition_listing_states()` — daily cron: workshop→active stays manual; active→dormant at 60d; dormant→archived at 180d
 
-Same flag pattern for `opportunities` if needed later, but at launch the table is empty anyway, so skip for now.
+Public queries (`businesses_public` view, directory hooks, sitemap, category pages, business-by-slug) filter to `listing_status = 'active'`. Owner queries always show their own row.
 
-## Auth setup
+### Daily cron
 
-We need real auth on the live site for the first time. Defaults:
-- Email + password (primary)
-- Google sign-in (one-tap, lower friction)
-- No phone/SAML
-- Auto-confirm email signups: **off** (users must verify email — keeps spam signups out)
-- Password leaked-password check: **on** (HIBP)
+`pg_cron` job at 04:00 SAST:
+1. Run `transition_listing_states()`
+2. Enqueue trial-ending emails (T-15, T-5, T-day) based on `provider_balances.trial_ends_at`
+3. Enqueue dormancy emails (D-45, D-60, D-150, D-180) based on `last_active_at`
 
-Existing `Login` / `Register` / `ForgotPassword` / `ResetPassword` pages already exist at `/login`, `/register`, `/forgot-password`, `/reset-password` — we'll route founding pros into the new bespoke flow instead, but those pages stay live as the post-onboarding return path.
+Each email type checks `email_send_log` to avoid duplicates.
 
-## Files that will change
+---
+
+## Files
 
 **New:**
-- `src/components/WorkshopModeBanner.tsx` — coral persistent banner shown on all authenticated layouts
-- `src/components/FoundingProSignupForm.tsx` — the inline signup form on the landing page (replaces the current single email input when "I'm a Pro" is selected)
-- `supabase/migrations/<timestamp>_add_pre_launch_to_businesses.sql` — adds the flag + index
+- `src/components/WorkshopModeBanner.tsx`
+- `src/components/DormantBanner.tsx` (yellow, "your listing is paused")
+- `src/components/ArchivedBanner.tsx` (with reactivate button)
+- `src/components/FoundingProSignupForm.tsx`
+- `src/hooks/useBumpLastActive.tsx` — fires once per session
+- `supabase/functions/_shared/transactional-email-templates/trial-ending-15.tsx`
+- `supabase/functions/_shared/transactional-email-templates/trial-ending-5.tsx`
+- `supabase/functions/_shared/transactional-email-templates/trial-ended.tsx`
+- `supabase/functions/_shared/transactional-email-templates/dormancy-warning.tsx` (45d)
+- `supabase/functions/_shared/transactional-email-templates/listing-paused.tsx` (60d)
+- `supabase/functions/_shared/transactional-email-templates/archive-warning.tsx` (150d)
+- `supabase/functions/_shared/transactional-email-templates/listing-archived.tsx` (180d)
+- `supabase/functions/lifecycle-cron/index.ts` — runs nightly via pg_cron
+- Two migrations: schema + cron schedule
 
 **Edited:**
-- `src/pages/ComingSoon.tsx` — when role is "pro", show the full signup form. When role is "customer", keep current email-only flow.
-- `src/pages/ListBusiness.tsx` — on submit, set `pre_launch = true` on the new business row. Update step copy to reflect Workshop Mode.
-- `src/pages/Dashboard.tsx` — wrap content with `WorkshopModeBanner` + add Founding Pro hero card + update empty states
-- `src/pages/Opportunities.tsx` — pre-launch empty state
-- `src/pages/Pricing.tsx` — Workshop Mode messaging ("free starts at launch")
-- `src/components/ProposalModal.tsx` / bid buttons — hide when business is `pre_launch`
-- `src/hooks/useDirectory.tsx` — filter out `pre_launch = true` listings from public results
-- `src/hooks/useBusinessBySlug.tsx` — return 404 for public visitors hitting a pre-launch profile (owners still see their own)
-- `src/pages/Directory.tsx`, `src/pages/CategoryLocationPage.tsx`, `src/pages/GroupLanding.tsx` — apply pre_launch filter
-- `supabase/functions/sitemap-xml/index.ts` — exclude pre-launch businesses
-- `supabase/functions/_shared/transactional-email-templates/early-access-pro.tsx` — update copy: "your profile is built and ready, see you at launch" instead of "we'll let you know to set up"
+- `src/pages/ComingSoon.tsx`, `src/pages/ListBusiness.tsx`, `src/pages/Dashboard.tsx`, `src/pages/Opportunities.tsx`, `src/pages/Pricing.tsx`
+- `src/components/SiteHeader.tsx` — banner picker (workshop / dormant / archived)
+- `src/hooks/useDirectory.tsx`, `src/hooks/useBusinessBySlug.tsx`
+- `src/pages/Directory.tsx`, `src/pages/CategoryLocationPage.tsx`, `src/pages/GroupLanding.tsx`
+- `supabase/functions/sitemap-xml/index.ts`
+- `supabase/functions/_shared/transactional-email-templates/registry.ts`
+- `supabase/functions/_shared/transactional-email-templates/early-access-pro.tsx`
 
-**Welcome email tweak:**
-The pro welcome email becomes a confirmation, not a CTA: "Lekker — you're a Founding Pro. Your profile is locked in and ready for launch day. We'll holla when we open the doors."
+---
 
-## Launch day toggle (kept simple)
+## Out of scope
 
-When you're ready to go live, you (or admin) run:
-```
-UPDATE businesses SET pre_launch = false WHERE pre_launch = true;
-```
-And swap the `/` route from `<ComingSoon />` to `<Index />`. That's it. We can build a 1-click admin button later if useful.
-
-## Out of scope for this loop
-
-- Customer-side accounts (still email capture only, as requested)
-- The voucher redemption system (Phase 3 in your roadmap)
-- Klaps removal / new pricing page (Phase 2 in your roadmap — separate chat)
-- Smile ID verification flow during onboarding (can stay as-is, just won't trigger billing yet)
+- Customer-side accounts (still email capture only)
+- Voucher redemption (Phase 3)
+- Klaps overhaul / new pricing (Phase 2)
+- Smile ID at signup (untouched)
 - Admin "promote all to live" button (one SQL command for now)
 
-## Open question — landing page form weighting
+---
 
-When a visitor lands, which path is the default? You hinted at this earlier but didn't pick:
+## Launch day
 
-- **(a)** Customer form by default, "I'm a Pro" button swaps it
-- **(b)** Equal-weight toggle, no default — they pick before seeing any form
-- **(c)** Pro form by default (since filling 500 founding spots is the priority right now), customer signup tucked below
+```sql
+UPDATE businesses
+SET pre_launch = false, listing_status = 'active', last_active_at = now()
+WHERE pre_launch = true;
+```
+Swap `/` route from `<ComingSoon />` to `<Index />`. Done.
 
-I'd default to **(c)** during the founding-spot phase since that's the active goal — but tell me if you want (a) or (b) instead and I'll wire it that way.
+---
 
-## After this is built
+## Build order
 
-1. You sign up as your own first Founding Pro to test the full flow
-2. Test signup, profile build, dashboard, all empty states, Workshop Mode banner
-3. Hit publish, point sjoh.co.za at it
-4. Start teasing
+1. **Migration** — `pre_launch` + lifecycle columns + RPCs
+2. **Workshop Mode UI** — landing form, banner, empty states, public-query filters
+3. **Lifecycle UI** — dormant/archived banners, reactivate button, `useBumpLastActive`
+4. **Email templates** — all 7 new ones
+5. **Cron edge function + pg_cron schedule** — last, once everything else is verified
+
+That way you can test signup + Workshop Mode end-to-end before the lifecycle automation kicks in.
