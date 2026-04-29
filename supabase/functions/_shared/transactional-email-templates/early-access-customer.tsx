@@ -55,9 +55,9 @@ const EarlyAccessCustomerEmail = () => (
         </Text>
 
         <Text style={text}>
-          We built Sjoh because finding a decent plumber, sparky, builder or
-          cleaner shouldn't be a gamble. No mamparas. No half-jobs. Just people
-          who do the graft.
+          Tired of guessing who to hire?<br />
+          We built Sjoh to fix that.<br />
+          No mamparas. No half-jobs. Just people who actually deliver.
         </Text>
 
         <Text style={signoff}>

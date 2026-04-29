@@ -1,89 +1,61 @@
-## Goal
+Two quick fixes plus a bigger feature decision to make.
 
-Wire up the early-access welcome email so every signup gets an instant, branded, on-voice confirmation in their inbox — different copy for Pros vs Clients. Then sanity-check the landing page is ready to go public.
+## 1. Fix the sender name (the "worka-sa-connect" issue)
 
-## What gets built
+`supabase/functions/send-transactional-email/index.ts` line 8 still has:
+```
+const SITE_NAME = "worka-sa-connect"
+```
 
-### 1. Two React Email templates
+That's what's showing up in the From header (`worka-sa-connect <noreply@notify.sjoh.co.za>`). It was baked in at scaffold time before the rebrand.
 
-**`early-access-pro.tsx`** — sent when `role = 'pro'`
-- Subject: "You're on the list, ous — your free month is locked in"
-- Preview text: "First dibs when Sjoh opens its doors"
-- Body covers:
-  - Welkom — you're officially on the Founding Pros list
-  - The three perks they get (extra free month, Founding Pro badge, first-in-line for vetting)
-  - What happens next ("we'll holla when the doors open, no spam in between")
-  - Soft sign-off from the Sjoh team
+**Change:** set `SITE_NAME = "Sjoh"` and redeploy `send-transactional-email`. From line will then read `Sjoh <noreply@notify.sjoh.co.za>`. Display name in inboxes becomes "Sjoh".
 
-**`early-access-customer.tsx`** — sent when `role = 'customer'`
-- Subject: "You're on the Sjoh list — first dibs incoming"
-- Preview text: "No more WhatsApp mampara hunts"
-- Body covers:
-  - You're in — first to know when we launch
-  - What Sjoh actually does for them (post a job with your budget, get vetted pros, no commission games)
-  - What happens next
-  - Soft sign-off
+## 2. Update the customer email closing copy
 
-Both templates:
-- White background, coral (#e8665a) accents and CTA, Plus Jakarta Sans → Arial fallback
-- Sjoh wordmark at the top
-- Sjoh SA copy voice (per `mem://design/sjoh-copy-voice`)
-- System auto-appends the unsubscribe footer (don't add one manually)
+In `early-access-customer.tsx`, replace the two paragraphs around lines 49–61 with the exact words you sent:
 
-### 2. Wire the trigger
+> Tired of guessing who to hire?
+> We built Sjoh to fix that.
+> No mamparas. No half-jobs. Just people who actually deliver.
 
-In `src/pages/ComingSoon.tsx`, after the successful insert into `early_access_signups`:
-- Call `supabase.functions.invoke('send-transactional-email', ...)` 
-- Pick the template based on the `role` field
-- Use `idempotencyKey: early-access-{signup-id}` so retries are safe
+Keep the "What happens next?" heading above it, keep the sign-off and footer below it. Then redeploy.
 
-### 3. Build the unsubscribe page
+## 3. Early profile setup for founding members — the bigger question
 
-Create `/email-unsubscribe` page (path may already exist as a placeholder — wire it up properly):
-- Reads `token` from URL
-- Validates against `handle-email-unsubscribe` edge function
-- Shows branded "Confirm unsubscribe" button
-- Confirmation state after they click
+Right now `early_access_signups` only stores email + role + founding-spot flag. To let founding pros pre-build their profiles before launch, we'd need to do one of these:
 
-### 4. Register templates + deploy
+**Option A — Magic-link onboarding (recommended)**
+After they claim their founding spot, send them a second email with a unique link like `/founding-setup?token=xxx`. That link drops them into a stripped-down version of `ListBusiness.tsx` (basics → profile → photos), saves to a new `pending_businesses` table, and they're ready to be flipped live on launch day. No password required yet.
 
-- Add both templates to `registry.ts`
-- Deploy edge functions (auto)
+- Pros: directory has real listings on day one, pros feel invested before launch, you can showcase real businesses in marketing
+- Cons: 2-3 days of work (new table, token system, stripped onboarding flow, new email template, admin "promote to live" tool)
 
-### 5. Landing-page launch checks
+**Option B — Just open auth + onboarding now**
+Let founding members sign up properly (email + password), build a real business profile, and mark it as `pre_launch` so it doesn't show in the public directory until launch day. Uses your existing `ListBusiness.tsx` flow.
 
-- Check publish visibility is set to `public` (not workspace-only)
-- Verify the signup form shows a clear success state after submit
-- Quick once-over of the landing page on mobile viewport
+- Pros: reuses existing code, less work (~half a day)
+- Cons: requires opening auth on the live site; means juggling two states (coming-soon page + working signup); risk of confusion ("am I live or not?")
 
-## What's NOT in this plan (deliberately)
+**Option C — Manual intake**
+Reply to founding signups personally, collect their info over WhatsApp/email, you (or an assistant) populate the directory. Works fine for the first 50–100.
 
-- Branded auth email templates — no one's logging in yet
-- Job-posted / bid-received / trial-lifecycle emails — post-launch features
-- Marketing blasts / drip sequences — you'll handle those manually via CSV exports
-- Admin signups page — Cloud export is fine until volume justifies it
+- Pros: zero engineering, highest-touch onboarding, you learn what pros actually struggle with
+- Cons: doesn't scale past ~100, your time
 
-## Files that will change
+**Option D — Skip it for now**
+Ship the email fixes, launch the teaser, build the founding-onboarding flow in a fresh chat once signups start coming in.
 
-**New:**
-- `supabase/functions/_shared/transactional-email-templates/early-access-pro.tsx`
-- `supabase/functions/_shared/transactional-email-templates/early-access-customer.tsx`
-- `supabase/functions/_shared/transactional-email-templates/registry.ts` (if not yet scaffolded)
-- `supabase/functions/send-transactional-email/index.ts` + siblings (scaffolded automatically)
+## Files I'd touch in this loop
 
-**Edited:**
-- `src/pages/ComingSoon.tsx` — add the `functions.invoke` after successful insert
-- `src/pages/EmailUnsubscribe.tsx` — wire up to the unsubscribe edge function
-- `src/App.tsx` — confirm `/email-unsubscribe` route exists
+If you pick "just the email fixes":
+- `supabase/functions/send-transactional-email/index.ts` (one line)
+- `supabase/functions/_shared/transactional-email-templates/early-access-customer.tsx` (closing paragraphs)
+- Redeploy `send-transactional-email`
 
-## After this, you're clear to publish
+The profile pre-setup work would be a separate plan once you pick A/B/C/D.
 
-Once the welcome emails are live and tested with one real signup (your own email), we hit publish, point sjoh.co.za at the landing page, and start teasing.
+## What I need from you
 
-## One thing to confirm before I build
-
-Voice check on the Pro subject line — I went with **"You're on the list, ous — your free month is locked in"**. Two alternatives if you want a different vibe:
-- More chilled: **"Lekker, you're in — your free month is sorted"**
-- More urgent: **"Founding Pro spot locked in — here's what you get"**
-
-If you don't pick, I'll go with the first one.
+1. Confirm the email fixes (sender name + new closing copy) — I'll do these now
+2. Pick A, B, C, or D for the founding-member profile setup
