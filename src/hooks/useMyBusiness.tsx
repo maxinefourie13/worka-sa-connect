@@ -5,9 +5,11 @@ import { useAuth } from "@/hooks/useAuth";
 export interface MyBusiness {
   id: string;
   name: string;
+  slug: string;
   category_slug: string;
   city: string;
   province: string;
+  pre_launch: boolean;
   google_place_id: string | null;
   google_maps_url: string | null;
   google_rating: number | null;
@@ -33,7 +35,7 @@ export function useMyBusiness() {
     setLoading(true);
     const { data } = await supabase
       .from("businesses")
-      .select("id, name, category_slug, city, province, google_place_id, google_maps_url, google_rating, google_review_count, google_reviews_last_fetched_at")
+      .select("id, name, slug, category_slug, city, province, pre_launch, google_place_id, google_maps_url, google_rating, google_review_count, google_reviews_last_fetched_at")
       .eq("owner_id", user.id)
       .limit(1)
       .maybeSingle();
