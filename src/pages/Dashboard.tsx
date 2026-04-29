@@ -190,8 +190,8 @@ const KlapsSection = () => {
   const { provider, events, toggleUrgentAlerts } = useKlap();
   const verification = useVerification();
   const [topUpOpen, setTopUpOpen] = useState(false);
-  const tier = SJOH_TIERS.find((t) => t.slug === provider.tier)!;
-  const pct = Math.round((provider.klapsRemaining / tier.klapsPerMonth) * 100);
+  const tier = SJOH_TIERS.find((t) => t.slug === provider.tier) ?? SJOH_TIERS[0];
+  const pct = Math.round((provider.klapsRemaining / Math.max(1, tier.klapsPerMonth)) * 100);
 
   const verifyLabel: Record<typeof verification.status, string> = {
     not_required: "Upgrade to verify",
