@@ -120,7 +120,7 @@ const StatCard = ({ label, value, hint }: { label: string; value: string; hint?:
 const OverviewSection = ({ onJump }: { onJump: (s: SectionKey) => void }) => {
   const { provider } = useKlap();
   const { user } = useAuth();
-  const tier = SJOH_TIERS.find((t) => t.slug === provider.tier)!;
+  const tier = SJOH_TIERS.find((t) => t.slug === provider.tier) ?? SJOH_TIERS[0];
   const firstName =
     (user?.user_metadata?.display_name as string | undefined)?.split(" ")[0] ||
     user?.email?.split("@")[0] ||
