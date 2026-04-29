@@ -1,11 +1,10 @@
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 
-type Tier = "hustler" | "main-oke";
-type Pack = "six-pack" | "crate";
+type Tier = "basic" | "verified_pro";
 
 async function startCheckout(
-  fn: "paystack-create-subscription" | "paystack-create-topup",
+  fn: "paystack-create-subscription" | "paystack-create-urgent",
   body: Record<string, unknown>,
   loadingMsg: string,
 ) {
@@ -36,8 +35,9 @@ async function startCheckout(
 
 export const payments = {
   startSubscription: (tier: Tier) =>
-    startCheckout("paystack-create-subscription", { tier }, `Starting ${tier === "hustler" ? "Hustler" : "The Pro"} subscription`),
-
-  buyKlapPack: (pack: Pack) =>
-    startCheckout("paystack-create-topup", { pack }, "Loading Klaps"),
+    startCheckout(
+      "paystack-create-subscription",
+      { tier },
+      `Starting ${tier === "basic" ? "Basic" : "Verified Pro"} subscription`,
+    ),
 };
