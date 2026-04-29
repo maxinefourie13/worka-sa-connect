@@ -625,6 +625,8 @@ export type Database = {
       provider_balances: {
         Row: {
           email_alerts_optin: boolean
+          founding_proposals_period_start: string
+          founding_proposals_used_this_month: number
           id: string
           is_id_verified: boolean
           onesignal_player_id: string | null
@@ -643,6 +645,8 @@ export type Database = {
         }
         Insert: {
           email_alerts_optin?: boolean
+          founding_proposals_period_start?: string
+          founding_proposals_used_this_month?: number
           id?: string
           is_id_verified?: boolean
           onesignal_player_id?: string | null
@@ -661,6 +665,8 @@ export type Database = {
         }
         Update: {
           email_alerts_optin?: boolean
+          founding_proposals_period_start?: string
+          founding_proposals_used_this_month?: number
           id?: string
           is_id_verified?: boolean
           onesignal_player_id?: string | null
@@ -1035,6 +1041,10 @@ export type Database = {
         Returns: undefined
       }
       bump_last_active: { Args: never; Returns: undefined }
+      can_use_founding_proposal: {
+        Args: { _user_id: string }
+        Returns: boolean
+      }
       claim_founding_spot: { Args: { _signup_id: string }; Returns: boolean }
       delete_email: {
         Args: { message_id: number; queue_name: string }
@@ -1066,6 +1076,7 @@ export type Database = {
         Returns: boolean
       }
       has_verified_pro_access: { Args: { _user_id: string }; Returns: boolean }
+      is_founding_member: { Args: { _user_id: string }; Returns: boolean }
       lapse_subscription: {
         Args: { _subscription_code: string }
         Returns: undefined
