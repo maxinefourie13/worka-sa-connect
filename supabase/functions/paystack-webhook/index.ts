@@ -51,6 +51,7 @@ Deno.serve(async (req) => {
     event === 'charge.success' && purpose === 'subscription' ? 'subscription_charge' :
     event === 'charge.success' && purpose === 'klap_topup'   ? 'klap_topup_charge'  :
     event === 'charge.success' && purpose === 'urgent_fee'   ? 'urgent_fee_charge'  :
+    event === 'charge.success' && purpose === 'urgent_boost' ? 'urgent_boost'       :
     event === 'subscription.disable'   ? 'subscription_disable' :
     event === 'invoice.payment_failed' ? 'subscription_payment_failed' :
     'other';
@@ -108,6 +109,19 @@ Deno.serve(async (req) => {
     } else if (kind === 'urgent_fee_charge') {
       // Urgent SOS feature was removed — ignore legacy webhooks gracefully.
       processError = null;
+    } else if (kind === 'urgent_boost' && userId) {
+      const opportunityId = meta.opportunity_id as string | undefined;
+      if (!opportunityId) {
+        processError = 'urgent_boost missing opportunity_id metadata';
+      } else {
+        const { error } = await admin.rpc('apply_urgent_boost', {
+          _opportunity_id: opportunityId,
+          _user_id: userId,
+          _amount_cents: amount ?? 5000,
+          _reference: reference,
+        });
+        if (error) processError = error.message;
+      }
     } else if (kind === 'subscription_disable' || kind === 'subscription_payment_failed') {
       const subCode = data.subscription_code ?? data.plan ?? null;
       if (subCode) {

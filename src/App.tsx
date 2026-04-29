@@ -23,6 +23,7 @@ import ListBusiness from "./pages/ListBusiness.tsx";
 import Dashboard from "./pages/Dashboard.tsx";
 import CategoryLocationPage from "./pages/CategoryLocationPage.tsx";
 import { Login, Register, ForgotPassword, ResetPassword } from "./pages/Auth.tsx";
+import FoundingMembersAdmin from "./pages/admin/FoundingMembers.tsx";
 
 const queryClient = new QueryClient();
 
@@ -51,6 +52,7 @@ const App = () => {
                 <Route path="/pricing" element={<Pricing />} />
                 <Route path="/list" element={<ProtectedRoute><ListBusiness /></ProtectedRoute>} />
                 <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+                <Route path="/admin/founding-members" element={<ProtectedRoute><FoundingMembersAdmin /></ProtectedRoute>} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/forgot-password" element={<ForgotPassword />} />
