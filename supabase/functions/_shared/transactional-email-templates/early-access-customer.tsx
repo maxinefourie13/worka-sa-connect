@@ -1,0 +1,162 @@
+import * as React from 'npm:react@18.3.1'
+import {
+  Body,
+  Container,
+  Head,
+  Heading,
+  Html,
+  Preview,
+  Section,
+  Text,
+} from 'npm:@react-email/components@0.0.22'
+import type { TemplateEntry } from './registry.ts'
+
+const SITE_NAME = 'Sjoh'
+const SITE_URL = 'https://sjoh.co.za'
+
+const EarlyAccessCustomerEmail = () => (
+  <Html lang="en" dir="ltr">
+    <Head />
+    <Preview>No more WhatsApp mampara hunts — Sjoh is on the way</Preview>
+    <Body style={main}>
+      <Container style={container}>
+        <Section style={brandSection}>
+          <Text style={wordmark}>
+            sjoh<span style={dot}>.</span>co<span style={dot}>.</span>za
+          </Text>
+        </Section>
+
+        <Heading style={h1}>You're on the list.</Heading>
+
+        <Text style={lead}>
+          Lekker — you'll be first to know when Sjoh goes live. No more chasing
+          ous in WhatsApp groups or hoping someone pitches up on Saturday.
+        </Text>
+
+        <Section style={perksBox}>
+          <Text style={perkLine}>
+            <span style={tick}>✓</span> First dibs on vetted pros in your area
+          </Text>
+          <Text style={perkLine}>
+            <span style={tick}>✓</span> Post a job with your own budget — pros come to you
+          </Text>
+          <Text style={perkLine}>
+            <span style={tick}>✓</span> No commission, no middleman — you talk to them direct
+          </Text>
+        </Section>
+
+        <Heading as="h2" style={h2}>What happens next?</Heading>
+        <Text style={text}>
+          The moment we open the doors, we'll let you know — usually with a
+          heads-up a day or two before. From there it's a few clicks to find
+          someone who'll actually do the job properly.
+        </Text>
+
+        <Text style={text}>
+          We built Sjoh because finding a decent plumber, sparky, builder or
+          cleaner shouldn't be a gamble. No mamparas. No half-jobs. Just people
+          who do the graft.
+        </Text>
+
+        <Text style={signoff}>
+          Chat soon,<br />
+          The {SITE_NAME} team
+        </Text>
+
+        <Text style={footer}>
+          You're getting this because you signed up for early access at{' '}
+          <a href={SITE_URL} style={link}>sjoh.co.za</a>.
+        </Text>
+      </Container>
+    </Body>
+  </Html>
+)
+
+export const template = {
+  component: EarlyAccessCustomerEmail,
+  subject: "You're on the Sjoh list — first dibs incoming",
+  displayName: 'Early access — Customer welcome',
+  previewData: {},
+} satisfies TemplateEntry
+
+const main = {
+  backgroundColor: '#ffffff',
+  fontFamily: '"Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif',
+  margin: 0,
+  padding: 0,
+}
+const container = {
+  maxWidth: '560px',
+  margin: '0 auto',
+  padding: '32px 28px 40px',
+}
+const brandSection = { textAlign: 'center' as const, margin: '0 0 28px' }
+const wordmark = {
+  fontSize: '24px',
+  fontWeight: 800,
+  letterSpacing: '-0.02em',
+  color: '#0f0f10',
+  margin: 0,
+}
+const dot = { color: '#e8665a' }
+const h1 = {
+  fontSize: '32px',
+  fontWeight: 800,
+  letterSpacing: '-0.02em',
+  color: '#0f0f10',
+  lineHeight: 1.15,
+  margin: '0 0 16px',
+}
+const h2 = {
+  fontSize: '18px',
+  fontWeight: 800,
+  letterSpacing: '-0.01em',
+  color: '#0f0f10',
+  margin: '28px 0 8px',
+}
+const lead = {
+  fontSize: '16px',
+  color: '#3a3a3d',
+  lineHeight: 1.55,
+  margin: '0 0 24px',
+}
+const text = {
+  fontSize: '15px',
+  color: '#3a3a3d',
+  lineHeight: 1.6,
+  margin: '0 0 16px',
+}
+const perksBox = {
+  backgroundColor: '#fff5f4',
+  border: '1px solid #fad5d1',
+  borderRadius: '14px',
+  padding: '18px 20px',
+  margin: '8px 0 24px',
+}
+const perkLine = {
+  fontSize: '15px',
+  color: '#0f0f10',
+  fontWeight: 600,
+  lineHeight: 1.5,
+  margin: '6px 0',
+}
+const tick = {
+  color: '#e8665a',
+  fontWeight: 800,
+  marginRight: '8px',
+}
+const signoff = {
+  fontSize: '15px',
+  color: '#0f0f10',
+  lineHeight: 1.5,
+  margin: '28px 0 24px',
+}
+const footer = {
+  fontSize: '12px',
+  color: '#888888',
+  lineHeight: 1.5,
+  margin: '24px 0 0',
+  borderTop: '1px solid #eeeeee',
+  paddingTop: '16px',
+}
+const link = { color: '#e8665a', textDecoration: 'underline' }
