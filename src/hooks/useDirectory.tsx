@@ -45,6 +45,8 @@ export function useBusinesses(): State<Business> {
 }
 
 function mapOpportunity(row: any): Opportunity {
+  const boostedAt = row.urgent_boost_paid_at as string | null | undefined;
+  const isBoosted = !!boostedAt && (Date.now() - new Date(boostedAt).getTime()) < 72 * 3600 * 1000;
   return {
     id: row.id,
     title: row.title,
@@ -57,12 +59,14 @@ function mapOpportunity(row: any): Opportunity {
     budget: Number(row.budget ?? 0),
     budgetType: (row.budget_type ?? "estimate") as Opportunity["budgetType"],
     deadline: row.deadline ?? "",
-    isUrgent: false,
+    isUrgent: isBoosted,
     status: (row.status ?? "open") as Opportunity["status"],
     postedAt: relative(row.created_at),
     applicants: row.applicants_count ?? 0,
     requirements: row.requirements ?? [],
     postedBy: row.posted_by_name ?? "Sjoh client",
+    clientId: row.client_id,
+    urgentBoostPaidAt: boostedAt ?? null,
   };
 }
 
