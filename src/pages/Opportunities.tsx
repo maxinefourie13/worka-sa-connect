@@ -1,15 +1,18 @@
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { Search, ShieldCheck } from "lucide-react";
+import { Search, ShieldCheck, Construction } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
 import { Button } from "@/components/ui/button";
 import { JobCard } from "@/components/JobCard";
 import { CATEGORIES, PROVINCES } from "@/lib/mockData";
 import { useOpportunities } from "@/hooks/useDirectory";
+import { useMyBusiness } from "@/hooks/useMyBusiness";
 import { cn } from "@/lib/utils";
 
 const Opportunities = () => {
   const { data: opportunities } = useOpportunities();
+  const { business: myBiz } = useMyBusiness();
+  const isWorkshopMode = !!myBiz?.pre_launch;
   const [keyword, setKeyword] = useState("");
   const [category, setCategory] = useState("");
   const [province, setProvince] = useState("");
