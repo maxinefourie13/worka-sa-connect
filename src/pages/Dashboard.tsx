@@ -119,6 +119,7 @@ const OverviewSection = ({ onJump }: { onJump: (s: SectionKey) => void }) => {
     "boet";
   return (
     <>
+      <SubscriptionGapBanner />
       <header className="flex items-center justify-between">
         <div>
           <h1 className="font-display text-3xl font-medium tracking-tight">
