@@ -301,18 +301,18 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* Latest opportunities */}
+      {/* Latest customer requests */}
       <section className="bg-card border-y border-border">
         <div className="container py-20">
           <div className="flex items-end justify-between mb-10">
             <div className="max-w-xl">
               <h2 className="font-display text-3xl md:text-4xl font-medium tracking-tight">
-                Latest opportunities
+                Latest customer requests
               </h2>
-              <p className="mt-3 text-ink-2">Real jobs posted by people and businesses across SA.</p>
+              <p className="mt-3 text-ink-2">Real requests posted by people and businesses across SA.</p>
             </div>
-            <Link to="/opportunities" className="text-sm font-semibold text-primary hover:underline hidden md:inline-block">
-              View board
+            <Link to="/requests" className="text-sm font-semibold text-primary hover:underline hidden md:inline-block">
+              View all requests
             </Link>
           </div>
           <div className="grid lg:grid-cols-3 gap-5">
