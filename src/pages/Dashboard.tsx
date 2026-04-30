@@ -694,6 +694,61 @@ const NotificationPrefsCard = () => {
           </Button>
         )}
       </div>
+
+      {/* WhatsApp — App-Fatigue fix: bring leads to where Pros already live */}
+      <div className="py-3 border-t border-border">
+        <div className="flex items-start justify-between gap-3">
+          <div className="flex items-start gap-3 min-w-0">
+            <MessageCircle className="size-4 text-ink-2 mt-0.5 shrink-0" />
+            <div className="min-w-0">
+              <p className="text-sm font-semibold">WhatsApp me when fresh leads drop</p>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                Lead alerts on WhatsApp — no need to keep checking the app. Capped at 5/hour.
+              </p>
+            </div>
+          </div>
+          {waOn && (
+            <span className="shrink-0 inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded-full bg-primary/10 text-primary border border-primary/30">
+              On
+            </span>
+          )}
+        </div>
+        <div className="mt-3 flex flex-col sm:flex-row gap-2">
+          <input
+            type="tel"
+            inputMode="tel"
+            value={waNumber}
+            onChange={(e) => setWaNumber(e.target.value)}
+            placeholder="+27 82 123 4567"
+            className="db-input flex-1"
+            disabled={loading || busy === "wa"}
+          />
+          {waOn ? (
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => saveWhatsApp(false)}
+              disabled={busy === "wa"}
+              className="shrink-0"
+            >
+              {busy === "wa" ? "..." : "Turn off"}
+            </Button>
+          ) : (
+            <Button
+              size="sm"
+              onClick={() => saveWhatsApp(true)}
+              disabled={busy === "wa"}
+              className="shrink-0 gap-1.5"
+            >
+              <MessageCircle className="size-3.5" strokeWidth={2.5} />
+              {busy === "wa" ? "Saving…" : "Enable WhatsApp alerts"}
+            </Button>
+          )}
+        </div>
+        <p className="mt-2 text-[11px] text-muted-foreground">
+          Standard WhatsApp message rates apply on Twilio's side. We'll only send when a lead matches your category &amp; area.
+        </p>
+      </div>
     </div>
   );
 };
