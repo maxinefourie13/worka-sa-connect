@@ -316,11 +316,23 @@ const BusinessProfile = () => {
                   </li>
                   <li className="flex items-start gap-2.5">
                     <Phone className="size-4 text-muted-foreground mt-0.5 shrink-0" />
-                    <a href={`tel:${business.phone}`} className="hover:text-primary transition-colors break-all">{business.phone}</a>
+                    {phone ? (
+                      <a href={`tel:${phone}`} className="hover:text-primary transition-colors break-all">{phone}</a>
+                    ) : (
+                      <button onClick={handleReveal} className="text-primary hover:underline text-left" disabled={revealing}>
+                        {revealing ? "Revealing…" : "Tap to reveal phone"}
+                      </button>
+                    )}
                   </li>
                   <li className="flex items-start gap-2.5">
                     <Mail className="size-4 text-muted-foreground mt-0.5 shrink-0" />
-                    <a href={`mailto:${business.email}`} className="hover:text-primary transition-colors break-all">{business.email}</a>
+                    {email ? (
+                      <a href={`mailto:${email}`} className="hover:text-primary transition-colors break-all">{email}</a>
+                    ) : (
+                      <button onClick={handleReveal} className="text-primary hover:underline text-left" disabled={revealing}>
+                        {revealing ? "Revealing…" : "Tap to reveal email"}
+                      </button>
+                    )}
                   </li>
                   <li className="flex items-start gap-2.5">
                     <Globe className="size-4 text-muted-foreground mt-0.5 shrink-0" />
