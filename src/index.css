@@ -158,4 +158,23 @@
     background-size: 24px 24px;
     background-position: 0 0;
   }
+
+  /* Moving black ↔ coral gradient — used on sample/preview cards */
+  .sample-gradient {
+    background: linear-gradient(
+      120deg,
+      hsl(0 0% 8%) 0%,
+      hsl(5 100% 64%) 35%,
+      hsl(0 0% 8%) 65%,
+      hsl(5 100% 64%) 100%
+    );
+    background-size: 300% 300%;
+    animation: sample-gradient-pan 7s ease-in-out infinite;
+  }
+  @keyframes sample-gradient-pan {
+    0%   { background-position: 0% 50%; }
+    50%  { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
 }
+

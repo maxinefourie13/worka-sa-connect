@@ -243,26 +243,29 @@ const CategoryLocationPage = () => {
                 b.id === EXAMPLE_BUSINESS_ID ? (
                   <div
                     key={b.id}
-                    className="block bg-card border-2 border-dashed border-primary/60 rounded-xl p-5 shadow-card relative"
+                    className="block bg-card border border-border rounded-xl shadow-card relative overflow-hidden"
                   >
-                    <span className="absolute top-3 right-3 bg-primary text-primary-foreground text-[10px] font-bold tracking-widest uppercase px-2 py-1 rounded">
-                      Sample
-                    </span>
-                    <h2 className="font-display text-lg font-semibold leading-tight pr-16">
-                      {b.name}
-                    </h2>
-                    <p className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
-                      <MapPin className="size-3" /> {b.city}, {b.province}
-                    </p>
-                    <p className="text-sm text-ink-2 mt-3">
-                      This is what your listing will look like — your name, photo, services and reviews live here.
-                    </p>
-                    <Link
-                      to="/list"
-                      className="mt-4 inline-block text-sm font-bold text-primary hover:underline"
-                    >
-                      List your business →
-                    </Link>
+                    <div className="sample-gradient h-2 w-full" />
+                    <div className="p-5 relative">
+                      <span className="absolute top-3 right-3 bg-foreground text-background text-[10px] font-bold tracking-widest uppercase px-2 py-1 rounded">
+                        Sample
+                      </span>
+                      <h2 className="font-display text-lg font-semibold leading-tight pr-16">
+                        {b.name}
+                      </h2>
+                      <p className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
+                        <MapPin className="size-3" /> {b.city}, {b.province}
+                      </p>
+                      <p className="text-sm text-ink-2 mt-3">
+                        This is what your listing will look like — your name, photo, services and reviews live here.
+                      </p>
+                      <Link
+                        to="/list"
+                        className="mt-4 inline-block text-sm font-bold text-primary hover:underline"
+                      >
+                        List your business →
+                      </Link>
+                    </div>
                   </div>
                 ) : (
                   <Link

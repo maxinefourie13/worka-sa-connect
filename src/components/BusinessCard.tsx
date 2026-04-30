@@ -37,8 +37,8 @@ export const BusinessCard = ({ business, className }: BusinessCardProps) => {
         )}
         aria-label="Example listing preview"
       >
-        <div className={cn("h-28 relative overflow-hidden", business.gradient)}>
-          <span className="absolute top-3 left-3 z-10 bg-primary text-primary-foreground text-[10px] font-bold tracking-widest uppercase px-2 py-1 rounded">
+        <div className="h-28 relative overflow-hidden sample-gradient">
+          <span className="absolute top-3 left-3 z-10 bg-background/95 text-foreground text-[10px] font-bold tracking-widest uppercase px-2 py-1 rounded shadow-soft">
             Sample listing
           </span>
           <div className="absolute -bottom-7 left-5 z-10 size-14 rounded-xl bg-card border-4 border-card shadow-soft flex items-center justify-center font-display font-bold text-xl text-foreground">
