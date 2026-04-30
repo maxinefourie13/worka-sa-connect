@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import {
   LayoutGrid, User, Sparkles, Briefcase, Users, CreditCard, Plus,
-  Zap, ShieldCheck, Siren, Bell, Mail, FileText, MessageCircle,
+  Zap, ShieldCheck, Siren, Bell, Mail, FileText, MessageCircle, Lock,
 } from "lucide-react";
 import { QuotesSection } from "@/components/dashboard/QuotesSection";
 import { SiteHeader } from "@/components/SiteHeader";
@@ -21,9 +21,10 @@ import { SubscriptionGapBanner } from "@/components/SubscriptionGapBanner";
 import { ProfileVisibilityWarning } from "@/components/ProfileVisibilityWarning";
 import { ReferAProCard } from "@/components/dashboard/ReferAProCard";
 import { SecondaryCategoriesCard } from "@/components/dashboard/SecondaryCategoriesCard";
+import { PrivacySection } from "@/components/dashboard/PrivacySection";
 import { cn } from "@/lib/utils";
 
-type SectionKey = "overview" | "quotes" | "klaps" | "profile" | "promotions" | "opportunities" | "followers" | "billing";
+type SectionKey = "overview" | "quotes" | "klaps" | "profile" | "promotions" | "opportunities" | "followers" | "billing" | "privacy";
 const SECTIONS: { key: SectionKey; label: string; icon: typeof LayoutGrid }[] = [
   { key: "overview", label: "Overview", icon: LayoutGrid },
   { key: "quotes", label: "My Quotes", icon: FileText },
@@ -33,6 +34,7 @@ const SECTIONS: { key: SectionKey; label: string; icon: typeof LayoutGrid }[] = 
   { key: "opportunities", label: "Leads", icon: Briefcase },
   { key: "followers", label: "Followers", icon: Users },
   { key: "billing", label: "Billing", icon: CreditCard },
+  { key: "privacy", label: "Data & Privacy", icon: Lock },
 ];
 
 const Dashboard = () => {
@@ -106,6 +108,7 @@ const Dashboard = () => {
             {section === "opportunities" && <OpportunitiesSection />}
             {section === "followers" && <FollowersSection />}
             {section === "billing" && <BillingSection />}
+            {section === "privacy" && <PrivacySection />}
           </div>
         </div>
       </div>
