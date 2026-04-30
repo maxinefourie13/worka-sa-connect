@@ -14,6 +14,10 @@ export interface MyBusiness {
   pre_launch: boolean;
   listing_status: ListingStatus;
   last_active_at: string;
+  phone: string | null;
+  email: string | null;
+  website: string | null;
+  description: string | null;
   google_place_id: string | null;
   google_maps_url: string | null;
   google_rating: number | null;
@@ -39,7 +43,7 @@ export function useMyBusiness() {
     setLoading(true);
     const { data } = await supabase
       .from("businesses")
-      .select("id, name, slug, category_slug, city, province, pre_launch, listing_status, last_active_at, google_place_id, google_maps_url, google_rating, google_review_count, google_reviews_last_fetched_at")
+      .select("id, name, slug, category_slug, city, province, pre_launch, listing_status, last_active_at, phone, email, website, description, google_place_id, google_maps_url, google_rating, google_review_count, google_reviews_last_fetched_at")
       .eq("owner_id", user.id)
       .limit(1)
       .maybeSingle();

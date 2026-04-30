@@ -204,9 +204,9 @@ const HomePage = () => {
         <div className="container py-10">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-4 divide-y md:divide-y-0 md:divide-x divide-border/60">
             {[
-              { v: STATS.businesses.toLocaleString("en-ZA"), l: "Businesses listed" },
-              { v: STATS.opportunities.toLocaleString("en-ZA"), l: "Open requests" },
-              { v: STATS.categories.toString(), l: "Categories" },
+              { v: STATS.commission, l: "Commission on jobs" },
+              { v: STATS.categories.toString(), l: "Service categories" },
+              { v: STATS.categoryGroups.toString(), l: "Industry groups" },
               { v: STATS.provinces.toString(), l: "Provinces covered" },
             ].map((s) => (
               <div key={s.l} className="flex flex-col items-center text-center pt-4 md:pt-0">

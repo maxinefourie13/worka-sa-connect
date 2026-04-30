@@ -619,11 +619,13 @@ export const PROMOTIONS: Promotion[] = [
   },
 ];
 
+// Factual, defensible stats only — derived from the static directory taxonomy
+// (not from inflated business counts). Update when we add categories/groups.
 export const STATS = {
-  businesses: 14208,
-  opportunities: 2845,
-  categories: 114,
+  categories: CATEGORIES.length,
+  categoryGroups: CATEGORY_GROUPS.length,
   provinces: 9,
+  commission: "0%",
 };
 
 // =====================================================

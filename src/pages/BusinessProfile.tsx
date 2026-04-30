@@ -7,6 +7,7 @@ import { BUSINESS_VERIFICATION, formatRand } from "@/lib/mockData";
 import { VerificationBadges } from "@/components/VerificationBadges";
 import { ReportProfileButton } from "@/components/ReportProfileButton";
 import { GoogleReviewsList } from "@/components/GoogleReviewsList";
+import { PublicBusinessGallery } from "@/components/PublicBusinessGallery";
 import { SeoHead } from "@/components/SeoHead";
 import { useBusinessBySlug } from "@/hooks/useBusinessBySlug";
 import { useReveal } from "@/hooks/useReveal";
@@ -263,6 +264,9 @@ const BusinessProfile = () => {
                       <Reveal>
                         <h2 className="font-display text-lg sm:text-xl font-semibold mb-2 sm:mb-3">About</h2>
                         <p className="text-sm sm:text-base text-ink-2 leading-relaxed">{business.description}</p>
+                      </Reveal>
+                      <Reveal delay={60}>
+                        <PublicBusinessGallery businessId={business.id} />
                       </Reveal>
                       <Reveal delay={80}>
                         <h2 className="font-display text-lg sm:text-xl font-semibold mb-3 sm:mb-4">Services overview</h2>

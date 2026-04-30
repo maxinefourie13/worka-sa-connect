@@ -21,6 +21,7 @@ import { SubscriptionGapBanner } from "@/components/SubscriptionGapBanner";
 import { ProfileVisibilityWarning } from "@/components/ProfileVisibilityWarning";
 import { ReferAProCard } from "@/components/dashboard/ReferAProCard";
 import { SecondaryCategoriesCard } from "@/components/dashboard/SecondaryCategoriesCard";
+import { BusinessGalleryCard } from "@/components/dashboard/BusinessGalleryCard";
 import { PrivacySection } from "@/components/dashboard/PrivacySection";
 import { useProviderAccess } from "@/hooks/useProviderAccess";
 import { cn } from "@/lib/utils";
@@ -308,7 +309,10 @@ const VerificationSection = () => {
 
 const ProfileSection = () => {
   const { user } = useAuth();
+  const { business, refresh } = useMyBusiness();
   const [myBiz, setMyBiz] = useState<{ id: string; category_slug: string } | null>(null);
+  const [form, setForm] = useState({ name: "", phone: "", email: "", website: "", description: "" });
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     if (!user) return;
@@ -324,6 +328,58 @@ const ProfileSection = () => {
     })();
   }, [user]);
 
+  useEffect(() => {
+    if (business) {
+      setForm({
+        name: business.name ?? "",
+        phone: business.phone ?? "",
+        email: business.email ?? "",
+        website: business.website ?? "",
+        description: business.description ?? "",
+      });
+    }
+  }, [business?.id]);
+
+  const onSave = async () => {
+    if (!business?.id) return;
+    setSaving(true);
+    const { error } = await supabase
+      .from("businesses")
+      .update({
+        name: form.name,
+        phone: form.phone || null,
+        email: form.email || null,
+        website: form.website || null,
+        description: form.description || null,
+      })
+      .eq("id", business.id);
+    setSaving(false);
+    if (error) {
+      toast({ title: "Aikona, couldn't save.", description: error.message, variant: "destructive" });
+      return;
+    }
+    toast({ title: "Sharp! Profile updated.", description: "Your changes are live." });
+    refresh?.();
+  };
+
+  if (!business) {
+    return (
+      <>
+        <header>
+          <h1 className="font-display text-3xl font-medium tracking-tight">My Profile</h1>
+          <p className="text-sm text-ink-2 mt-1">Edit how your business appears on Sjoh.</p>
+        </header>
+        <div className="bg-card border border-border rounded-xl p-6">
+          <p className="text-sm text-ink-2">
+            You haven't listed your business yet.
+          </p>
+          <Button asChild className="mt-4"><Link to="/list">List your business</Link></Button>
+        </div>
+        <DbStyle />
+      </>
+    );
+  }
+
   return (
     <>
       <header>
@@ -332,19 +388,36 @@ const ProfileSection = () => {
       </header>
       <div className="bg-card border border-border rounded-xl p-6 space-y-5">
         <div className="grid sm:grid-cols-2 gap-4">
-          <Field label="Business name"><input className="db-input" defaultValue="Khumalo Electrical Contractors" /></Field>
-          <Field label="Phone"><input className="db-input" defaultValue="+27 11 234 5678" /></Field>
-          <Field label="Email"><input className="db-input" defaultValue="hello@khumaloelec.co.za" /></Field>
-          <Field label="Website"><input className="db-input" defaultValue="khumaloelec.co.za" /></Field>
+          <Field label="Business name">
+            <input className="db-input" value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} />
+          </Field>
+          <Field label="Phone">
+            <input className="db-input" value={form.phone} onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value }))} />
+          </Field>
+          <Field label="Email">
+            <input className="db-input" value={form.email} onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))} />
+          </Field>
+          <Field label="Website">
+            <input className="db-input" value={form.website} onChange={(e) => setForm((f) => ({ ...f, website: e.target.value }))} />
+          </Field>
         </div>
         <Field label="Description">
-          <textarea rows={4} className="db-input resize-none" defaultValue="Master electricians serving Gauteng since 2009. Certified installations, COC inspections, solar PV, and 24/7 emergency callouts." />
+          <textarea
+            rows={4}
+            className="db-input resize-none"
+            value={form.description}
+            onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
+          />
         </Field>
         <div className="flex justify-end gap-3 pt-3 border-t border-border">
-          <Button variant="outline">Cancel</Button>
-          <Button>Save Changes</Button>
+          <Button variant="outline" onClick={() => business && setForm({
+            name: business.name ?? "", phone: business.phone ?? "", email: business.email ?? "",
+            website: business.website ?? "", description: business.description ?? "",
+          })}>Cancel</Button>
+          <Button onClick={onSave} disabled={saving}>{saving ? "Saving…" : "Save Changes"}</Button>
         </div>
       </div>
+      <BusinessGalleryCard businessId={business.id} />
       {myBiz && (
         <SecondaryCategoriesCard
           businessId={myBiz.id}
