@@ -67,6 +67,8 @@ function mapOpportunity(row: any): Opportunity {
     postedBy: row.posted_by_name ?? "Sjoh client",
     clientId: row.client_id,
     urgentBoostPaidAt: boostedAt ?? null,
+    isConciergeLead: !!row.is_concierge_lead,
+    externalContactUrl: row.external_contact_url ?? null,
   };
 }
 
