@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { ArrowLeft, Phone, Mail, MessageCircle, MapPin, Clock, Globe, ShieldCheck } from "lucide-react";
+import { ArrowLeft, Phone, Mail, MessageCircle, MapPin, Clock, Globe, ShieldCheck, FileText } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
 import { Button } from "@/components/ui/button";
 import { BUSINESS_VERIFICATION, formatRand } from "@/lib/mockData";
@@ -12,6 +12,7 @@ import { useBusinessBySlug } from "@/hooks/useBusinessBySlug";
 import { useReveal } from "@/hooks/useReveal";
 import { useRevealContact } from "@/hooks/useRevealContact";
 import { useVerifiedHiresCount } from "@/hooks/useVerifiedHiresCount";
+import { useAuth } from "@/hooks/useAuth";
 import { cn } from "@/lib/utils";
 
 type TabKey = "about" | "services" | "promotions" | "reviews";
@@ -94,11 +95,15 @@ const BusinessProfile = () => {
     });
   };
 
+  const { user } = useAuth();
   const { contact: revealed, loading: revealing, reveal } = useRevealContact(business.id);
-  // Use revealed contact if available, otherwise fall back to whatever the row gave us
-  // (owners reading their own listing still get email/phone directly via RLS).
-  const phone = revealed?.phone ?? business.phone ?? "";
-  const email = revealed?.email ?? business.email ?? "";
+
+  // Bot protection: never inline phone/email in the public HTML. Visitors must
+  // click "Reveal" (which is auth-gated + rate-limited server-side) before any
+  // contact details are rendered. This prevents scraping while keeping it easy
+  // for real humans (and Grandmas) to see.
+  const phone = revealed?.phone ?? "";
+  const email = revealed?.email ?? "";
   const hasContact = !!(phone || email);
   const phoneDigits = phone.replace(/\D/g, "");
 
@@ -107,14 +112,15 @@ const BusinessProfile = () => {
   const seoTitle = `${business.name} | ${business.category} in ${business.city} | Sjoh!`;
   const seoDesc = (business.description || `${business.name} — ${business.category} in ${business.city}, ${business.province}. Find someone who can do it properly on Sjoh.`).slice(0, 158);
   const canonical = typeof window !== "undefined" ? `${window.location.origin}/business/${business.slug}` : undefined;
+
+  // LocalBusiness schema — deliberately omits telephone/email so search engines
+  // and crawlers don't surface raw contact details to scrapers.
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
     name: business.name,
     description: business.description ?? undefined,
     image: business.image ?? undefined,
-    telephone: business.phone ?? undefined,
-    email: business.email ?? undefined,
     url: canonical,
     address: {
       "@type": "PostalAddress",
@@ -424,6 +430,18 @@ const BusinessProfile = () => {
                     <p className="text-[11px] text-muted-foreground mt-2 text-center">Sign in required. We hide contact info from scrapers.</p>
                   </div>
                 )}
+                <div className="mt-5 pt-5 border-t border-border">
+                  <Button asChild variant="outline" className="w-full">
+                    <Link to={user ? `/requests/new?pro=${business.slug}` : `/login?next=${encodeURIComponent(`/requests/new?pro=${business.slug}`)}`}>
+                      <FileText className="size-4" /> Request a Quote from this Pro
+                    </Link>
+                  </Button>
+                  {!user && (
+                    <p className="text-[11px] text-muted-foreground mt-2 text-center">
+                      Sign up to use the secure Sjoh Quoting system — your number stays hidden until you accept.
+                    </p>
+                  )}
+                </div>
                 <p className="mt-4 text-xs text-muted-foreground leading-relaxed">
                   You deal with this business directly. Sjoh takes no commission.
                 </p>
