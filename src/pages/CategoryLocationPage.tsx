@@ -241,32 +241,27 @@ const CategoryLocationPage = () => {
             <div className="grid sm:grid-cols-2 gap-4">
               {displayRows.map((b) =>
                 b.id === EXAMPLE_BUSINESS_ID ? (
-                  <div
+                  <Link
                     key={b.id}
-                    className="block bg-card border border-border rounded-xl shadow-card relative overflow-hidden"
+                    to="/example-listing"
+                    className="block bg-card border border-border rounded-xl shadow-card relative overflow-hidden hover:border-primary hover:shadow-pop hover:-translate-y-0.5 transition-all duration-300 group"
                   >
                     <div className="sample-gradient h-2 w-full" />
                     <div className="p-5 relative">
                       <span className="absolute top-3 right-3 bg-foreground text-background text-[10px] font-bold tracking-widest uppercase px-2 py-1 rounded">
                         Sample
                       </span>
-                      <h2 className="font-display text-lg font-semibold leading-tight pr-16">
+                      <h2 className="font-display text-lg font-semibold leading-tight pr-16 group-hover:text-primary transition-colors">
                         {b.name}
                       </h2>
                       <p className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
                         <MapPin className="size-3" /> {b.city}, {b.province}
                       </p>
                       <p className="text-sm text-ink-2 mt-3">
-                        This is what your listing will look like — your name, photo, services and reviews live here.
+                        See what a client sees when they click your profile →
                       </p>
-                      <Link
-                        to="/list"
-                        className="mt-4 inline-block text-sm font-bold text-primary hover:underline"
-                      >
-                        List your business →
-                      </Link>
                     </div>
-                  </div>
+                  </Link>
                 ) : (
                   <Link
                     key={b.id}

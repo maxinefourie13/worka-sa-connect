@@ -14,6 +14,7 @@ import NotFound from "./pages/NotFound.tsx";
 import Directory from "./pages/Directory.tsx";
 import GroupLanding from "./pages/GroupLanding.tsx";
 import BusinessProfile from "./pages/BusinessProfile.tsx";
+import ExampleProfile from "./pages/ExampleProfile.tsx";
 import Opportunities from "./pages/Opportunities.tsx";
 import PostOpportunity from "./pages/PostOpportunity.tsx";
 import LeadDetail from "./pages/LeadDetail.tsx";
@@ -55,6 +56,7 @@ const App = () => {
               <Route path="/" element={<Index />} />
               <Route path="/directory" element={<Directory />} />
               <Route path="/directory/g/:groupSlug" element={<GroupLanding />} />
+              <Route path="/example-listing" element={<ExampleProfile />} />
               <Route path="/business/:slug" element={<BusinessProfile />} />
               {/* Customer-facing: Requests */}
               <Route path="/requests" element={<Opportunities />} />
