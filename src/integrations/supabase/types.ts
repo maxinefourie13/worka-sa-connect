@@ -934,6 +934,8 @@ export type Database = {
           user_id: string
           verification_expires_at: string | null
           verification_status: Database["public"]["Enums"]["verification_status"]
+          whatsapp_alerts_optin: boolean
+          whatsapp_number: string | null
         }
         Insert: {
           email_alerts_optin?: boolean
@@ -955,6 +957,8 @@ export type Database = {
           user_id: string
           verification_expires_at?: string | null
           verification_status?: Database["public"]["Enums"]["verification_status"]
+          whatsapp_alerts_optin?: boolean
+          whatsapp_number?: string | null
         }
         Update: {
           email_alerts_optin?: boolean
@@ -976,6 +980,8 @@ export type Database = {
           user_id?: string
           verification_expires_at?: string | null
           verification_status?: Database["public"]["Enums"]["verification_status"]
+          whatsapp_alerts_optin?: boolean
+          whatsapp_number?: string | null
         }
         Relationships: []
       }
@@ -1610,6 +1616,10 @@ export type Database = {
       }
       set_secondary_categories: {
         Args: { _business_id: string; _slugs: string[] }
+        Returns: undefined
+      }
+      set_whatsapp_alerts: {
+        Args: { _enabled: boolean; _number: string }
         Returns: undefined
       }
       submit_proposal: {
