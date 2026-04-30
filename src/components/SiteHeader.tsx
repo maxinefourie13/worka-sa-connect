@@ -19,8 +19,8 @@ import {
 
 const NAV = [
   { to: "/directory", label: "Browse" },
-  { to: "/requests", label: "Requests" },
-  { to: "/leads", label: "Leads" },
+  { to: "/requests", label: "Get Quotes" },
+  { to: "/leads", label: "Send Quotes" },
   { to: "/pricing", label: "Pricing" },
 ];
 
