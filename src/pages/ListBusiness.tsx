@@ -195,7 +195,7 @@ const ListBusiness = () => {
               </div>
               <h2 className="font-display text-3xl font-medium tracking-tight">You're listed on Sjoh.</h2>
               <p className="mt-3 text-ink-2 max-w-md mx-auto">
-                Your profile is live in the directory. Start posting promotions and applying to opportunities from your dashboard.
+                Your profile is live in the directory. Start posting promotions and sending quotes on customer requests from your dashboard.
               </p>
               <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
                 <Button onClick={() => navigate("/dashboard")}>Go to Dashboard</Button>
