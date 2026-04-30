@@ -168,16 +168,21 @@ const BusinessProfile = () => {
                     <Button variant={following ? "soft" : "default"} onClick={toggleFollow} className="transition-all hover:scale-[1.02]">
                       {following ? "Following" : "Follow"}
                     </Button>
-                    <Button variant="outline" className="transition-all hover:scale-[1.02]">Contact</Button>
-                    <Button
-                      variant="outline"
-                      asChild
-                      className="bg-[#25D366]/5 border-[#25D366]/40 text-[#1da851] hover:bg-[#25D366]/10 hover:text-[#1da851] transition-all hover:scale-[1.02]"
-                    >
-                      <a href={`https://wa.me/${phoneDigits}`} target="_blank" rel="noopener noreferrer">
-                        WhatsApp
-                      </a>
-                    </Button>
+                    {hasContact ? (
+                      <Button
+                        variant="outline"
+                        asChild
+                        className="bg-[#25D366]/5 border-[#25D366]/40 text-[#1da851] hover:bg-[#25D366]/10 hover:text-[#1da851] transition-all hover:scale-[1.02]"
+                      >
+                        <a href={`https://wa.me/${phoneDigits}`} target="_blank" rel="noopener noreferrer">
+                          WhatsApp
+                        </a>
+                      </Button>
+                    ) : (
+                      <Button variant="outline" onClick={handleReveal} disabled={revealing} className="transition-all hover:scale-[1.02]">
+                        {revealing ? "Revealing…" : "Reveal contact"}
+                      </Button>
+                    )}
                   </div>
                   {/* Mobile follow button only (the rest live in the sticky bottom bar) */}
                   <div className="sm:hidden">
