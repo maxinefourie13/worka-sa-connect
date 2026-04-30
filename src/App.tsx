@@ -26,6 +26,7 @@ import { Login, Register, ForgotPassword, ResetPassword } from "./pages/Auth.tsx
 import PublicQuote from "./pages/PublicQuote.tsx";
 import VerifiedReviewPage from "./pages/VerifiedReviewPage.tsx";
 import FoundingMembersAdmin from "./pages/admin/FoundingMembers.tsx";
+import ConciergeAdmin from "./pages/admin/Concierge.tsx";
 
 const queryClient = new QueryClient();
 
