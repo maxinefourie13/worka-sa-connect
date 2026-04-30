@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { BUSINESSES, OPPORTUNITIES, type Business, type Opportunity, type Province } from "@/lib/mockData";
 import { mapBusinessRow } from "@/lib/businessAdapter";
+import { buildExampleBusiness } from "@/lib/exampleBusiness";
 
 interface State<T> {
   data: T[];
@@ -30,11 +31,16 @@ export function useBusinesses(): State<Business> {
         .order("created_at", { ascending: false })
         .limit(500);
       if (cancelled) return;
+      const example = buildExampleBusiness();
       if (error || !data) {
-        setState({ data: [], loading: false, isFallback: false });
+        setState({ data: [example], loading: false, isFallback: false });
         return;
       }
-      setState({ data: data.map(mapBusinessRow), loading: false, isFallback: false });
+      setState({
+        data: [example, ...data.map(mapBusinessRow)],
+        loading: false,
+        isFallback: false,
+      });
     })();
     return () => {
       cancelled = true;
