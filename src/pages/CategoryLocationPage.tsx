@@ -124,6 +124,26 @@ const CategoryLocationPage = () => {
   const description = `Need a ${keyword.toLowerCase()} in ${locationLabel}? Get quotes from vetted South African pros. No ghosters, no half-jobs — just okes who can do it properly.`;
   const canonical = buildLocationCanonical(categorySlug ?? "", provinceSlug, citySlug);
 
+  // Example/preview row injected into every category page until we have enough
+  // real verified pros. Excluded from JSON-LD so it doesn't pollute structured data.
+  const exampleRow: BizRow = {
+    id: EXAMPLE_BUSINESS_ID,
+    slug: EXAMPLE_BUSINESS_ID,
+    name: "Example Business",
+    city: cityName ?? "Your city",
+    province: provinceName ?? "Your province",
+    category_name: categoryName,
+    category_slug: categorySlug ?? "",
+    description:
+      "This is what your listing will look like — your name, photo, services and reviews live here. List your business to claim your spot.",
+    rating: 0,
+    review_count: 0,
+    address: null,
+    website: null,
+    is_verified: false,
+  };
+  const displayRows = [exampleRow, ...rows];
+
   const jsonLd = useMemo<BusinessForJsonLd[]>(
     () =>
       rows.map((b) => ({
