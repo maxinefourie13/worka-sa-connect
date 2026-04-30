@@ -18,6 +18,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { requestPushPermission, disablePush, isPushConfigured } from "@/lib/push";
 import { GoogleReviewsCard } from "@/components/dashboard/GoogleReviewsCard";
 import { SubscriptionGapBanner } from "@/components/SubscriptionGapBanner";
+import { ProfileVisibilityWarning } from "@/components/ProfileVisibilityWarning";
 import { cn } from "@/lib/utils";
 
 type SectionKey = "overview" | "quotes" | "klaps" | "profile" | "promotions" | "opportunities" | "followers" | "billing";
@@ -131,6 +132,7 @@ const OverviewSection = ({ onJump }: { onJump: (s: SectionKey) => void }) => {
   return (
     <>
       <SubscriptionGapBanner />
+      <ProfileVisibilityWarning />
       <header className="flex items-center justify-between">
         <div>
           <h1 className="font-display text-3xl font-medium tracking-tight">

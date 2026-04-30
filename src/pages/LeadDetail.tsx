@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
+import { MarkCompleteCard } from "@/components/MarkCompleteCard";
 
 type Opp = {
   id: string;
@@ -59,6 +60,7 @@ const LeadDetail = () => {
   const [contact, setContact] = useState<RevealedContact | null>(null);
   const [revealReason, setRevealReason] = useState<string | null>(null);
   const [accepting, setAccepting] = useState<string | null>(null);
+  const [dealMemoId, setDealMemoId] = useState<string | null>(null);
 
   const isOwner = !!(user && opp && opp.client_id === user.id);
 
@@ -143,6 +145,23 @@ const LeadDetail = () => {
     })();
     return () => { cancelled = true; };
   }, [user, myProposal, isOwner]);
+
+  // Look up an existing deal memo for this pro/job so we can show Mark Complete.
+  useEffect(() => {
+    if (!user || !myProposal || myProposal.status !== "accepted") return;
+    let cancelled = false;
+    (async () => {
+      const { data } = await supabase
+        .from("deal_memos")
+        .select("id")
+        .eq("pro_user_id", user.id)
+        .eq("business_id", myProposal.business_id)
+        .order("created_at", { ascending: false })
+        .limit(1);
+      if (!cancelled && data && data.length) setDealMemoId(data[0].id);
+    })();
+    return () => { cancelled = true; };
+  }, [user, myProposal]);
 
   const handleAcceptQuote = async (proposalId: string) => {
     setAccepting(proposalId);
@@ -268,6 +287,16 @@ const LeadDetail = () => {
               <ContactRow label="Phone" value={contact.client_phone} icon={Phone} />
               <ContactRow label="Email" value={contact.client_email} icon={Mail} />
               <ContactRow label="Preferred" value={contact.contact_preference} icon={MessageCircle} />
+
+              <div className="mt-4 flex items-start gap-2 rounded-lg bg-amber-50 dark:bg-amber-950/20 border border-amber-300/60 dark:border-amber-700/40 p-3 text-sm">
+                <ShieldCheck className="size-4 text-amber-700 dark:text-amber-400 mt-0.5 shrink-0" />
+                <p className="text-amber-900 dark:text-amber-200 leading-relaxed">
+                  <span className="font-bold">🔒 Safety First:</span>{" "}
+                  Verify that the person who arrives matches their profile photo.
+                  Contact us immediately if it is someone else.
+                </p>
+              </div>
+
               {whatsappLink && (
                 <a
                   href={whatsappLink}
@@ -357,6 +386,12 @@ const LeadDetail = () => {
               )
             )}
           </section>
+        )}
+
+        {user && !isOwner && myProposal?.status === "accepted" && dealMemoId && (
+          <div className="mt-6">
+            <MarkCompleteCard dealMemoId={dealMemoId} />
+          </div>
         )}
 
         {!user && (

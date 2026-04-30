@@ -7,6 +7,7 @@ import { BUSINESS_VERIFICATION, formatRand } from "@/lib/mockData";
 import { VerificationBadges } from "@/components/VerificationBadges";
 import { ReportProfileButton } from "@/components/ReportProfileButton";
 import { GoogleReviewsList } from "@/components/GoogleReviewsList";
+import { SeoHead } from "@/components/SeoHead";
 import { useBusinessBySlug } from "@/hooks/useBusinessBySlug";
 import { useReveal } from "@/hooks/useReveal";
 import { useRevealContact } from "@/hooks/useRevealContact";
@@ -103,8 +104,32 @@ const BusinessProfile = () => {
 
   const handleReveal = async () => { await reveal(); };
 
+  const seoTitle = `${business.name} | ${business.category} in ${business.city} | Sjoh!`;
+  const seoDesc = (business.description || `${business.name} — ${business.category} in ${business.city}, ${business.province}. Find someone who can do it properly on Sjoh.`).slice(0, 158);
+  const canonical = typeof window !== "undefined" ? `${window.location.origin}/business/${business.slug}` : undefined;
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    name: business.name,
+    description: business.description ?? undefined,
+    image: business.image ?? undefined,
+    telephone: business.phone ?? undefined,
+    email: business.email ?? undefined,
+    url: canonical,
+    address: {
+      "@type": "PostalAddress",
+      addressLocality: business.city,
+      addressRegion: business.province,
+      addressCountry: "ZA",
+    },
+    aggregateRating: business.rating
+      ? { "@type": "AggregateRating", ratingValue: business.rating, reviewCount: Array.isArray(business.reviews) ? business.reviews.length : 0 }
+      : undefined,
+  };
+
   return (
     <SiteLayout>
+      <SeoHead title={seoTitle} description={seoDesc} canonical={canonical} jsonLd={jsonLd} />
       {/* Header / cover */}
       <div className={cn("h-44 sm:h-56 md:h-72 relative overflow-hidden", !business.image && business.gradient)}>
         {business.image && (
