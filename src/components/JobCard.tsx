@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 
 import { formatRand, type Opportunity } from "@/lib/mockData";
 import { cn } from "@/lib/utils";
-import { KlapButton } from "@/components/KlapButton";
+import { ApplyButton } from "@/components/ApplyButton";
 import { UrgentBoostButton } from "@/components/UrgentBoostButton";
 import { useAuth } from "@/hooks/useAuth";
 import { History, Siren, Sparkles, Paperclip, MapPin } from "lucide-react";
@@ -165,7 +165,7 @@ export const JobCard = ({ job, className, clientHireCount, isProView, proCity }:
                   size="sm"
                 />
               ) : (
-                <KlapButton
+                <ApplyButton
                   jobId={job.id}
                   jobTitle={job.title}
                   jobBudget={job.budget}

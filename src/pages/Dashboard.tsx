@@ -2,14 +2,12 @@ import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import {
   LayoutGrid, User, Sparkles, Briefcase, Users, CreditCard, Plus,
-  Zap, ShieldCheck, Siren, Bell, Mail, FileText, MessageCircle, Lock,
+  ShieldCheck, Bell, Mail, FileText, MessageCircle, Lock,
 } from "lucide-react";
 import { QuotesSection } from "@/components/dashboard/QuotesSection";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Button } from "@/components/ui/button";
 import { BUSINESSES, formatRand, OPPORTUNITIES, PROMOTIONS, SJOH_TIERS } from "@/lib/mockData";
-import { useKlap } from "@/lib/klapStore";
-import { TopUpModal } from "@/components/TopUpModal";
 import { VerificationBadges } from "@/components/VerificationBadges";
 import { toast } from "@/hooks/use-toast";
 import { useVerification } from "@/hooks/useVerification";
@@ -23,13 +21,14 @@ import { ProfileVisibilityWarning } from "@/components/ProfileVisibilityWarning"
 import { ReferAProCard } from "@/components/dashboard/ReferAProCard";
 import { SecondaryCategoriesCard } from "@/components/dashboard/SecondaryCategoriesCard";
 import { PrivacySection } from "@/components/dashboard/PrivacySection";
+import { useProviderAccess } from "@/hooks/useProviderAccess";
 import { cn } from "@/lib/utils";
 
-type SectionKey = "overview" | "quotes" | "klaps" | "profile" | "promotions" | "opportunities" | "followers" | "billing" | "privacy";
+type SectionKey = "overview" | "quotes" | "verification" | "profile" | "promotions" | "opportunities" | "followers" | "billing" | "privacy";
 const SECTIONS: { key: SectionKey; label: string; icon: typeof LayoutGrid }[] = [
   { key: "overview", label: "Overview", icon: LayoutGrid },
   { key: "quotes", label: "My Quotes", icon: FileText },
-  { key: "klaps", label: "Klaps & Verification", icon: Zap },
+  { key: "verification", label: "Verification", icon: ShieldCheck },
   { key: "profile", label: "My Profile", icon: User },
   { key: "promotions", label: "Promotions", icon: Sparkles },
   { key: "opportunities", label: "Leads", icon: Briefcase },
@@ -103,7 +102,7 @@ const Dashboard = () => {
           <div className="space-y-6">
             {section === "overview" && <OverviewSection onJump={setSection} />}
             {section === "quotes" && <QuotesSection />}
-            {section === "klaps" && <KlapsSection />}
+            {section === "verification" && <VerificationSection />}
             {section === "profile" && <ProfileSection />}
             {section === "promotions" && <PromotionsSection />}
             {section === "opportunities" && <OpportunitiesSection />}
@@ -128,13 +127,21 @@ const StatCard = ({ label, value, hint }: { label: string; value: string; hint?:
 );
 
 const OverviewSection = ({ onJump }: { onJump: (s: SectionKey) => void }) => {
-  const { provider } = useKlap();
   const { user } = useAuth();
-  const tier = SJOH_TIERS.find((t) => t.slug === provider.tier) ?? SJOH_TIERS[0];
+  const access = useProviderAccess();
   const firstName =
     (user?.user_metadata?.display_name as string | undefined)?.split(" ")[0] ||
     user?.email?.split("@")[0] ||
     "boet";
+
+  const planLabel =
+    access.tier === "verified_pro" ? "Verified Pro"
+    : access.tier === "basic" ? "Basic Listing"
+    : access.tier === "verified_pro_trial" ? "Verified Pro · Trial"
+    : access.tier === "basic_trial" ? "Basic · Trial"
+    : access.tier === "locked" ? "Account paused"
+    : "No plan";
+
   return (
     <>
       <SubscriptionGapBanner />
@@ -151,30 +158,32 @@ const OverviewSection = ({ onJump }: { onJump: (s: SectionKey) => void }) => {
         </Button>
       </header>
 
-      {/* Klaps highlight */}
+      {/* Plan highlight */}
       <button
-        onClick={() => onJump("klaps")}
+        onClick={() => onJump("billing")}
         className="w-full text-left bg-foreground text-background rounded-xl p-6 flex items-center justify-between gap-5 hover:opacity-95 transition-opacity"
       >
         <div className="flex items-center gap-4">
           <span className="size-12 rounded-xl bg-accent text-accent-foreground flex items-center justify-center">
-            <Zap className="size-6" strokeWidth={2.5} />
+            <CreditCard className="size-6" strokeWidth={2.5} />
           </span>
           <div>
-            <p className="text-xs font-bold uppercase tracking-widest text-background/70">Your Klaps</p>
-            <p className="font-display text-3xl font-semibold tabular-nums mt-1">
-              {provider.klapsRemaining} <span className="text-base text-background/60 font-normal">this month</span>
+            <p className="text-xs font-bold uppercase tracking-widest text-background/70">Your plan</p>
+            <p className="font-display text-3xl font-semibold mt-1">
+              {planLabel}
+              {access.isOnTrial && (
+                <span className="text-base text-background/60 font-normal"> · {access.trialDaysLeft}d left</span>
+              )}
             </p>
           </div>
         </div>
         <span className="text-sm font-semibold text-accent">Manage →</span>
       </button>
 
-      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
         <StatCard label="Profile views" value="1,284" hint="+12%" />
         <StatCard label="Enquiries" value="38" hint="+5" />
         <StatCard label="Followers" value="318" hint="+24" />
-        <StatCard label="Klaps sent" value={String(13)} hint="this month" />
       </div>
       <div className="bg-card border border-border rounded-xl p-6">
         <h2 className="font-display text-lg font-semibold mb-4">Recent activity</h2>
@@ -199,12 +208,10 @@ const OverviewSection = ({ onJump }: { onJump: (s: SectionKey) => void }) => {
   );
 };
 
-const KlapsSection = () => {
-  const { provider, events, toggleUrgentAlerts } = useKlap();
+const VerificationSection = () => {
   const verification = useVerification();
-  const [topUpOpen, setTopUpOpen] = useState(false);
-  const tier = SJOH_TIERS.find((t) => t.slug === provider.tier) ?? SJOH_TIERS[0];
-  const pct = Math.round((provider.klapsRemaining / 100) * 100);
+  // Mock cert data — to be wired to real businesses table later.
+  const me = BUSINESSES[0];
 
   const verifyLabel: Record<typeof verification.status, string> = {
     not_required: "Upgrade to verify",
@@ -229,53 +236,24 @@ const KlapsSection = () => {
   return (
     <>
       <header>
-        <h1 className="font-display text-3xl font-medium tracking-tight">Klaps & Verification</h1>
-        <p className="text-sm text-ink-2 mt-1">Your wallet, your trust badges, your urgent alerts.</p>
+        <h1 className="font-display text-3xl font-medium tracking-tight">Verification</h1>
+        <p className="text-sm text-ink-2 mt-1">Your trust badges, visible on every listing.</p>
       </header>
 
-      {/* Wallet */}
-      <div className="bg-foreground text-background rounded-xl p-6 md:p-8">
-        <div className="flex items-start justify-between gap-4 flex-wrap">
-          <div>
-            <p className="text-xs font-bold uppercase tracking-widest text-background/70">Klap wallet</p>
-            <p className="font-display text-5xl font-semibold tabular-nums mt-2">
-              {provider.klapsRemaining}
-              <span className="text-lg text-background/60 font-normal"> Klaps</span>
-            </p>
-            <p className="text-sm text-background/75 mt-1">
-              {tier.name} · resets in 18 days
-            </p>
-          </div>
-          <Button variant="default" className="bg-accent text-accent-foreground hover:bg-accent/90" onClick={() => setTopUpOpen(true)}>
-            <Zap className="size-4" /> Top up Klaps
-          </Button>
-        </div>
-        <div className="mt-5 h-2 rounded-full bg-background/15 overflow-hidden">
-          <div className="h-full bg-accent" style={{ width: `${pct}%` }} />
-        </div>
-      </div>
-
-      {/* Verification */}
       <div className="bg-card border border-border rounded-xl p-6">
         <div className="flex items-start justify-between gap-3 flex-wrap">
           <div>
             <h2 className="font-display text-lg font-semibold flex items-center gap-2">
               <ShieldCheck className="size-5 text-primary" /> No Tjops verification
             </h2>
-            <p className="text-sm text-ink-2 mt-1">Your trust badges, visible on every listing.</p>
+            <p className="text-sm text-ink-2 mt-1">Verified pros land 3x more enquiries.</p>
           </div>
-          <span className={cn(
-            "text-xs font-bold uppercase tracking-widest px-2.5 py-1 rounded",
-            provider.strikes === 0 ? "bg-primary-light text-primary" : "bg-accent/15 text-accent",
-          )}>
-            Strikes: {provider.strikes} / 3
-          </span>
         </div>
         <div className="mt-5">
           <VerificationBadges
             idVerified={verification.isIdVerified}
-            certifiedPro={provider.certifiedPro}
-            certifications={provider.certifications}
+            certifiedPro={false}
+            certifications={[]}
           />
         </div>
         <div className="mt-5 grid sm:grid-cols-2 gap-3">
@@ -300,7 +278,7 @@ const KlapsSection = () => {
           <div className="border border-border rounded-lg p-4">
             <p className="text-sm font-semibold">Trade certificates</p>
             <p className="text-xs text-muted-foreground mt-1">
-              {provider.certifiedPro ? `✓ ${provider.certifications.join(", ")}` : "Upload to become a Certified Pro"}
+              Upload to become a Certified Pro
             </p>
             <Button size="sm" variant="outline" className="mt-3" onClick={() => toast({ title: "Upload (coming soon)", description: "Certificate uploads land in the next update." })}>
               Upload certificate
@@ -309,33 +287,7 @@ const KlapsSection = () => {
         </div>
       </div>
 
-      {/* Notification preferences */}
       <NotificationPrefsCard />
-
-      {/* Activity */}
-      <div className="bg-card border border-border rounded-xl p-6">
-        <h2 className="font-display text-lg font-semibold mb-4">Recent Klap activity</h2>
-        <ul className="divide-y divide-border">
-          {events.map((e) => (
-            <li key={e.id} className="py-3 flex items-center justify-between gap-3">
-              <div className="min-w-0">
-                <p className="text-sm font-medium truncate">{e.jobTitle}</p>
-                <p className="text-xs text-muted-foreground">{e.timestamp} · 1 Klap</p>
-              </div>
-              <span className={cn(
-                "text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded shrink-0",
-                e.outcome === "won" ? "bg-primary-light text-primary"
-                  : e.outcome === "lost" ? "bg-secondary text-muted-foreground"
-                  : "bg-accent/15 text-accent",
-              )}>
-                {e.outcome}
-              </span>
-            </li>
-          ))}
-        </ul>
-      </div>
-
-      <TopUpModal open={topUpOpen} onClose={() => setTopUpOpen(false)} />
     </>
   );
 };
@@ -473,9 +425,13 @@ const FollowersSection = () => {
 };
 
 const BillingSection = () => {
-  const { provider } = useKlap();
   const { user } = useAuth();
-  const tier = SJOH_TIERS.find((t) => t.slug === provider.tier)!;
+  const access = useProviderAccess();
+  const tierSlug =
+    access.tier === "verified_pro" || access.tier === "verified_pro_trial" ? "verified_pro"
+    : access.tier === "basic" || access.tier === "basic_trial" ? "basic"
+    : "basic_trial";
+  const tier = SJOH_TIERS.find((t) => t.slug === tierSlug) ?? SJOH_TIERS[0];
   const [liveSub, setLiveSub] = useState<{
     billing_cycle: "monthly" | "annual";
     next_renewal_at: string | null;
