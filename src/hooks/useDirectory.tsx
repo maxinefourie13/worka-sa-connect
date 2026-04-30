@@ -10,14 +10,14 @@ interface State<T> {
 }
 
 /**
- * Live businesses from `businesses_public`. Falls back to mock seed data
- * when the table is empty so the directory never looks barren pre-launch.
+ * Live businesses from `businesses_public`. Returns an empty list when
+ * the table is empty so we never show fake placeholder pros to real users.
  */
 export function useBusinesses(): State<Business> {
   const [state, setState] = useState<State<Business>>({
-    data: BUSINESSES,
+    data: [],
     loading: true,
-    isFallback: true,
+    isFallback: false,
   });
 
   useEffect(() => {
@@ -30,8 +30,8 @@ export function useBusinesses(): State<Business> {
         .order("created_at", { ascending: false })
         .limit(500);
       if (cancelled) return;
-      if (error || !data || data.length === 0) {
-        setState({ data: BUSINESSES, loading: false, isFallback: true });
+      if (error || !data) {
+        setState({ data: [], loading: false, isFallback: false });
         return;
       }
       setState({ data: data.map(mapBusinessRow), loading: false, isFallback: false });
