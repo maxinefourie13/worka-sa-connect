@@ -158,10 +158,6 @@ const PublicQuote = () => {
               <p className="text-xs text-ink-2 mt-1">Sort payment directly with {business.name}. When the job's done, they'll mark it complete and we'll buzz you for a Verified Review.</p>
             </div>
           )}
-        </div>
-
-        {memo.status === "accepted" && (
-          <QuoteRevisionRespondCard dealMemoId={memo.id} onResponded={refresh} />
 
           {memo.status === "completed" && (
             <div className="mt-7 pt-7 border-t border-border">
@@ -180,6 +176,10 @@ const PublicQuote = () => {
             </div>
           )}
         </div>
+
+        {memo.status === "accepted" && (
+          <QuoteRevisionRespondCard dealMemoId={memo.id} onResponded={refresh} />
+        )}
 
         <p className="text-xs text-muted-foreground text-center mt-6 leading-relaxed">
           <ShieldCheck className="size-3.5 inline mr-1" />
