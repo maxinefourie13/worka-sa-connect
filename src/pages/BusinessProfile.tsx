@@ -405,23 +405,31 @@ const BusinessProfile = () => {
 
       {/* Mobile sticky action bar */}
       <div className="lg:hidden fixed bottom-0 inset-x-0 z-40 bg-card/95 backdrop-blur border-t border-border shadow-pop animate-fade-up">
-        <div className="container py-2.5 grid grid-cols-3 gap-2">
-          <Button variant="default" size="sm" className="w-full gap-1.5" asChild>
-            <a href={`tel:${business.phone}`}><Phone className="size-4" />Call</a>
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            className="w-full gap-1.5 bg-[#25D366]/5 border-[#25D366]/40 text-[#1da851] hover:bg-[#25D366]/10 hover:text-[#1da851]"
-            asChild
-          >
-            <a href={`https://wa.me/${phoneDigits}`} target="_blank" rel="noopener noreferrer">
-              <MessageCircle className="size-4" />WhatsApp
-            </a>
-          </Button>
-          <Button variant="outline" size="sm" className="w-full gap-1.5" asChild>
-            <a href={`mailto:${business.email}`}><Mail className="size-4" />Email</a>
-          </Button>
+        <div className="container py-2.5">
+          {hasContact ? (
+            <div className="grid grid-cols-3 gap-2">
+              <Button variant="default" size="sm" className="w-full gap-1.5" asChild>
+                <a href={`tel:${phone}`}><Phone className="size-4" />Call</a>
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                className="w-full gap-1.5 bg-[#25D366]/5 border-[#25D366]/40 text-[#1da851] hover:bg-[#25D366]/10 hover:text-[#1da851]"
+                asChild
+              >
+                <a href={`https://wa.me/${phoneDigits}`} target="_blank" rel="noopener noreferrer">
+                  <MessageCircle className="size-4" />WhatsApp
+                </a>
+              </Button>
+              <Button variant="outline" size="sm" className="w-full gap-1.5" asChild>
+                <a href={`mailto:${email}`}><Mail className="size-4" />Email</a>
+              </Button>
+            </div>
+          ) : (
+            <Button onClick={handleReveal} disabled={revealing} size="sm" className="w-full">
+              {revealing ? "Revealing…" : "Reveal contact details"}
+            </Button>
+          )}
         </div>
       </div>
     </SiteLayout>
