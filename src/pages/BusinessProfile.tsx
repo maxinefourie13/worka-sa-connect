@@ -10,6 +10,7 @@ import { GoogleReviewsList } from "@/components/GoogleReviewsList";
 import { useBusinessBySlug } from "@/hooks/useBusinessBySlug";
 import { useReveal } from "@/hooks/useReveal";
 import { useRevealContact } from "@/hooks/useRevealContact";
+import { useVerifiedHiresCount } from "@/hooks/useVerifiedHiresCount";
 import { cn } from "@/lib/utils";
 
 type TabKey = "about" | "services" | "promotions" | "reviews";
