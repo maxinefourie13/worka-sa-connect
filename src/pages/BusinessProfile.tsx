@@ -52,6 +52,7 @@ const BusinessProfile = () => {
   const [tab, setTab] = useState<TabKey>("about");
   const [following, setFollowing] = useState(false);
   const [followers, setFollowers] = useState(0);
+  const { count: verifiedHires } = useVerifiedHiresCount(business?.id);
 
   // Sync follower count once business resolves.
   if (business && followers === 0 && business.followers > 0) {
