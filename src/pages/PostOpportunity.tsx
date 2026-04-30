@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { ArrowLeft, CheckCircle2 } from "lucide-react";
+import { ArrowLeft, CheckCircle2, Siren } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
 import { Button } from "@/components/ui/button";
 import { LiabilityDisclaimer } from "@/components/LiabilityDisclaimer";
@@ -18,6 +18,7 @@ const PostOpportunity = () => {
   const [groupSlug, setGroupSlug] = useState("");
   const [categorySlug, setCategorySlug] = useState("");
   const [agreeTerms, setAgreeTerms] = useState(false);
+  const [isUrgent, setIsUrgent] = useState(false);
 
   const subCats = groupSlug ? CATEGORIES.filter((c) => c.groupSlug === groupSlug) : [];
 
@@ -61,6 +62,7 @@ const PostOpportunity = () => {
       deadline: form.get("deadline") ? String(form.get("deadline")) : null,
       requirements: reqVal ? [reqVal] : [],
       posted_by_name: user.email?.split("@")[0] ?? null,
+      is_urgent: isUrgent,
     };
 
     const { data: opp, error } = await supabase
