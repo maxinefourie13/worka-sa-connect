@@ -12,7 +12,7 @@ import { useBusinesses, useOpportunities } from "@/hooks/useDirectory";
 import { getCategoryGroupIcon } from "@/lib/categoryIcons";
 
 const HOW_IT_WORKS = [
-  { title: "Tell us what you need", body: "Search the directory or post a job in seconds." },
+  { title: "Tell us what you need", body: "Search the directory or post a request in seconds." },
   { title: "Get real people", body: "Local businesses ready to help — across all nine provinces." },
   { title: "Choose who you trust", body: "Browse profiles, reviews, and active promotions." },
   { title: "Get it done", body: "Contact them directly. No middleman. No commission." },
@@ -153,13 +153,55 @@ const HomePage = () => {
         </div>
       </section>
 
+      {/* Customer dual pathway */}
+      <section className="border-b border-border bg-background">
+        <div className="container py-16 md:py-20">
+          <div className="text-center max-w-2xl mx-auto mb-10">
+            <span className="text-xs font-bold uppercase tracking-widest text-primary">Two ways to find help</span>
+            <h2 className="font-display text-3xl md:text-4xl font-extrabold tracking-tight mt-3">
+              Pick the path that suits you.
+            </h2>
+          </div>
+          <div className="grid md:grid-cols-2 gap-5 max-w-4xl mx-auto">
+            <div className="group bg-card border border-border rounded-2xl p-7 md:p-8 hover:border-primary hover:shadow-pop transition-all flex flex-col">
+              <span className="inline-flex items-center self-start gap-1.5 text-[10px] font-bold uppercase tracking-widest text-primary bg-primary/10 px-2.5 py-1 rounded-full">
+                Recommended
+              </span>
+              <h3 className="font-display text-2xl font-extrabold tracking-tight mt-4">
+                Let the Pros come to you.
+              </h3>
+              <p className="mt-2 text-ink-2 leading-relaxed flex-1">
+                Tell us what you need, and available pros in your area will send you quotes.
+              </p>
+              <Button size="lg" className="mt-6 w-full font-bold" asChild>
+                <Link to="/requests/new">Get Quotes</Link>
+              </Button>
+            </div>
+            <div className="group bg-card border border-border rounded-2xl p-7 md:p-8 hover:border-foreground hover:shadow-pop transition-all flex flex-col">
+              <span className="inline-flex items-center self-start gap-1.5 text-[10px] font-bold uppercase tracking-widest text-foreground bg-foreground/10 px-2.5 py-1 rounded-full">
+                Hands-on
+              </span>
+              <h3 className="font-display text-2xl font-extrabold tracking-tight mt-4">
+                Browse and contact directly.
+              </h3>
+              <p className="mt-2 text-ink-2 leading-relaxed flex-1">
+                Prefer to hunt? Search our directory and contact pros on your own terms.
+              </p>
+              <Button size="lg" variant="ink" className="mt-6 w-full font-bold" asChild>
+                <Link to="/directory">Search Directory</Link>
+              </Button>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Stats bar */}
       <section className="bg-card border-b border-border">
         <div className="container py-10">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-4 divide-y md:divide-y-0 md:divide-x divide-border/60">
             {[
               { v: STATS.businesses.toLocaleString("en-ZA"), l: "Businesses listed" },
-              { v: STATS.opportunities.toLocaleString("en-ZA"), l: "Open opportunities" },
+              { v: STATS.opportunities.toLocaleString("en-ZA"), l: "Open requests" },
               { v: STATS.categories.toString(), l: "Categories" },
               { v: STATS.provinces.toString(), l: "Provinces covered" },
             ].map((s) => (
@@ -259,18 +301,18 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* Latest opportunities */}
+      {/* Latest customer requests */}
       <section className="bg-card border-y border-border">
         <div className="container py-20">
           <div className="flex items-end justify-between mb-10">
             <div className="max-w-xl">
               <h2 className="font-display text-3xl md:text-4xl font-medium tracking-tight">
-                Latest opportunities
+                Latest customer requests
               </h2>
-              <p className="mt-3 text-ink-2">Real jobs posted by people and businesses across SA.</p>
+              <p className="mt-3 text-ink-2">Real requests posted by people and businesses across SA.</p>
             </div>
-            <Link to="/opportunities" className="text-sm font-semibold text-primary hover:underline hidden md:inline-block">
-              View board
+            <Link to="/requests" className="text-sm font-semibold text-primary hover:underline hidden md:inline-block">
+              View all requests
             </Link>
           </div>
           <div className="grid lg:grid-cols-3 gap-5">

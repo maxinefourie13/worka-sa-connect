@@ -9,10 +9,10 @@ import { payments } from "@/lib/payments";
 import { useAuth } from "@/hooks/useAuth";
 
 const FAQS = [
-  { q: "How does the free trial work?", a: "New providers get 30 days on On the Map free — no card required. Early-access members get 2 months. After that, it's R50/month to stay listed." },
-  { q: "What's the difference between On the Map and Ready for Work?", a: "On the Map (R50/mo) keeps you listed in the directory so clients can find and contact you directly. Ready for Work (R250/mo) adds the verified badge, top placement, and the ability to apply to job posts." },
-  { q: "Do you take commission on the work I do?", a: "Never. Sjoh is a directory — payments happen directly between you and your client. We don't touch your money." },
-  { q: "What is the Eish! Urgent boost?", a: "Posting a job is free. If it's urgent, pay R50 to pin it to the top of the feed for 72 hours and notify verified pros nearby." },
+  { q: "How does the free trial work?", a: "New providers get 30 days on Basic Listing free — no card required. Early-access members get 2 months. After that, it is R50/month to stay listed." },
+  { q: "What is the difference between Basic Listing and Verified Pro?", a: "Basic Listing (R50/mo) keeps you in the directory so customers can find and contact you directly. Verified Pro (R250/mo) adds the verified badge, top placement, and the ability to send quotes on customer requests." },
+  { q: "Do you take commission on the work I do?", a: "Never. Sjoh is a directory — payments happen directly between you and your customer. We don't touch your money." },
+  { q: "What is the Eish! Urgent option?", a: "Posting a request is always free. If it's urgent, customers can flag it as Eish! Urgent at no extra charge — it gets pinned to the top of the feed for 72 hours and notifies Verified Pros nearby." },
   { q: "What is Sjoh's Law?", a: "Three strikes and you're out. Flake on a job, do dangerous work, or refuse to pay for completed work — that's a strike. Three strikes and your ID is permanently banned." },
   { q: "Can I cancel any time?", a: "Yes. Cancel or downgrade from your dashboard. No contracts, no cancellation fees." },
 ];
@@ -64,7 +64,7 @@ const Pricing = () => {
               )}
               {t.featured && (
                 <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-foreground text-background text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full">
-                  For the actual pros
+                  Verified
                 </span>
               )}
               <h3 className="font-display text-2xl font-semibold">{t.name}</h3>

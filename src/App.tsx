@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes, Navigate, useParams } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
 import { initOneSignal, isPushConfigured } from "@/lib/push";
 import EmailUnsubscribe from "./pages/EmailUnsubscribe.tsx";
@@ -19,6 +19,12 @@ import BusinessProfile from "./pages/BusinessProfile.tsx";
 import Opportunities from "./pages/Opportunities.tsx";
 import PostOpportunity from "./pages/PostOpportunity.tsx";
 import Pricing from "./pages/Pricing.tsx";
+
+// Redirect helper for legacy /opportunities/:id → /requests/:id
+const RedirectRequestById = () => {
+  const { id } = useParams();
+  return <Navigate to={id ? `/requests/${id}` : "/requests"} replace />;
+};
 import ListBusiness from "./pages/ListBusiness.tsx";
 import Dashboard from "./pages/Dashboard.tsx";
 import CategoryLocationPage from "./pages/CategoryLocationPage.tsx";
@@ -49,9 +55,17 @@ const App = () => {
                 <Route path="/directory" element={<Directory />} />
                 <Route path="/directory/g/:groupSlug" element={<GroupLanding />} />
                 <Route path="/business/:slug" element={<BusinessProfile />} />
-                <Route path="/opportunities" element={<Opportunities />} />
-                <Route path="/opportunities/new" element={<ProtectedRoute><PostOpportunity /></ProtectedRoute>} />
-                <Route path="/opportunities/:id" element={<Opportunities />} />
+                {/* Customer-facing: Requests */}
+                <Route path="/requests" element={<Opportunities />} />
+                <Route path="/requests/new" element={<ProtectedRoute><PostOpportunity /></ProtectedRoute>} />
+                <Route path="/requests/:id" element={<Opportunities />} />
+                {/* Pro-facing: Leads (same board, different framing) */}
+                <Route path="/leads" element={<Opportunities />} />
+                <Route path="/leads/:id" element={<Opportunities />} />
+                {/* Legacy redirects */}
+                <Route path="/opportunities" element={<Navigate to="/requests" replace />} />
+                <Route path="/opportunities/new" element={<Navigate to="/requests/new" replace />} />
+                <Route path="/opportunities/:id" element={<RedirectRequestById />} />
                 <Route path="/pricing" element={<Pricing />} />
                 <Route path="/list" element={<ProtectedRoute><ListBusiness /></ProtectedRoute>} />
                 <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />

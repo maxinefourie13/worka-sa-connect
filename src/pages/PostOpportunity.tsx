@@ -1,31 +1,82 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { ArrowLeft, CheckCircle2, Siren } from "lucide-react";
+import { ArrowLeft, CheckCircle2, Siren, ImagePlus, X, FileText, Loader2 } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
 import { Button } from "@/components/ui/button";
 import { LiabilityDisclaimer } from "@/components/LiabilityDisclaimer";
 import { CATEGORIES, CATEGORY_GROUPS, PROVINCES } from "@/lib/mockData";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import type { Json } from "@/integrations/supabase/types";
 import { useAuth } from "@/hooks/useAuth";
 import { findProhibited, PROHIBITED_MESSAGE } from "@/lib/prohibitedKeywords";
+
+interface Attachment {
+  url: string;
+  name: string;
+  type: string;
+  size: number;
+}
+
+const MAX_FILES = 6;
+const MAX_BYTES = 10 * 1024 * 1024; // 10MB
+const ACCEPTED = "image/jpeg,image/png,image/webp,image/gif,image/heic,application/pdf";
 
 const PostOpportunity = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [groupSlug, setGroupSlug] = useState("");
   const [categorySlug, setCategorySlug] = useState("");
   const [agreeTerms, setAgreeTerms] = useState(false);
   const [isUrgent, setIsUrgent] = useState(false);
+  const [attachments, setAttachments] = useState<Attachment[]>([]);
+  const [uploading, setUploading] = useState(false);
 
   const subCats = groupSlug ? CATEGORIES.filter((c) => c.groupSlug === groupSlug) : [];
+
+  const handleFiles = async (files: FileList | null) => {
+    if (!files || !user) return;
+    const remaining = MAX_FILES - attachments.length;
+    if (remaining <= 0) {
+      toast({ title: "Limit reached", description: `You can upload up to ${MAX_FILES} files.`, variant: "destructive" });
+      return;
+    }
+    const picked = Array.from(files).slice(0, remaining);
+    setUploading(true);
+    const uploaded: Attachment[] = [];
+    for (const file of picked) {
+      if (file.size > MAX_BYTES) {
+        toast({ title: "File too big", description: `"${file.name}" is over 10MB.`, variant: "destructive" });
+        continue;
+      }
+      const safeName = file.name.replace(/[^\w.\-]+/g, "_");
+      const path = `${user.id}/${Date.now()}-${safeName}`;
+      const { error: upErr } = await supabase.storage
+        .from("request-attachments")
+        .upload(path, file, { contentType: file.type, upsert: false });
+      if (upErr) {
+        toast({ title: "Upload failed", description: upErr.message, variant: "destructive" });
+        continue;
+      }
+      const { data: pub } = supabase.storage.from("request-attachments").getPublicUrl(path);
+      uploaded.push({ url: pub.publicUrl, name: file.name, type: file.type, size: file.size });
+    }
+    setAttachments((prev) => [...prev, ...uploaded]);
+    setUploading(false);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
+  const removeAttachment = (idx: number) => {
+    setAttachments((prev) => prev.filter((_, i) => i !== idx));
+  };
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) {
-      navigate("/auth");
+      navigate("/login");
       return;
     }
     if (!agreeTerms) {
@@ -63,31 +114,32 @@ const PostOpportunity = () => {
       requirements: reqVal ? [reqVal] : [],
       posted_by_name: user.email?.split("@")[0] ?? null,
       is_urgent: isUrgent,
+      attachments: attachments as unknown as Json,
     };
 
     const { data: opp, error } = await supabase
       .from("opportunities")
-      .insert(payload)
+      .insert([payload])
       .select()
       .single();
 
     if (error) {
-      toast({ title: "Couldn't post job", description: error.message, variant: "destructive" });
+      toast({ title: "Couldn't post your request", description: error.message, variant: "destructive" });
       setSubmitting(false);
       return;
     }
 
-    // Notify all matching providers (email + push). Fire and forget.
+    // Notify all matching pros (email + push). Fire and forget.
     supabase.functions
       .invoke("notify-new-job", { body: { opportunity_id: opp.id } })
-      .catch((e) => console.error("[notify-new-job]", e));
+      .catch((err) => console.error("[notify-new-job]", err));
 
     setSubmitted(true);
     toast({
       title: "Sharp-sharp!",
-      description: "Your job is live. The okes are warming up their bakkies.",
+      description: "Your request is live. Pros will start sending quotes shortly.",
     });
-    setTimeout(() => navigate("/opportunities"), 1500);
+    setTimeout(() => navigate("/requests"), 1500);
   };
 
   if (submitted) {
@@ -97,8 +149,8 @@ const PostOpportunity = () => {
           <div className="size-16 rounded-full bg-primary-light text-primary mx-auto flex items-center justify-center mb-6">
             <CheckCircle2 className="size-8" />
           </div>
-          <h1 className="font-display text-3xl font-medium tracking-tight">Sharp-sharp!</h1>
-          <p className="mt-3 text-ink-2">Your job is live. The okes are warming up their bakkies.</p>
+          <h1 className="font-display text-3xl font-extrabold tracking-tight">Sharp-sharp!</h1>
+          <p className="mt-3 text-ink-2">Your request is live. Pros will start sending quotes shortly.</p>
         </div>
       </SiteLayout>
     );
@@ -107,23 +159,81 @@ const PostOpportunity = () => {
   return (
     <SiteLayout>
       <div className="container py-12 max-w-2xl">
-        <Link to="/opportunities" className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground mb-6">
-          <ArrowLeft className="size-4" /> Back to opportunities
+        <Link to="/requests" className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground mb-6">
+          <ArrowLeft className="size-4" /> Back to requests
         </Link>
         <header className="mb-8">
-          <h1 className="font-display text-3xl md:text-4xl font-medium tracking-tight">
-            What's the damage?
+          <span className="text-xs font-bold uppercase tracking-widest text-primary">Get Quotes</span>
+          <h1 className="font-display text-3xl md:text-4xl font-extrabold tracking-tight mt-2">
+            Tell us what you need.
           </h1>
-          <p className="mt-2 text-ink-2">Get responses from real okes ready to help. You contact them directly — no middleman.</p>
+          <p className="mt-2 text-ink-2">Pros in your area will send you quotes. You contact them directly — no commission.</p>
         </header>
 
         <form onSubmit={onSubmit} className="bg-card border border-border rounded-2xl p-6 md:p-8 space-y-5 shadow-card">
           <Field label="What do you need?" required>
-            <input required name="title" className="input" placeholder="E.g., The geyser is crying, please help." />
+            <input required name="title" className="input" placeholder="e.g. Replace a burst geyser in Sandton" />
           </Field>
-          <Field label="Description" required>
-            <textarea required name="description" rows={4} className="input resize-none" placeholder="Don't hold back. Tell the okes exactly how bad the DIY disaster is..." />
+          <Field label="Describe the job" required>
+            <textarea required name="description" rows={4} className="input resize-none" placeholder="Tell pros exactly what's going on. The more detail, the more accurate the quote." />
           </Field>
+
+          {/* Photo / file upload */}
+          <div>
+            <span className="block text-sm font-semibold mb-1.5">
+              Add photos or files <span className="text-muted-foreground font-normal">(optional)</span>
+            </span>
+            <p className="text-xs text-ink-2 mb-3 leading-relaxed">
+              Showing pros exactly what you need helps you get more accurate quotes. Up to {MAX_FILES} images or PDFs, max 10MB each.
+            </p>
+
+            {attachments.length > 0 && (
+              <div className="grid grid-cols-3 sm:grid-cols-4 gap-3 mb-3">
+                {attachments.map((a, idx) => (
+                  <div key={idx} className="relative group aspect-square rounded-lg border border-border overflow-hidden bg-muted">
+                    {a.type.startsWith("image/") ? (
+                      <img src={a.url} alt={a.name} className="absolute inset-0 size-full object-cover" />
+                    ) : (
+                      <div className="absolute inset-0 flex flex-col items-center justify-center p-2 text-center gap-1.5">
+                        <FileText className="size-7 text-muted-foreground" strokeWidth={2} />
+                        <span className="text-[10px] font-medium text-ink-2 truncate w-full">{a.name}</span>
+                      </div>
+                    )}
+                    <button
+                      type="button"
+                      onClick={() => removeAttachment(idx)}
+                      className="absolute top-1.5 right-1.5 size-6 rounded-full bg-foreground/80 text-background flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                      aria-label={`Remove ${a.name}`}
+                    >
+                      <X className="size-3.5" strokeWidth={2.5} />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept={ACCEPTED}
+              multiple
+              onChange={(e) => handleFiles(e.target.files)}
+              className="hidden"
+              disabled={uploading || attachments.length >= MAX_FILES}
+            />
+            <Button
+              type="button"
+              variant="outline"
+              size="default"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={uploading || attachments.length >= MAX_FILES}
+              className="gap-2"
+            >
+              {uploading ? <Loader2 className="size-4 animate-spin" /> : <ImagePlus className="size-4" />}
+              {uploading ? "Uploading…" : attachments.length === 0 ? "Add photos or files" : `Add more (${attachments.length}/${MAX_FILES})`}
+            </Button>
+          </div>
+
           <div className="grid sm:grid-cols-2 gap-5">
             <Field label="Category group" required>
               <select
@@ -217,8 +327,8 @@ const PostOpportunity = () => {
           </label>
 
           <div className="pt-2 flex flex-col sm:flex-row gap-3">
-            <Button type="submit" size="lg" className="flex-1" disabled={submitting || !agreeTerms}>
-              {submitting ? "Just now, just now…" : "Let's Gooi"}
+            <Button type="submit" size="lg" className="flex-1" disabled={submitting || !agreeTerms || uploading}>
+              {submitting ? "Posting your request…" : "Get Quotes"}
             </Button>
             <Button type="button" variant="outline" size="lg" onClick={() => navigate(-1)}>Cancel</Button>
           </div>

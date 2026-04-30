@@ -130,7 +130,7 @@ export const ApplyButton = ({
           )}
         >
           {isUrgent ? <Siren className="size-3.5" strokeWidth={2.5} /> : <Send className="size-3.5" strokeWidth={2.5} />}
-          {submitted ? "Proposal sent ✓" : isUrgent ? "Claim urgent job" : "Apply for this job"}
+          {submitted ? "Quote sent ✓" : isUrgent ? "Claim Lead" : "Send Quote"}
         </Button>
         {showFoundingPill && !isUrgent && (
           <span className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest text-accent">
@@ -178,36 +178,36 @@ const PaywallDialog = ({ kind, onClose, onPickPlan, onRunKyc }: PaywallProps) =>
   const copy = {
     locked: {
       icon: <Lock className="size-5 text-accent" strokeWidth={2.5} />,
-      title: "Your account is on pause",
-      body: "Your free trial ended without a payment method. Choose On the Map (R50/mo) or Ready for Work (R250/mo) to start applying again.",
-      cta: "Pick a plan",
+      title: "Your account is paused",
+      body: "Your free trial ended without a payment method. Choose Basic Listing (R50/mo) or Verified Pro (R250/mo) to send quotes again.",
+      cta: "Choose a plan",
       onCta: onPickPlan,
     },
     "no-plan": {
       icon: <Lock className="size-5 text-accent" strokeWidth={2.5} />,
-      title: "Trial done, boet",
-      body: "Your 30-day free trial is finished. Pick a plan and we'll let you back in.",
+      title: "Your trial has ended",
+      body: "Your 30-day free trial is finished. Choose a plan to keep sending quotes.",
       cta: "See plans",
       onCta: onPickPlan,
     },
     basic: {
       icon: <Sparkles className="size-5 text-primary" strokeWidth={2.5} />,
-      title: "You're on the passive listing tier",
-      body: "On the Map (R50/mo) keeps you in the directory so clients can find you and call you directly. Upgrade to Ready for Work (R250/mo) to apply to jobs and contact clients yourself.",
-      cta: "Upgrade to R250",
+      title: "Upgrade to send quotes",
+      body: "Basic Listing (R50/mo) keeps you in the directory so customers can find and contact you. Upgrade to Verified Pro (R250/mo) to send quotes on customer requests.",
+      cta: "Upgrade to Verified Pro",
       onCta: onPickPlan,
     },
     "trial-urgent": {
       icon: <Siren className="size-5 text-accent" strokeWidth={2.5} />,
-      title: "Eish! Urgent jobs need Verified Pro",
-      body: "Urgent leads are reserved for Ready for Work pros with a verified ID. End your free trial, upgrade to R250/mo and pass the ID check to claim emergency jobs like this.",
+      title: "Urgent leads need Verified Pro",
+      body: "Urgent customer requests are reserved for Verified Pros with a verified ID. Upgrade to R250/mo and complete the ID check to claim emergency leads.",
       cta: "Upgrade & verify",
       onCta: onPickPlan,
     },
     "kyc-needed": {
       icon: <ShieldCheck className="size-5 text-accent" strokeWidth={2.5} />,
-      title: "One more step — verify your ID",
-      body: "Eish! Urgent jobs are only sent to pros with a verified SA ID. Run the quick ID check on your business profile and you're in.",
+      title: "Verify your ID first",
+      body: "Urgent leads are only sent to pros with a verified SA ID. Complete the quick ID check on your profile and you're in.",
       cta: "Verify my ID",
       onCta: onRunKyc,
     },

@@ -27,7 +27,7 @@ const SECTIONS: { key: SectionKey; label: string; icon: typeof LayoutGrid }[] = 
   { key: "klaps", label: "Klaps & Verification", icon: Zap },
   { key: "profile", label: "My Profile", icon: User },
   { key: "promotions", label: "Promotions", icon: Sparkles },
-  { key: "opportunities", label: "Opportunities", icon: Briefcase },
+  { key: "opportunities", label: "Leads", icon: Briefcase },
   { key: "followers", label: "Followers", icon: Users },
   { key: "billing", label: "Billing", icon: CreditCard },
 ];
@@ -389,8 +389,8 @@ const PromotionsSection = () => (
 const OpportunitiesSection = () => (
   <>
     <header>
-      <h1 className="font-display text-3xl font-medium tracking-tight">Opportunities</h1>
-      <p className="text-sm text-ink-2 mt-1">Track jobs you've Klapped.</p>
+      <h1 className="font-display text-3xl font-extrabold tracking-tight">Leads</h1>
+      <p className="text-sm text-ink-2 mt-1">Customer requests you've quoted on.</p>
     </header>
     <div className="bg-card border border-border rounded-xl divide-y divide-border">
       {OPPORTUNITIES.slice(0, 4).map((o, i) => (
@@ -398,7 +398,7 @@ const OpportunitiesSection = () => (
           <div className="flex items-start gap-3 min-w-0">
             <span className="size-10 rounded-lg bg-secondary flex items-center justify-center text-xl shrink-0">{o.emoji}</span>
             <div className="min-w-0">
-              <Link to={`/opportunities/${o.id}`} className="font-semibold text-sm hover:text-primary truncate block">{o.title}</Link>
+              <Link to={`/requests/${o.id}`} className="font-semibold text-sm hover:text-primary truncate block">{o.title}</Link>
               <p className="text-xs text-muted-foreground mt-0.5">{o.city} · {formatRand(o.budget)}</p>
             </div>
           </div>

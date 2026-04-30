@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 import { KlapButton } from "@/components/KlapButton";
 import { UrgentBoostButton } from "@/components/UrgentBoostButton";
 import { useAuth } from "@/hooks/useAuth";
-import { History, Siren, Sparkles } from "lucide-react";
+import { History, Siren, Sparkles, Paperclip } from "lucide-react";
 
 interface JobCardProps {
   job: Opportunity;
@@ -66,7 +66,52 @@ export const JobCard = ({ job, className, clientHireCount }: JobCardProps) => {
               <span>By {job.deadline}</span>
               <span className="text-muted-foreground">·</span>
               <span>{job.applicants} applied</span>
+              {job.attachments && job.attachments.length > 0 && (
+                <>
+                  <span className="text-muted-foreground">·</span>
+                  <span className="inline-flex items-center gap-1 text-foreground font-medium">
+                    <Paperclip className="size-3" strokeWidth={2.5} />
+                    {job.attachments.length} photo{job.attachments.length === 1 ? "" : "s"}
+                  </span>
+                </>
+              )}
             </div>
+
+            {job.attachments && job.attachments.length > 0 && (
+              <div className="mt-3 flex gap-1.5 overflow-x-auto pb-1">
+                {job.attachments.slice(0, 4).map((a, i) => (
+                  a.type.startsWith("image/") ? (
+                    <a
+                      key={i}
+                      href={a.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="shrink-0 size-14 rounded-md overflow-hidden border border-border hover:border-primary transition-colors"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <img src={a.url} alt={a.name} loading="lazy" className="size-full object-cover" />
+                    </a>
+                  ) : (
+                    <a
+                      key={i}
+                      href={a.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="shrink-0 size-14 rounded-md border border-border hover:border-primary flex items-center justify-center bg-muted text-muted-foreground"
+                      onClick={(e) => e.stopPropagation()}
+                      title={a.name}
+                    >
+                      <Paperclip className="size-4" strokeWidth={2} />
+                    </a>
+                  )
+                ))}
+                {job.attachments.length > 4 && (
+                  <span className="shrink-0 size-14 rounded-md border border-dashed border-border flex items-center justify-center text-[11px] font-semibold text-muted-foreground">
+                    +{job.attachments.length - 4}
+                  </span>
+                )}
+              </div>
+            )}
 
             <div className="mt-4 flex items-center justify-between gap-3">
               <div>
