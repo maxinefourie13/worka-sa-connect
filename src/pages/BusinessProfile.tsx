@@ -91,7 +91,7 @@ const BusinessProfile = () => {
     });
   };
 
-  const { contact: revealed, loading: revealing, reveal, revealed: isRevealed } = useRevealContact(business.id);
+  const { contact: revealed, loading: revealing, reveal } = useRevealContact(business.id);
   // Use revealed contact if available, otherwise fall back to whatever the row gave us
   // (owners reading their own listing still get email/phone directly via RLS).
   const phone = revealed?.phone ?? business.phone ?? "";
