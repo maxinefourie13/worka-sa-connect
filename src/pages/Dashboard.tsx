@@ -29,11 +29,11 @@ import { cn } from "@/lib/utils";
 type SectionKey = "overview" | "quotes" | "verification" | "profile" | "promotions" | "opportunities" | "followers" | "billing" | "privacy";
 const SECTIONS: { key: SectionKey; label: string; icon: typeof LayoutGrid }[] = [
   { key: "overview", label: "Overview", icon: LayoutGrid },
-  { key: "quotes", label: "My Quotes", icon: FileText },
+  { key: "quotes", label: "Quotes I sent", icon: FileText },
   { key: "verification", label: "Verification", icon: ShieldCheck },
   { key: "profile", label: "My Profile", icon: User },
   { key: "promotions", label: "Promotions", icon: Sparkles },
-  { key: "opportunities", label: "Leads", icon: Briefcase },
+  { key: "opportunities", label: "Won jobs", icon: Briefcase },
   { key: "followers", label: "Followers", icon: Users },
   { key: "billing", label: "Billing", icon: CreditCard },
   { key: "privacy", label: "Data & Privacy", icon: Lock },
