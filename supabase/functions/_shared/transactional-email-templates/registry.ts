@@ -13,10 +13,12 @@ import { template as earlyAccessPro } from './early-access-pro.tsx'
 import { template as earlyAccessCustomer } from './early-access-customer.tsx'
 import { template as earlyAccessProWaitlist } from './early-access-pro-waitlist.tsx'
 import { template as earlyAccessCustomerWaitlist } from './early-access-customer-waitlist.tsx'
+import { template as verifiedReviewChaser } from './verified-review-chaser.tsx'
 
 export const TEMPLATES: Record<string, TemplateEntry> = {
   'early-access-pro': earlyAccessPro,
   'early-access-customer': earlyAccessCustomer,
   'early-access-pro-waitlist': earlyAccessProWaitlist,
   'early-access-customer-waitlist': earlyAccessCustomerWaitlist,
+  'verified-review-chaser': verifiedReviewChaser,
 }

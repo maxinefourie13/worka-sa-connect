@@ -2,8 +2,9 @@ import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import {
   LayoutGrid, User, Sparkles, Briefcase, Users, CreditCard, Plus,
-  Zap, ShieldCheck, Siren, Bell, Mail,
+  Zap, ShieldCheck, Siren, Bell, Mail, FileText,
 } from "lucide-react";
+import { QuotesSection } from "@/components/dashboard/QuotesSection";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Button } from "@/components/ui/button";
 import { BUSINESSES, formatRand, OPPORTUNITIES, PROMOTIONS, SJOH_TIERS } from "@/lib/mockData";
@@ -19,9 +20,10 @@ import { GoogleReviewsCard } from "@/components/dashboard/GoogleReviewsCard";
 import { SubscriptionGapBanner } from "@/components/SubscriptionGapBanner";
 import { cn } from "@/lib/utils";
 
-type SectionKey = "overview" | "klaps" | "profile" | "promotions" | "opportunities" | "followers" | "billing";
+type SectionKey = "overview" | "quotes" | "klaps" | "profile" | "promotions" | "opportunities" | "followers" | "billing";
 const SECTIONS: { key: SectionKey; label: string; icon: typeof LayoutGrid }[] = [
   { key: "overview", label: "Overview", icon: LayoutGrid },
+  { key: "quotes", label: "My Quotes", icon: FileText },
   { key: "klaps", label: "Klaps & Verification", icon: Zap },
   { key: "profile", label: "My Profile", icon: User },
   { key: "promotions", label: "Promotions", icon: Sparkles },
@@ -94,6 +96,7 @@ const Dashboard = () => {
           {/* Content */}
           <div className="space-y-6">
             {section === "overview" && <OverviewSection onJump={setSection} />}
+            {section === "quotes" && <QuotesSection />}
             {section === "klaps" && <KlapsSection />}
             {section === "profile" && <ProfileSection />}
             {section === "promotions" && <PromotionsSection />}
