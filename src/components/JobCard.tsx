@@ -5,13 +5,18 @@ import { cn } from "@/lib/utils";
 import { KlapButton } from "@/components/KlapButton";
 import { UrgentBoostButton } from "@/components/UrgentBoostButton";
 import { useAuth } from "@/hooks/useAuth";
-import { History, Siren, Sparkles, Paperclip } from "lucide-react";
+import { History, Siren, Sparkles, Paperclip, MapPin } from "lucide-react";
+import { freshnessFromIso, competitionSignal } from "@/lib/leadSignals";
 
 interface JobCardProps {
   job: Opportunity;
   className?: string;
   /** Optional: how many jobs this client has previously hired on Sjoh. */
   clientHireCount?: number;
+  /** When true, render Pro-side signals (freshness + quote count). */
+  isProView?: boolean;
+  /** When set, show a "Near you" pip if this job's city matches. */
+  proCity?: string;
 }
 
 export const JobCard = ({ job, className, clientHireCount }: JobCardProps) => {
