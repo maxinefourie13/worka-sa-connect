@@ -235,6 +235,12 @@ export const Register = () => {
       footer={<>Already have an account? <Link to="/login" className="text-primary font-semibold hover:underline">Log in</Link></>}
     >
       <form className="space-y-4" onSubmit={onSubmit}>
+        {referralCode && (
+          <div className="rounded-lg border border-primary/30 bg-primary/5 px-3 py-2 text-xs">
+            <div className="font-bold text-foreground">🎁 Referral applied: <span className="font-mono">{referralCode}</span></div>
+            <div className="text-ink-2 mt-0.5">When you upgrade to Verified Pro, you both get a free month.</div>
+          </div>
+        )}
         <Field label="What does your Ma call you?">
           <input required className="input" placeholder="First name + surname (or business name)" value={displayName} onChange={(e) => setDisplayName(e.target.value)} />
         </Field>
