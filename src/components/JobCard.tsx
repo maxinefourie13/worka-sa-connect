@@ -35,10 +35,37 @@ export const JobCard = ({ job, className, clientHireCount, isProView, proCity }:
           isBoosted ? "border-accent/60 ring-1 ring-accent/30 hover:border-accent" : "border-border hover:border-primary/30",
         )}
       >
-        <div className="mb-3 flex flex-wrap items-center gap-2">
+        <div className="mb-3 flex flex-wrap items-center gap-1.5">
           {isBoosted && (
             <span className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-accent-foreground bg-accent px-2 py-1 rounded-full animate-pulse">
               <Siren className="size-3" strokeWidth={2.5} /> Urgent
+            </span>
+          )}
+          {isProView && (
+            <span
+              className={cn(
+                "inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded-full border",
+                fresh.badgeClass,
+              )}
+              title="When this lead was posted"
+            >
+              <span aria-hidden>{fresh.dot}</span> {fresh.label}
+            </span>
+          )}
+          {isProView && (
+            <span
+              className={cn(
+                "inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded-full border",
+                competition.badgeClass,
+              )}
+              title="How many pros have already quoted"
+            >
+              <span aria-hidden>{competition.dot}</span> {competition.label}
+            </span>
+          )}
+          {isProView && isNearby && (
+            <span className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded-full border bg-foreground text-background border-foreground">
+              <MapPin className="size-3" strokeWidth={2.5} /> Near you
             </span>
           )}
           {job.isConciergeLead && (
