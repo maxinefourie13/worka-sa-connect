@@ -102,7 +102,7 @@ const Dashboard = () => {
           <div className="space-y-6">
             {section === "overview" && <OverviewSection onJump={setSection} />}
             {section === "quotes" && <QuotesSection />}
-            {section === "klaps" && <KlapsSection />}
+            {section === "verification" && <VerificationSection />}
             {section === "profile" && <ProfileSection />}
             {section === "promotions" && <PromotionsSection />}
             {section === "opportunities" && <OpportunitiesSection />}
