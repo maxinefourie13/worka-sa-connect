@@ -1,0 +1,1 @@
+REVOKE EXECUTE ON FUNCTION public.mark_deal_memo_complete(uuid, text, text) FROM PUBLIC, anon;
