@@ -15,6 +15,7 @@ import { toast } from "@/hooks/use-toast";
 import { useVerification } from "@/hooks/useVerification";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
+import { payments } from "@/lib/payments";
 import { requestPushPermission, disablePush, isPushConfigured } from "@/lib/push";
 import { GoogleReviewsCard } from "@/components/dashboard/GoogleReviewsCard";
 import { SubscriptionGapBanner } from "@/components/SubscriptionGapBanner";
