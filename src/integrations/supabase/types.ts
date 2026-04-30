@@ -874,6 +874,27 @@ export type Database = {
         }
         Relationships: []
       }
+      rate_limits: {
+        Row: {
+          action: string
+          created_at: string
+          id: number
+          user_id: string
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          id?: number
+          user_id: string
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          id?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
       reviews: {
         Row: {
           body: string
@@ -1283,6 +1304,10 @@ export type Database = {
         Returns: boolean
       }
       cancel_deal_memo: { Args: { _id: string }; Returns: undefined }
+      check_rate_limit: {
+        Args: { _action: string; _max: number; _window_seconds: number }
+        Returns: undefined
+      }
       claim_founding_spot: { Args: { _signup_id: string }; Returns: boolean }
       complete_deal_memo: { Args: { _id: string }; Returns: undefined }
       delete_email: {
