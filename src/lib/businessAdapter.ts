@@ -52,6 +52,7 @@ export function mapReviewRow(row: any) {
     rating: row.rating,
     body: row.body,
     date: relativeDate(row.created_at),
+    isVerifiedHire: !!row.is_verified_hire,
   };
 }
 
