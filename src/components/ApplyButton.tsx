@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Send, Sparkles, ExternalLink, Siren, Lock, ShieldCheck, Loader2 } from "lucide-react";
+import { Send, Sparkles, ExternalLink, Siren, Lock, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
