@@ -55,9 +55,17 @@ const App = () => {
                 <Route path="/directory" element={<Directory />} />
                 <Route path="/directory/g/:groupSlug" element={<GroupLanding />} />
                 <Route path="/business/:slug" element={<BusinessProfile />} />
-                <Route path="/opportunities" element={<Opportunities />} />
-                <Route path="/opportunities/new" element={<ProtectedRoute><PostOpportunity /></ProtectedRoute>} />
-                <Route path="/opportunities/:id" element={<Opportunities />} />
+                {/* Customer-facing: Requests */}
+                <Route path="/requests" element={<Opportunities />} />
+                <Route path="/requests/new" element={<ProtectedRoute><PostOpportunity /></ProtectedRoute>} />
+                <Route path="/requests/:id" element={<Opportunities />} />
+                {/* Pro-facing: Leads (same board, different framing) */}
+                <Route path="/leads" element={<Opportunities />} />
+                <Route path="/leads/:id" element={<Opportunities />} />
+                {/* Legacy redirects */}
+                <Route path="/opportunities" element={<Navigate to="/requests" replace />} />
+                <Route path="/opportunities/new" element={<Navigate to="/requests/new" replace />} />
+                <Route path="/opportunities/:id" element={<RedirectRequestById />} />
                 <Route path="/pricing" element={<Pricing />} />
                 <Route path="/list" element={<ProtectedRoute><ListBusiness /></ProtectedRoute>} />
                 <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
