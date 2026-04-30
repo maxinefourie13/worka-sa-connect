@@ -7,6 +7,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import { MarkCompleteCard } from "@/components/MarkCompleteCard";
+import { QuoteRevisionCard } from "@/components/QuoteRevisionCard";
 import { InvoiceGenerator } from "@/components/InvoiceGenerator";
 
 type Opp = {
@@ -391,6 +392,11 @@ const LeadDetail = () => {
 
         {user && !isOwner && myProposal?.status === "accepted" && dealMemoId && (
           <div className="mt-6 space-y-6">
+            <QuoteRevisionCard
+              dealMemoId={dealMemoId}
+              currentAmount={Number(myProposal.quote_amount ?? 0)}
+              isAccepted={true}
+            />
             <MarkCompleteCard dealMemoId={dealMemoId} />
             <InvoiceGenerator
               dealMemoId={dealMemoId}
