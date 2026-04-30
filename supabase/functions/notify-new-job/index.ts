@@ -157,7 +157,7 @@ Deno.serve(async (req) => {
             include_player_ids: pushIds,
             headings: { en: "🔥 Fresh Graft!" },
             contents: {
-              en: `A ${opp.category_name} job was just posted in ${opp.city}. Klap it now!`,
+              en: `A ${opp.category_name} job was just posted in ${opp.city}. Send your quote!`,
             },
             url: jobUrl,
           }),

@@ -7,7 +7,8 @@ import {
 import { QuotesSection } from "@/components/dashboard/QuotesSection";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Button } from "@/components/ui/button";
-import { BUSINESSES, formatRand, OPPORTUNITIES, PROMOTIONS, SJOH_TIERS } from "@/lib/mockData";
+import { formatRand, OPPORTUNITIES, PROMOTIONS, SJOH_TIERS } from "@/lib/mockData";
+import { useMyBusiness } from "@/hooks/useMyBusiness";
 import { VerificationBadges } from "@/components/VerificationBadges";
 import { toast } from "@/hooks/use-toast";
 import { useVerification } from "@/hooks/useVerification";
@@ -39,14 +40,16 @@ const SECTIONS: { key: SectionKey; label: string; icon: typeof LayoutGrid }[] = 
 
 const Dashboard = () => {
   const [section, setSection] = useState<SectionKey>("overview");
-  const me = BUSINESSES[0]; // mock "logged in" business
+  const { user } = useAuth();
+  const { business } = useMyBusiness();
+  const access = useProviderAccess();
   const [params, setParams] = useSearchParams();
 
   useEffect(() => {
     if (params.get("paid") === "1") {
       toast({
-        title: "Chankura sorted.",
-        description: "Your account is topped up. Back to work!",
+        title: "Sharp! Plan sorted.",
+        description: "Your subscription is active. Back to work!",
       });
       params.delete("paid");
       setParams(params, { replace: true });
@@ -61,6 +64,17 @@ const Dashboard = () => {
     }
   }, [params, setParams]);
 
+  const sidebarName =
+    business?.name ||
+    (user?.user_metadata?.display_name as string | undefined) ||
+    user?.email?.split("@")[0] ||
+    "Your account";
+  const sidebarRole =
+    access.tier === "verified_pro" || access.tier === "verified_pro_trial" ? "Verified Pro"
+    : access.tier === "basic" || access.tier === "basic_trial" ? "Basic listing"
+    : "No active plan";
+  const sidebarInitial = sidebarName.charAt(0).toUpperCase();
+
   return (
     <div className="flex min-h-dvh flex-col bg-background">
       <SiteHeader />
@@ -70,10 +84,12 @@ const Dashboard = () => {
           <aside>
             <div className="bg-card border border-border rounded-xl p-4">
               <div className="flex items-center gap-3 px-2 py-2">
-                <div className={cn("size-10 rounded-lg flex items-center justify-center font-display font-bold text-foreground bg-card border border-border", me.gradient)} />
+                <div className="size-10 rounded-lg flex items-center justify-center font-display font-bold text-primary bg-primary/10 border border-primary/20">
+                  {sidebarInitial}
+                </div>
                 <div className="min-w-0">
-                  <p className="text-sm font-semibold truncate">{me.name}</p>
-                  <p className="text-xs text-muted-foreground">The Pro</p>
+                  <p className="text-sm font-semibold truncate">{sidebarName}</p>
+                  <p className="text-xs text-muted-foreground truncate">{sidebarRole}</p>
                 </div>
               </div>
               <nav className="mt-3 space-y-0.5">
@@ -210,8 +226,6 @@ const OverviewSection = ({ onJump }: { onJump: (s: SectionKey) => void }) => {
 
 const VerificationSection = () => {
   const verification = useVerification();
-  // Mock cert data — to be wired to real businesses table later.
-  const me = BUSINESSES[0];
 
   const verifyLabel: Record<typeof verification.status, string> = {
     not_required: "Upgrade to verify",

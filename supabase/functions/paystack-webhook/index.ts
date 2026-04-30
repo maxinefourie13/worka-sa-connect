@@ -49,7 +49,6 @@ Deno.serve(async (req) => {
 
   const kind =
     event === 'charge.success' && purpose === 'subscription' ? 'subscription_charge' :
-    event === 'charge.success' && purpose === 'klap_topup'   ? 'klap_topup_charge'  :
     event === 'charge.success' && purpose === 'urgent_fee'   ? 'urgent_fee_charge'  :
     event === 'charge.success' && purpose === 'urgent_boost' ? 'urgent_boost'       :
     event === 'subscription.disable'   ? 'subscription_disable' :
@@ -107,18 +106,6 @@ Deno.serve(async (req) => {
         _billing_cycle: billingCycle,
       });
       if (error) processError = error.message;
-    } else if (kind === 'klap_topup_charge') {
-      const { data: topup } = await admin
-        .from('klap_topups')
-        .select('id')
-        .eq('paystack_reference', reference)
-        .single();
-      if (topup) {
-        const { error } = await admin.rpc('apply_klap_topup', { _topup_id: topup.id });
-        if (error) processError = error.message;
-      } else {
-        processError = 'topup row missing';
-      }
     } else if (kind === 'urgent_fee_charge') {
       // Urgent SOS feature was removed — ignore legacy webhooks gracefully.
       processError = null;
