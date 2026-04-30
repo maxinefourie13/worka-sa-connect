@@ -6,18 +6,33 @@ import { corsHeaders } from '../_shared/cors.ts';
 
 const PAYSTACK_BASE = 'https://api.paystack.co';
 
-type Tier = 'hustler' | 'main-oke';
+// Accept both legacy ('hustler' / 'main-oke') and current ('basic' / 'verified_pro')
+// tier slugs so we don't break older clients.
+type Tier = 'basic' | 'verified_pro' | 'hustler' | 'main-oke';
+type BillingCycle = 'monthly' | 'annual';
 
-const TIER_AMOUNTS: Record<Tier, number> = {
-  // amounts in kobo (cents)
-  'hustler': 5000,    // R50
-  'main-oke': 25000,  // R250
+function normalizeTier(t: Tier): 'basic' | 'verified_pro' {
+  if (t === 'hustler') return 'basic';
+  if (t === 'main-oke') return 'verified_pro';
+  return t;
+}
+
+const TIER_AMOUNTS: Record<'basic' | 'verified_pro', Record<BillingCycle, number>> = {
+  // amounts in kobo (cents). Annual = 10 months (10% off 12).
+  basic:        { monthly: 5000,  annual: 54000  }, // R50  / R540
+  verified_pro: { monthly: 25000, annual: 270000 }, // R250 / R2700
 };
 
-function planCodeFor(tier: Tier): string | undefined {
-  return tier === 'hustler'
-    ? Deno.env.get('PAYSTACK_PLAN_HUSTLER')
-    : Deno.env.get('PAYSTACK_PLAN_MAIN_OKE');
+function planCodeFor(tier: 'basic' | 'verified_pro', cycle: BillingCycle): string | undefined {
+  const env = (k: string) => Deno.env.get(k);
+  if (tier === 'basic') {
+    return cycle === 'annual'
+      ? env('PAYSTACK_PLAN_BASIC_ANNUAL')
+      : (env('PAYSTACK_PLAN_BASIC_MONTHLY') || env('PAYSTACK_PLAN_HUSTLER'));
+  }
+  return cycle === 'annual'
+    ? env('PAYSTACK_PLAN_VERIFIED_PRO_ANNUAL')
+    : (env('PAYSTACK_PLAN_VERIFIED_PRO_MONTHLY') || env('PAYSTACK_PLAN_MAIN_OKE'));
 }
 
 Deno.serve(async (req) => {
@@ -46,13 +61,19 @@ Deno.serve(async (req) => {
     const userEmail = claims.claims.email as string;
 
     const body = await req.json().catch(() => ({}));
-    const tier = body.tier as Tier;
+    const rawTier = body.tier as Tier;
+    const rawCycle = (body.billing_cycle ?? 'monthly') as BillingCycle;
     const callbackUrl = String(body.callback_url ?? '');
-    if (tier !== 'hustler' && tier !== 'main-oke') {
+
+    if (!['basic', 'verified_pro', 'hustler', 'main-oke'].includes(rawTier)) {
       return new Response(JSON.stringify({ error: 'Invalid tier' }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
     }
+    if (rawCycle !== 'monthly' && rawCycle !== 'annual') {
+      return new Response(JSON.stringify({ error: 'Invalid billing_cycle' }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+    }
 
-    const planCode = planCodeFor(tier);
+    const tier = normalizeTier(rawTier);
+    const planCode = planCodeFor(tier, rawCycle);
 
     // Initialize a transaction. If a plan is configured, attaching `plan` makes
     // Paystack auto-create a subscription on success.
@@ -64,7 +85,7 @@ Deno.serve(async (req) => {
       },
       body: JSON.stringify({
         email: userEmail,
-        amount: TIER_AMOUNTS[tier],
+        amount: TIER_AMOUNTS[tier][rawCycle],
         currency: 'ZAR',
         callback_url: callbackUrl || undefined,
         plan: planCode || undefined,
@@ -72,6 +93,7 @@ Deno.serve(async (req) => {
           user_id: userId,
           purpose: 'subscription',
           tier,
+          billing_cycle: rawCycle,
         },
       }),
     });
