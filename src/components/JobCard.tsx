@@ -99,8 +99,8 @@ export const JobCard = ({ job, className, clientHireCount, isProView, proCity }:
               <span>{job.city}, {job.province}</span>
               <span className="text-muted-foreground">·</span>
               <span>By {job.deadline}</span>
-              <span className="text-muted-foreground">·</span>
-              <span>{job.applicants} applied</span>
+              {!isProView && <span className="text-muted-foreground">·</span>}
+              {!isProView && <span>{job.applicants} applied</span>}
               {job.attachments && job.attachments.length > 0 && (
                 <>
                   <span className="text-muted-foreground">·</span>
