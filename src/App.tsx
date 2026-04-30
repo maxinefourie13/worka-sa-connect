@@ -23,6 +23,8 @@ import ListBusiness from "./pages/ListBusiness.tsx";
 import Dashboard from "./pages/Dashboard.tsx";
 import CategoryLocationPage from "./pages/CategoryLocationPage.tsx";
 import { Login, Register, ForgotPassword, ResetPassword } from "./pages/Auth.tsx";
+import PublicQuote from "./pages/PublicQuote.tsx";
+import VerifiedReviewPage from "./pages/VerifiedReviewPage.tsx";
 import FoundingMembersAdmin from "./pages/admin/FoundingMembers.tsx";
 
 const queryClient = new QueryClient();
@@ -63,6 +65,8 @@ const App = () => {
                 <Route path="/:categorySlug/:provinceSlug/:citySlug" element={<CategoryLocationPage />} />
                 <Route path="/email-preferences/unsubscribe" element={<EmailUnsubscribe />} />
                 <Route path="/unsubscribe" element={<EmailUnsubscribe />} />
+                <Route path="/quote/:id" element={<PublicQuote />} />
+                <Route path="/quote/:id/review" element={<VerifiedReviewPage />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>
