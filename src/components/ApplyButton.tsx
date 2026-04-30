@@ -1,15 +1,27 @@
 import { useState } from "react";
-import { Send, Sparkles, ExternalLink } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { Send, Sparkles, ExternalLink, Siren, Lock, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { ProposalModal } from "@/components/ProposalModal";
 import { cn } from "@/lib/utils";
 import { useProviderAccess } from "@/hooks/useProviderAccess";
+import { useAuth } from "@/hooks/useAuth";
 
 interface Props {
   jobId: string;
   jobTitle: string;
   jobBudget?: number;
   clientName?: string;
+  /** True if the job is flagged Eish! Urgent (free for clients, pinned 72h). */
+  isUrgent?: boolean;
   size?: "sm" | "default" | "lg";
   className?: string;
   /** If true, this is an admin-sourced concierge lead — redirect to externalContactUrl instead of opening the proposal modal. */
@@ -18,24 +30,50 @@ interface Props {
 }
 
 /**
- * Apply to a job. Server-side `submit_proposal` enforces:
- *  - Ready for Work subscribers: unlimited proposals (verified business required)
- *  - Founding members on Basic/trial/no plan: 1 free proposal per calendar month, no verification needed
- *  - Everyone else: must upgrade to Ready for Work
+ * Apply to a job. Server-side `submit_proposal` is the source of truth. Client-side gating
+ * here just stops obviously-blocked clicks and shows the right paywall:
+ *  - Not signed in → /auth
+ *  - Locked tier → choose a plan
+ *  - On the Map (R50) → upgrade to Ready for Work
+ *  - Trial / no plan, urgent job → upgrade to R250 + ID check
+ *  - Verified Pro, urgent job, no KYC → run ID check
+ *  - Otherwise → open proposal modal (server has final say).
  */
-export const ApplyButton = ({ jobId, jobTitle, jobBudget, clientName, size = "sm", className, isConciergeLead, externalContactUrl }: Props) => {
+export const ApplyButton = ({
+  jobId,
+  jobTitle,
+  jobBudget,
+  clientName,
+  isUrgent,
+  size = "sm",
+  className,
+  isConciergeLead,
+  externalContactUrl,
+}: Props) => {
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  const {
+    loading,
+    status,
+    tier,
+    hasVerifiedProAccess,
+    hasKycBusiness,
+    foundingProposalAvailable,
+    isFoundingMember,
+    foundingProposalsResetAt,
+  } = useProviderAccess();
+
   const [proposalOpen, setProposalOpen] = useState(false);
   const [submitted, setSubmitted] = useState(false);
-  const { hasVerifiedProAccess, foundingProposalAvailable, isFoundingMember, foundingProposalsResetAt } = useProviderAccess();
+  const [paywall, setPaywall] = useState<null | "locked" | "no-plan" | "basic" | "trial-urgent" | "kyc-needed">(null);
 
   const showFoundingPill = !hasVerifiedProAccess && foundingProposalAvailable;
   const foundingExhausted = !hasVerifiedProAccess && isFoundingMember && !foundingProposalAvailable;
-
   const resetLabel = foundingProposalsResetAt
     ? foundingProposalsResetAt.toLocaleDateString("en-ZA", { day: "numeric", month: "long" })
     : null;
 
-  // Concierge lead: skip the proposal modal entirely and bounce to the original source.
+  // Concierge lead: skip paywalls entirely, bounce to source.
   if (isConciergeLead && externalContactUrl) {
     return (
       <div className="flex flex-col items-end gap-1.5">
@@ -56,36 +94,57 @@ export const ApplyButton = ({ jobId, jobTitle, jobBudget, clientName, size = "sm
     );
   }
 
+  const handleClick = () => {
+    if (!user) { navigate("/auth"); return; }
+    if (loading) return;
+
+    if (status === "locked") return setPaywall("locked");
+    if (status === "none") return setPaywall("no-plan");
+
+    // R50 basic plan = passive listing only
+    if (tier === "basic") return setPaywall("basic");
+
+    if (isUrgent) {
+      if (!hasVerifiedProAccess) return setPaywall("trial-urgent");
+      if (!hasKycBusiness) return setPaywall("kyc-needed");
+    }
+
+    setProposalOpen(true);
+  };
+
   return (
     <>
       <div className="flex flex-col items-start gap-1.5">
         <Button
           size={size}
-          onClick={() => setProposalOpen(true)}
+          onClick={handleClick}
           disabled={submitted}
           className={cn(
             "font-bold tracking-wide gap-1.5",
             submitted
               ? "bg-primary-light text-primary hover:bg-primary-light"
-              : "bg-accent text-accent-foreground hover:bg-accent/90",
+              : isUrgent
+                ? "bg-accent text-accent-foreground hover:bg-accent/90"
+                : "bg-primary text-primary-foreground hover:bg-primary/90",
             className,
           )}
         >
-          <Send className="size-3.5" strokeWidth={2.5} />
-          {submitted ? "Proposal sent ✓" : "Apply for this job"}
+          {isUrgent ? <Siren className="size-3.5" strokeWidth={2.5} /> : <Send className="size-3.5" strokeWidth={2.5} />}
+          {submitted ? "Proposal sent ✓" : isUrgent ? "Claim urgent job" : "Apply for this job"}
         </Button>
-        {showFoundingPill && (
+        {showFoundingPill && !isUrgent && (
           <span className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest text-accent">
             <Sparkles className="size-3" strokeWidth={2.5} />
             Founding member · free this month
           </span>
         )}
-        {foundingExhausted && resetLabel && (
+        {foundingExhausted && resetLabel && !isUrgent && (
           <span className="text-[11px] text-muted-foreground">
             Free proposal used · resets {resetLabel}
           </span>
         )}
       </div>
+
       <ProposalModal
         open={proposalOpen}
         jobId={jobId}
@@ -95,6 +154,77 @@ export const ApplyButton = ({ jobId, jobTitle, jobBudget, clientName, size = "sm
         onClose={() => setProposalOpen(false)}
         onSubmitted={() => setSubmitted(true)}
       />
+
+      <PaywallDialog
+        kind={paywall}
+        onClose={() => setPaywall(null)}
+        onPickPlan={() => { setPaywall(null); navigate("/pricing"); }}
+        onRunKyc={() => { setPaywall(null); navigate("/dashboard"); }}
+      />
     </>
+  );
+};
+
+interface PaywallProps {
+  kind: null | "locked" | "no-plan" | "basic" | "trial-urgent" | "kyc-needed";
+  onClose: () => void;
+  onPickPlan: () => void;
+  onRunKyc: () => void;
+}
+
+const PaywallDialog = ({ kind, onClose, onPickPlan, onRunKyc }: PaywallProps) => {
+  if (!kind) return null;
+
+  const copy = {
+    locked: {
+      icon: <Lock className="size-5 text-accent" strokeWidth={2.5} />,
+      title: "Your account is on pause",
+      body: "Your free trial ended without a payment method. Choose On the Map (R50/mo) or Ready for Work (R250/mo) to start applying again.",
+      cta: "Pick a plan",
+      onCta: onPickPlan,
+    },
+    "no-plan": {
+      icon: <Lock className="size-5 text-accent" strokeWidth={2.5} />,
+      title: "Trial done, boet",
+      body: "Your 30-day free trial is finished. Pick a plan and we'll let you back in.",
+      cta: "See plans",
+      onCta: onPickPlan,
+    },
+    basic: {
+      icon: <Sparkles className="size-5 text-primary" strokeWidth={2.5} />,
+      title: "You're on the passive listing tier",
+      body: "On the Map (R50/mo) keeps you in the directory so clients can find you and call you directly. Upgrade to Ready for Work (R250/mo) to apply to jobs and contact clients yourself.",
+      cta: "Upgrade to R250",
+      onCta: onPickPlan,
+    },
+    "trial-urgent": {
+      icon: <Siren className="size-5 text-accent" strokeWidth={2.5} />,
+      title: "Eish! Urgent jobs need Verified Pro",
+      body: "Urgent leads are reserved for Ready for Work pros with a verified ID. End your free trial, upgrade to R250/mo and pass the ID check to claim emergency jobs like this.",
+      cta: "Upgrade & verify",
+      onCta: onPickPlan,
+    },
+    "kyc-needed": {
+      icon: <ShieldCheck className="size-5 text-accent" strokeWidth={2.5} />,
+      title: "One more step — verify your ID",
+      body: "Eish! Urgent jobs are only sent to pros with a verified SA ID. Run the quick ID check on your business profile and you're in.",
+      cta: "Verify my ID",
+      onCta: onRunKyc,
+    },
+  }[kind];
+
+  return (
+    <Dialog open={!!kind} onOpenChange={(o) => !o && onClose()}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-2">{copy.icon}{copy.title}</DialogTitle>
+          <DialogDescription className="pt-2 leading-relaxed">{copy.body}</DialogDescription>
+        </DialogHeader>
+        <DialogFooter className="gap-2">
+          <Button variant="ghost" onClick={onClose}>Maybe later</Button>
+          <Button onClick={copy.onCta} className="font-bold">{copy.cta}</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 };
