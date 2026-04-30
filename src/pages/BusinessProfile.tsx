@@ -123,7 +123,7 @@ const BusinessProfile = () => {
       addressCountry: "ZA",
     },
     aggregateRating: business.rating
-      ? { "@type": "AggregateRating", ratingValue: business.rating, reviewCount: business.reviews ?? 0 }
+      ? { "@type": "AggregateRating", ratingValue: business.rating, reviewCount: Array.isArray(business.reviews) ? business.reviews.length : 0 }
       : undefined,
   };
 
