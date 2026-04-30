@@ -49,40 +49,44 @@ const Opportunities = () => {
     <SiteLayout>
       <div className="container py-12">
         <header className="mb-8 max-w-2xl">
-          <span className="text-xs font-bold uppercase tracking-widest text-primary">Opportunity board</span>
-          <h1 className="font-display text-4xl md:text-5xl font-medium tracking-tight mt-2">
-            Tell people what you need done.
+          <span className="text-xs font-bold uppercase tracking-widest text-primary">
+            {isProView ? "Available leads" : "Customer requests"}
+          </span>
+          <h1 className="font-display text-4xl md:text-5xl font-extrabold tracking-tight mt-2">
+            {isProView ? "New leads in your area." : "Tell pros what you need done."}
           </h1>
           <p className="mt-3 text-ink-2">
-            Get responses from real okes ready to graft. Contact them directly — no middleman, no commission.
+            {isProView
+              ? "Real customer requests, ready for a quote. Send a quote and contact the customer directly — no commission."
+              : "Get quotes from real okes ready to graft. Contact them directly — no middleman, no commission."}
           </p>
         </header>
 
-        {isWorkshopMode && (
+        {isWorkshopMode && isProView && (
           <div className="rounded-2xl border-2 border-dashed border-primary/40 bg-primary/5 p-6 md:p-8 mb-10 flex items-start gap-4">
             <span className="size-10 rounded-xl bg-primary/15 text-primary flex items-center justify-center shrink-0">
               <Construction className="size-5" strokeWidth={2.5} />
             </span>
             <div>
-              <h2 className="font-display text-lg font-semibold">No jobs yet — we haven't opened the doors to customers.</h2>
+              <h2 className="font-display text-lg font-semibold">No leads yet — we haven't opened the doors to customers.</h2>
               <p className="text-sm text-ink-2 mt-1.5">
-                When we launch, this is where new jobs in your area land. Until then, get your profile sharp so you're first in line. We'll holla the moment we open.
+                When we launch, this is where new customer requests in your area land. Until then, get your profile sharp so you're first in line. We'll holla the moment we open.
               </p>
             </div>
           </div>
         )}
 
-        {/* Post CTA banner */}
-        {!isWorkshopMode && (
+        {/* Post CTA banner — customer view only */}
+        {!isProView && (
           <div className="rounded-2xl bg-gradient-to-r from-primary to-primary-glow text-primary-foreground p-6 md:p-8 mb-10 flex flex-col md:flex-row md:items-center justify-between gap-5">
             <div>
-              <h2 className="font-display text-xl md:text-2xl font-semibold">Need work done?</h2>
+              <h2 className="font-display text-xl md:text-2xl font-extrabold tracking-tight">Need work done?</h2>
               <p className="text-primary-foreground/85 text-sm mt-1">
-                Post a job and let real people come to you. Pull in, boet.
+                Post a request and pros will send you quotes.
               </p>
             </div>
             <Button variant="ink" size="lg" asChild>
-              <Link to="/opportunities/new">Post a Job</Link>
+              <Link to="/requests/new">Get Quotes</Link>
             </Button>
           </div>
         )}
