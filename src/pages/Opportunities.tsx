@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Search, ShieldCheck, Construction } from "lucide-react";
+import { Search, ShieldCheck, Construction, MapPin, Clock, Siren } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
 import { Button } from "@/components/ui/button";
 import { JobCard } from "@/components/JobCard";
@@ -8,6 +8,8 @@ import { CATEGORIES, PROVINCES } from "@/lib/mockData";
 import { useOpportunities } from "@/hooks/useDirectory";
 import { useMyBusiness } from "@/hooks/useMyBusiness";
 import { cn } from "@/lib/utils";
+
+type SortMode = "nearest" | "newest" | "urgent";
 
 const Opportunities = () => {
   const location = useLocation();
@@ -19,6 +21,7 @@ const Opportunities = () => {
   const [category, setCategory] = useState("");
   const [province, setProvince] = useState("");
   const [verifiedOnly, setVerifiedOnly] = useState(false);
+  const [sortMode, setSortMode] = useState<SortMode>(isProView && myBiz?.city ? "nearest" : "newest");
 
   // Mock client hiring history — keyed by job id. In production this comes from a server-side count.
   const clientHireHistory = useMemo<Record<string, number>>(
