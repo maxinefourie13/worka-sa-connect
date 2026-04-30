@@ -17,9 +17,24 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     // IMPORTANT: register listener FIRST, then fetch existing session.
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, newSession) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, newSession) => {
       setSession(newSession);
       setLoading(false);
+
+      // After a fresh sign-in (incl. email confirm), try to claim a pending referral.
+      if (event === "SIGNED_IN" && newSession?.user) {
+        try {
+          const code = localStorage.getItem("sjoh_pending_referral");
+          if (code) {
+            // Defer so the session is fully ready for the RPC call.
+            setTimeout(() => {
+              supabase.rpc("claim_referral_code", { _code: code }).then(({ error }) => {
+                if (!error) localStorage.removeItem("sjoh_pending_referral");
+              });
+            }, 0);
+          }
+        } catch { /* ignore */ }
+      }
     });
 
     supabase.auth.getSession().then(({ data: { session: existing } }) => {

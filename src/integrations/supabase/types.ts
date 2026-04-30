@@ -157,6 +157,7 @@ export type Database = {
           report_count: number
           response_rate: number
           review_count: number
+          secondary_categories: string[]
           slug: string
           strikes: number
           tags: string[]
@@ -202,6 +203,7 @@ export type Database = {
           report_count?: number
           response_rate?: number
           review_count?: number
+          secondary_categories?: string[]
           slug: string
           strikes?: number
           tags?: string[]
@@ -247,6 +249,7 @@ export type Database = {
           report_count?: number
           response_rate?: number
           review_count?: number
+          secondary_categories?: string[]
           slug?: string
           strikes?: number
           tags?: string[]
@@ -718,6 +721,42 @@ export type Database = {
         }
         Relationships: []
       }
+      pro_referrals: {
+        Row: {
+          created_at: string
+          id: string
+          redeemed_at: string | null
+          referee_credit_applied_at: string | null
+          referee_user_id: string
+          referral_code: string
+          referrer_credit_applied_at: string | null
+          referrer_user_id: string
+          status: Database["public"]["Enums"]["pro_referral_status"]
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          redeemed_at?: string | null
+          referee_credit_applied_at?: string | null
+          referee_user_id: string
+          referral_code: string
+          referrer_credit_applied_at?: string | null
+          referrer_user_id: string
+          status?: Database["public"]["Enums"]["pro_referral_status"]
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          redeemed_at?: string | null
+          referee_credit_applied_at?: string | null
+          referee_user_id?: string
+          referral_code?: string
+          referrer_credit_applied_at?: string | null
+          referrer_user_id?: string
+          status?: Database["public"]["Enums"]["pro_referral_status"]
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -885,6 +924,7 @@ export type Database = {
           paystack_customer_code: string | null
           paystack_subscription_code: string | null
           push_alerts_optin: boolean
+          referral_code: string | null
           smile_id_job_id: string | null
           tier: Database["public"]["Enums"]["sjoh_tier"]
           tier_expires_at: string | null
@@ -905,6 +945,7 @@ export type Database = {
           paystack_customer_code?: string | null
           paystack_subscription_code?: string | null
           push_alerts_optin?: boolean
+          referral_code?: string | null
           smile_id_job_id?: string | null
           tier?: Database["public"]["Enums"]["sjoh_tier"]
           tier_expires_at?: string | null
@@ -925,6 +966,7 @@ export type Database = {
           paystack_customer_code?: string | null
           paystack_subscription_code?: string | null
           push_alerts_optin?: boolean
+          referral_code?: string | null
           smile_id_job_id?: string | null
           tier?: Database["public"]["Enums"]["sjoh_tier"]
           tier_expires_at?: string | null
@@ -1325,6 +1367,10 @@ export type Database = {
         Args: { _claimed: boolean; _signup_id: string }
         Returns: boolean
       }
+      apply_pro_referral_reward: {
+        Args: { _referee_user_id: string }
+        Returns: undefined
+      }
       apply_subscription_payment: {
         Args: {
           _customer_code: string
@@ -1375,6 +1421,7 @@ export type Database = {
         Returns: undefined
       }
       claim_founding_spot: { Args: { _signup_id: string }; Returns: boolean }
+      claim_referral_code: { Args: { _code: string }; Returns: string }
       complete_deal_memo: { Args: { _id: string }; Returns: undefined }
       delete_email: {
         Args: { message_id: number; queue_name: string }
@@ -1385,6 +1432,7 @@ export type Database = {
         Returns: number
       }
       expire_stale_verifications: { Args: never; Returns: undefined }
+      generate_referral_code: { Args: never; Returns: string }
       get_founding_spot_counts: {
         Args: never
         Returns: {
@@ -1413,6 +1461,15 @@ export type Database = {
           province: string
           status: Database["public"]["Enums"]["opportunity_status"]
           title: string
+        }[]
+      }
+      get_my_referral_summary: {
+        Args: never
+        Returns: {
+          pending_count: number
+          redeemed_count: number
+          referral_code: string
+          total_free_months: number
         }[]
       }
       get_opportunity_for_viewer: {
@@ -1551,6 +1608,10 @@ export type Database = {
         Args: { _enabled: boolean; _player_id: string }
         Returns: undefined
       }
+      set_secondary_categories: {
+        Args: { _business_id: string; _slugs: string[] }
+        Returns: undefined
+      }
       submit_proposal: {
         Args: {
           _business_id: string
@@ -1594,6 +1655,7 @@ export type Database = {
         | "other"
         | "urgent_boost"
       price_type: "fixed" | "from" | "quote"
+      pro_referral_status: "pending" | "redeemed" | "expired"
       proposal_status: "pending" | "shortlisted" | "won" | "lost" | "withdrawn"
       sjoh_tier:
         | "none"
@@ -1751,6 +1813,7 @@ export const Constants = {
         "urgent_boost",
       ],
       price_type: ["fixed", "from", "quote"],
+      pro_referral_status: ["pending", "redeemed", "expired"],
       proposal_status: ["pending", "shortlisted", "won", "lost", "withdrawn"],
       sjoh_tier: [
         "none",
