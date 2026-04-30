@@ -909,6 +909,7 @@ export type Database = {
           deal_memo_id: string | null
           id: string
           is_verified_hire: boolean
+          is_verified_transaction: boolean
           rating: number
           reviewer_company: string | null
           reviewer_id: string | null
@@ -921,6 +922,7 @@ export type Database = {
           deal_memo_id?: string | null
           id?: string
           is_verified_hire?: boolean
+          is_verified_transaction?: boolean
           rating: number
           reviewer_company?: string | null
           reviewer_id?: string | null
@@ -933,6 +935,7 @@ export type Database = {
           deal_memo_id?: string | null
           id?: string
           is_verified_hire?: boolean
+          is_verified_transaction?: boolean
           rating?: number
           reviewer_company?: string | null
           reviewer_id?: string | null
