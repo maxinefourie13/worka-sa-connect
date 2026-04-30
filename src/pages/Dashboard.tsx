@@ -473,7 +473,43 @@ const FollowersSection = () => {
 
 const BillingSection = () => {
   const { provider } = useKlap();
+  const { user } = useAuth();
   const tier = SJOH_TIERS.find((t) => t.slug === provider.tier)!;
+  const [liveSub, setLiveSub] = useState<{
+    billing_cycle: "monthly" | "annual";
+    next_renewal_at: string | null;
+    tier: string | null;
+  } | null>(null);
+  const [switching, setSwitching] = useState(false);
+
+  useEffect(() => {
+    if (!user) return;
+    (async () => {
+      const { data } = await supabase
+        .from("provider_balances")
+        .select("billing_cycle, next_renewal_at, tier")
+        .eq("user_id", user.id)
+        .maybeSingle();
+      if (data) setLiveSub(data as typeof liveSub);
+    })();
+  }, [user]);
+
+  const isPaid = liveSub?.tier === "basic" || liveSub?.tier === "verified_pro";
+  const isMonthlyPaid = isPaid && liveSub?.billing_cycle === "monthly";
+  const monthlyPrice = liveSub?.tier === "verified_pro" ? 250 : liveSub?.tier === "basic" ? 50 : 0;
+  const yearlySaving = monthlyPrice * 12 - Math.round(monthlyPrice * 12 * 0.9);
+
+  const switchToAnnual = async () => {
+    if (!liveSub?.tier || (liveSub.tier !== "basic" && liveSub.tier !== "verified_pro")) return;
+    setSwitching(true);
+    await payments.startSubscription(liveSub.tier as "basic" | "verified_pro", "annual");
+    setSwitching(false);
+  };
+
+  const renewalLabel = liveSub?.next_renewal_at
+    ? new Date(liveSub.next_renewal_at).toLocaleDateString("en-ZA", { day: "numeric", month: "short", year: "numeric" })
+    : null;
+
   return (
     <>
       <header>
@@ -499,15 +535,42 @@ const BillingSection = () => {
         <p className="text-xs font-bold uppercase tracking-widest text-background/70">Current plan</p>
         <p className="font-display text-3xl font-semibold mt-2">{tier.name}</p>
         <p className="text-sm text-background/75 mt-1">
-          {tier.price === 0 ? "Free trial" : `${formatRand(tier.price)} ${tier.period}`}
+          {isPaid ? (
+            liveSub?.billing_cycle === "annual"
+              ? `${formatRand(Math.round(monthlyPrice * 12 * 0.9))} /year · billed yearly`
+              : `${formatRand(monthlyPrice)} /month`
+          ) : (
+            tier.price === 0 ? "Free trial" : `${formatRand(tier.price)} ${tier.period}`
+          )}
         </p>
-        <div className="mt-5 flex gap-3">
+        {renewalLabel && (
+          <p className="text-xs text-background/60 mt-1">Next renewal: {renewalLabel}</p>
+        )}
+        <div className="mt-5 flex flex-wrap gap-3">
           <Button variant="default" className="bg-accent text-accent-foreground hover:bg-accent/90" asChild>
             <Link to="/pricing">Change Plan</Link>
           </Button>
           <Button variant="ghost" className="text-white hover:bg-white/10">Cancel Plan</Button>
         </div>
       </div>
+
+      {/* Switch-to-yearly nudge for monthly paid subscribers */}
+      {isMonthlyPaid && yearlySaving > 0 && (
+        <div className="rounded-xl border-2 border-primary/40 bg-primary/5 p-5 flex flex-col sm:flex-row items-start sm:items-center gap-4">
+          <div className="flex-1 min-w-0">
+            <p className="font-display text-base font-extrabold tracking-tight">
+              Same plan, {formatRand(yearlySaving)} less. Switch to yearly?
+            </p>
+            <p className="text-sm text-ink-2 mt-1">
+              Pay for the year and save 10%. Sorted.
+            </p>
+          </div>
+          <Button onClick={switchToAnnual} disabled={switching} className="shrink-0">
+            {switching ? "Sorting…" : "Switch to yearly"}
+          </Button>
+        </div>
+      )}
+
       <div className="bg-card border border-border rounded-xl p-6">
         <h3 className="font-display text-lg font-semibold mb-4">Payment method</h3>
         <div className="flex items-center justify-between p-4 border border-border rounded-lg">
