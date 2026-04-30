@@ -18,6 +18,7 @@ import GroupLanding from "./pages/GroupLanding.tsx";
 import BusinessProfile from "./pages/BusinessProfile.tsx";
 import Opportunities from "./pages/Opportunities.tsx";
 import PostOpportunity from "./pages/PostOpportunity.tsx";
+import LeadDetail from "./pages/LeadDetail.tsx";
 import Pricing from "./pages/Pricing.tsx";
 
 // Redirect helper for legacy /opportunities/:id → /requests/:id
@@ -58,10 +59,10 @@ const App = () => {
                 {/* Customer-facing: Requests */}
                 <Route path="/requests" element={<Opportunities />} />
                 <Route path="/requests/new" element={<ProtectedRoute><PostOpportunity /></ProtectedRoute>} />
-                <Route path="/requests/:id" element={<Opportunities />} />
+                <Route path="/requests/:id" element={<LeadDetail />} />
                 {/* Pro-facing: Leads (same board, different framing) */}
                 <Route path="/leads" element={<Opportunities />} />
-                <Route path="/leads/:id" element={<Opportunities />} />
+                <Route path="/leads/:id" element={<LeadDetail />} />
                 {/* Legacy redirects */}
                 <Route path="/opportunities" element={<Navigate to="/requests" replace />} />
                 <Route path="/opportunities/new" element={<Navigate to="/requests/new" replace />} />
