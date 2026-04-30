@@ -51,8 +51,8 @@ const Pricing = () => {
         </header>
 
         {/* Bold no-commission promise — kills the "hidden costs" red-team */}
-        <div className="max-w-3xl mx-auto mb-12 rounded-2xl border-2 border-primary/40 bg-primary/5 p-5 md:p-6 flex items-start gap-4">
-          <span className="size-12 rounded-xl bg-primary text-primary-foreground flex items-center justify-center shrink-0 font-display font-extrabold text-lg">0%</span>
+        <div className="max-w-3xl mx-auto mb-12 rounded-2xl border-2 border-primary/40 bg-primary/5 p-5 md:p-6 flex items-start gap-4 hover:border-primary hover:shadow-pop transition-all duration-300">
+          <span className="size-12 rounded-xl bg-primary text-primary-foreground flex items-center justify-center shrink-0 font-display font-extrabold text-lg animate-pulse-ring">0%</span>
           <div className="text-sm md:text-base">
             <p className="font-display font-extrabold tracking-tight text-foreground">
               0% commission. You keep every cent you earn.
@@ -144,8 +144,8 @@ const Pricing = () => {
               </div>
               <ul className="mt-5 space-y-3 flex-1">
                 {t.features.map((f) => (
-                  <li key={f} className="flex items-start gap-2.5 text-sm">
-                    <Check className="size-4 text-primary mt-0.5 shrink-0" strokeWidth={3} />
+                  <li key={f} className="flex items-start gap-2.5 text-sm group/item">
+                    <Check className="size-4 text-primary mt-0.5 shrink-0 transition-transform duration-200 group-hover/item:scale-125" strokeWidth={3} />
                     <span>{f}</span>
                   </li>
                 ))}
