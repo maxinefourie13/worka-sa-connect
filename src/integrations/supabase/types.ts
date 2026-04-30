@@ -612,6 +612,7 @@ export type Database = {
           posted_by_name: string | null
           province: string
           requirements: string[]
+          stale_fallback_notified_at: string | null
           status: Database["public"]["Enums"]["opportunity_status"]
           title: string
           updated_at: string
@@ -640,6 +641,7 @@ export type Database = {
           posted_by_name?: string | null
           province: string
           requirements?: string[]
+          stale_fallback_notified_at?: string | null
           status?: Database["public"]["Enums"]["opportunity_status"]
           title: string
           updated_at?: string
@@ -668,6 +670,7 @@ export type Database = {
           posted_by_name?: string | null
           province?: string
           requirements?: string[]
+          stale_fallback_notified_at?: string | null
           status?: Database["public"]["Enums"]["opportunity_status"]
           title?: string
           updated_at?: string
@@ -1429,6 +1432,10 @@ export type Database = {
       claim_founding_spot: { Args: { _signup_id: string }; Returns: boolean }
       claim_referral_code: { Args: { _code: string }; Returns: string }
       complete_deal_memo: { Args: { _id: string }; Returns: undefined }
+      count_active_pros: {
+        Args: { _category_slug: string; _city?: string; _province: string }
+        Returns: number
+      }
       delete_email: {
         Args: { message_id: number; queue_name: string }
         Returns: boolean
@@ -1438,6 +1445,18 @@ export type Database = {
         Returns: number
       }
       expire_stale_verifications: { Args: never; Returns: undefined }
+      find_fallback_pros_for_opportunity: {
+        Args: { _opportunity_id: string }
+        Returns: {
+          city: string
+          id: string
+          name: string
+          province: string
+          rating: number
+          review_count: number
+          slug: string
+        }[]
+      }
       generate_referral_code: { Args: never; Returns: string }
       get_founding_spot_counts: {
         Args: never
