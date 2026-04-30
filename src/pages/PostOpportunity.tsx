@@ -340,6 +340,25 @@ const PostOpportunity = () => {
             </Field>
           </div>
 
+          {/* Supply transparency — only show when we know we're thin on the ground. */}
+          {categorySlug && province && supplyCount !== null && supplyCount < 5 && !supplyChecking && (
+            <div className="rounded-2xl border-2 border-dashed border-primary/40 bg-primary/5 p-4 md:p-5 flex items-start gap-3">
+              <span className="size-10 rounded-xl bg-primary/15 text-primary flex items-center justify-center shrink-0">
+                <HardHat className="size-5" strokeWidth={2.5} />
+              </span>
+              <div className="text-sm">
+                <div className="font-display font-bold text-base">
+                  Sjoh! We're still recruiting top-tier {selectedCategoryName.toLowerCase()} pros in {city ? `${city}, ${province}` : province}.
+                </div>
+                <p className="text-ink-2 mt-1 leading-relaxed">
+                  {supplyCount === 0
+                    ? "No matching pros are listed in your area yet — but go ahead and post. We're hustling to bring more on board, and your request helps us prioritise."
+                    : `Only ${supplyCount} pro${supplyCount === 1 ? "" : "s"} match right now, so quotes might take a little longer to land. Hang tight — if nothing arrives in 24 hours, we'll suggest top pros from nearby areas.`}
+                </p>
+              </div>
+            </div>
+          )}
+
           {/* Contact details — privacy-promise block */}
           <div className="rounded-2xl border-2 border-primary/20 bg-primary/5 p-4 md:p-5 space-y-4">
             <div className="flex items-start gap-2.5">
