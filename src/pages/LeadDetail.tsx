@@ -388,6 +388,12 @@ const LeadDetail = () => {
           </section>
         )}
 
+        {user && !isOwner && myProposal?.status === "accepted" && dealMemoId && (
+          <div className="mt-6">
+            <MarkCompleteCard dealMemoId={dealMemoId} />
+          </div>
+        )}
+
         {!user && (
           <section className="bg-card border border-border rounded-2xl p-6 text-center shadow-card">
             <AlertTriangle className="size-6 text-muted-foreground mx-auto mb-3" />
