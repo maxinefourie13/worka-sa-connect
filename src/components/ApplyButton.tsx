@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Send, Sparkles } from "lucide-react";
+import { Send, Sparkles, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ProposalModal } from "@/components/ProposalModal";
 import { cn } from "@/lib/utils";
@@ -12,6 +12,9 @@ interface Props {
   clientName?: string;
   size?: "sm" | "default" | "lg";
   className?: string;
+  /** If true, this is an admin-sourced concierge lead — redirect to externalContactUrl instead of opening the proposal modal. */
+  isConciergeLead?: boolean;
+  externalContactUrl?: string | null;
 }
 
 /**
