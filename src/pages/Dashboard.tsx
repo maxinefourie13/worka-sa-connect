@@ -2,14 +2,12 @@ import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import {
   LayoutGrid, User, Sparkles, Briefcase, Users, CreditCard, Plus,
-  Zap, ShieldCheck, Siren, Bell, Mail, FileText, MessageCircle, Lock,
+  ShieldCheck, Bell, Mail, FileText, MessageCircle, Lock,
 } from "lucide-react";
 import { QuotesSection } from "@/components/dashboard/QuotesSection";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Button } from "@/components/ui/button";
 import { BUSINESSES, formatRand, OPPORTUNITIES, PROMOTIONS, SJOH_TIERS } from "@/lib/mockData";
-import { useKlap } from "@/lib/klapStore";
-import { TopUpModal } from "@/components/TopUpModal";
 import { VerificationBadges } from "@/components/VerificationBadges";
 import { toast } from "@/hooks/use-toast";
 import { useVerification } from "@/hooks/useVerification";
@@ -23,13 +21,14 @@ import { ProfileVisibilityWarning } from "@/components/ProfileVisibilityWarning"
 import { ReferAProCard } from "@/components/dashboard/ReferAProCard";
 import { SecondaryCategoriesCard } from "@/components/dashboard/SecondaryCategoriesCard";
 import { PrivacySection } from "@/components/dashboard/PrivacySection";
+import { useProviderAccess } from "@/hooks/useProviderAccess";
 import { cn } from "@/lib/utils";
 
-type SectionKey = "overview" | "quotes" | "klaps" | "profile" | "promotions" | "opportunities" | "followers" | "billing" | "privacy";
+type SectionKey = "overview" | "quotes" | "verification" | "profile" | "promotions" | "opportunities" | "followers" | "billing" | "privacy";
 const SECTIONS: { key: SectionKey; label: string; icon: typeof LayoutGrid }[] = [
   { key: "overview", label: "Overview", icon: LayoutGrid },
   { key: "quotes", label: "My Quotes", icon: FileText },
-  { key: "klaps", label: "Klaps & Verification", icon: Zap },
+  { key: "verification", label: "Verification", icon: ShieldCheck },
   { key: "profile", label: "My Profile", icon: User },
   { key: "promotions", label: "Promotions", icon: Sparkles },
   { key: "opportunities", label: "Leads", icon: Briefcase },
