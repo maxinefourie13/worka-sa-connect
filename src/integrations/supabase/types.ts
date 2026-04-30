@@ -118,6 +118,55 @@ export type Database = {
           },
         ]
       }
+      business_images: {
+        Row: {
+          business_id: string
+          created_at: string
+          id: string
+          sort_order: number
+          storage_path: string | null
+          url: string
+        }
+        Insert: {
+          business_id: string
+          created_at?: string
+          id?: string
+          sort_order?: number
+          storage_path?: string | null
+          url: string
+        }
+        Update: {
+          business_id?: string
+          created_at?: string
+          id?: string
+          sort_order?: number
+          storage_path?: string | null
+          url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "business_images_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "business_verified_status"
+            referencedColumns: ["business_id"]
+          },
+          {
+            foreignKeyName: "business_images_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "business_images_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       businesses: {
         Row: {
           address: string | null
