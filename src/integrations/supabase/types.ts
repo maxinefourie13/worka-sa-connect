@@ -454,6 +454,63 @@ export type Database = {
         }
         Relationships: []
       }
+      invoices: {
+        Row: {
+          business_id: string
+          created_at: string
+          customer_email: string | null
+          customer_name: string
+          customer_phone: string | null
+          deal_memo_id: string | null
+          id: string
+          invoice_number: string
+          issued_at: string
+          line_items: Json
+          notes: string | null
+          pro_user_id: string
+          subtotal_zar: number
+          total_zar: number
+          vat_included: boolean
+          vat_zar: number
+        }
+        Insert: {
+          business_id: string
+          created_at?: string
+          customer_email?: string | null
+          customer_name: string
+          customer_phone?: string | null
+          deal_memo_id?: string | null
+          id?: string
+          invoice_number: string
+          issued_at?: string
+          line_items?: Json
+          notes?: string | null
+          pro_user_id: string
+          subtotal_zar?: number
+          total_zar?: number
+          vat_included?: boolean
+          vat_zar?: number
+        }
+        Update: {
+          business_id?: string
+          created_at?: string
+          customer_email?: string | null
+          customer_name?: string
+          customer_phone?: string | null
+          deal_memo_id?: string | null
+          id?: string
+          invoice_number?: string
+          issued_at?: string
+          line_items?: Json
+          notes?: string | null
+          pro_user_id?: string
+          subtotal_zar?: number
+          total_zar?: number
+          vat_included?: boolean
+          vat_zar?: number
+        }
+        Relationships: []
+      }
       no_show_reports: {
         Row: {
           business_id: string

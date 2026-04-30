@@ -29,13 +29,20 @@ const cols = [
       { to: "#", label: "Partners" },
     ],
   },
+  {
+    title: "Legal",
+    links: [
+      { to: "/terms", label: "Terms of Service" },
+      { to: "/privacy", label: "Privacy Policy" },
+    ],
+  },
 ];
 
 export const SiteFooter = () => {
   return (
     <footer className="border-t border-border bg-card">
       <div className="container py-16">
-        <div className="grid gap-12 lg:grid-cols-4">
+        <div className="grid gap-12 lg:grid-cols-5">
           <div className="space-y-4">
             <Link to="/" className="font-display text-2xl font-semibold tracking-tight">
               Sjoh<span className="text-primary">.</span>

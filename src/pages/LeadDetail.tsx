@@ -7,6 +7,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import { MarkCompleteCard } from "@/components/MarkCompleteCard";
+import { InvoiceGenerator } from "@/components/InvoiceGenerator";
 
 type Opp = {
   id: string;
@@ -389,8 +390,20 @@ const LeadDetail = () => {
         )}
 
         {user && !isOwner && myProposal?.status === "accepted" && dealMemoId && (
-          <div className="mt-6">
+          <div className="mt-6 space-y-6">
             <MarkCompleteCard dealMemoId={dealMemoId} />
+            <InvoiceGenerator
+              dealMemoId={dealMemoId}
+              businessId={myProposal.business_id}
+              proUserId={user.id}
+              customer={{
+                name: opp.posted_by_name ?? "Customer",
+                email: contact?.client_email ?? null,
+                phone: contact?.client_phone ?? null,
+              }}
+              defaultAmount={Number(myProposal.quote_amount ?? 0)}
+              defaultDescription={opp.title}
+            />
           </div>
         )}
 
