@@ -627,42 +627,8 @@ export const STATS = {
 };
 
 // =====================================================
-// "Klap it" system — verification, tiers, klaps, urgent
+// Sjoh subscription tiers (real source-of-truth model)
 // =====================================================
-
-export interface ProviderProfile {
-  id: string;
-  businessId: string;
-  idVerified: boolean;          // "Verified Oke"
-  certifiedPro: boolean;        // PIRB / Wireman's etc — coral checkmark
-  certifications: string[];
-  strikes: 0 | 1 | 2 | 3;
-  tier: "dala-trial" | "hustler" | "main-oke";
-  trialEndsAt?: string;
-  klapsRemaining: number;
-  klapsThisMonth: number;
-  urgentAlertsOptIn: boolean;
-}
-
-export interface KlapEvent {
-  id: string;
-  jobId: string;
-  jobTitle: string;
-  cost: number;
-  timestamp: string;
-  outcome: "pending" | "won" | "lost";
-}
-
-export interface KlapPack {
-  id: string;
-  name: string;
-  klaps: number;
-  price: number;
-  blurb: string;
-}
-
-// KLAP_PACKS removed — bidding/Klap system replaced by flat subscriptions + Urgent Boost.
-export const KLAP_PACKS: never[] = [];
 
 export interface SjohTier {
   slug: "basic_trial" | "basic" | "verified_pro";
@@ -718,27 +684,6 @@ export const SJOH_TIERS: SjohTier[] = [
       "Branded PDF quotations",
     ],
   },
-];
-
-// Mock provider profile (the "logged in" demo user — Khumalo Electrical)
-export const MY_PROVIDER: ProviderProfile = {
-  id: "pp1",
-  businessId: "b1",
-  idVerified: true,
-  certifiedPro: true,
-  certifications: ["Wireman's Licence", "PIRB"],
-  strikes: 0,
-  tier: "main-oke",
-  klapsRemaining: 87,
-  klapsThisMonth: 100,
-  urgentAlertsOptIn: true,
-};
-
-export const MOCK_KLAP_EVENTS: KlapEvent[] = [
-  { id: "k1", jobId: "o1", jobTitle: "Office solar PV installation — 8kW system", cost: 1, timestamp: "2 hours ago", outcome: "pending" },
-  { id: "k2", jobId: "o4", jobTitle: "Monthly IT support for 14-person agency", cost: 1, timestamp: "Yesterday", outcome: "lost" },
-  { id: "k3", jobId: "o3", jobTitle: "Custom steel balustrade — 18 metres", cost: 1, timestamp: "3 days ago", outcome: "won" },
-  { id: "k4", jobId: "o2", jobTitle: "Wedding photographer — 180 guests", cost: 1, timestamp: "5 days ago", outcome: "lost" },
 ];
 
 // Per-business verification overlay (mock). Defaults to false for missing entries.
