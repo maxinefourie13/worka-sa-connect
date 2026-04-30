@@ -464,7 +464,7 @@ const Disputes = () => {
                           <div className="font-mono text-xs text-muted-foreground">
                             {new Date(a.created_at).toLocaleString("en-ZA")}
                           </div>
-                          <div className="font-medium">{a.action.replaceAll("_", " ")}</div>
+                          <div className="font-medium">{a.action.replace(/_/g, " ")}</div>
                           {a.notes && <div className="text-muted-foreground">{a.notes}</div>}
                         </li>
                       ))}
