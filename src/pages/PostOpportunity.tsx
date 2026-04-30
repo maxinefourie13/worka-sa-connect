@@ -179,6 +179,28 @@ const PostOpportunity = () => {
             <textarea name="requirements" rows={3} className="input resize-none" placeholder="Certifications, references, insurance, etc." />
           </Field>
 
+          <label
+            className={`flex items-start gap-3 rounded-xl border-2 p-4 cursor-pointer select-none transition-colors ${
+              isUrgent ? "border-accent bg-accent/5" : "border-border hover:border-accent/50"
+            }`}
+          >
+            <input
+              type="checkbox"
+              checked={isUrgent}
+              onChange={(e) => setIsUrgent(e.target.checked)}
+              className="mt-0.5 size-4 rounded border-border text-accent focus:ring-accent cursor-pointer"
+            />
+            <div className="flex-1">
+              <div className="flex items-center gap-2">
+                <Siren className="size-4 text-accent" strokeWidth={2.5} />
+                <span className="font-display font-bold text-base">Eish! Urgent <span className="text-accent">(Free)</span></span>
+              </div>
+              <p className="text-sm text-ink-2 mt-1 leading-relaxed">
+                Pin this to the top of the feed for 72 hours and instantly alert all Verified Pros within 10km. No charge — just for real emergencies.
+              </p>
+            </div>
+          </label>
+
           <LiabilityDisclaimer />
 
           <label className="flex items-start gap-2.5 text-sm cursor-pointer select-none">
