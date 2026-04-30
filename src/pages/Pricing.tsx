@@ -33,15 +33,30 @@ const Pricing = () => {
   return (
     <SiteLayout>
       <div className="container py-16 md:py-20">
-        <header className="text-center max-w-2xl mx-auto mb-14">
+        <header className="text-center max-w-2xl mx-auto mb-10">
           <span className="text-xs font-bold uppercase tracking-widest text-primary">Provider plans</span>
-          <h1 className="font-display text-4xl md:text-5xl font-medium tracking-tight mt-3 text-balance">
+          <h1 className="font-display text-4xl md:text-5xl font-extrabold tracking-tight mt-3 text-balance">
             No commission. Just a small monthly fee.
           </h1>
           <p className="mt-4 text-lg text-ink-2">
             Get listed, get found, keep 100% of what you earn.
           </p>
         </header>
+
+        {/* Bold no-commission promise — kills the "hidden costs" red-team */}
+        <div className="max-w-3xl mx-auto mb-12 rounded-2xl border-2 border-primary/40 bg-primary/5 p-5 md:p-6 flex items-start gap-4">
+          <span className="size-12 rounded-xl bg-primary text-primary-foreground flex items-center justify-center shrink-0 font-display font-extrabold text-lg">0%</span>
+          <div className="text-sm md:text-base">
+            <p className="font-display font-extrabold tracking-tight text-foreground">
+              0% commission. You keep every cent you earn.
+            </p>
+            <p className="text-ink-2 mt-1.5">
+              Your monthly plan covers <strong>unlimited quotes</strong> and your directory listing.
+              We don't take a cut of your invoice, we don't charge per message, and we don't touch your Paystack payouts. Clients pay you directly.
+            </p>
+          </div>
+        </div>
+
 
         {/* Tiers */}
         <div className="grid lg:grid-cols-3 gap-5 max-w-6xl mx-auto">
