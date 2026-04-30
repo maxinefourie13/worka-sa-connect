@@ -304,7 +304,15 @@ const BusinessProfile = () => {
                                 <p className="text-xs text-muted-foreground truncate">{r.reviewerCompany}</p>
                               )}
                             </div>
-                            <span className="font-semibold tabular-nums text-accent text-sm shrink-0">{r.rating}.0 ★</span>
+                            <div className="flex items-center gap-2 shrink-0">
+                              {r.isVerifiedHire && (
+                                <span className="inline-flex items-center gap-1 rounded-full bg-accent/10 border border-accent/30 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-accent">
+                                  <ShieldCheck className="size-3" />
+                                  Verified Hire
+                                </span>
+                              )}
+                              <span className="font-semibold tabular-nums text-accent text-sm">{r.rating}.0 ★</span>
+                            </div>
                           </div>
                           <p className="text-sm text-ink-2 mt-3 leading-relaxed">{r.body}</p>
                           <p className="text-xs text-muted-foreground mt-3">{r.date}</p>
