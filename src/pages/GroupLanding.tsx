@@ -161,7 +161,7 @@ const GroupLanding = () => {
             <h2 className="font-display text-2xl md:text-3xl font-medium tracking-tight">
               Latest jobs in {group.name}
             </h2>
-            <Link to="/opportunities" className="text-sm font-semibold text-primary hover:underline hidden md:inline-block">
+            <Link to="/requests" className="text-sm font-semibold text-primary hover:underline hidden md:inline-block">
               View board →
             </Link>
           </div>
