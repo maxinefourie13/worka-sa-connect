@@ -201,7 +201,7 @@ const HomePage = () => {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-4 divide-y md:divide-y-0 md:divide-x divide-border/60">
             {[
               { v: STATS.businesses.toLocaleString("en-ZA"), l: "Businesses listed" },
-              { v: STATS.opportunities.toLocaleString("en-ZA"), l: "Open opportunities" },
+              { v: STATS.opportunities.toLocaleString("en-ZA"), l: "Open requests" },
               { v: STATS.categories.toString(), l: "Categories" },
               { v: STATS.provinces.toString(), l: "Provinces covered" },
             ].map((s) => (
