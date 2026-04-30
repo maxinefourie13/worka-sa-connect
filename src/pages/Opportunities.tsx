@@ -98,7 +98,7 @@ const Opportunities = () => {
             <input
               value={keyword}
               onChange={(e) => setKeyword(e.target.value)}
-              placeholder="Search opportunities…"
+              placeholder={isProView ? "Search leads…" : "Search requests…"}
               className="w-full py-2 bg-transparent outline-none text-sm"
             />
           </div>
