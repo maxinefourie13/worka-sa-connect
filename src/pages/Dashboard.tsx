@@ -477,6 +477,21 @@ const BillingSection = () => {
         <h1 className="font-display text-3xl font-medium tracking-tight">Billing</h1>
         <p className="text-sm text-ink-2 mt-1">Manage your plan and payment details.</p>
       </header>
+
+      {/* No-commission promise — kills the "hidden costs" fear */}
+      <div className="rounded-xl border-2 border-primary/40 bg-primary/5 p-5">
+        <div className="flex items-start gap-3">
+          <span className="size-10 rounded-lg bg-primary text-primary-foreground flex items-center justify-center shrink-0 font-display font-extrabold">0%</span>
+          <div className="min-w-0">
+            <p className="font-display text-base font-extrabold tracking-tight">0% commission. You keep every cent you earn.</p>
+            <p className="text-sm text-ink-2 mt-1">
+              Your monthly fee covers <strong>unlimited quotes</strong>, your directory listing, and customer alerts.
+              No per-message fees, no per-job cuts, no Paystack surprises — clients pay you directly.
+            </p>
+          </div>
+        </div>
+      </div>
+
       <div className="bg-foreground text-background rounded-xl p-6">
         <p className="text-xs font-bold uppercase tracking-widest text-background/70">Current plan</p>
         <p className="font-display text-3xl font-semibold mt-2">{tier.name}</p>
