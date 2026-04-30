@@ -168,11 +168,28 @@ export const Login = () => {
 
 export const Register = () => {
   useRedirectIfAuthed();
+  const location = useLocation();
   const [displayName, setDisplayName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [agreeTerms, setAgreeTerms] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [referralCode, setReferralCode] = useState<string>("");
+
+  // Pick up ?ref=CODE from URL and remember it across the confirm-email round-trip.
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const fromUrl = params.get("ref")?.trim().toUpperCase();
+    if (fromUrl) {
+      setReferralCode(fromUrl);
+      try { localStorage.setItem("sjoh_pending_referral", fromUrl); } catch { /* ignore */ }
+    } else {
+      try {
+        const stored = localStorage.getItem("sjoh_pending_referral");
+        if (stored) setReferralCode(stored);
+      } catch { /* ignore */ }
+    }
+  }, [location.search]);
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -185,12 +202,12 @@ export const Register = () => {
       return;
     }
     setSubmitting(true);
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
         emailRedirectTo: window.location.origin,
-        data: { display_name: displayName },
+        data: { display_name: displayName, referral_code: referralCode || null },
       },
     });
     setSubmitting(false);
@@ -198,6 +215,16 @@ export const Register = () => {
       toast({ title: "Couldn't create account", description: error.message, variant: "destructive" });
       return;
     }
+
+    // If we have an active session right away (e.g. auto-confirm), try to claim the referral now.
+    if (referralCode && data.session) {
+      const { error: refErr } = await supabase.rpc("claim_referral_code", { _code: referralCode });
+      if (!refErr) {
+        try { localStorage.removeItem("sjoh_pending_referral"); } catch { /* ignore */ }
+        toast({ title: "Referral linked!", description: "When you upgrade to Verified Pro, you both get a free month." });
+      }
+    }
+
     toast({ title: "Sharp-sharp!", description: "You're in. Let's get to work." });
   };
 
