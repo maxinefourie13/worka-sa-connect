@@ -29,6 +29,13 @@ const cols = [
       { to: "#", label: "Partners" },
     ],
   },
+  {
+    title: "Legal",
+    links: [
+      { to: "/terms", label: "Terms of Service" },
+      { to: "/privacy", label: "Privacy Policy" },
+    ],
+  },
 ];
 
 export const SiteFooter = () => {

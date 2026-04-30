@@ -34,6 +34,8 @@ import PublicQuote from "./pages/PublicQuote.tsx";
 import VerifiedReviewPage from "./pages/VerifiedReviewPage.tsx";
 import FoundingMembersAdmin from "./pages/admin/FoundingMembers.tsx";
 import ConciergeAdmin from "./pages/admin/Concierge.tsx";
+import Terms from "./pages/Terms.tsx";
+import Privacy from "./pages/Privacy.tsx";
 
 const queryClient = new QueryClient();
 
@@ -84,6 +86,8 @@ const App = () => {
                 <Route path="/unsubscribe" element={<EmailUnsubscribe />} />
                 <Route path="/quote/:id" element={<PublicQuote />} />
                 <Route path="/quote/:id/review" element={<VerifiedReviewPage />} />
+                <Route path="/terms" element={<Terms />} />
+                <Route path="/privacy" element={<Privacy />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>
