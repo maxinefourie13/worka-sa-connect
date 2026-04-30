@@ -60,6 +60,7 @@ const LeadDetail = () => {
   const [contact, setContact] = useState<RevealedContact | null>(null);
   const [revealReason, setRevealReason] = useState<string | null>(null);
   const [accepting, setAccepting] = useState<string | null>(null);
+  const [dealMemoId, setDealMemoId] = useState<string | null>(null);
 
   const isOwner = !!(user && opp && opp.client_id === user.id);
 
@@ -144,6 +145,23 @@ const LeadDetail = () => {
     })();
     return () => { cancelled = true; };
   }, [user, myProposal, isOwner]);
+
+  // Look up an existing deal memo for this pro/job so we can show Mark Complete.
+  useEffect(() => {
+    if (!user || !myProposal || myProposal.status !== "accepted") return;
+    let cancelled = false;
+    (async () => {
+      const { data } = await supabase
+        .from("deal_memos")
+        .select("id")
+        .eq("pro_user_id", user.id)
+        .eq("business_id", myProposal.business_id)
+        .order("created_at", { ascending: false })
+        .limit(1);
+      if (!cancelled && data && data.length) setDealMemoId(data[0].id);
+    })();
+    return () => { cancelled = true; };
+  }, [user, myProposal]);
 
   const handleAcceptQuote = async (proposalId: string) => {
     setAccepting(proposalId);
