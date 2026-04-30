@@ -606,6 +606,30 @@ const NotificationPrefsCard = () => {
     setBusy(null);
   };
 
+  const saveWhatsApp = async (enable: boolean) => {
+    setBusy("wa");
+    const cleaned = waNumber.replace(/[^0-9+]/g, "");
+    if (enable && cleaned.length < 8) {
+      toast({ title: "Need a valid number", description: "Pop in your WhatsApp number with country code (e.g. +27821234567).", variant: "destructive" });
+      setBusy(null);
+      return;
+    }
+    const { error } = await supabase.rpc("set_whatsapp_alerts", { _enabled: enable, _number: cleaned });
+    if (error) {
+      toast({ title: "Couldn't save", description: error.message, variant: "destructive" });
+    } else {
+      setWaOn(enable);
+      setWaNumber(cleaned);
+      toast({
+        title: enable ? "WhatsApp alerts on 💬" : "WhatsApp alerts off",
+        description: enable
+          ? "We'll ping your WhatsApp the second a fresh lead drops in your area."
+          : "No more WhatsApp pings from Sjoh.",
+      });
+    }
+    setBusy(null);
+  };
+
   return (
     <div className="bg-card border border-border rounded-xl p-6">
       <div className="flex items-start gap-3 mb-5">
