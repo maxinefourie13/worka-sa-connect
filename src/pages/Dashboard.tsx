@@ -425,9 +425,13 @@ const FollowersSection = () => {
 };
 
 const BillingSection = () => {
-  const { provider } = useKlap();
   const { user } = useAuth();
-  const tier = SJOH_TIERS.find((t) => t.slug === provider.tier)!;
+  const access = useProviderAccess();
+  const tierSlug =
+    access.tier === "verified_pro" || access.tier === "verified_pro_trial" ? "verified_pro"
+    : access.tier === "basic" || access.tier === "basic_trial" ? "basic"
+    : "basic_trial";
+  const tier = SJOH_TIERS.find((t) => t.slug === tierSlug) ?? SJOH_TIERS[0];
   const [liveSub, setLiveSub] = useState<{
     billing_cycle: "monthly" | "annual";
     next_renewal_at: string | null;
