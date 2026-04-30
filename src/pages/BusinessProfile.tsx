@@ -9,6 +9,7 @@ import { ReportProfileButton } from "@/components/ReportProfileButton";
 import { GoogleReviewsList } from "@/components/GoogleReviewsList";
 import { useBusinessBySlug } from "@/hooks/useBusinessBySlug";
 import { useReveal } from "@/hooks/useReveal";
+import { useRevealContact } from "@/hooks/useRevealContact";
 import { cn } from "@/lib/utils";
 
 type TabKey = "about" | "services" | "promotions" | "reviews";
