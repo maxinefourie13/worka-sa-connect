@@ -158,6 +158,7 @@ export interface Review {
   rating: number;
   body: string;
   date: string;
+  isVerifiedHire?: boolean;
 }
 
 export interface Business {

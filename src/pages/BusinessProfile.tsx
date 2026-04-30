@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { ArrowLeft, Phone, Mail, MessageCircle, MapPin, Clock, Globe } from "lucide-react";
+import { ArrowLeft, Phone, Mail, MessageCircle, MapPin, Clock, Globe, ShieldCheck } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
 import { Button } from "@/components/ui/button";
 import { BUSINESS_VERIFICATION, formatRand } from "@/lib/mockData";
@@ -10,6 +10,7 @@ import { GoogleReviewsList } from "@/components/GoogleReviewsList";
 import { useBusinessBySlug } from "@/hooks/useBusinessBySlug";
 import { useReveal } from "@/hooks/useReveal";
 import { useRevealContact } from "@/hooks/useRevealContact";
+import { useVerifiedHiresCount } from "@/hooks/useVerifiedHiresCount";
 import { cn } from "@/lib/utils";
 
 type TabKey = "about" | "services" | "promotions" | "reviews";
@@ -51,6 +52,7 @@ const BusinessProfile = () => {
   const [tab, setTab] = useState<TabKey>("about");
   const [following, setFollowing] = useState(false);
   const [followers, setFollowers] = useState(0);
+  const { count: verifiedHires } = useVerifiedHiresCount(business?.id);
 
   // Sync follower count once business resolves.
   if (business && followers === 0 && business.followers > 0) {
@@ -162,6 +164,12 @@ const BusinessProfile = () => {
                       </span>
                     </p>
                     <p className="mt-1 text-xs sm:text-sm text-muted-foreground">{followers} followers</p>
+                    {verifiedHires > 0 && (
+                      <div className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-accent/10 border border-accent/30 px-2.5 py-1 text-xs font-semibold text-accent">
+                        <ShieldCheck className="size-3.5" />
+                        {verifiedHires} Verified Job{verifiedHires === 1 ? "" : "s"} Completed via Sjoh
+                      </div>
+                    )}
                   </div>
                   {/* Desktop / tablet action buttons */}
                   <div className="hidden sm:flex flex-wrap gap-2">
@@ -296,7 +304,15 @@ const BusinessProfile = () => {
                                 <p className="text-xs text-muted-foreground truncate">{r.reviewerCompany}</p>
                               )}
                             </div>
-                            <span className="font-semibold tabular-nums text-accent text-sm shrink-0">{r.rating}.0 ★</span>
+                            <div className="flex items-center gap-2 shrink-0">
+                              {r.isVerifiedHire && (
+                                <span className="inline-flex items-center gap-1 rounded-full bg-accent/10 border border-accent/30 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-accent">
+                                  <ShieldCheck className="size-3" />
+                                  Verified Hire
+                                </span>
+                              )}
+                              <span className="font-semibold tabular-nums text-accent text-sm">{r.rating}.0 ★</span>
+                            </div>
                           </div>
                           <p className="text-sm text-ink-2 mt-3 leading-relaxed">{r.body}</p>
                           <p className="text-xs text-muted-foreground mt-3">{r.date}</p>
