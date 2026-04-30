@@ -457,6 +457,7 @@ export type Database = {
           external_contact_url: string | null
           id: string
           is_concierge_lead: boolean
+          is_urgent: boolean
           posted_by_name: string | null
           province: string
           requirements: string[]
@@ -480,6 +481,7 @@ export type Database = {
           external_contact_url?: string | null
           id?: string
           is_concierge_lead?: boolean
+          is_urgent?: boolean
           posted_by_name?: string | null
           province: string
           requirements?: string[]
@@ -503,6 +505,7 @@ export type Database = {
           external_contact_url?: string | null
           id?: string
           is_concierge_lead?: boolean
+          is_urgent?: boolean
           posted_by_name?: string | null
           province?: string
           requirements?: string[]
@@ -1208,6 +1211,7 @@ export type Database = {
         Args: { _subscription_code: string }
         Returns: undefined
       }
+      lock_lapsed_trials: { Args: never; Returns: number }
       mark_chaser_sent: { Args: { _id: string }; Returns: undefined }
       mark_verification_pending: {
         Args: { _job_id: string }
@@ -1222,6 +1226,7 @@ export type Database = {
         }
         Returns: number
       }
+      provider_status: { Args: { _user_id: string }; Returns: string }
       reactivate_listing: { Args: { _business_id: string }; Returns: boolean }
       read_email_batch: {
         Args: { batch_size: number; queue_name: string; vt: number }
@@ -1281,6 +1286,7 @@ export type Database = {
           to_dormant: number
         }[]
       }
+      user_has_kyc_business: { Args: { _user_id: string }; Returns: boolean }
     }
     Enums: {
       app_role: "admin" | "business_owner" | "client"
