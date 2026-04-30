@@ -652,17 +652,14 @@ export interface KlapPack {
   blurb: string;
 }
 
-export const KLAP_PACKS: KlapPack[] = [
-  { id: "six-pack", name: "Six-Pack", klaps: 20, price: 50, blurb: "Quick top-up to keep grafting." },
-  { id: "crate", name: "Crate", klaps: 80, price: 150, blurb: "Best value — for the busy weeks." },
-];
+// KLAP_PACKS removed — bidding/Klap system replaced by flat subscriptions + Urgent Boost.
+export const KLAP_PACKS: never[] = [];
 
 export interface SjohTier {
-  slug: "dala-trial" | "hustler" | "main-oke";
+  slug: "basic_trial" | "basic" | "verified_pro";
   name: string;
   price: number;
   period: string;
-  klapsPerMonth: number;
   blurb: string;
   features: string[];
   popular?: boolean;
@@ -671,48 +668,44 @@ export interface SjohTier {
 
 export const SJOH_TIERS: SjohTier[] = [
   {
-    slug: "dala-trial",
-    name: "Ready for Work",
+    slug: "basic_trial",
+    name: "On the Map (Trial)",
     price: 0,
-    period: "Free trial",
-    klapsPerMonth: 5,
-    blurb: "Land your first job. Zero risk.",
+    period: "30 days free",
+    blurb: "Get listed. No card required.",
     features: [
-      "Unlimited free proposals",
-      "Standard listing in search",
-      "Manual ID upload",
-      "5 Klaps/month bid budget",
-      "No card required",
+      "Listed in the directory",
+      "Direct contact from clients",
+      "No commission, ever",
+      "Upgrade anytime",
     ],
   },
   {
-    slug: "hustler",
-    name: "The Hustler",
+    slug: "basic",
+    name: "On the Map",
     price: 50,
     period: "/month",
-    klapsPerMonth: 50,
-    blurb: "For side-hustlers and weekend pros.",
+    blurb: "Stay listed and get found.",
     popular: true,
     features: [
-      "Unlimited free proposals",
-      "Boosted listing in search",
-      "50 Klaps/month bid budget",
-      "Top-up packs available",
+      "Permanent directory listing",
+      "Direct client contact",
+      "No commission on jobs",
+      "Cancel anytime",
     ],
   },
   {
-    slug: "main-oke",
-    name: "The Pro",
+    slug: "verified_pro",
+    name: "Ready for Work",
     price: 250,
     period: "/month",
-    klapsPerMonth: 200,
-    blurb: "AI-verified. Featured placement. Full-time grafters.",
+    blurb: "Apply to jobs. Verified badge. Top placement.",
     featured: true,
     features: [
-      "Coral Checkmark — AI ID verified",
-      "Unlimited free proposals",
+      "Everything in On the Map",
+      "Coral Checkmark — verified pro",
+      "Apply to unlimited job posts",
       "Top of local search results",
-      "200 Klaps/month bid budget",
       "Branded PDF auto-quotations",
     ],
   },

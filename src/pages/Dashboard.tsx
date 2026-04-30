@@ -152,7 +152,7 @@ const OverviewSection = ({ onJump }: { onJump: (s: SectionKey) => void }) => {
           <div>
             <p className="text-xs font-bold uppercase tracking-widest text-background/70">Your Klaps</p>
             <p className="font-display text-3xl font-semibold tabular-nums mt-1">
-              {provider.klapsRemaining} <span className="text-base text-background/60 font-normal">/ {tier.klapsPerMonth} this month</span>
+              {provider.klapsRemaining} <span className="text-base text-background/60 font-normal">this month</span>
             </p>
           </div>
         </div>
@@ -191,7 +191,7 @@ const KlapsSection = () => {
   const verification = useVerification();
   const [topUpOpen, setTopUpOpen] = useState(false);
   const tier = SJOH_TIERS.find((t) => t.slug === provider.tier) ?? SJOH_TIERS[0];
-  const pct = Math.round((provider.klapsRemaining / Math.max(1, tier.klapsPerMonth)) * 100);
+  const pct = Math.round((provider.klapsRemaining / 100) * 100);
 
   const verifyLabel: Record<typeof verification.status, string> = {
     not_required: "Upgrade to verify",
@@ -227,7 +227,7 @@ const KlapsSection = () => {
             <p className="text-xs font-bold uppercase tracking-widest text-background/70">Klap wallet</p>
             <p className="font-display text-5xl font-semibold tabular-nums mt-2">
               {provider.klapsRemaining}
-              <span className="text-lg text-background/60 font-normal"> / {tier.klapsPerMonth}</span>
+              <span className="text-lg text-background/60 font-normal"> Klaps</span>
             </p>
             <p className="text-sm text-background/75 mt-1">
               {tier.name} · resets in 18 days
@@ -447,7 +447,7 @@ const BillingSection = () => {
         <p className="text-xs font-bold uppercase tracking-widest text-background/70">Current plan</p>
         <p className="font-display text-3xl font-semibold mt-2">{tier.name}</p>
         <p className="text-sm text-background/75 mt-1">
-          {tier.price === 0 ? "Free" : `${formatRand(tier.price)} ${tier.period}`} · {tier.klapsPerMonth} Klaps/month bid budget
+          {tier.price === 0 ? "Free trial" : `${formatRand(tier.price)} ${tier.period}`}
         </p>
         <div className="mt-5 flex gap-3">
           <Button variant="default" className="bg-accent text-accent-foreground hover:bg-accent/90" asChild>
