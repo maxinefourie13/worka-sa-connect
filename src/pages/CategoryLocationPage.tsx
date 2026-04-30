@@ -86,7 +86,7 @@ const CategoryLocationPage = () => {
         return;
       }
 
-      let list = (data ?? []) as BizRow[];
+      let list = ((data ?? []) as unknown) as BizRow[];
       if (cityName) {
         list = list.filter((b) => slugify(b.city) === citySlug);
       }
@@ -95,7 +95,7 @@ const CategoryLocationPage = () => {
       // Build sibling-city links for internal crawl depth
       if (provinceName) {
         const cities = Array.from(
-          new Set((data ?? []).map((b) => b.city).filter(Boolean)),
+          new Set(list.map((b) => b.city).filter(Boolean)),
         ).slice(0, 12);
         setSiblingCities(cities);
       } else {
