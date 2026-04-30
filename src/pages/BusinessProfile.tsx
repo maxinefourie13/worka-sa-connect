@@ -96,13 +96,14 @@ const BusinessProfile = () => {
   };
 
   const { user } = useAuth();
-  const isOwner = !!(user && (business as any).ownerId && user.id === (business as any).ownerId);
   const { contact: revealed, loading: revealing, reveal } = useRevealContact(business.id);
 
-  // Bot protection: never inline phone/email in HTML for non-owners until they click reveal.
-  // Owners always see their own contact (they need to verify it's correct).
-  const phone = revealed?.phone ?? (isOwner ? (business.phone ?? "") : "");
-  const email = revealed?.email ?? (isOwner ? (business.email ?? "") : "");
+  // Bot protection: never inline phone/email in the public HTML. Visitors must
+  // click "Reveal" (which is auth-gated + rate-limited server-side) before any
+  // contact details are rendered. This prevents scraping while keeping it easy
+  // for real humans (and Grandmas) to see.
+  const phone = revealed?.phone ?? "";
+  const email = revealed?.email ?? "";
   const hasContact = !!(phone || email);
   const phoneDigits = phone.replace(/\D/g, "");
 
@@ -431,7 +432,7 @@ const BusinessProfile = () => {
                 )}
                 <div className="mt-5 pt-5 border-t border-border">
                   <Button asChild variant="outline" className="w-full">
-                    <Link to={user ? `/requests/new?pro=${business.slug}` : `/auth?next=${encodeURIComponent(`/requests/new?pro=${business.slug}`)}`}>
+                    <Link to={user ? `/requests/new?pro=${business.slug}` : `/login?next=${encodeURIComponent(`/requests/new?pro=${business.slug}`)}`}>
                       <FileText className="size-4" /> Request a Quote from this Pro
                     </Link>
                   </Button>
