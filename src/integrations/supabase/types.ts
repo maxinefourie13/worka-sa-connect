@@ -1304,6 +1304,7 @@ export type Database = {
         | "basic"
         | "verified_pro_trial"
         | "verified_pro"
+        | "locked"
       verification_status:
         | "not_required"
         | "required"
@@ -1460,6 +1461,7 @@ export const Constants = {
         "basic",
         "verified_pro_trial",
         "verified_pro",
+        "locked",
       ],
       verification_status: [
         "not_required",
