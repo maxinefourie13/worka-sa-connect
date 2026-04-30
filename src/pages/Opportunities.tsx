@@ -156,8 +156,8 @@ const Opportunities = () => {
           </select>
         </div>
 
-        {/* Verified Pros filter chip */}
-        <div className="flex items-center gap-2 mb-6">
+        {/* Filter + sort chips */}
+        <div className="flex flex-wrap items-center gap-2 mb-6">
           <button
             onClick={() => setVerifiedOnly((v) => !v)}
             className={cn(
@@ -171,12 +171,39 @@ const Opportunities = () => {
             <ShieldCheck className="size-3.5" strokeWidth={2.5} />
             {verifiedOnly ? "Showing trusted clients only" : `Show only Verified Pros (${verifiedCount})`}
           </button>
+
+          {isProView && (
+            <div className="ml-auto inline-flex rounded-full border border-border bg-card p-0.5 text-xs font-bold uppercase tracking-widest">
+              {([
+                { key: "nearest", label: "Nearest", icon: MapPin, disabled: !proCity && !proProvince },
+                { key: "newest", label: "Newest", icon: Clock, disabled: false },
+                { key: "urgent", label: "Urgent", icon: Siren, disabled: false },
+              ] as const).map((s) => (
+                <button
+                  key={s.key}
+                  onClick={() => !s.disabled && setSortMode(s.key)}
+                  disabled={s.disabled}
+                  title={s.disabled ? "Set your business city to sort by nearest" : `Sort by ${s.label.toLowerCase()}`}
+                  className={cn(
+                    "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full transition-colors disabled:opacity-40",
+                    sortMode === s.key ? "bg-foreground text-background" : "text-ink-2 hover:text-foreground",
+                  )}
+                >
+                  <s.icon className="size-3.5" strokeWidth={2.5} />
+                  {s.label}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
-        <div className="text-sm text-muted-foreground mb-4 tabular-nums">
-          {filtered.length} {isProView
+        <div className="text-sm text-muted-foreground mb-4 tabular-nums flex items-center gap-2">
+          <span>{filtered.length} {isProView
             ? `lead${filtered.length === 1 ? "" : "s"}`
-            : `request${filtered.length === 1 ? "" : "s"}`} found
+            : `request${filtered.length === 1 ? "" : "s"}`} found</span>
+          {isProView && sortMode === "nearest" && proCity && (
+            <span className="text-ink-2">· nearest to <span className="font-semibold text-foreground">{proCity}</span></span>
+          )}
         </div>
 
         {filtered.length === 0 ? (
@@ -186,7 +213,13 @@ const Opportunities = () => {
         ) : (
           <div className="grid lg:grid-cols-2 gap-5">
             {filtered.map((o) => (
-              <JobCard key={o.id} job={o} clientHireCount={clientHireHistory[o.id]} />
+              <JobCard
+                key={o.id}
+                job={o}
+                clientHireCount={clientHireHistory[o.id]}
+                isProView={isProView}
+                proCity={proCity}
+              />
             ))}
           </div>
         )}
