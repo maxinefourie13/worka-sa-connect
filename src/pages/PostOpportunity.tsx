@@ -7,6 +7,7 @@ import { LiabilityDisclaimer } from "@/components/LiabilityDisclaimer";
 import { CATEGORIES, CATEGORY_GROUPS, PROVINCES } from "@/lib/mockData";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import type { Json } from "@/integrations/supabase/types";
 import { useAuth } from "@/hooks/useAuth";
 import { findProhibited, PROHIBITED_MESSAGE } from "@/lib/prohibitedKeywords";
 
