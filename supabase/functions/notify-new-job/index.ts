@@ -34,6 +34,7 @@ Deno.serve(async (req) => {
 
     const body = await req.json().catch(() => ({}));
     const opportunityId = String(body?.opportunity_id ?? "");
+    const explicitUrgent = body?.urgent === true;
     if (!opportunityId) {
       return new Response(JSON.stringify({ error: "opportunity_id required" }), {
         status: 400,
@@ -45,7 +46,7 @@ Deno.serve(async (req) => {
 
     const { data: opp } = await admin
       .from("opportunities")
-      .select("id, title, description, category_slug, category_name, city, budget, client_id")
+      .select("id, title, description, category_slug, category_name, city, budget, client_id, is_urgent")
       .eq("id", opportunityId)
       .maybeSingle();
     if (!opp) {
@@ -55,17 +56,24 @@ Deno.serve(async (req) => {
       });
     }
 
-    // Find matching businesses (same category + city, exclude the poster's own businesses)
-    const { data: matches } = await admin
+    const isUrgent = explicitUrgent || !!opp.is_urgent;
+
+    // Find matching businesses (same category + city, exclude the poster's own businesses).
+    // For Eish! Urgent jobs, only target ID-verified businesses (Ready for Work pros only —
+    // tier is filtered downstream against provider_balances).
+    let matchQuery = admin
       .from("businesses")
-      .select("id, name, owner_id")
+      .select("id, name, owner_id, kyc_verified")
       .eq("category_slug", opp.category_slug)
       .ilike("city", opp.city)
       .neq("owner_id", opp.client_id)
       .limit(MAX_RECIPIENTS);
+    if (isUrgent) matchQuery = matchQuery.eq("kyc_verified", true);
+
+    const { data: matches } = await matchQuery;
 
     if (!matches || matches.length === 0) {
-      return new Response(JSON.stringify({ ok: true, recipients: 0 }), {
+      return new Response(JSON.stringify({ ok: true, recipients: 0, urgent: isUrgent }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
