@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 import { KlapButton } from "@/components/KlapButton";
 import { UrgentBoostButton } from "@/components/UrgentBoostButton";
 import { useAuth } from "@/hooks/useAuth";
-import { History, Siren, Sparkles } from "lucide-react";
+import { History, Siren, Sparkles, Paperclip } from "lucide-react";
 
 interface JobCardProps {
   job: Opportunity;
