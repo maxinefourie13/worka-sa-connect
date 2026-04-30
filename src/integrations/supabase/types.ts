@@ -798,6 +798,7 @@ export type Database = {
       payment_events: {
         Row: {
           amount_cents: number | null
+          billing_cycle: Database["public"]["Enums"]["billing_cycle"] | null
           created_at: string
           currency: string | null
           error_message: string | null
@@ -812,6 +813,7 @@ export type Database = {
         }
         Insert: {
           amount_cents?: number | null
+          billing_cycle?: Database["public"]["Enums"]["billing_cycle"] | null
           created_at?: string
           currency?: string | null
           error_message?: string | null
@@ -826,6 +828,7 @@ export type Database = {
         }
         Update: {
           amount_cents?: number | null
+          billing_cycle?: Database["public"]["Enums"]["billing_cycle"] | null
           created_at?: string
           currency?: string | null
           error_message?: string | null
@@ -1034,11 +1037,13 @@ export type Database = {
       }
       provider_balances: {
         Row: {
+          billing_cycle: Database["public"]["Enums"]["billing_cycle"]
           email_alerts_optin: boolean
           founding_proposals_period_start: string
           founding_proposals_used_this_month: number
           id: string
           is_id_verified: boolean
+          next_renewal_at: string | null
           onesignal_player_id: string | null
           paystack_customer_code: string | null
           paystack_subscription_code: string | null
@@ -1057,11 +1062,13 @@ export type Database = {
           whatsapp_number: string | null
         }
         Insert: {
+          billing_cycle?: Database["public"]["Enums"]["billing_cycle"]
           email_alerts_optin?: boolean
           founding_proposals_period_start?: string
           founding_proposals_used_this_month?: number
           id?: string
           is_id_verified?: boolean
+          next_renewal_at?: string | null
           onesignal_player_id?: string | null
           paystack_customer_code?: string | null
           paystack_subscription_code?: string | null
@@ -1080,11 +1087,13 @@ export type Database = {
           whatsapp_number?: string | null
         }
         Update: {
+          billing_cycle?: Database["public"]["Enums"]["billing_cycle"]
           email_alerts_optin?: boolean
           founding_proposals_period_start?: string
           founding_proposals_used_this_month?: number
           id?: string
           is_id_verified?: boolean
+          next_renewal_at?: string | null
           onesignal_player_id?: string | null
           paystack_customer_code?: string | null
           paystack_subscription_code?: string | null
@@ -1546,16 +1555,28 @@ export type Database = {
         Args: { _referee_user_id: string }
         Returns: undefined
       }
-      apply_subscription_payment: {
-        Args: {
-          _customer_code: string
-          _next_renewal: string
-          _subscription_code: string
-          _tier: Database["public"]["Enums"]["sjoh_tier"]
-          _user_id: string
-        }
-        Returns: undefined
-      }
+      apply_subscription_payment:
+        | {
+            Args: {
+              _customer_code: string
+              _next_renewal: string
+              _subscription_code: string
+              _tier: Database["public"]["Enums"]["sjoh_tier"]
+              _user_id: string
+            }
+            Returns: undefined
+          }
+        | {
+            Args: {
+              _billing_cycle?: Database["public"]["Enums"]["billing_cycle"]
+              _customer_code: string
+              _next_renewal: string
+              _subscription_code: string
+              _tier: Database["public"]["Enums"]["sjoh_tier"]
+              _user_id: string
+            }
+            Returns: undefined
+          }
       apply_urgent_boost: {
         Args: {
           _amount_cents: number
@@ -1863,6 +1884,7 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "business_owner" | "client"
+      billing_cycle: "monthly" | "annual"
       budget_type: "fixed" | "estimate" | "negotiable"
       business_plan: "free" | "standard" | "featured"
       deal_memo_status: "pending" | "accepted" | "completed" | "cancelled"
@@ -2038,6 +2060,7 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "business_owner", "client"],
+      billing_cycle: ["monthly", "annual"],
       budget_type: ["fixed", "estimate", "negotiable"],
       business_plan: ["free", "standard", "featured"],
       deal_memo_status: ["pending", "accepted", "completed", "cancelled"],
