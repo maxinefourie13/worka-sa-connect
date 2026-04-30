@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { Search, ShieldCheck, Construction } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
 import { Button } from "@/components/ui/button";
@@ -10,6 +10,8 @@ import { useMyBusiness } from "@/hooks/useMyBusiness";
 import { cn } from "@/lib/utils";
 
 const Opportunities = () => {
+  const location = useLocation();
+  const isProView = location.pathname.startsWith("/leads");
   const { data: opportunities } = useOpportunities();
   const { business: myBiz } = useMyBusiness();
   const isWorkshopMode = !!myBiz?.pre_launch;
