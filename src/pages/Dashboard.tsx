@@ -27,7 +27,7 @@ const SECTIONS: { key: SectionKey; label: string; icon: typeof LayoutGrid }[] = 
   { key: "klaps", label: "Klaps & Verification", icon: Zap },
   { key: "profile", label: "My Profile", icon: User },
   { key: "promotions", label: "Promotions", icon: Sparkles },
-  { key: "opportunities", label: "Opportunities", icon: Briefcase },
+  { key: "opportunities", label: "Leads", icon: Briefcase },
   { key: "followers", label: "Followers", icon: Users },
   { key: "billing", label: "Billing", icon: CreditCard },
 ];
