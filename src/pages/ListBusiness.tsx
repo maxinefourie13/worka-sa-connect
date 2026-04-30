@@ -19,6 +19,7 @@ const ListBusiness = () => {
   const [plan, setPlan] = useState("standard");
   const [groupSlug, setGroupSlug] = useState("");
   const [categorySlug, setCategorySlug] = useState("");
+  const [whatsappConsent, setWhatsappConsent] = useState(false);
   const navigate = useNavigate();
 
   const subCats = groupSlug ? CATEGORIES.filter((c) => c.groupSlug === groupSlug) : [];
@@ -185,6 +186,21 @@ const ListBusiness = () => {
                   Stripe checkout will appear here in the live version.
                 </div>
               )}
+
+              {/* Mandatory WhatsApp consent — POPIA-compliant, NOT pre-checked */}
+              <label className="flex items-start gap-3 rounded-xl border border-border bg-card p-4 cursor-pointer hover:border-primary/40 transition-colors">
+                <input
+                  type="checkbox"
+                  checked={whatsappConsent}
+                  onChange={(e) => setWhatsappConsent(e.target.checked)}
+                  className="mt-0.5 size-4 rounded border-border accent-primary cursor-pointer shrink-0"
+                />
+                <span className="text-sm text-ink-2 leading-relaxed">
+                  <strong className="text-foreground">I explicitly consent</strong> to receive lead alerts via WhatsApp from Sjoh,
+                  and I understand I can opt out at any time from my dashboard. Standard
+                  message rates may apply.
+                </span>
+              </label>
             </div>
           )}
 
@@ -209,7 +225,7 @@ const ListBusiness = () => {
               <Button variant="ghost" onClick={prev} disabled={step === 0}>
                 <ArrowLeft className="size-4" /> Back
               </Button>
-              <Button onClick={next}>
+              <Button onClick={next} disabled={step === 3 && !whatsappConsent}>
                 {step === 3 ? (
                   <>Confirm and Publish</>
                 ) : (
