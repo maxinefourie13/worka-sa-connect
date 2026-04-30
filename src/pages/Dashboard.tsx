@@ -152,7 +152,7 @@ const OverviewSection = ({ onJump }: { onJump: (s: SectionKey) => void }) => {
           <div>
             <p className="text-xs font-bold uppercase tracking-widest text-background/70">Your Klaps</p>
             <p className="font-display text-3xl font-semibold tabular-nums mt-1">
-              {provider.klapsRemaining} <span className="text-base text-background/60 font-normal">/ {tier.klapsPerMonth} this month</span>
+              {provider.klapsRemaining} <span className="text-base text-background/60 font-normal">this month</span>
             </p>
           </div>
         </div>
