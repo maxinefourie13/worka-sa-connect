@@ -62,6 +62,7 @@ const Pricing = () => {
                   Most popular
                 </span>
               )}
+              {t.featured && (
                 <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-foreground text-background text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full">
                   Verified
                 </span>
