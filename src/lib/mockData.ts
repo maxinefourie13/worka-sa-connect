@@ -429,6 +429,8 @@ export interface Opportunity {
   status: "open" | "closed";
   applicants: number;
   postedAt: string;
+  /** ISO timestamp of when the lead was posted — used for live freshness badges. */
+  createdAt?: string;
   requirements: string[];
   /** Client (owner) user id — only present from live data. */
   clientId?: string;

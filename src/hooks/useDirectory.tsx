@@ -63,6 +63,7 @@ function mapOpportunity(row: any): Opportunity {
     isUrgent,
     status: (row.status ?? "open") as Opportunity["status"],
     postedAt: relative(row.created_at),
+    createdAt: row.created_at,
     applicants: row.applicants_count ?? 0,
     requirements: row.requirements ?? [],
     postedBy: row.posted_by_name ?? "Sjoh client",
