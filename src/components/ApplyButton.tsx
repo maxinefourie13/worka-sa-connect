@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Send, Sparkles } from "lucide-react";
+import { Send, Sparkles, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ProposalModal } from "@/components/ProposalModal";
 import { cn } from "@/lib/utils";
@@ -12,6 +12,9 @@ interface Props {
   clientName?: string;
   size?: "sm" | "default" | "lg";
   className?: string;
+  /** If true, this is an admin-sourced concierge lead — redirect to externalContactUrl instead of opening the proposal modal. */
+  isConciergeLead?: boolean;
+  externalContactUrl?: string | null;
 }
 
 /**
@@ -20,7 +23,7 @@ interface Props {
  *  - Founding members on Basic/trial/no plan: 1 free proposal per calendar month, no verification needed
  *  - Everyone else: must upgrade to Ready for Work
  */
-export const ApplyButton = ({ jobId, jobTitle, jobBudget, clientName, size = "sm", className }: Props) => {
+export const ApplyButton = ({ jobId, jobTitle, jobBudget, clientName, size = "sm", className, isConciergeLead, externalContactUrl }: Props) => {
   const [proposalOpen, setProposalOpen] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const { hasVerifiedProAccess, foundingProposalAvailable, isFoundingMember, foundingProposalsResetAt } = useProviderAccess();
@@ -31,6 +34,27 @@ export const ApplyButton = ({ jobId, jobTitle, jobBudget, clientName, size = "sm
   const resetLabel = foundingProposalsResetAt
     ? foundingProposalsResetAt.toLocaleDateString("en-ZA", { day: "numeric", month: "long" })
     : null;
+
+  // Concierge lead: skip the proposal modal entirely and bounce to the original source.
+  if (isConciergeLead && externalContactUrl) {
+    return (
+      <div className="flex flex-col items-end gap-1.5">
+        <Button
+          size={size}
+          asChild
+          className={cn("font-bold tracking-wide gap-1.5 bg-primary text-primary-foreground hover:bg-primary/90", className)}
+        >
+          <a href={externalContactUrl} target="_blank" rel="noopener noreferrer">
+            <ExternalLink className="size-3.5" strokeWidth={2.5} />
+            Contact client directly
+          </a>
+        </Button>
+        <span className="text-[10px] text-muted-foreground text-right max-w-[160px] leading-tight">
+          We sourced this lead from outside Sjoh — contact the client at the link above.
+        </span>
+      </div>
+    );
+  }
 
   return (
     <>

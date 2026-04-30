@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 import { KlapButton } from "@/components/KlapButton";
 import { UrgentBoostButton } from "@/components/UrgentBoostButton";
 import { useAuth } from "@/hooks/useAuth";
-import { History, Siren } from "lucide-react";
+import { History, Siren, Sparkles } from "lucide-react";
 
 interface JobCardProps {
   job: Opportunity;
@@ -27,11 +27,18 @@ export const JobCard = ({ job, className, clientHireCount }: JobCardProps) => {
           isBoosted ? "border-accent/60 ring-1 ring-accent/30 hover:border-accent" : "border-border hover:border-primary/30",
         )}
       >
-        {isBoosted && (
-          <div className="mb-3 inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-accent-foreground bg-accent px-2 py-1 rounded-full animate-pulse">
-            <Siren className="size-3" strokeWidth={2.5} /> Urgent
-          </div>
-        )}
+        <div className="mb-3 flex flex-wrap items-center gap-2">
+          {isBoosted && (
+            <span className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-accent-foreground bg-accent px-2 py-1 rounded-full animate-pulse">
+              <Siren className="size-3" strokeWidth={2.5} /> Urgent
+            </span>
+          )}
+          {job.isConciergeLead && (
+            <span className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-primary bg-primary/10 border border-primary/30 px-2 py-1 rounded-full">
+              <Sparkles className="size-3" strokeWidth={2.5} /> Sourced by Sjoh Concierge
+            </span>
+          )}
+        </div>
         <div className="flex items-start gap-4">
           <div className="shrink-0 size-12 rounded-lg bg-secondary flex items-center justify-center text-2xl">
             {job.emoji}
@@ -78,7 +85,14 @@ export const JobCard = ({ job, className, clientHireCount }: JobCardProps) => {
                   size="sm"
                 />
               ) : (
-                <KlapButton jobId={job.id} jobTitle={job.title} jobBudget={job.budget} clientName={job.postedBy} />
+                <KlapButton
+                  jobId={job.id}
+                  jobTitle={job.title}
+                  jobBudget={job.budget}
+                  clientName={job.postedBy}
+                  isConciergeLead={job.isConciergeLead}
+                  externalContactUrl={job.externalContactUrl}
+                />
               )}
             </div>
           </div>

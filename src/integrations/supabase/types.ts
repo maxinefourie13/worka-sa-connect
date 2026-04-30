@@ -141,6 +141,9 @@ export type Database = {
           image_url: string | null
           is_suspended: boolean
           is_verified: boolean
+          kyc_reference: string | null
+          kyc_verified: boolean
+          kyc_verified_at: string | null
           last_active_at: string
           listing_status: string
           name: string
@@ -181,6 +184,9 @@ export type Database = {
           image_url?: string | null
           is_suspended?: boolean
           is_verified?: boolean
+          kyc_reference?: string | null
+          kyc_verified?: boolean
+          kyc_verified_at?: string | null
           last_active_at?: string
           listing_status?: string
           name: string
@@ -221,6 +227,9 @@ export type Database = {
           image_url?: string | null
           is_suspended?: boolean
           is_verified?: boolean
+          kyc_reference?: string | null
+          kyc_verified?: boolean
+          kyc_verified_at?: string | null
           last_active_at?: string
           listing_status?: string
           name?: string
@@ -441,11 +450,13 @@ export type Database = {
           category_name: string
           category_slug: string
           city: string
-          client_id: string
+          client_id: string | null
           created_at: string
           deadline: string | null
           description: string
+          external_contact_url: string | null
           id: string
+          is_concierge_lead: boolean
           posted_by_name: string | null
           province: string
           requirements: string[]
@@ -462,11 +473,13 @@ export type Database = {
           category_name: string
           category_slug: string
           city: string
-          client_id: string
+          client_id?: string | null
           created_at?: string
           deadline?: string | null
           description: string
+          external_contact_url?: string | null
           id?: string
+          is_concierge_lead?: boolean
           posted_by_name?: string | null
           province: string
           requirements?: string[]
@@ -483,11 +496,13 @@ export type Database = {
           category_name?: string
           category_slug?: string
           city?: string
-          client_id?: string
+          client_id?: string | null
           created_at?: string
           deadline?: string | null
           description?: string
+          external_contact_url?: string | null
           id?: string
+          is_concierge_lead?: boolean
           posted_by_name?: string | null
           province?: string
           requirements?: string[]

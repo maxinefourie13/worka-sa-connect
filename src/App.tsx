@@ -26,6 +26,7 @@ import { Login, Register, ForgotPassword, ResetPassword } from "./pages/Auth.tsx
 import PublicQuote from "./pages/PublicQuote.tsx";
 import VerifiedReviewPage from "./pages/VerifiedReviewPage.tsx";
 import FoundingMembersAdmin from "./pages/admin/FoundingMembers.tsx";
+import ConciergeAdmin from "./pages/admin/Concierge.tsx";
 
 const queryClient = new QueryClient();
 
@@ -55,6 +56,7 @@ const App = () => {
                 <Route path="/list" element={<ProtectedRoute><ListBusiness /></ProtectedRoute>} />
                 <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
                 <Route path="/admin/founding-members" element={<ProtectedRoute><FoundingMembersAdmin /></ProtectedRoute>} />
+                <Route path="/admin/concierge" element={<ProtectedRoute><ConciergeAdmin /></ProtectedRoute>} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/forgot-password" element={<ForgotPassword />} />
