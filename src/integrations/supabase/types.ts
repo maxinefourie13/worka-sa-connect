@@ -262,6 +262,63 @@ export type Database = {
         }
         Relationships: []
       }
+      deal_memos: {
+        Row: {
+          accepted_at: string | null
+          business_id: string
+          cancelled_at: string | null
+          client_email: string
+          client_phone: string | null
+          client_user_id: string | null
+          completed_at: string | null
+          created_at: string
+          id: string
+          job_title: string
+          pro_user_id: string
+          review_chaser_sent_at: string | null
+          scope_of_work: string
+          status: Database["public"]["Enums"]["deal_memo_status"]
+          total_amount_zar: number
+          updated_at: string
+        }
+        Insert: {
+          accepted_at?: string | null
+          business_id: string
+          cancelled_at?: string | null
+          client_email: string
+          client_phone?: string | null
+          client_user_id?: string | null
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          job_title: string
+          pro_user_id: string
+          review_chaser_sent_at?: string | null
+          scope_of_work: string
+          status?: Database["public"]["Enums"]["deal_memo_status"]
+          total_amount_zar: number
+          updated_at?: string
+        }
+        Update: {
+          accepted_at?: string | null
+          business_id?: string
+          cancelled_at?: string | null
+          client_email?: string
+          client_phone?: string | null
+          client_user_id?: string | null
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          job_title?: string
+          pro_user_id?: string
+          review_chaser_sent_at?: string | null
+          scope_of_work?: string
+          status?: Database["public"]["Enums"]["deal_memo_status"]
+          total_amount_zar?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       early_access_signups: {
         Row: {
           claimed_founding_spot: boolean
@@ -711,7 +768,9 @@ export type Database = {
           body: string
           business_id: string
           created_at: string
+          deal_memo_id: string | null
           id: string
+          is_verified_hire: boolean
           rating: number
           reviewer_company: string | null
           reviewer_id: string | null
@@ -721,7 +780,9 @@ export type Database = {
           body: string
           business_id: string
           created_at?: string
+          deal_memo_id?: string | null
           id?: string
+          is_verified_hire?: boolean
           rating: number
           reviewer_company?: string | null
           reviewer_id?: string | null
@@ -731,7 +792,9 @@ export type Database = {
           body?: string
           business_id?: string
           created_at?: string
+          deal_memo_id?: string | null
           id?: string
+          is_verified_hire?: boolean
           rating?: number
           reviewer_company?: string | null
           reviewer_id?: string | null
@@ -1047,6 +1110,7 @@ export type Database = {
       }
     }
     Functions: {
+      accept_deal_memo: { Args: { _id: string }; Returns: undefined }
       admin_create_founding_signup: {
         Args: { _email: string; _role: string }
         Returns: string
@@ -1083,11 +1147,17 @@ export type Database = {
         Args: { _business_id: string; _since?: string }
         Returns: number
       }
+      business_verified_hires_count: {
+        Args: { _business_id: string }
+        Returns: number
+      }
       can_use_founding_proposal: {
         Args: { _user_id: string }
         Returns: boolean
       }
+      cancel_deal_memo: { Args: { _id: string }; Returns: undefined }
       claim_founding_spot: { Args: { _signup_id: string }; Returns: boolean }
+      complete_deal_memo: { Args: { _id: string }; Returns: undefined }
       delete_email: {
         Args: { message_id: number; queue_name: string }
         Returns: boolean
@@ -1123,6 +1193,7 @@ export type Database = {
         Args: { _subscription_code: string }
         Returns: undefined
       }
+      mark_chaser_sent: { Args: { _id: string }; Returns: undefined }
       mark_verification_pending: {
         Args: { _job_id: string }
         Returns: undefined
@@ -1178,6 +1249,16 @@ export type Database = {
         }
         Returns: string
       }
+      submit_verified_review: {
+        Args: {
+          _body: string
+          _deal_memo_id: string
+          _rating: number
+          _reviewer_company?: string
+          _reviewer_name: string
+        }
+        Returns: string
+      }
       transition_listing_states: {
         Args: never
         Returns: {
@@ -1190,6 +1271,7 @@ export type Database = {
       app_role: "admin" | "business_owner" | "client"
       budget_type: "fixed" | "estimate" | "negotiable"
       business_plan: "free" | "standard" | "featured"
+      deal_memo_status: "pending" | "accepted" | "completed" | "cancelled"
       opportunity_status: "open" | "closed" | "awarded"
       payment_event_kind:
         | "subscription_charge"
@@ -1344,6 +1426,7 @@ export const Constants = {
       app_role: ["admin", "business_owner", "client"],
       budget_type: ["fixed", "estimate", "negotiable"],
       business_plan: ["free", "standard", "featured"],
+      deal_memo_status: ["pending", "accepted", "completed", "cancelled"],
       opportunity_status: ["open", "closed", "awarded"],
       payment_event_kind: [
         "subscription_charge",
