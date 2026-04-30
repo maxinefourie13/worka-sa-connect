@@ -30,12 +30,13 @@ export const BusinessCard = ({ business, className }: BusinessCardProps) => {
   // ---- Example / preview card ----------------------------------------------
   if (isExample) {
     return (
-      <div
+      <Link
+        to="/example-listing"
         className={cn(
-          "group relative block bg-card rounded-xl border-2 border-dashed border-primary/60 overflow-hidden shadow-card",
+          "group relative block bg-card rounded-xl border-2 border-dashed border-primary/60 overflow-hidden shadow-card hover:shadow-pop hover:-translate-y-0.5 transition-all duration-300",
           className,
         )}
-        aria-label="Example listing preview"
+        aria-label="Preview an example listing"
       >
         <div className="h-28 relative overflow-hidden sample-gradient">
           <span className="absolute top-3 left-3 z-10 bg-background/95 text-foreground text-[10px] font-bold tracking-widest uppercase px-2 py-1 rounded shadow-soft">
@@ -47,7 +48,7 @@ export const BusinessCard = ({ business, className }: BusinessCardProps) => {
         </div>
 
         <div className="pt-10 px-5 pb-5">
-          <h3 className="font-display text-lg font-semibold leading-snug">
+          <h3 className="font-display text-lg font-semibold leading-snug group-hover:text-primary transition-colors">
             {business.name}
           </h3>
           <p className="mt-1 text-xs text-muted-foreground">
@@ -66,16 +67,10 @@ export const BusinessCard = ({ business, className }: BusinessCardProps) => {
           </div>
 
           <p className="mt-3 text-xs text-ink-2 leading-relaxed">
-            This is what your listing will look like.
+            Click to see what a client sees on your profile →
           </p>
-
-          <div className="mt-4">
-            <Button asChild size="sm" className="w-full h-8 text-xs">
-              <Link to="/list">List your business →</Link>
-            </Button>
-          </div>
         </div>
-      </div>
+      </Link>
     );
   }
 
