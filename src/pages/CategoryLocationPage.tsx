@@ -16,6 +16,7 @@ import {
   type BusinessForJsonLd,
 } from "@/lib/seo";
 import { CATEGORIES, PROVINCES } from "@/lib/mockData";
+import { EXAMPLE_BUSINESS_ID } from "@/lib/exampleBusiness";
 import { Star, MapPin, ShieldCheck } from "lucide-react";
 
 interface BizRow {
