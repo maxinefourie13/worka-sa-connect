@@ -356,19 +356,28 @@ const BusinessProfile = () => {
                   </div>
                 </div>
                 {/* Desktop call/whatsapp/email — mobile shows sticky bar instead */}
-                <div className="hidden sm:grid mt-5 grid-cols-3 gap-2">
-                  <Button variant="default" className="w-full transition-all hover:scale-[1.03]" asChild>
-                    <a href={`tel:${business.phone}`}><Phone className="size-4" />Call</a>
-                  </Button>
-                  <Button variant="outline" className="w-full transition-all hover:scale-[1.03]" asChild>
-                    <a href={`https://wa.me/${phoneDigits}`} target="_blank" rel="noopener noreferrer">
-                      <MessageCircle className="size-4" />WhatsApp
-                    </a>
-                  </Button>
-                  <Button variant="outline" className="w-full transition-all hover:scale-[1.03]" asChild>
-                    <a href={`mailto:${business.email}`}><Mail className="size-4" />Email</a>
-                  </Button>
-                </div>
+                {hasContact ? (
+                  <div className="hidden sm:grid mt-5 grid-cols-3 gap-2">
+                    <Button variant="default" className="w-full transition-all hover:scale-[1.03]" asChild>
+                      <a href={`tel:${phone}`}><Phone className="size-4" />Call</a>
+                    </Button>
+                    <Button variant="outline" className="w-full transition-all hover:scale-[1.03]" asChild>
+                      <a href={`https://wa.me/${phoneDigits}`} target="_blank" rel="noopener noreferrer">
+                        <MessageCircle className="size-4" />WhatsApp
+                      </a>
+                    </Button>
+                    <Button variant="outline" className="w-full transition-all hover:scale-[1.03]" asChild>
+                      <a href={`mailto:${email}`}><Mail className="size-4" />Email</a>
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="hidden sm:block mt-5">
+                    <Button onClick={handleReveal} disabled={revealing} className="w-full">
+                      {revealing ? "Revealing…" : "Reveal contact details"}
+                    </Button>
+                    <p className="text-[11px] text-muted-foreground mt-2 text-center">Sign in required. We hide contact info from scrapers.</p>
+                  </div>
+                )}
                 <p className="mt-4 text-xs text-muted-foreground leading-relaxed">
                   You deal with this business directly. Sjoh takes no commission.
                 </p>
