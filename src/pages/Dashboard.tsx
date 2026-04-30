@@ -189,6 +189,8 @@ const OverviewSection = ({ onJump }: { onJump: (s: SectionKey) => void }) => {
           </li>
         </ul>
       </div>
+
+      <ReferAProCard />
     </>
   );
 };
@@ -334,31 +336,56 @@ const KlapsSection = () => {
   );
 };
 
-const ProfileSection = () => (
-  <>
-    <header>
-      <h1 className="font-display text-3xl font-medium tracking-tight">My Profile</h1>
-      <p className="text-sm text-ink-2 mt-1">Edit how your business appears on Sjoh.</p>
-    </header>
-    <div className="bg-card border border-border rounded-xl p-6 space-y-5">
-      <div className="grid sm:grid-cols-2 gap-4">
-        <Field label="Business name"><input className="db-input" defaultValue="Khumalo Electrical Contractors" /></Field>
-        <Field label="Phone"><input className="db-input" defaultValue="+27 11 234 5678" /></Field>
-        <Field label="Email"><input className="db-input" defaultValue="hello@khumaloelec.co.za" /></Field>
-        <Field label="Website"><input className="db-input" defaultValue="khumaloelec.co.za" /></Field>
+const ProfileSection = () => {
+  const { user } = useAuth();
+  const [myBiz, setMyBiz] = useState<{ id: string; category_slug: string } | null>(null);
+
+  useEffect(() => {
+    if (!user) return;
+    (async () => {
+      const { data } = await supabase
+        .from("businesses")
+        .select("id, category_slug")
+        .eq("owner_id", user.id)
+        .order("created_at", { ascending: true })
+        .limit(1)
+        .maybeSingle();
+      if (data) setMyBiz({ id: data.id, category_slug: data.category_slug });
+    })();
+  }, [user]);
+
+  return (
+    <>
+      <header>
+        <h1 className="font-display text-3xl font-medium tracking-tight">My Profile</h1>
+        <p className="text-sm text-ink-2 mt-1">Edit how your business appears on Sjoh.</p>
+      </header>
+      <div className="bg-card border border-border rounded-xl p-6 space-y-5">
+        <div className="grid sm:grid-cols-2 gap-4">
+          <Field label="Business name"><input className="db-input" defaultValue="Khumalo Electrical Contractors" /></Field>
+          <Field label="Phone"><input className="db-input" defaultValue="+27 11 234 5678" /></Field>
+          <Field label="Email"><input className="db-input" defaultValue="hello@khumaloelec.co.za" /></Field>
+          <Field label="Website"><input className="db-input" defaultValue="khumaloelec.co.za" /></Field>
+        </div>
+        <Field label="Description">
+          <textarea rows={4} className="db-input resize-none" defaultValue="Master electricians serving Gauteng since 2009. Certified installations, COC inspections, solar PV, and 24/7 emergency callouts." />
+        </Field>
+        <div className="flex justify-end gap-3 pt-3 border-t border-border">
+          <Button variant="outline">Cancel</Button>
+          <Button>Save Changes</Button>
+        </div>
       </div>
-      <Field label="Description">
-        <textarea rows={4} className="db-input resize-none" defaultValue="Master electricians serving Gauteng since 2009. Certified installations, COC inspections, solar PV, and 24/7 emergency callouts." />
-      </Field>
-      <div className="flex justify-end gap-3 pt-3 border-t border-border">
-        <Button variant="outline">Cancel</Button>
-        <Button>Save Changes</Button>
-      </div>
-    </div>
-    <GoogleReviewsCard />
-    <DbStyle />
-  </>
-);
+      {myBiz && (
+        <SecondaryCategoriesCard
+          businessId={myBiz.id}
+          primaryCategorySlug={myBiz.category_slug}
+        />
+      )}
+      <GoogleReviewsCard />
+      <DbStyle />
+    </>
+  );
+};
 
 const PromotionsSection = () => (
   <>
