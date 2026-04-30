@@ -241,6 +241,27 @@ export type Database = {
         }
         Relationships: []
       }
+      contact_reveals: {
+        Row: {
+          business_id: string
+          created_at: string
+          id: string
+          viewer_id: string
+        }
+        Insert: {
+          business_id: string
+          created_at?: string
+          id?: string
+          viewer_id: string
+        }
+        Update: {
+          business_id?: string
+          created_at?: string
+          id?: string
+          viewer_id?: string
+        }
+        Relationships: []
+      }
       early_access_signups: {
         Row: {
           claimed_founding_spot: boolean
@@ -1058,6 +1079,10 @@ export type Database = {
         Returns: undefined
       }
       bump_last_active: { Args: never; Returns: undefined }
+      business_lead_count: {
+        Args: { _business_id: string; _since?: string }
+        Returns: number
+      }
       can_use_founding_proposal: {
         Args: { _user_id: string }
         Returns: boolean
@@ -1123,6 +1148,13 @@ export type Database = {
       report_business: {
         Args: { _business_id: string; _details?: string; _reason: string }
         Returns: string
+      }
+      reveal_contact: {
+        Args: { _business_id: string }
+        Returns: {
+          email: string
+          phone: string
+        }[]
       }
       run_lifecycle_sweep: { Args: never; Returns: Json }
       set_business_pre_launch: {
