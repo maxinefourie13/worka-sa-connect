@@ -118,7 +118,7 @@ const PostOpportunity = () => {
 
     const { data: opp, error } = await supabase
       .from("opportunities")
-      .insert(payload)
+      .insert([payload])
       .select()
       .single();
 
