@@ -10,6 +10,8 @@ import { supabase } from "@/integrations/supabase/client";
 import type { Json } from "@/integrations/supabase/types";
 import { useAuth } from "@/hooks/useAuth";
 import { findProhibited, PROHIBITED_MESSAGE } from "@/lib/prohibitedKeywords";
+import { compressIfImage } from "@/lib/compressImage";
+import { ShieldCheck } from "lucide-react";
 
 interface Attachment {
   url: string;
@@ -47,9 +49,11 @@ const PostOpportunity = () => {
     const picked = Array.from(files).slice(0, remaining);
     setUploading(true);
     const uploaded: Attachment[] = [];
-    for (const file of picked) {
+    for (const rawFile of picked) {
+      // Compress images >2MB on the client; PDFs/non-images pass through.
+      const file = await compressIfImage(rawFile);
       if (file.size > MAX_BYTES) {
-        toast({ title: "File too big", description: `"${file.name}" is over 10MB.`, variant: "destructive" });
+        toast({ title: "File too big", description: `"${file.name}" is over 10MB even after compression.`, variant: "destructive" });
         continue;
       }
       const safeName = file.name.replace(/[^\w.\-]+/g, "_");
