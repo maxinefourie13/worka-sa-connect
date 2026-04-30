@@ -1197,6 +1197,29 @@ export type Database = {
           role: string
         }[]
       }
+      get_opportunity_for_viewer: {
+        Args: { _opportunity_id: string }
+        Returns: {
+          applicants_count: number
+          attachments: Json
+          budget: number
+          budget_type: Database["public"]["Enums"]["budget_type"]
+          can_view_full: boolean
+          category_name: string
+          category_slug: string
+          city: string
+          created_at: string
+          deadline: string
+          description: string
+          id: string
+          is_urgent: boolean
+          posted_by_name: string
+          province: string
+          requirements: string[]
+          status: Database["public"]["Enums"]["opportunity_status"]
+          title: string
+        }[]
+      }
       has_active_listing_access: {
         Args: { _user_id: string }
         Returns: boolean
