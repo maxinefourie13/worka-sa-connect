@@ -114,7 +114,7 @@ const PostOpportunity = () => {
       requirements: reqVal ? [reqVal] : [],
       posted_by_name: user.email?.split("@")[0] ?? null,
       is_urgent: isUrgent,
-      attachments: attachments as unknown as Record<string, unknown>[],
+      attachments: attachments as unknown as Json,
     };
 
     const { data: opp, error } = await supabase
