@@ -80,21 +80,36 @@ Deno.serve(async (req) => {
 
     const ownerIds = [...new Set(matches.map((b: any) => b.owner_id))];
 
-    // Pull notification preferences in one go
+    // Pull notification preferences + tier in one go.
+    // For urgent jobs we also require an active Ready for Work (verified_pro) tier —
+    // KYC was already enforced at the business-row level above.
     const { data: balances } = await admin
       .from("provider_balances")
-      .select("user_id, email_alerts_optin, push_alerts_optin, onesignal_player_id")
+      .select("user_id, email_alerts_optin, push_alerts_optin, onesignal_player_id, tier, tier_expires_at, trial_ends_at")
       .in("user_id", ownerIds);
 
     const prefMap = new Map<string, any>();
     for (const b of balances ?? []) prefMap.set(b.user_id, b);
 
+    const isVerifiedProActive = (b: any) => {
+      if (!b) return false;
+      const now = Date.now();
+      if (b.tier === "verified_pro") {
+        return !b.tier_expires_at || new Date(b.tier_expires_at).getTime() > now;
+      }
+      if (b.tier === "verified_pro_trial") {
+        return !!b.trial_ends_at && new Date(b.trial_ends_at).getTime() > now;
+      }
+      return false;
+    };
+
     const jobUrl = `https://sjoh.co.za/opportunities/${opp.id}`;
     let emailsSent = 0;
-    let pushIds: string[] = [];
+    const pushIds: string[] = [];
 
     for (const ownerId of ownerIds) {
       const prefs = prefMap.get(ownerId) ?? { email_alerts_optin: true };
+      if (isUrgent && !isVerifiedProActive(prefs)) continue;
 
       // Email path
       if (prefs.email_alerts_optin !== false) {
