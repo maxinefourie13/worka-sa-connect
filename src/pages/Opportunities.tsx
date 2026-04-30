@@ -82,15 +82,15 @@ const Opportunities = () => {
       <div className="container py-12">
         <header className="mb-8 max-w-2xl">
           <span className="text-xs font-bold uppercase tracking-widest text-primary">
-            {isProView ? "Available leads" : "Customer requests"}
+            {isProView ? "Send Quotes" : "Get Quotes"}
           </span>
           <h1 className="font-display text-4xl md:text-5xl font-extrabold tracking-tight mt-2">
-            {isProView ? "New leads in your area." : "Tell pros what you need done."}
+            {isProView ? "Find work. Send a quote." : "Tell pros what you need done."}
           </h1>
           <p className="mt-3 text-ink-2">
             {isProView
-              ? "Real customer requests, ready for a quote. Send a quote and contact the customer directly — no commission."
-              : "Get quotes from real okes ready to graft. Contact them directly — no middleman, no commission."}
+              ? "Real customer requests, ready for a quote. Contact the customer directly once they accept — no commission."
+              : "Post a request and pros will quote you. Or browse the directory and contact someone yourself — no middleman, no commission."}
           </p>
         </header>
 
@@ -114,7 +114,7 @@ const Opportunities = () => {
             <div>
               <h2 className="font-display text-xl md:text-2xl font-extrabold tracking-tight">Need work done?</h2>
               <p className="text-primary-foreground/85 text-sm mt-1">
-                Post a request and pros will send you quotes.
+                Post a request — pros will send you quotes. Or use the filters below to browse what's already on offer.
               </p>
             </div>
             <Button variant="ink" size="lg" asChild>
@@ -169,7 +169,7 @@ const Opportunities = () => {
             title="Only show jobs from clients who've hired on Sjoh before"
           >
             <ShieldCheck className="size-3.5" strokeWidth={2.5} />
-            {verifiedOnly ? "Showing trusted clients only" : `Show only Verified Pros (${verifiedCount})`}
+            {verifiedOnly ? "Showing trusted clients only" : `Trusted clients only (${verifiedCount})`}
           </button>
 
           {isProView && (
@@ -199,8 +199,8 @@ const Opportunities = () => {
 
         <div className="text-sm text-muted-foreground mb-4 tabular-nums flex items-center gap-2">
           <span>{filtered.length} {isProView
-            ? `lead${filtered.length === 1 ? "" : "s"}`
-            : `request${filtered.length === 1 ? "" : "s"}`} found</span>
+            ? `job${filtered.length === 1 ? "" : "s"} to quote`
+            : `open request${filtered.length === 1 ? "" : "s"}`}</span>
           {isProView && sortMode === "nearest" && proCity && (
             <span className="text-ink-2">· nearest to <span className="font-semibold text-foreground">{proCity}</span></span>
           )}

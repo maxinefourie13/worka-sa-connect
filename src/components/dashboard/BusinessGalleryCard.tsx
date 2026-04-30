@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Plus, Trash2, ImagePlus } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { toast } from "@/hooks/use-toast";
 import { compressIfImage } from "@/lib/compressImage";
 
@@ -18,15 +19,20 @@ export function BusinessGalleryCard({ businessId }: { businessId: string }) {
   const [images, setImages] = useState<GalleryImage[]>([]);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
+  const [preview, setPreview] = useState<GalleryImage | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const load = async () => {
     setLoading(true);
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from("business_images")
       .select("id, url, storage_path, sort_order")
       .eq("business_id", businessId)
       .order("sort_order", { ascending: true });
+    if (error) {
+      console.error("[gallery] load failed", error);
+      toast({ title: "Couldn't load gallery", description: error.message, variant: "destructive" });
+    }
     setImages((data ?? []) as GalleryImage[]);
     setLoading(false);
   };
@@ -46,32 +52,64 @@ export function BusinessGalleryCard({ businessId }: { businessId: string }) {
     const toUpload = Array.from(files).slice(0, remaining);
     setUploading(true);
     let nextOrder = images.length;
+    let succeeded = 0;
     for (const raw of toUpload) {
+      let storagePath: string | null = null;
       try {
         const file = await compressIfImage(raw);
-        const ext = file.name.split(".").pop() || "jpg";
-        const path = `${businessId}/${crypto.randomUUID()}.${ext}`;
+        const ext = (file.name.split(".").pop() || "jpg").toLowerCase();
+        storagePath = `${businessId}/${crypto.randomUUID()}.${ext}`;
+
         const { error: upErr } = await supabase.storage
           .from("business-gallery")
-          .upload(path, file, { contentType: file.type, upsert: false });
-        if (upErr) throw upErr;
-        const { data: pub } = supabase.storage.from("business-gallery").getPublicUrl(path);
+          .upload(storagePath, file, { contentType: file.type, upsert: false });
+        if (upErr) {
+          console.error("[gallery] storage upload failed", upErr);
+          toast({
+            title: "Aikona, photo didn't upload.",
+            description: `Storage: ${upErr.message}`,
+            variant: "destructive",
+          });
+          continue;
+        }
+
+        const { data: pub } = supabase.storage.from("business-gallery").getPublicUrl(storagePath);
         const { error: insErr } = await supabase.from("business_images").insert({
           business_id: businessId,
           url: pub.publicUrl,
-          storage_path: path,
+          storage_path: storagePath,
           sort_order: nextOrder++,
         });
-        if (insErr) throw insErr;
+        if (insErr) {
+          console.error("[gallery] db insert failed", insErr);
+          // Roll back the orphaned storage object so we don't leak.
+          await supabase.storage.from("business-gallery").remove([storagePath]).catch(() => undefined);
+          toast({
+            title: "Photo uploaded but didn't save.",
+            description: `Database: ${insErr.message}`,
+            variant: "destructive",
+          });
+          continue;
+        }
+        succeeded += 1;
       } catch (err) {
         const msg = err instanceof Error ? err.message : "Upload failed";
+        console.error("[gallery] unexpected error", err);
+        if (storagePath) {
+          await supabase.storage.from("business-gallery").remove([storagePath]).catch(() => undefined);
+        }
         toast({ title: "Aikona, photo didn't upload.", description: msg, variant: "destructive" });
       }
     }
     setUploading(false);
     if (fileInputRef.current) fileInputRef.current.value = "";
     await load();
-    toast({ title: "Sharp! Photos added.", description: "They're live on your profile." });
+    if (succeeded > 0) {
+      toast({
+        title: "Sharp! Photos added.",
+        description: `${succeeded} ${succeeded === 1 ? "photo is" : "photos are"} live on your profile.`,
+      });
+    }
   };
 
   const remove = async (img: GalleryImage) => {
@@ -79,7 +117,12 @@ export function BusinessGalleryCard({ businessId }: { businessId: string }) {
     if (img.storage_path) {
       await supabase.storage.from("business-gallery").remove([img.storage_path]);
     }
-    await supabase.from("business_images").delete().eq("id", img.id);
+    const { error } = await supabase.from("business_images").delete().eq("id", img.id);
+    if (error) {
+      toast({ title: "Couldn't remove photo", description: error.message, variant: "destructive" });
+      return;
+    }
+    setPreview(null);
     await load();
   };
 
@@ -127,7 +170,14 @@ export function BusinessGalleryCard({ businessId }: { businessId: string }) {
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
           {images.map((img) => (
             <div key={img.id} className="relative group aspect-square rounded-lg overflow-hidden border border-border">
-              <img src={img.url} alt="Gallery" className="size-full object-cover" loading="lazy" />
+              <button
+                type="button"
+                onClick={() => setPreview(img)}
+                className="size-full block"
+                aria-label="View photo"
+              >
+                <img src={img.url} alt="Gallery" className="size-full object-cover" loading="lazy" />
+              </button>
               <button
                 type="button"
                 onClick={() => remove(img)}
@@ -140,6 +190,24 @@ export function BusinessGalleryCard({ businessId }: { businessId: string }) {
           ))}
         </div>
       )}
+
+      <Dialog open={!!preview} onOpenChange={(v) => !v && setPreview(null)}>
+        <DialogContent className="max-w-4xl p-0 bg-transparent border-0 shadow-none">
+          {preview && (
+            <div className="relative">
+              <img src={preview.url} alt="Gallery" className="w-full h-auto rounded-lg" />
+              <Button
+                variant="destructive"
+                size="sm"
+                className="absolute top-3 right-3"
+                onClick={() => remove(preview)}
+              >
+                <Trash2 className="size-3.5" /> Remove
+              </Button>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

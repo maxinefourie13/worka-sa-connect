@@ -5,8 +5,8 @@ const cols = [
     title: "Platform",
     links: [
       { to: "/directory", label: "Browse Directory" },
-      { to: "/requests", label: "Customer Requests" },
-      { to: "/leads", label: "Pro Leads" },
+      { to: "/requests", label: "Get Quotes (post a job)" },
+      { to: "/leads", label: "Send Quotes (find work)" },
       { to: "/pricing", label: "Pricing" },
       { to: "/list", label: "List Your Business" },
     ],

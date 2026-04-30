@@ -8,6 +8,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useUserRoles } from "@/hooks/useUserRoles";
 import sjohLogo from "@/assets/sjoh-logo.png";
 import { ListingStatusBanner } from "@/components/ListingStatusBanner";
+import { EarlyAccessRibbon } from "@/components/EarlyAccessRibbon";
 import { useBumpLastActive } from "@/hooks/useBumpLastActive";
 import {
   DropdownMenu,
@@ -19,8 +20,8 @@ import {
 
 const NAV = [
   { to: "/directory", label: "Browse" },
-  { to: "/requests", label: "Requests" },
-  { to: "/leads", label: "Leads" },
+  { to: "/requests", label: "Get Quotes" },
+  { to: "/leads", label: "Send Quotes" },
   { to: "/pricing", label: "Pricing" },
 ];
 
@@ -53,6 +54,7 @@ export const SiteHeader = () => {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/70 bg-background/85 backdrop-blur-md">
+      <EarlyAccessRibbon />
       <ListingStatusBanner />
       <div className="container flex h-16 items-center justify-between gap-6">
         <div className="flex items-center gap-10">
@@ -98,6 +100,9 @@ export const SiteHeader = () => {
                   </DropdownMenuItem>
                   {isAdmin && (
                     <>
+                      <DropdownMenuItem asChild>
+                        <Link to="/admin/preview"><Shield className="size-4 mr-2" />Admin · Preview</Link>
+                      </DropdownMenuItem>
                       <DropdownMenuItem asChild>
                         <Link to="/admin/founding-members"><Shield className="size-4 mr-2" />Admin · Founding</Link>
                       </DropdownMenuItem>

@@ -7,7 +7,9 @@ import {
 import { QuotesSection } from "@/components/dashboard/QuotesSection";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Button } from "@/components/ui/button";
-import { formatRand, OPPORTUNITIES, PROMOTIONS, SJOH_TIERS } from "@/lib/mockData";
+import { formatRand, SJOH_TIERS } from "@/lib/mockData";
+import { useMyBusinessStats } from "@/hooks/useMyBusinessStats";
+import { useRecentActivity, timeAgo } from "@/hooks/useRecentActivity";
 import { useMyBusiness } from "@/hooks/useMyBusiness";
 import { VerificationBadges } from "@/components/VerificationBadges";
 import { toast } from "@/hooks/use-toast";
@@ -29,11 +31,11 @@ import { cn } from "@/lib/utils";
 type SectionKey = "overview" | "quotes" | "verification" | "profile" | "promotions" | "opportunities" | "followers" | "billing" | "privacy";
 const SECTIONS: { key: SectionKey; label: string; icon: typeof LayoutGrid }[] = [
   { key: "overview", label: "Overview", icon: LayoutGrid },
-  { key: "quotes", label: "My Quotes", icon: FileText },
+  { key: "quotes", label: "Quotes I sent", icon: FileText },
   { key: "verification", label: "Verification", icon: ShieldCheck },
   { key: "profile", label: "My Profile", icon: User },
   { key: "promotions", label: "Promotions", icon: Sparkles },
-  { key: "opportunities", label: "Leads", icon: Briefcase },
+  { key: "opportunities", label: "Won jobs", icon: Briefcase },
   { key: "followers", label: "Followers", icon: Users },
   { key: "billing", label: "Billing", icon: CreditCard },
   { key: "privacy", label: "Data & Privacy", icon: Lock },
@@ -146,6 +148,9 @@ const StatCard = ({ label, value, hint }: { label: string; value: string; hint?:
 const OverviewSection = ({ onJump }: { onJump: (s: SectionKey) => void }) => {
   const { user } = useAuth();
   const access = useProviderAccess();
+  const { business } = useMyBusiness();
+  const stats = useMyBusinessStats(business?.id);
+  const activity = useRecentActivity(business?.id);
   const firstName =
     (user?.user_metadata?.display_name as string | undefined)?.split(" ")[0] ||
     user?.email?.split("@")[0] ||
@@ -159,6 +164,13 @@ const OverviewSection = ({ onJump }: { onJump: (s: SectionKey) => void }) => {
     : access.tier === "locked" ? "Account paused"
     : "No plan";
 
+  const profileUrl = business ? `${window.location.origin}/business/${business.slug}` : null;
+  const copyProfileLink = async () => {
+    if (!profileUrl) return;
+    await navigator.clipboard.writeText(profileUrl);
+    toast({ title: "Link copied", description: "Paste it into WhatsApp, Insta bio, or wherever your customers hang out." });
+  };
+
   return (
     <>
       <SubscriptionGapBanner />
@@ -168,9 +180,9 @@ const OverviewSection = ({ onJump }: { onJump: (s: SectionKey) => void }) => {
           <h1 className="font-display text-3xl font-medium tracking-tight">
             Howzit, {firstName}. Ready to dala what you must?
           </h1>
-          <p className="text-sm text-ink-2 mt-1">Your performance over the last 30 days.</p>
+          <p className="text-sm text-ink-2 mt-1">Your activity over the last 30 days.</p>
         </div>
-        <Button>
+        <Button onClick={() => onJump("promotions")}>
           <Plus className="size-4" />Add Promotion
         </Button>
       </header>
@@ -198,26 +210,46 @@ const OverviewSection = ({ onJump }: { onJump: (s: SectionKey) => void }) => {
       </button>
 
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        <StatCard label="Profile views" value="1,284" hint="+12%" />
-        <StatCard label="Enquiries" value="38" hint="+5" />
-        <StatCard label="Followers" value="318" hint="+24" />
+        <StatCard
+          label="Profile views"
+          value={stats.profileViews === null ? "—" : stats.profileViews.toLocaleString("en-ZA")}
+          hint={stats.profileViews === null ? "Coming soon" : undefined}
+        />
+        <StatCard
+          label="Enquiries (30d)"
+          value={stats.loading ? "…" : stats.enquiries30d.toLocaleString("en-ZA")}
+        />
+        <StatCard
+          label="Followers"
+          value={stats.loading ? "…" : stats.followers.toLocaleString("en-ZA")}
+        />
       </div>
       <div className="bg-card border border-border rounded-xl p-6">
         <h2 className="font-display text-lg font-semibold mb-4">Recent activity</h2>
-        <ul className="space-y-3 text-sm">
-          <li className="flex items-center justify-between py-2 border-b border-border last:border-0">
-            <span>New enquiry from <strong>Naledi Properties</strong></span>
-            <span className="text-xs text-muted-foreground">2h ago</span>
-          </li>
-          <li className="flex items-center justify-between py-2 border-b border-border last:border-0">
-            <span><strong>Sipho M.</strong> started following you</span>
-            <span className="text-xs text-muted-foreground">5h ago</span>
-          </li>
-          <li className="flex items-center justify-between py-2">
-            <span>Your listing was viewed <strong>83 times</strong> yesterday</span>
-            <span className="text-xs text-muted-foreground">1d ago</span>
-          </li>
-        </ul>
+        {activity.loading ? (
+          <p className="text-sm text-muted-foreground">Loading…</p>
+        ) : activity.items.length === 0 ? (
+          <div className="py-6 text-center">
+            <p className="text-sm text-ink-2">No activity yet, boet.</p>
+            <p className="text-xs text-muted-foreground mt-1 mb-4">
+              Once customers follow you, reveal your contact, or you send a quote — you'll see it here.
+            </p>
+            {profileUrl && (
+              <Button size="sm" variant="outline" onClick={copyProfileLink}>
+                Copy your profile link
+              </Button>
+            )}
+          </div>
+        ) : (
+          <ul className="space-y-3 text-sm">
+            {activity.items.map((it) => (
+              <li key={it.id} className="flex items-center justify-between py-2 border-b border-border last:border-0">
+                <span>{it.label}</span>
+                <span className="text-xs text-muted-foreground">{timeAgo(it.at)}</span>
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
 
       <ReferAProCard />
@@ -430,86 +462,220 @@ const ProfileSection = () => {
   );
 };
 
-const PromotionsSection = () => (
-  <>
-    <header className="flex items-center justify-between">
-      <div>
-        <h1 className="font-display text-3xl font-medium tracking-tight">Promotions</h1>
-        <p className="text-sm text-ink-2 mt-1">Run limited-time offers to attract new customers.</p>
-      </div>
-      <Button><Plus className="size-4" />Add Promotion</Button>
-    </header>
-    <div className="space-y-3">
-      {PROMOTIONS.slice(0, 2).map((p) => (
-        <div key={p.id} className="bg-card border border-border rounded-xl p-5 flex items-center justify-between gap-4">
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="text-[10px] font-bold uppercase tracking-widest bg-primary-light text-primary px-2 py-0.5 rounded">Active</span>
-              <h3 className="font-semibold">{p.title}</h3>
-            </div>
-            <p className="text-sm text-ink-2 mt-1">{p.description}</p>
-            <p className="text-xs text-muted-foreground mt-2">Expires {p.expiresAt}</p>
-          </div>
-          <div className="flex gap-2">
-            <Button variant="outline" size="sm">Edit</Button>
-            <Button variant="ghost" size="sm">End</Button>
-          </div>
-        </div>
-      ))}
-    </div>
-  </>
-);
+interface PromotionRow {
+  id: string;
+  title: string;
+  description: string | null;
+  expires_at: string | null;
+  is_active: boolean;
+}
 
-const OpportunitiesSection = () => (
-  <>
-    <header>
-      <h1 className="font-display text-3xl font-extrabold tracking-tight">Leads</h1>
-      <p className="text-sm text-ink-2 mt-1">Customer requests you've quoted on.</p>
-    </header>
-    <div className="bg-card border border-border rounded-xl divide-y divide-border">
-      {OPPORTUNITIES.slice(0, 4).map((o, i) => (
-        <div key={o.id} className="p-5 flex items-center justify-between gap-4">
-          <div className="flex items-start gap-3 min-w-0">
-            <span className="size-10 rounded-lg bg-secondary flex items-center justify-center text-xl shrink-0">{o.emoji}</span>
-            <div className="min-w-0">
-              <Link to={`/requests/${o.id}`} className="font-semibold text-sm hover:text-primary truncate block">{o.title}</Link>
-              <p className="text-xs text-muted-foreground mt-0.5">{o.city} · {formatRand(o.budget)}</p>
-            </div>
-          </div>
-          <span className={cn(
-            "text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded whitespace-nowrap",
-            i === 0 ? "bg-accent/15 text-accent" : i === 1 ? "bg-primary-light text-primary" : "bg-secondary text-muted-foreground",
-          )}>
-            {i === 0 ? "Pending" : i === 1 ? "Won" : "Lost"}
-          </span>
+const PromotionsSection = () => {
+  const { business } = useMyBusiness();
+  const [items, setItems] = useState<PromotionRow[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!business?.id) { setItems([]); setLoading(false); return; }
+    let cancelled = false;
+    (async () => {
+      const { data } = await supabase
+        .from("promotions")
+        .select("id, title, description, expires_at, is_active")
+        .eq("business_id", business.id)
+        .order("created_at", { ascending: false });
+      if (!cancelled) {
+        setItems((data ?? []) as PromotionRow[]);
+        setLoading(false);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [business?.id]);
+
+  return (
+    <>
+      <header className="flex items-center justify-between">
+        <div>
+          <h1 className="font-display text-3xl font-medium tracking-tight">Promotions</h1>
+          <p className="text-sm text-ink-2 mt-1">Run limited-time offers to attract new customers.</p>
         </div>
-      ))}
-    </div>
-  </>
-);
+        <Button disabled title="Promotions editor lands soon"><Plus className="size-4" />Add Promotion</Button>
+      </header>
+      {loading ? (
+        <div className="bg-card border border-border rounded-xl p-6 text-sm text-muted-foreground">Loading…</div>
+      ) : items.length === 0 ? (
+        <div className="bg-card border border-border rounded-xl p-8 text-center">
+          <Sparkles className="size-8 mx-auto text-muted-foreground mb-2" />
+          <p className="text-sm font-semibold">No promotions running yet</p>
+          <p className="text-xs text-ink-2 mt-1 max-w-sm mx-auto">
+            Promotions show up on your profile and in search. The editor is on its way.
+          </p>
+        </div>
+      ) : (
+        <div className="space-y-3">
+          {items.map((p) => (
+            <div key={p.id} className="bg-card border border-border rounded-xl p-5 flex items-center justify-between gap-4">
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="text-[10px] font-bold uppercase tracking-widest bg-primary-light text-primary px-2 py-0.5 rounded">
+                    {p.is_active ? "Active" : "Ended"}
+                  </span>
+                  <h3 className="font-semibold">{p.title}</h3>
+                </div>
+                {p.description && <p className="text-sm text-ink-2 mt-1">{p.description}</p>}
+                {p.expires_at && (
+                  <p className="text-xs text-muted-foreground mt-2">
+                    Expires {new Date(p.expires_at).toLocaleDateString("en-ZA")}
+                  </p>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </>
+  );
+};
+
+interface WonJobRow {
+  id: string;
+  status: string;
+  quote_amount: number | null;
+  created_at: string;
+  opportunity_id: string;
+  opportunity: { title: string; city: string; budget: number | null } | null;
+}
+
+const OpportunitiesSection = () => {
+  const { user } = useAuth();
+  const [items, setItems] = useState<WonJobRow[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!user) return;
+    let cancelled = false;
+    (async () => {
+      const { data } = await supabase
+        .from("proposals")
+        .select("id, status, quote_amount, created_at, opportunity_id, opportunity:opportunities(title, city, budget)")
+        .eq("provider_id", user.id)
+        .order("created_at", { ascending: false })
+        .limit(20);
+      if (!cancelled) {
+        setItems((data ?? []) as unknown as WonJobRow[]);
+        setLoading(false);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [user]);
+
+  return (
+    <>
+      <header>
+        <h1 className="font-display text-3xl font-extrabold tracking-tight">Won jobs</h1>
+        <p className="text-sm text-ink-2 mt-1">Quotes you've sent and where they stand.</p>
+      </header>
+      {loading ? (
+        <div className="bg-card border border-border rounded-xl p-6 text-sm text-muted-foreground">Loading…</div>
+      ) : items.length === 0 ? (
+        <div className="bg-card border border-border rounded-xl p-8 text-center">
+          <Briefcase className="size-8 mx-auto text-muted-foreground mb-2" />
+          <p className="text-sm font-semibold">No quotes sent yet</p>
+          <p className="text-xs text-ink-2 mt-1">Hop over to Send Quotes and get the ball rolling.</p>
+          <Button asChild size="sm" className="mt-4"><Link to="/leads">Find work →</Link></Button>
+        </div>
+      ) : (
+        <div className="bg-card border border-border rounded-xl divide-y divide-border">
+          {items.map((m) => (
+            <div key={m.id} className="p-5 flex items-center justify-between gap-4">
+              <div className="min-w-0">
+                <Link to={`/requests/${m.opportunity_id}`} className="font-semibold text-sm hover:text-primary truncate block">
+                  {m.opportunity?.title ?? "Untitled job"}
+                </Link>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  {m.opportunity?.city ?? "—"} · {m.quote_amount ? formatRand(Number(m.quote_amount)) : "Quote on inspection"}
+                </p>
+              </div>
+              <span className={cn(
+                "text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded whitespace-nowrap",
+                m.status === "accepted" ? "bg-primary-light text-primary"
+                  : m.status === "rejected" ? "bg-secondary text-muted-foreground"
+                  : "bg-accent/15 text-accent",
+              )}>
+                {m.status}
+              </span>
+            </div>
+          ))}
+        </div>
+      )}
+    </>
+  );
+};
+
+interface FollowerRow {
+  follower_id: string;
+  created_at: string;
+  profile: { display_name: string | null } | null;
+}
 
 const FollowersSection = () => {
-  const followers = ["Thandi Nkosi", "Pieter van Wyk", "Naledi M.", "Sipho D.", "Adam K.", "Liam Petersen"];
+  const { business } = useMyBusiness();
+  const [items, setItems] = useState<FollowerRow[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!business?.id) { setItems([]); setLoading(false); return; }
+    let cancelled = false;
+    (async () => {
+      const { data } = await supabase
+        .from("business_follows")
+        .select("follower_id, created_at, profile:profiles(display_name)")
+        .eq("business_id", business.id)
+        .order("created_at", { ascending: false });
+      if (!cancelled) {
+        setItems((data ?? []) as unknown as FollowerRow[]);
+        setLoading(false);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [business?.id]);
+
   return (
     <>
       <header>
         <h1 className="font-display text-3xl font-medium tracking-tight">Followers</h1>
-        <p className="text-sm text-ink-2 mt-1">318 people follow your business.</p>
+        <p className="text-sm text-ink-2 mt-1">
+          {loading ? "Loading…" : `${items.length} ${items.length === 1 ? "person follows" : "people follow"} your business.`}
+        </p>
       </header>
-      <div className="bg-card border border-border rounded-xl divide-y divide-border">
-        {followers.map((f) => (
-          <div key={f} className="p-4 flex items-center gap-3">
-            <div className="size-9 rounded-full bg-secondary flex items-center justify-center text-sm font-semibold">{f.charAt(0)}</div>
-            <span className="text-sm font-medium">{f}</span>
-          </div>
-        ))}
-      </div>
+      {!loading && items.length === 0 ? (
+        <div className="bg-card border border-border rounded-xl p-8 text-center">
+          <Users className="size-8 mx-auto text-muted-foreground mb-2" />
+          <p className="text-sm font-semibold">No followers yet</p>
+          <p className="text-xs text-ink-2 mt-1">Once customers follow you, you'll see them here.</p>
+        </div>
+      ) : (
+        <div className="bg-card border border-border rounded-xl divide-y divide-border">
+          {items.map((f) => {
+            const name = f.profile?.display_name?.trim() || "Sjoh customer";
+            return (
+              <div key={f.follower_id} className="p-4 flex items-center gap-3">
+                <div className="size-9 rounded-full bg-secondary flex items-center justify-center text-sm font-semibold">
+                  {name.charAt(0).toUpperCase()}
+                </div>
+                <span className="text-sm font-medium">{name}</span>
+              </div>
+            );
+          })}
+        </div>
+      )}
       <p className="text-xs text-ink-2 mt-3">
-        Followers see your updates and promotions in their feed. Direct messaging isn't part of Sjoh — keep contact on the public profile so customers reach you on your terms.
+        Followers see your updates and promotions. Direct messaging isn't part of Sjoh — keep contact on the public profile so customers reach you on your terms.
       </p>
     </>
   );
 };
+
 
 const BillingSection = () => {
   const { user } = useAuth();
