@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { ArrowLeft, Phone, Mail, MessageCircle, MapPin, Clock, Globe } from "lucide-react";
+import { ArrowLeft, Phone, Mail, MessageCircle, MapPin, Clock, Globe, ShieldCheck } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
 import { Button } from "@/components/ui/button";
 import { BUSINESS_VERIFICATION, formatRand } from "@/lib/mockData";
