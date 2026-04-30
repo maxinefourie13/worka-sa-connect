@@ -304,13 +304,26 @@ const PostOpportunity = () => {
               </select>
             </Field>
             <Field label="Province" required>
-              <select required name="province" className="input cursor-pointer">
+              <select
+                required
+                name="province"
+                className="input cursor-pointer"
+                value={province}
+                onChange={(e) => setProvince(e.target.value)}
+              >
                 <option value="">Select a province</option>
                 {PROVINCES.map((p) => <option key={p} value={p}>{p}</option>)}
               </select>
             </Field>
             <Field label="City / suburb" required>
-              <input required name="city" className="input" placeholder="e.g. Sandton" />
+              <input
+                required
+                name="city"
+                className="input"
+                placeholder="e.g. Sandton"
+                value={city}
+                onChange={(e) => setCity(e.target.value)}
+              />
             </Field>
             <Field label="Budget (R)" required>
               <input required name="budget" type="number" min="0" className="input" placeholder="What are you willing to spend?" />
