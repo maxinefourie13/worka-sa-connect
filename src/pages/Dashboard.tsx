@@ -19,6 +19,8 @@ import { requestPushPermission, disablePush, isPushConfigured } from "@/lib/push
 import { GoogleReviewsCard } from "@/components/dashboard/GoogleReviewsCard";
 import { SubscriptionGapBanner } from "@/components/SubscriptionGapBanner";
 import { ProfileVisibilityWarning } from "@/components/ProfileVisibilityWarning";
+import { ReferAProCard } from "@/components/dashboard/ReferAProCard";
+import { SecondaryCategoriesCard } from "@/components/dashboard/SecondaryCategoriesCard";
 import { cn } from "@/lib/utils";
 
 type SectionKey = "overview" | "quotes" | "klaps" | "profile" | "promotions" | "opportunities" | "followers" | "billing";
