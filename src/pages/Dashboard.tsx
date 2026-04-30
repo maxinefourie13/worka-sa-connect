@@ -21,6 +21,7 @@ import { SubscriptionGapBanner } from "@/components/SubscriptionGapBanner";
 import { ProfileVisibilityWarning } from "@/components/ProfileVisibilityWarning";
 import { ReferAProCard } from "@/components/dashboard/ReferAProCard";
 import { SecondaryCategoriesCard } from "@/components/dashboard/SecondaryCategoriesCard";
+import { BusinessGalleryCard } from "@/components/dashboard/BusinessGalleryCard";
 import { PrivacySection } from "@/components/dashboard/PrivacySection";
 import { useProviderAccess } from "@/hooks/useProviderAccess";
 import { cn } from "@/lib/utils";
