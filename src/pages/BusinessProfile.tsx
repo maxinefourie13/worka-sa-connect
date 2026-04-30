@@ -7,6 +7,7 @@ import { BUSINESS_VERIFICATION, formatRand } from "@/lib/mockData";
 import { VerificationBadges } from "@/components/VerificationBadges";
 import { ReportProfileButton } from "@/components/ReportProfileButton";
 import { GoogleReviewsList } from "@/components/GoogleReviewsList";
+import { PublicBusinessGallery } from "@/components/PublicBusinessGallery";
 import { SeoHead } from "@/components/SeoHead";
 import { useBusinessBySlug } from "@/hooks/useBusinessBySlug";
 import { useReveal } from "@/hooks/useReveal";
