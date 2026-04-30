@@ -140,7 +140,7 @@ const HomePage = () => {
               <Link
                 key={c.slug}
                 to={`/directory?category=${c.slug}`}
-                className="text-sm font-medium px-3.5 py-1.5 rounded-full border border-border bg-card hover:border-accent hover:bg-accent-soft transition-all"
+                className="text-sm font-medium px-3.5 py-1.5 rounded-full border border-border bg-card hover:border-accent hover:bg-accent-soft hover:-translate-y-0.5 hover:shadow-card transition-all duration-200 ease-out active:scale-95"
               >
                 {c.name}
               </Link>
@@ -159,11 +159,11 @@ const HomePage = () => {
             </h2>
           </div>
           <div className="grid md:grid-cols-2 gap-5 max-w-4xl mx-auto">
-            <div className="group bg-card border border-border rounded-2xl p-7 md:p-8 hover:border-primary hover:shadow-pop transition-all flex flex-col">
-              <span className="inline-flex items-center self-start gap-1.5 text-[10px] font-bold uppercase tracking-widest text-primary bg-primary/10 px-2.5 py-1 rounded-full">
+            <div className="group bg-card border border-border rounded-2xl p-7 md:p-8 hover:border-primary hover:shadow-pop hover:-translate-y-1 transition-all duration-300 ease-out flex flex-col">
+              <span className="inline-flex items-center self-start gap-1.5 text-[10px] font-bold uppercase tracking-widest text-primary bg-primary/10 px-2.5 py-1 rounded-full group-hover:bg-primary group-hover:text-primary-foreground transition-colors duration-300">
                 Recommended
               </span>
-              <h3 className="font-display text-2xl font-extrabold tracking-tight mt-4">
+              <h3 className="font-display text-2xl font-extrabold tracking-tight mt-4 group-hover:text-primary transition-colors duration-300">
                 Let the Pros come to you.
               </h3>
               <p className="mt-2 text-ink-2 leading-relaxed flex-1">
@@ -173,11 +173,11 @@ const HomePage = () => {
                 <Link to="/requests/new">Get Quotes</Link>
               </Button>
             </div>
-            <div className="group bg-card border border-border rounded-2xl p-7 md:p-8 hover:border-foreground hover:shadow-pop transition-all flex flex-col">
-              <span className="inline-flex items-center self-start gap-1.5 text-[10px] font-bold uppercase tracking-widest text-foreground bg-foreground/10 px-2.5 py-1 rounded-full">
+            <div className="group bg-card border border-border rounded-2xl p-7 md:p-8 hover:border-foreground hover:shadow-pop hover:-translate-y-1 transition-all duration-300 ease-out flex flex-col">
+              <span className="inline-flex items-center self-start gap-1.5 text-[10px] font-bold uppercase tracking-widest text-foreground bg-foreground/10 px-2.5 py-1 rounded-full group-hover:bg-foreground group-hover:text-background transition-colors duration-300">
                 Hands-on
               </span>
-              <h3 className="font-display text-2xl font-extrabold tracking-tight mt-4">
+              <h3 className="font-display text-2xl font-extrabold tracking-tight mt-4 group-hover:text-foreground transition-colors duration-300">
                 Browse and contact directly.
               </h3>
               <p className="mt-2 text-ink-2 leading-relaxed flex-1">
@@ -226,12 +226,12 @@ const HomePage = () => {
           {HOW_IT_WORKS.map((s, i) => (
             <div
               key={s.title}
-              className="bg-card border border-border rounded-xl p-6 hover:border-primary/30 hover:shadow-card transition-all"
+              className="group bg-card border border-border rounded-xl p-6 hover:border-primary/40 hover:shadow-pop hover:-translate-y-1 transition-all duration-300 ease-out"
             >
-              <span className="font-display text-3xl font-bold text-primary tabular-nums">
+              <span className="font-display text-3xl font-bold text-primary tabular-nums inline-block group-hover:scale-110 group-hover:-rotate-3 transition-transform duration-300 origin-bottom-left">
                 0{i + 1}
               </span>
-              <h3 className="font-display text-lg font-semibold mt-5">{s.title}</h3>
+              <h3 className="font-display text-lg font-semibold mt-5 group-hover:text-primary transition-colors">{s.title}</h3>
               <p className="mt-2 text-sm text-ink-2 leading-relaxed">{s.body}</p>
             </div>
           ))}
@@ -259,9 +259,9 @@ const HomePage = () => {
                 <Link
                   key={g.slug}
                   to={`/directory/g/${g.slug}`}
-                  className="group bg-background border border-border rounded-lg p-5 flex items-center gap-4 hover:border-primary hover:bg-primary-light/40 transition-all"
+                  className="group bg-background border border-border rounded-lg p-5 flex items-center gap-4 hover:border-primary hover:bg-primary-light/40 hover:-translate-y-1 hover:shadow-card transition-all duration-300 ease-out"
                 >
-                  <span className="size-11 rounded-lg bg-primary-light text-primary flex items-center justify-center shrink-0 group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+                  <span className="size-11 rounded-lg bg-primary-light text-primary flex items-center justify-center shrink-0 group-hover:bg-primary group-hover:text-primary-foreground group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
                     <Icon className="size-5" strokeWidth={2} />
                   </span>
                   <div className="min-w-0">

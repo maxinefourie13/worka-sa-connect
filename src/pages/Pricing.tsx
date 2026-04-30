@@ -51,8 +51,8 @@ const Pricing = () => {
         </header>
 
         {/* Bold no-commission promise — kills the "hidden costs" red-team */}
-        <div className="max-w-3xl mx-auto mb-12 rounded-2xl border-2 border-primary/40 bg-primary/5 p-5 md:p-6 flex items-start gap-4">
-          <span className="size-12 rounded-xl bg-primary text-primary-foreground flex items-center justify-center shrink-0 font-display font-extrabold text-lg">0%</span>
+        <div className="max-w-3xl mx-auto mb-12 rounded-2xl border-2 border-primary/40 bg-primary/5 p-5 md:p-6 flex items-start gap-4 hover:border-primary hover:shadow-pop transition-all duration-300">
+          <span className="size-12 rounded-xl bg-primary text-primary-foreground flex items-center justify-center shrink-0 font-display font-extrabold text-lg animate-pulse-ring">0%</span>
           <div className="text-sm md:text-base">
             <p className="font-display font-extrabold tracking-tight text-foreground">
               0% commission. You keep every cent you earn.
@@ -72,8 +72,8 @@ const Pricing = () => {
               type="button"
               onClick={() => setCycle("monthly")}
               className={cn(
-                "px-5 py-2 rounded-full text-sm font-semibold transition-colors",
-                cycle === "monthly" ? "bg-foreground text-background" : "text-ink-2 hover:text-foreground",
+                "px-5 py-2 rounded-full text-sm font-semibold transition-all duration-200 ease-out active:scale-95",
+                cycle === "monthly" ? "bg-foreground text-background shadow-sm" : "text-ink-2 hover:text-foreground hover:bg-secondary",
               )}
               aria-pressed={cycle === "monthly"}
             >
@@ -83,15 +83,15 @@ const Pricing = () => {
               type="button"
               onClick={() => setCycle("annual")}
               className={cn(
-                "px-5 py-2 rounded-full text-sm font-semibold transition-colors flex items-center gap-2",
-                cycle === "annual" ? "bg-foreground text-background" : "text-ink-2 hover:text-foreground",
+                "px-5 py-2 rounded-full text-sm font-semibold transition-all duration-200 ease-out flex items-center gap-2 active:scale-95",
+                cycle === "annual" ? "bg-foreground text-background shadow-sm" : "text-ink-2 hover:text-foreground hover:bg-secondary",
               )}
               aria-pressed={cycle === "annual"}
             >
               Yearly
               <span className={cn(
-                "text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full",
-                cycle === "annual" ? "bg-primary text-primary-foreground" : "bg-primary/15 text-primary",
+                "text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full transition-transform",
+                cycle === "annual" ? "bg-primary text-primary-foreground animate-pop-in" : "bg-primary/15 text-primary",
               )}>
                 Save 10%
               </span>
@@ -111,21 +111,21 @@ const Pricing = () => {
             <div
               key={t.slug}
               className={cn(
-                "relative bg-card border rounded-2xl p-7 flex flex-col",
+                "group relative bg-card border rounded-2xl p-7 flex flex-col transition-all duration-300 ease-out hover:-translate-y-2",
                 t.popular
-                  ? "border-primary shadow-pop lg:scale-[1.03]"
+                  ? "border-primary shadow-pop lg:scale-[1.03] hover:shadow-[0_20px_60px_-15px_hsl(var(--primary)/0.45)]"
                   : t.featured
-                  ? "border-foreground shadow-pop"
-                  : "border-border shadow-card",
+                  ? "border-foreground shadow-pop hover:shadow-[0_20px_60px_-15px_hsl(var(--foreground)/0.4)]"
+                  : "border-border shadow-card hover:shadow-pop hover:border-primary/40",
               )}
             >
               {t.popular && (
-                <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full">
+                <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full animate-soft-bob">
                   Most popular
                 </span>
               )}
               {t.featured && (
-                <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-foreground text-background text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full">
+                <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-foreground text-background text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full animate-soft-bob">
                   Verified
                 </span>
               )}
@@ -144,8 +144,8 @@ const Pricing = () => {
               </div>
               <ul className="mt-5 space-y-3 flex-1">
                 {t.features.map((f) => (
-                  <li key={f} className="flex items-start gap-2.5 text-sm">
-                    <Check className="size-4 text-primary mt-0.5 shrink-0" strokeWidth={3} />
+                  <li key={f} className="flex items-start gap-2.5 text-sm group/item">
+                    <Check className="size-4 text-primary mt-0.5 shrink-0 transition-transform duration-200 group-hover/item:scale-125" strokeWidth={3} />
                     <span>{f}</span>
                   </li>
                 ))}

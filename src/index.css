@@ -159,6 +159,11 @@
     background-position: 0 0;
   }
 
+  /* Card hover lift — apply to non-button cards/tiles for consistent motion */
+  .lift-card {
+    @apply transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-pop;
+  }
+
   /* Moving black ↔ coral gradient — used on sample/preview cards */
   .sample-gradient {
     background: linear-gradient(
