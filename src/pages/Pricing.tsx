@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Check, Siren, Sparkles } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
@@ -5,26 +6,32 @@ import { Button } from "@/components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { SJOH_TIERS, formatRand } from "@/lib/mockData";
 import { cn } from "@/lib/utils";
-import { payments } from "@/lib/payments";
+import { payments, type BillingCycle } from "@/lib/payments";
 import { useAuth } from "@/hooks/useAuth";
 
 const FAQS = [
   { q: "How does the free trial work?", a: "New providers get 30 days on Basic Listing free — no card required. Early-access members get 2 months. After that, it is R50/month to stay listed." },
   { q: "What is the difference between Basic Listing and Verified Pro?", a: "Basic Listing (R50/mo) keeps you in the directory so customers can find and contact you directly. Verified Pro (R250/mo) adds the verified badge, top placement, and the ability to send quotes on customer requests." },
+  { q: "Pay monthly or yearly?", a: "Both. Pay yearly and you save 10% — that's R60 a year on Basic, or R300 a year on Verified Pro. Same plan, less moolah. Annual is non-refundable, so only pick yearly if you're sure." },
   { q: "Do you take commission on the work I do?", a: "Never. Sjoh is a directory — payments happen directly between you and your customer. We don't touch your money." },
   { q: "What is the Eish! Urgent option?", a: "Posting a request is always free. If it's urgent, customers can flag it as Eish! Urgent at no extra charge — it gets pinned to the top of the feed for 72 hours and notifies Verified Pros nearby." },
   { q: "What is Sjoh's Law?", a: "Three strikes and you're out. Flake on a job, do dangerous work, or refuse to pay for completed work — that's a strike. Three strikes and your ID is permanently banned." },
-  { q: "Can I cancel any time?", a: "Yes. Cancel or downgrade from your dashboard. No contracts, no cancellation fees." },
+  { q: "Can I cancel any time?", a: "Yes. Cancel or downgrade from your dashboard. No contracts, no cancellation fees. Annual plans run their full term — no partial refunds." },
 ];
+
+// Annual = pay 10 months, get 12 (i.e. 10% off the yearly cost).
+const annualPrice = (monthly: number) => Math.round(monthly * 12 * 0.9);
+const annualSaving = (monthly: number) => monthly * 12 - annualPrice(monthly);
 
 const Pricing = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const [cycle, setCycle] = useState<BillingCycle>("monthly");
 
   const handleTierClick = (slug: string) => {
     if (!user) { navigate("/auth"); return; }
     if (slug === "basic" || slug === "verified_pro") {
-      payments.startSubscription(slug);
+      payments.startSubscription(slug, cycle);
     } else {
       navigate("/list");
     }
