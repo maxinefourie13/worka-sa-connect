@@ -65,9 +65,49 @@ const Pricing = () => {
         </div>
 
 
+        {/* Billing-cycle toggle */}
+        <div className="flex justify-center mb-8">
+          <div className="inline-flex items-center gap-1 p-1 rounded-full border border-border bg-card shadow-card">
+            <button
+              type="button"
+              onClick={() => setCycle("monthly")}
+              className={cn(
+                "px-5 py-2 rounded-full text-sm font-semibold transition-colors",
+                cycle === "monthly" ? "bg-foreground text-background" : "text-ink-2 hover:text-foreground",
+              )}
+              aria-pressed={cycle === "monthly"}
+            >
+              Monthly
+            </button>
+            <button
+              type="button"
+              onClick={() => setCycle("annual")}
+              className={cn(
+                "px-5 py-2 rounded-full text-sm font-semibold transition-colors flex items-center gap-2",
+                cycle === "annual" ? "bg-foreground text-background" : "text-ink-2 hover:text-foreground",
+              )}
+              aria-pressed={cycle === "annual"}
+            >
+              Yearly
+              <span className={cn(
+                "text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full",
+                cycle === "annual" ? "bg-primary text-primary-foreground" : "bg-primary/15 text-primary",
+              )}>
+                Save 10%
+              </span>
+            </button>
+          </div>
+        </div>
+
         {/* Tiers */}
         <div className="grid lg:grid-cols-3 gap-5 max-w-6xl mx-auto">
-          {SJOH_TIERS.map((t) => (
+          {SJOH_TIERS.map((t) => {
+            const isPaidTier = t.slug === "basic" || t.slug === "verified_pro";
+            const showAnnual = isPaidTier && cycle === "annual";
+            const displayPrice = showAnnual ? annualPrice(t.price) : t.price;
+            const displayPeriod = showAnnual ? "/year" : t.period;
+            const saving = showAnnual ? annualSaving(t.price) : 0;
+            return (
             <div
               key={t.slug}
               className={cn(
@@ -93,9 +133,14 @@ const Pricing = () => {
               <p className="text-sm text-ink-2 mt-1">{t.blurb}</p>
               <div className="mt-6 pb-6 border-b border-border">
                 <span className="font-display text-5xl font-medium tracking-tight">
-                  {t.price === 0 ? "R 0" : formatRand(t.price)}
+                  {displayPrice === 0 ? "R 0" : formatRand(displayPrice)}
                 </span>
-                <span className="text-sm text-muted-foreground"> {t.period}</span>
+                <span className="text-sm text-muted-foreground"> {displayPeriod}</span>
+                {showAnnual && (
+                  <p className="mt-2 text-xs text-ink-2">
+                    ≈ {formatRand(Math.round(displayPrice / 12))}/mo · <span className="text-primary font-semibold">save {formatRand(saving)} a year</span>
+                  </p>
+                )}
               </div>
               <ul className="mt-5 space-y-3 flex-1">
                 {t.features.map((f) => (
@@ -111,10 +156,15 @@ const Pricing = () => {
                 className="mt-7"
                 onClick={() => handleTierClick(t.slug)}
               >
-                {t.slug === "basic_trial" ? "Start free trial" : `Choose ${t.name}`}
+                {t.slug === "basic_trial"
+                  ? "Start free trial"
+                  : showAnnual
+                    ? `Choose ${t.name} — yearly`
+                    : `Choose ${t.name}`}
               </Button>
             </div>
-          ))}
+            );
+          })}
         </div>
 
         {/* Founding-member perk */}
