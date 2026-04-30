@@ -284,14 +284,48 @@ const PostOpportunity = () => {
               <input name="deadline" type="date" className="input" />
             </Field>
             <Field label="Contact preference">
-              <select className="input cursor-pointer">
-                <option>WhatsApp</option>
-                <option>Phone call</option>
-                <option>Email</option>
-                <option>In-platform messages</option>
+              <select name="contact_preference" defaultValue="whatsapp" className="input cursor-pointer">
+                <option value="whatsapp">WhatsApp</option>
+                <option value="phone">Phone call</option>
+                <option value="email">Email</option>
               </select>
             </Field>
           </div>
+
+          {/* Contact details — privacy-promise block */}
+          <div className="rounded-2xl border-2 border-primary/20 bg-primary/5 p-4 md:p-5 space-y-4">
+            <div className="flex items-start gap-2.5">
+              <ShieldCheck className="size-5 text-primary shrink-0 mt-0.5" />
+              <div className="text-sm">
+                <div className="font-display font-bold text-base">We take your privacy seriously</div>
+                <p className="text-ink-2 mt-1 leading-relaxed">
+                  Your phone number and email are <span className="font-semibold text-foreground">never shared with businesses</span> until you explicitly accept their quote. Pros only see the job description and photos.
+                </p>
+              </div>
+            </div>
+            <div className="grid sm:grid-cols-2 gap-4">
+              <Field label="Phone (for WhatsApp / call)" required>
+                <input
+                  required
+                  name="client_phone"
+                  type="tel"
+                  className="input"
+                  placeholder="082 123 4567"
+                  pattern="[0-9+\s\-()]{8,}"
+                />
+              </Field>
+              <Field label="Email">
+                <input
+                  name="client_email"
+                  type="email"
+                  className="input"
+                  defaultValue={user?.email ?? ""}
+                  placeholder="you@email.com"
+                />
+              </Field>
+            </div>
+          </div>
+
           <Field label="Specific requirements">
             <textarea name="requirements" rows={3} className="input resize-none" placeholder="Certifications, references, insurance, etc." />
           </Field>
