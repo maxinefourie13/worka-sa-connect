@@ -438,6 +438,8 @@ export interface Opportunity {
   isConciergeLead?: boolean;
   /** Where the original lead lives (FB post URL, wa.me link, etc.) */
   externalContactUrl?: string | null;
+  /** Photos / PDFs the customer attached to give pros visual context for accurate quotes. */
+  attachments?: Array<{ url: string; name: string; type: string; size: number }>;
 }
 
 export const OPPORTUNITIES: Opportunity[] = [
