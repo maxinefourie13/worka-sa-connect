@@ -445,6 +445,7 @@ export type Database = {
       opportunities: {
         Row: {
           applicants_count: number
+          attachments: Json
           budget: number
           budget_type: Database["public"]["Enums"]["budget_type"]
           category_name: string
@@ -469,6 +470,7 @@ export type Database = {
         }
         Insert: {
           applicants_count?: number
+          attachments?: Json
           budget?: number
           budget_type?: Database["public"]["Enums"]["budget_type"]
           category_name: string
@@ -493,6 +495,7 @@ export type Database = {
         }
         Update: {
           applicants_count?: number
+          attachments?: Json
           budget?: number
           budget_type?: Database["public"]["Enums"]["budget_type"]
           category_name?: string
