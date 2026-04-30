@@ -26,7 +26,7 @@ const HERO_PHRASES = [
   "Sjoh! Too much month at the end of the money? Start a hustle.",
   "Sjoh! Kitchen looking like a swimming pool? Dala a vetted plumber.",
   "Sjoh! Turn your 'I know a guy' status into a legit business.",
-  "Sjoh! Still waiting on the 'Sober Monday' guy? Hire vetted pros instead.",
+  
   "Sjoh! Power bill giving you chest pains? Offer your services.",
   "Sjoh! Don't let a mampara tile your bathroom. Get real quotes.",
   "Sjoh! Got skills but no leads? List your services today.",
