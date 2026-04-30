@@ -543,20 +543,24 @@ const NotificationPrefsCard = () => {
   const { user } = useAuth();
   const [emailOn, setEmailOn] = useState(true);
   const [pushOn, setPushOn] = useState(false);
+  const [waOn, setWaOn] = useState(false);
+  const [waNumber, setWaNumber] = useState("");
   const [loading, setLoading] = useState(true);
-  const [busy, setBusy] = useState<"email" | "push" | null>(null);
+  const [busy, setBusy] = useState<"email" | "push" | "wa" | null>(null);
 
   useEffect(() => {
     if (!user) return;
     (async () => {
       const { data } = await supabase
         .from("provider_balances")
-        .select("email_alerts_optin, push_alerts_optin")
+        .select("email_alerts_optin, push_alerts_optin, whatsapp_alerts_optin, whatsapp_number")
         .eq("user_id", user.id)
         .maybeSingle();
       if (data) {
         setEmailOn(data.email_alerts_optin ?? true);
         setPushOn(data.push_alerts_optin ?? false);
+        setWaOn((data as any).whatsapp_alerts_optin ?? false);
+        setWaNumber((data as any).whatsapp_number ?? "");
       }
       setLoading(false);
     })();
