@@ -97,8 +97,8 @@ const DirectoryPage = () => {
           </h1>
           <p className="mt-3 text-ink-2">
             {activeGroup
-              ? `Browse trusted ${activeGroup.name.toLowerCase()} businesses across ${PROVINCES.length} provinces.`
-              : `Try: wedding photographer, electrician, steel fabrication. Trusted businesses across ${PROVINCES.length} provinces.`}
+              ? `Browse trusted ${activeGroup.name.toLowerCase()} businesses across all 9 provinces.`
+              : `Try: wedding photographer, electrician, steel fabrication. Trusted businesses across all 9 provinces.`}
           </p>
         </header>
 
