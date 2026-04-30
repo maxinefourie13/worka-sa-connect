@@ -268,6 +268,16 @@ const LeadDetail = () => {
               <ContactRow label="Phone" value={contact.client_phone} icon={Phone} />
               <ContactRow label="Email" value={contact.client_email} icon={Mail} />
               <ContactRow label="Preferred" value={contact.contact_preference} icon={MessageCircle} />
+
+              <div className="mt-4 flex items-start gap-2 rounded-lg bg-amber-50 dark:bg-amber-950/20 border border-amber-300/60 dark:border-amber-700/40 p-3 text-sm">
+                <ShieldCheck className="size-4 text-amber-700 dark:text-amber-400 mt-0.5 shrink-0" />
+                <p className="text-amber-900 dark:text-amber-200 leading-relaxed">
+                  <span className="font-bold">🔒 Safety First:</span>{" "}
+                  Verify that the person who arrives matches their profile photo.
+                  Contact us immediately if it is someone else.
+                </p>
+              </div>
+
               {whatsappLink && (
                 <a
                   href={whatsappLink}
