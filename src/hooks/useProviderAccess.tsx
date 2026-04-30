@@ -66,7 +66,7 @@ export function useProviderAccess(): ProviderAccess {
   useEffect(() => {
     if (!user) { setState({ ...DEFAULT, loading: false }); return; }
     (async () => {
-      const [{ data: bal }, { data: foundingFlag }, { data: kycCount }] = await Promise.all([
+      const [{ data: bal }, { data: foundingFlag }, kycRes] = await Promise.all([
         supabase
           .from("provider_balances")
           .select("tier, trial_ends_at, tier_expires_at, founding_proposals_used_this_month, founding_proposals_period_start")
@@ -81,7 +81,7 @@ export function useProviderAccess(): ProviderAccess {
       ]);
 
       const isFoundingMember = !!foundingFlag;
-      const hasKycBusiness = (kycCount ?? 0) > 0;
+      const hasKycBusiness = (kycRes.count ?? 0) > 0;
 
       if (!bal) {
         setState({
