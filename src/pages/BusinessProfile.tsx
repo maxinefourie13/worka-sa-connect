@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { ArrowLeft, Phone, Mail, MessageCircle, MapPin, Clock, Globe, ShieldCheck, FileText } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
@@ -55,12 +55,17 @@ const BusinessProfile = () => {
   const [following, setFollowing] = useState(false);
   const [followers, setFollowers] = useState(0);
   const { count: verifiedHires } = useVerifiedHiresCount(business?.id);
+  // Hooks are called unconditionally above the early returns to keep hook
+  // order stable across slug changes.
+  const { user } = useAuth();
+  const { contact: revealed, loading: revealing, reveal } = useRevealContact(business?.id);
 
-  // Sync follower count once business resolves.
-  if (business && followers === 0 && business.followers > 0) {
-    // initial set without an effect (idempotent under React 18 strict mode)
-    setFollowers(business.followers);
-  }
+  // Sync follower count when business resolves or changes.
+  // Doing this in an effect (not in the render body) avoids a render-phase
+  // setState which logs a warning and can re-render-loop under StrictMode.
+  useEffect(() => {
+    if (business) setFollowers(business.followers ?? 0);
+  }, [business?.id, business?.followers]);
 
   if (loading) {
     return (
@@ -94,9 +99,6 @@ const BusinessProfile = () => {
       return next;
     });
   };
-
-  const { user } = useAuth();
-  const { contact: revealed, loading: revealing, reveal } = useRevealContact(business.id);
 
   // Bot protection: never inline phone/email in the public HTML. Visitors must
   // click "Reveal" (which is auth-gated + rate-limited server-side) before any

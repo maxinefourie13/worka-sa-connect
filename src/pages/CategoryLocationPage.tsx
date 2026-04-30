@@ -12,6 +12,7 @@ import {
   buildLocationCanonical,
   buildLocationJsonLd,
   isReservedSlug,
+  categoryKeyword,
   type BusinessForJsonLd,
 } from "@/lib/seo";
 import { CATEGORIES, PROVINCES } from "@/lib/mockData";
@@ -28,7 +29,6 @@ interface BizRow {
   description: string | null;
   rating: number;
   review_count: number;
-  phone: string | null;
   address: string | null;
   website: string | null;
   is_verified: boolean;
@@ -63,10 +63,12 @@ const CategoryLocationPage = () => {
     setLoading(true);
 
     (async () => {
+      // Use the businesses_public view: it strips PII (phone, email, etc.)
+      // so anonymous visitors and SSR-style scrapes never see contact details.
       let query = supabase
-        .from("businesses")
+        .from("businesses_public" as any)
         .select(
-          "id,slug,name,city,province,category_name,category_slug,description,rating,review_count,phone,address,website,is_verified",
+          "id,slug,name,city,province,category_name,category_slug,description,rating,review_count,address,website,is_verified",
         )
         .eq("category_slug", categorySlug)
         .eq("is_verified", true)
@@ -108,15 +110,17 @@ const CategoryLocationPage = () => {
   }, [categorySlug, provinceName, cityName, citySlug]);
 
   const categoryName = category?.name ?? (categorySlug ? titleFromSlug(categorySlug) : "Services");
+  // Search-friendly noun (e.g. "Plumber" instead of "Plumbing") for headings + meta.
+  const keyword = categoryKeyword(categorySlug);
   const locationLabel = cityName
     ? `${cityName}`
     : provinceName
     ? `${provinceName}`
     : "South Africa";
 
-  const heading = `Find the Best ${categoryName} in ${locationLabel}`;
-  const title = `Top ${categoryName} in ${locationLabel} | Verified Pros | Sjoh!`;
-  const description = `Looking for a trusted ${categoryName} in ${locationLabel}? Get quotes from vetted professionals. No ghosters, no half-jobs — just actual pros.`;
+  const heading = `Find a ${keyword} in ${locationLabel}`;
+  const title = `Top ${keyword}s in ${locationLabel} | Verified Pros | Sjoh!`;
+  const description = `Need a ${keyword.toLowerCase()} in ${locationLabel}? Get quotes from vetted South African pros. No ghosters, no half-jobs — just okes who can do it properly.`;
   const canonical = buildLocationCanonical(categorySlug ?? "", provinceSlug, citySlug);
 
   const jsonLd = useMemo<BusinessForJsonLd[]>(
@@ -129,7 +133,7 @@ const CategoryLocationPage = () => {
         province: b.province,
         rating: b.rating,
         review_count: b.review_count,
-        phone: b.phone,
+        // No phone in JSON-LD — bot scraping prevention.
         address: b.address,
         website: b.website,
       })),

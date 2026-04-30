@@ -281,7 +281,7 @@ const LeadDetail = () => {
                 <CheckCircle2 className="size-4 text-primary mt-0.5 shrink-0" />
                 <div>
                   <div className="font-semibold text-primary">
-                    {revealReason === "urgent_emergency" ? "Eish! Urgent — contact unlocked" : "The customer accepted your quote"}
+                    The customer accepted your quote
                   </div>
                   <p className="text-ink-2 text-xs mt-0.5">Reach out now. Sjoh doesn't take a cut — you deal direct.</p>
                 </div>
@@ -314,12 +314,12 @@ const LeadDetail = () => {
               <Lock className="size-5 text-muted-foreground shrink-0 mt-0.5" />
               <div>
                 <p className="text-ink-2 leading-relaxed">
-                  <span className="font-semibold text-foreground">Contact details are hidden for privacy.</span><br />
-                  They will be revealed instantly once the customer accepts your quote.
+                  <span className="font-semibold text-foreground">Contact details are hidden until the customer accepts your quote.</span><br />
+                  This applies to <span className="font-semibold">every job — urgent or not</span>. It's how we protect the customer (and you) from scams and bad actors. Send a sharp quote and you'll be the one they pick.
                 </p>
                 {opp.is_urgent && (
                   <p className="text-xs text-accent mt-2 font-semibold">
-                    Eish! Urgent: Verified Pros (R250 + KYC) get contact unlocked the moment they send a quote.
+                    Eish! Urgent jobs get prioritised in the customer's inbox — but contact still only unlocks on acceptance.
                   </p>
                 )}
               </div>
