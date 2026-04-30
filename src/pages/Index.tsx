@@ -7,6 +7,7 @@ import { FlameButton } from "@/components/ui/flame-button";
 import { BusinessCard } from "@/components/BusinessCard";
 import { JobCard } from "@/components/JobCard";
 import { Typewriter } from "@/components/Typewriter";
+import { FoundingSpotsBanner } from "@/components/FoundingSpotsBanner";
 import { CATEGORIES, CATEGORY_GROUPS, PROVINCES, STATS } from "@/lib/mockData";
 import { useBusinesses, useOpportunities } from "@/hooks/useDirectory";
 import { getCategoryGroupIcon } from "@/lib/categoryIcons";
@@ -77,9 +78,12 @@ const HomePage = () => {
       <section className="relative overflow-hidden border-b border-border bg-background">
         <div className="absolute inset-0 bg-grid-soft opacity-40 [mask-image:radial-gradient(ellipse_at_center,black_30%,transparent_75%)]" />
         <div className="container relative pt-20 pb-24 lg:pt-28 lg:pb-32 text-center">
-          <span className="inline-flex items-center px-3 py-1 rounded-full bg-primary-light text-primary text-xs font-semibold mb-8">
+          <span className="inline-flex items-center px-3 py-1 rounded-full bg-primary-light text-primary text-xs font-semibold mb-4">
             No commission. No middlemen. Direct contact.
           </span>
+          <div className="mb-8 flex justify-center">
+            <FoundingSpotsBanner />
+          </div>
 
           {/* Hero typewriter — the SA-flavoured Sjoh! line is the centrepiece */}
           <div className="min-h-[14rem] sm:min-h-[12rem] md:min-h-[13rem] lg:min-h-[14rem] flex items-center justify-center">

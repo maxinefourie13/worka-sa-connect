@@ -147,6 +147,7 @@ export type Database = {
           last_active_at: string
           listing_status: string
           name: string
+          no_show_count: number
           owner_id: string
           phone: string | null
           plan: Database["public"]["Enums"]["business_plan"]
@@ -159,6 +160,7 @@ export type Database = {
           slug: string
           strikes: number
           tags: string[]
+          trust_score: number
           updated_at: string
           website: string | null
         }
@@ -190,6 +192,7 @@ export type Database = {
           last_active_at?: string
           listing_status?: string
           name: string
+          no_show_count?: number
           owner_id: string
           phone?: string | null
           plan?: Database["public"]["Enums"]["business_plan"]
@@ -202,6 +205,7 @@ export type Database = {
           slug: string
           strikes?: number
           tags?: string[]
+          trust_score?: number
           updated_at?: string
           website?: string | null
         }
@@ -233,6 +237,7 @@ export type Database = {
           last_active_at?: string
           listing_status?: string
           name?: string
+          no_show_count?: number
           owner_id?: string
           phone?: string | null
           plan?: Database["public"]["Enums"]["business_plan"]
@@ -245,6 +250,7 @@ export type Database = {
           slug?: string
           strikes?: number
           tags?: string[]
+          trust_score?: number
           updated_at?: string
           website?: string | null
         }
@@ -442,6 +448,81 @@ export type Database = {
         }
         Relationships: []
       }
+      no_show_reports: {
+        Row: {
+          business_id: string
+          created_at: string
+          deal_memo_id: string | null
+          id: string
+          proposal_id: string | null
+          reason: string | null
+          reporter_id: string
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string
+        }
+        Insert: {
+          business_id: string
+          created_at?: string
+          deal_memo_id?: string | null
+          id?: string
+          proposal_id?: string | null
+          reason?: string | null
+          reporter_id: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+        }
+        Update: {
+          business_id?: string
+          created_at?: string
+          deal_memo_id?: string | null
+          id?: string
+          proposal_id?: string | null
+          reason?: string | null
+          reporter_id?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "no_show_reports_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "business_verified_status"
+            referencedColumns: ["business_id"]
+          },
+          {
+            foreignKeyName: "no_show_reports_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "no_show_reports_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses_public"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "no_show_reports_deal_memo_id_fkey"
+            columns: ["deal_memo_id"]
+            isOneToOne: false
+            referencedRelation: "deal_memos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "no_show_reports_proposal_id_fkey"
+            columns: ["proposal_id"]
+            isOneToOne: false
+            referencedRelation: "proposals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       opportunities: {
         Row: {
           applicants_count: number
@@ -451,7 +532,10 @@ export type Database = {
           category_name: string
           category_slug: string
           city: string
+          client_email: string | null
           client_id: string | null
+          client_phone: string | null
+          contact_preference: string | null
           created_at: string
           deadline: string | null
           description: string
@@ -476,7 +560,10 @@ export type Database = {
           category_name: string
           category_slug: string
           city: string
+          client_email?: string | null
           client_id?: string | null
+          client_phone?: string | null
+          contact_preference?: string | null
           created_at?: string
           deadline?: string | null
           description: string
@@ -501,7 +588,10 @@ export type Database = {
           category_name?: string
           category_slug?: string
           city?: string
+          client_email?: string | null
           client_id?: string | null
+          client_phone?: string | null
+          contact_preference?: string | null
           created_at?: string
           deadline?: string | null
           description?: string
@@ -1132,6 +1222,14 @@ export type Database = {
     }
     Functions: {
       accept_deal_memo: { Args: { _id: string }; Returns: undefined }
+      accept_quote: {
+        Args: { _proposal_id: string }
+        Returns: {
+          client_email: string
+          client_phone: string
+          contact_preference: string
+        }[]
+      }
       admin_create_founding_signup: {
         Args: { _email: string; _role: string }
         Returns: string
@@ -1164,6 +1262,14 @@ export type Database = {
         Returns: undefined
       }
       bump_last_active: { Args: never; Returns: undefined }
+      business_avg_response_hours: {
+        Args: { _business_id: string }
+        Returns: number
+      }
+      business_last_completed_at: {
+        Args: { _business_id: string }
+        Returns: string
+      }
       business_lead_count: {
         Args: { _business_id: string; _since?: string }
         Returns: number
@@ -1197,6 +1303,27 @@ export type Database = {
           role: string
         }[]
       }
+      get_founding_spots_remaining: { Args: never; Returns: number }
+      get_my_opportunity: {
+        Args: { _id: string }
+        Returns: {
+          attachments: Json
+          budget: number
+          category_name: string
+          category_slug: string
+          city: string
+          client_email: string
+          client_phone: string
+          contact_preference: string
+          created_at: string
+          description: string
+          id: string
+          is_urgent: boolean
+          province: string
+          status: Database["public"]["Enums"]["opportunity_status"]
+          title: string
+        }[]
+      }
       get_opportunity_for_viewer: {
         Args: { _opportunity_id: string }
         Returns: {
@@ -1218,6 +1345,16 @@ export type Database = {
           requirements: string[]
           status: Database["public"]["Enums"]["opportunity_status"]
           title: string
+        }[]
+      }
+      get_revealed_contact: {
+        Args: { _proposal_id: string }
+        Returns: {
+          client_email: string
+          client_phone: string
+          contact_preference: string
+          reason: string
+          revealed: boolean
         }[]
       }
       has_active_listing_access: {
@@ -1261,6 +1398,10 @@ export type Database = {
           msg_id: number
           read_ct: number
         }[]
+      }
+      recompute_trust_score: {
+        Args: { _business_id: string }
+        Returns: undefined
       }
       report_business: {
         Args: { _business_id: string; _details?: string; _reason: string }
