@@ -153,6 +153,48 @@ const HomePage = () => {
         </div>
       </section>
 
+      {/* Customer dual pathway */}
+      <section className="border-b border-border bg-background">
+        <div className="container py-16 md:py-20">
+          <div className="text-center max-w-2xl mx-auto mb-10">
+            <span className="text-xs font-bold uppercase tracking-widest text-primary">Two ways to find help</span>
+            <h2 className="font-display text-3xl md:text-4xl font-extrabold tracking-tight mt-3">
+              Pick the path that suits you.
+            </h2>
+          </div>
+          <div className="grid md:grid-cols-2 gap-5 max-w-4xl mx-auto">
+            <div className="group bg-card border border-border rounded-2xl p-7 md:p-8 hover:border-primary hover:shadow-pop transition-all flex flex-col">
+              <span className="inline-flex items-center self-start gap-1.5 text-[10px] font-bold uppercase tracking-widest text-primary bg-primary/10 px-2.5 py-1 rounded-full">
+                Recommended
+              </span>
+              <h3 className="font-display text-2xl font-extrabold tracking-tight mt-4">
+                Let the Pros come to you.
+              </h3>
+              <p className="mt-2 text-ink-2 leading-relaxed flex-1">
+                Tell us what you need, and available pros in your area will send you quotes.
+              </p>
+              <Button size="lg" className="mt-6 w-full font-bold" asChild>
+                <Link to="/requests/new">Get Quotes</Link>
+              </Button>
+            </div>
+            <div className="group bg-card border border-border rounded-2xl p-7 md:p-8 hover:border-foreground hover:shadow-pop transition-all flex flex-col">
+              <span className="inline-flex items-center self-start gap-1.5 text-[10px] font-bold uppercase tracking-widest text-foreground bg-foreground/10 px-2.5 py-1 rounded-full">
+                Hands-on
+              </span>
+              <h3 className="font-display text-2xl font-extrabold tracking-tight mt-4">
+                Browse and contact directly.
+              </h3>
+              <p className="mt-2 text-ink-2 leading-relaxed flex-1">
+                Prefer to hunt? Search our directory and contact pros on your own terms.
+              </p>
+              <Button size="lg" variant="ink" className="mt-6 w-full font-bold" asChild>
+                <Link to="/directory">Search Directory</Link>
+              </Button>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Stats bar */}
       <section className="bg-card border-b border-border">
         <div className="container py-10">
