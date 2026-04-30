@@ -70,6 +70,7 @@ function mapOpportunity(row: any): Opportunity {
     urgentBoostPaidAt: boostedAt ?? null,
     isConciergeLead: !!row.is_concierge_lead,
     externalContactUrl: row.external_contact_url ?? null,
+    attachments: Array.isArray(row.attachments) ? row.attachments : [],
   };
 }
 
