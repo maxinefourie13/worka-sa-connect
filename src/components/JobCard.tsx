@@ -19,10 +19,13 @@ interface JobCardProps {
   proCity?: string;
 }
 
-export const JobCard = ({ job, className, clientHireCount }: JobCardProps) => {
+export const JobCard = ({ job, className, clientHireCount, isProView, proCity }: JobCardProps) => {
   const { user } = useAuth();
   const isOwner = !!user && !!job.clientId && user.id === job.clientId;
   const isBoosted = !!job.urgentBoostPaidAt && (Date.now() - new Date(job.urgentBoostPaidAt).getTime()) < 72 * 3600 * 1000;
+  const fresh = freshnessFromIso(job.createdAt, job.postedAt);
+  const competition = competitionSignal(job.applicants);
+  const isNearby = !!proCity && !!job.city && proCity.trim().toLowerCase() === job.city.trim().toLowerCase();
 
   return (
     <div className={className}>
