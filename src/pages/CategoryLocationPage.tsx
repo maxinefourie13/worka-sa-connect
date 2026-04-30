@@ -16,6 +16,7 @@ import {
   type BusinessForJsonLd,
 } from "@/lib/seo";
 import { CATEGORIES, PROVINCES } from "@/lib/mockData";
+import { EXAMPLE_BUSINESS_ID } from "@/lib/exampleBusiness";
 import { Star, MapPin, ShieldCheck } from "lucide-react";
 
 interface BizRow {
@@ -123,6 +124,26 @@ const CategoryLocationPage = () => {
   const description = `Need a ${keyword.toLowerCase()} in ${locationLabel}? Get quotes from vetted South African pros. No ghosters, no half-jobs — just okes who can do it properly.`;
   const canonical = buildLocationCanonical(categorySlug ?? "", provinceSlug, citySlug);
 
+  // Example/preview row injected into every category page until we have enough
+  // real verified pros. Excluded from JSON-LD so it doesn't pollute structured data.
+  const exampleRow: BizRow = {
+    id: EXAMPLE_BUSINESS_ID,
+    slug: EXAMPLE_BUSINESS_ID,
+    name: "Example Business",
+    city: cityName ?? "Your city",
+    province: provinceName ?? "Your province",
+    category_name: categoryName,
+    category_slug: categorySlug ?? "",
+    description:
+      "This is what your listing will look like — your name, photo, services and reviews live here. List your business to claim your spot.",
+    rating: 0,
+    review_count: 0,
+    address: null,
+    website: null,
+    is_verified: false,
+  };
+  const displayRows = [exampleRow, ...rows];
+
   const jsonLd = useMemo<BusinessForJsonLd[]>(
     () =>
       rows.map((b) => ({
@@ -205,51 +226,74 @@ const CategoryLocationPage = () => {
           <div className="py-20 flex justify-center">
             <SjohSpinner />
           </div>
-        ) : rows.length === 0 ? (
-          <div className="bg-card border border-border rounded-2xl p-10 text-center">
-            <p className="font-display text-2xl font-semibold">
-              Eish, no verified okes here yet.
-            </p>
-            <p className="text-ink-2 mt-2">
-              Be the first verified {categoryName.toLowerCase()} in {locationLabel}.
-            </p>
-            <Link
-              to="/list"
-              className="inline-block mt-5 text-sm font-bold text-primary hover:underline"
-            >
-              List your business →
-            </Link>
-          </div>
         ) : (
-          <div className="grid sm:grid-cols-2 gap-4">
-            {rows.map((b) => (
-              <Link
-                key={b.id}
-                to={`/business/${b.slug}`}
-                className="block bg-card border border-border rounded-xl p-5 hover:border-primary transition-colors shadow-card"
-              >
-                <div className="flex items-start justify-between gap-2">
-                  <h2 className="font-display text-lg font-semibold leading-tight">{b.name}</h2>
-                  {b.is_verified && (
-                    <ShieldCheck className="size-4 text-primary shrink-0" strokeWidth={2.5} />
-                  )}
-                </div>
-                <p className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
-                  <MapPin className="size-3" /> {b.city}, {b.province}
+          <>
+            {rows.length === 0 && (
+              <div className="bg-card border border-border rounded-2xl p-6 mb-6 text-center">
+                <p className="font-display text-lg font-semibold">
+                  Eish, no verified okes here yet — be the first.
                 </p>
-                {b.description && (
-                  <p className="text-sm text-ink-2 mt-3 line-clamp-2">{b.description}</p>
-                )}
-                <div className="mt-4 flex items-center gap-2 text-sm">
-                  <Star className="size-4 fill-accent text-accent" />
-                  <span className="font-semibold tabular-nums">{b.rating.toFixed(1)}</span>
-                  <span className="text-muted-foreground text-xs">
-                    ({b.review_count} review{b.review_count === 1 ? "" : "s"})
-                  </span>
-                </div>
-              </Link>
-            ))}
-          </div>
+                <p className="text-ink-2 text-sm mt-1">
+                  Here's a preview of how your listing will look.
+                </p>
+              </div>
+            )}
+            <div className="grid sm:grid-cols-2 gap-4">
+              {displayRows.map((b) =>
+                b.id === EXAMPLE_BUSINESS_ID ? (
+                  <div
+                    key={b.id}
+                    className="block bg-card border-2 border-dashed border-primary/60 rounded-xl p-5 shadow-card relative"
+                  >
+                    <span className="absolute top-3 right-3 bg-primary text-primary-foreground text-[10px] font-bold tracking-widest uppercase px-2 py-1 rounded">
+                      Sample
+                    </span>
+                    <h2 className="font-display text-lg font-semibold leading-tight pr-16">
+                      {b.name}
+                    </h2>
+                    <p className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
+                      <MapPin className="size-3" /> {b.city}, {b.province}
+                    </p>
+                    <p className="text-sm text-ink-2 mt-3">
+                      This is what your listing will look like — your name, photo, services and reviews live here.
+                    </p>
+                    <Link
+                      to="/list"
+                      className="mt-4 inline-block text-sm font-bold text-primary hover:underline"
+                    >
+                      List your business →
+                    </Link>
+                  </div>
+                ) : (
+                  <Link
+                    key={b.id}
+                    to={`/business/${b.slug}`}
+                    className="block bg-card border border-border rounded-xl p-5 hover:border-primary transition-colors shadow-card"
+                  >
+                    <div className="flex items-start justify-between gap-2">
+                      <h2 className="font-display text-lg font-semibold leading-tight">{b.name}</h2>
+                      {b.is_verified && (
+                        <ShieldCheck className="size-4 text-primary shrink-0" strokeWidth={2.5} />
+                      )}
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
+                      <MapPin className="size-3" /> {b.city}, {b.province}
+                    </p>
+                    {b.description && (
+                      <p className="text-sm text-ink-2 mt-3 line-clamp-2">{b.description}</p>
+                    )}
+                    <div className="mt-4 flex items-center gap-2 text-sm">
+                      <Star className="size-4 fill-accent text-accent" />
+                      <span className="font-semibold tabular-nums">{b.rating.toFixed(1)}</span>
+                      <span className="text-muted-foreground text-xs">
+                        ({b.review_count} review{b.review_count === 1 ? "" : "s"})
+                      </span>
+                    </div>
+                  </Link>
+                ),
+              )}
+            </div>
+          </>
         )}
 
         {/* Internal links: sibling cities + sibling categories for SEO depth */}

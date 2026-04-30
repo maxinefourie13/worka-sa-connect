@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { VerifiedBadge } from "@/components/VerifiedBadge";
 import type { Business } from "@/lib/mockData";
+import { EXAMPLE_BUSINESS_ID } from "@/lib/exampleBusiness";
 import { cn } from "@/lib/utils";
 
 interface BusinessCardProps {
@@ -15,6 +16,8 @@ export const BusinessCard = ({ business, className }: BusinessCardProps) => {
   const [following, setFollowing] = useState(false);
   const [followers, setFollowers] = useState(business.followers);
 
+  const isExample = business.id === EXAMPLE_BUSINESS_ID;
+
   const toggle = (e: React.MouseEvent) => {
     e.preventDefault();
     setFollowing((f) => {
@@ -24,6 +27,59 @@ export const BusinessCard = ({ business, className }: BusinessCardProps) => {
     });
   };
 
+  // ---- Example / preview card ----------------------------------------------
+  if (isExample) {
+    return (
+      <div
+        className={cn(
+          "group relative block bg-card rounded-xl border-2 border-dashed border-primary/60 overflow-hidden shadow-card",
+          className,
+        )}
+        aria-label="Example listing preview"
+      >
+        <div className={cn("h-28 relative overflow-hidden", business.gradient)}>
+          <span className="absolute top-3 left-3 z-10 bg-primary text-primary-foreground text-[10px] font-bold tracking-widest uppercase px-2 py-1 rounded">
+            Sample listing
+          </span>
+          <div className="absolute -bottom-7 left-5 z-10 size-14 rounded-xl bg-card border-4 border-card shadow-soft flex items-center justify-center font-display font-bold text-xl text-foreground">
+            {business.name.charAt(0)}
+          </div>
+        </div>
+
+        <div className="pt-10 px-5 pb-5">
+          <h3 className="font-display text-lg font-semibold leading-snug">
+            {business.name}
+          </h3>
+          <p className="mt-1 text-xs text-muted-foreground">
+            {business.category} <span className="opacity-50">·</span> {business.city}
+          </p>
+
+          <div className="mt-3 flex flex-wrap gap-1.5">
+            {business.tags.slice(0, 3).map((tag) => (
+              <span
+                key={tag}
+                className="text-[11px] font-medium px-2 py-0.5 rounded bg-primary/10 text-primary"
+              >
+                {tag}
+              </span>
+            ))}
+          </div>
+
+          <p className="mt-3 text-xs text-ink-2 leading-relaxed">
+            This is what your listing will look like.
+          </p>
+
+          <div className="mt-4">
+            <Button asChild size="sm" className="w-full h-8 text-xs">
+              <Link to="/list">List your business →</Link>
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ---- Real card ------------------------------------------------------------
   return (
     <Link
       to={`/business/${business.slug}`}
