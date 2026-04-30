@@ -1,6 +1,6 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { ArrowLeft, CheckCircle2, Siren, ImagePlus, X, FileText, Loader2 } from "lucide-react";
+import { ArrowLeft, CheckCircle2, Siren, ImagePlus, X, FileText, Loader2, HardHat } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
 import { Button } from "@/components/ui/button";
 import { LiabilityDisclaimer } from "@/components/LiabilityDisclaimer";
@@ -32,12 +32,47 @@ const PostOpportunity = () => {
   const [submitting, setSubmitting] = useState(false);
   const [groupSlug, setGroupSlug] = useState("");
   const [categorySlug, setCategorySlug] = useState("");
+  const [province, setProvince] = useState("");
+  const [city, setCity] = useState("");
   const [agreeTerms, setAgreeTerms] = useState(false);
   const [isUrgent, setIsUrgent] = useState(false);
   const [attachments, setAttachments] = useState<Attachment[]>([]);
   const [uploading, setUploading] = useState(false);
+  const [supplyCount, setSupplyCount] = useState<number | null>(null);
+  const [supplyChecking, setSupplyChecking] = useState(false);
 
   const subCats = groupSlug ? CATEGORIES.filter((c) => c.groupSlug === groupSlug) : [];
+  const selectedCategoryName = subCats.find((c) => c.slug === categorySlug)?.name || "this service";
+
+  // Supply transparency — quietly check how many active Pros match the
+  // category + province (and optionally city) the customer has chosen.
+  // If supply is thin, we'll show a friendly "still recruiting" notice.
+  useEffect(() => {
+    if (!categorySlug || !province) {
+      setSupplyCount(null);
+      return;
+    }
+    let cancelled = false;
+    setSupplyChecking(true);
+    const t = setTimeout(async () => {
+      const { data, error } = await supabase.rpc("count_active_pros", {
+        _category_slug: categorySlug,
+        _province: province,
+        _city: city || null,
+      });
+      if (cancelled) return;
+      setSupplyChecking(false);
+      if (error) {
+        setSupplyCount(null);
+        return;
+      }
+      setSupplyCount(typeof data === "number" ? data : null);
+    }, 350);
+    return () => {
+      cancelled = true;
+      clearTimeout(t);
+    };
+  }, [categorySlug, province, city]);
 
   const handleFiles = async (files: FileList | null) => {
     if (!files || !user) return;
