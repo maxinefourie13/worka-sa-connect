@@ -56,6 +56,9 @@ Deno.serve(async (req) => {
     event === 'invoice.payment_failed' ? 'subscription_payment_failed' :
     'other';
 
+  const billingCycle: 'monthly' | 'annual' =
+    meta.billing_cycle === 'annual' ? 'annual' : 'monthly';
+
   const { data: insertedEvent, error: insErr } = await admin
     .from('payment_events')
     .insert({
@@ -65,6 +68,7 @@ Deno.serve(async (req) => {
       kind,
       amount_cents: amount ?? null,
       currency: data.currency ?? 'ZAR',
+      billing_cycle: kind === 'subscription_charge' ? billingCycle : null,
       raw: payload,
     })
     .select()
@@ -80,10 +84,18 @@ Deno.serve(async (req) => {
   let processError: string | null = null;
   try {
     if (kind === 'subscription_charge' && userId) {
-      const tier = meta.tier as 'hustler' | 'main-oke';
+      // Normalize legacy tier names to the live enum values.
+      const rawTier = String(meta.tier ?? '');
+      const tier =
+        rawTier === 'hustler'  ? 'basic' :
+        rawTier === 'main-oke' ? 'verified_pro' :
+        (rawTier as 'basic' | 'verified_pro');
       // Paystack returns next_payment_date on subscription events; for charge.success
-      // we approximate: now + 30 days.
-      const nextRenewal = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
+      // we approximate based on billing cycle.
+      const renewalMs = billingCycle === 'annual'
+        ? 365 * 24 * 60 * 60 * 1000
+        : 30  * 24 * 60 * 60 * 1000;
+      const nextRenewal = new Date(Date.now() + renewalMs).toISOString();
       const customerCode = data.customer?.customer_code ?? null;
       const subscriptionCode = data.plan_object?.plan_code ?? data.plan ?? null;
       const { error } = await admin.rpc('apply_subscription_payment', {
@@ -92,6 +104,7 @@ Deno.serve(async (req) => {
         _customer_code: customerCode,
         _subscription_code: subscriptionCode,
         _next_renewal: nextRenewal,
+        _billing_cycle: billingCycle,
       });
       if (error) processError = error.message;
     } else if (kind === 'klap_topup_charge') {
