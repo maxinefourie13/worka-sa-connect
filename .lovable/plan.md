@@ -1,166 +1,129 @@
 
-You've asked for several things. I'll answer the question first, then lay out the changes, then give you the Codex prompt at the bottom.
+# Pre-launch cleanup + admin view + terminology fix
 
-## 1. "Claim Lead" vs "Send Quote" — what's the difference?
-
-It's the same button (`ApplyButton.tsx` line 133), the label just changes based on whether the request is **urgent**:
-
-- **Send Quote** — normal customer request. Pro opens the proposal modal, writes a message + price, submits a quote. Customer reviews it alongside other quotes.
-- **Claim Lead** — shown when the request is marked **urgent** (e.g. burst geyser, lockout). Gated to **Verified Pro + ID-verified** only. The intent is "first qualified pro to grab it gets the contact" — no quote shopping, because the customer needs help now.
-
-Concierge leads (admin-sourced from social media) are a separate third path: they redirect to an external WhatsApp/contact link instead of the proposal modal.
-
-If the two-label switcheroo is confusing, I'd recommend we standardise on **"Send Quote"** everywhere and just add an "Urgent — Verified Pros only" badge on the card. Let me know if you want that as part of this round.
+Five things, in order. Plus a clear answer on what publishing actually exposes.
 
 ---
 
-## 2. What I'll change
+## 1. Kill the mock numbers on the dashboard
 
-### A. Homepage stats — only factual numbers
-Currently shows fake numbers from `STATS` in `src/lib/mockData.ts` (14,208 businesses / 2,845 requests).
+Right now the Overview shows hardcoded "1,284 profile views / 38 enquiries / 318 followers" and a fake activity feed (Naledi Properties, Sipho M.). Same for Followers (fake list of 6 names) and the Leads tab inside the dashboard (pulls from `OPPORTUNITIES` mock).
 
-Replace with 4 real, defensible stats:
-- **9** Provinces covered
-- **{n}** Service categories (computed from `CATEGORIES.length` — currently 114)
-- **11** Category groups
-- **No commission** (or "0%") — replaces fake "open requests" count with a value statement
+**Changes (`src/pages/Dashboard.tsx`):**
 
-Implementation: edit `STATS` in `mockData.ts` and the stats block in `src/pages/Index.tsx` so it pulls live counts where possible and drops the two fake numbers.
-
-### B. Remove all seed businesses (keep a few seed requests)
-- `useBusinesses` in `src/hooks/useDirectory.tsx`: when DB returns empty, return `[]` instead of falling back to `BUSINESSES`. Show a friendly "No pros listed yet — be the first" empty state on Directory + Group + Category pages.
-- `useOpportunities`: keep the mock fallback for now (you said keep a few requests).
-- Trim `OPPORTUNITIES` in `mockData.ts` down to ~3 realistic SA requests, and tag them `postedBy: "Sample request"` so it's obvious they're examples — or, if you'd prefer, drop them entirely too. **Default in this plan: keep 3 sample requests.**
-- Featured Businesses section on the homepage hides itself when there are zero live businesses (no fake cards).
-
-### C. Business profile gallery + completeness
-The profile page (`src/pages/BusinessProfile.tsx`) currently doesn't even render the existing single `image_url`. A "full profile with gallery" needs:
-
-1. **Schema**: new `business_images` table — `id, business_id, url, sort_order, created_at`. RLS: public SELECT, owner-only INSERT/UPDATE/DELETE. Add a Storage bucket `business-gallery` (public read, owner write).
-2. **Dashboard upload UI**: a "Photos" card in the Profile section of `Dashboard.tsx` — drag/drop multiple, reorder, delete. Compress on upload using existing `src/lib/compressImage.ts`. Cap at 12 images.
-3. **Profile page render**: hero image (first gallery image, fallback to `image_url`), then a gallery grid below the description with lightbox on click. Also ensure the profile page renders: services (already in `services` table), Google reviews card, hours, address, contact reveal — audit pass to confirm each section renders cleanly when data is present and degrades gracefully when missing.
-4. **ListBusiness onboarding**: add a "Add a few photos" step (optional — can be done later from dashboard) so new pros land with a populated profile.
-
-### D. Server hygiene before publishing
-- Quick pass on `Dashboard.tsx` to confirm the live-data refactor we did last round still renders a sensible empty state for a brand-new pro (no business yet).
-- Verify Auth flow: signup/login/email verification works end-to-end on the live domain `sjoh.co.za`.
-- Make sure the early-access signup form (homepage email capture) writes to `early_access_signups` — it does, already wired.
-
-### E. Publish
-- Confirm `effective_publish_visibility: public` (it is).
-- Click Publish to go live at `sjoh.co.za` after the above changes land.
-
-Note: You'll see a button in the publish dialog — frontend changes only go live once you click "Update". Backend (DB migrations, edge functions) deploys automatically.
+- **Overview stats** → replace the three `StatCard`s with real values from a small `useMyBusinessStats(businessId)` hook that queries: `business_follows` count, `contact_reveals` count for the last 30 days, and a placeholder "Profile views" of `—` until we wire view tracking. Each card gets an empty-state hint ("No views yet — share your profile link").
+- **Recent activity** → query the union of: latest `business_follows`, latest `contact_reveals`, latest `proposals` for the user's business. If empty, show a friendly empty state: "No activity yet, boet. Share your profile to get the ball rolling." with a "Copy profile link" button.
+- **Followers section** → replace the hardcoded array with a live query of `business_follows` joined to `profiles` for display name. Empty state: "Nobody's followed you yet — once customers do, you'll see them here."
+- **Dashboard "Leads" tab** (`OpportunitiesSection`) → swap `OPPORTUNITIES.slice(0,4)` for live `proposals` where `provider_id = auth.uid()`, joined to `opportunities` for title/budget. Empty state: "You haven't sent any quotes yet. [Find work →]"
+- **Promotions section** → today shows two mock promos. Replace with a live query of `promotions` where the business is the user's. Empty state with "Add Promotion" CTA. (Functional add/edit can wait — at minimum stop showing fake data.)
+- **Plan label** stays as-is (it's already live from `useProviderAccess`).
 
 ---
 
-## 3. Out of scope this round (intentionally)
-- Wiring Promotions / Followers / Recent activity tabs in the Dashboard (still stubs; flagged previously).
-- Deciding the Claim Lead vs Send Quote rename — needs your call.
-- Replacing the "Featured businesses" section with something better than an empty state (we can revisit once you have 5+ real listings).
+## 2. Rename Leads / Requests → Get Quotes / Send Quotes
+
+Customer-side becomes **"Get Quotes"** (post a job, get pros to quote you). Pro-side becomes **"Send Quotes"** (browse jobs, send a quote). The customer-side page also doubles as the directory entry point.
+
+**Routing (`src/App.tsx`):**
+
+- Keep URLs `/requests` and `/leads` (good for SEO + back-compat) but rename in the UI everywhere. No URL change.
+- Header nav (`SiteHeader.tsx`):
+  - "Browse" stays (links to `/directory`)
+  - "Requests" → **"Get Quotes"** (`/requests`)
+  - "Leads" → **"Send Quotes"** (`/leads`)
+  - "Pricing" stays
+- Footer links updated to match.
+
+**Page copy (`src/pages/Opportunities.tsx`):**
+
+- Customer view header: "Get Quotes" / "Tell pros what you need." Sub: "Post a request, or browse the directory below."
+- Pro view header: "Send Quotes" / "New jobs in your area."
+- Filter chip "Show only Verified Pros" (which currently filters by client history) → rename to "Trusted clients only" since "Verified Pros" is misleading on the request feed.
+- Result counter: "X jobs to quote" (pro) / "X open requests" (customer).
+
+**Customer-side directory blend:** On the customer `/requests` page, add a top-of-page collapsible "Browse the directory instead" panel that surfaces the same search/category/province inputs as `/directory` and links into it. Keeps the path you described: post a request OR browse the full directory from one screen.
+
+**Dashboard sidebar (`SECTIONS` array):**
+
+- "My Quotes" → **"Quotes I sent"**
+- "Leads" → **"Won jobs"** (since this section shows proposals you've made)
+
+**JobCard / ProposalModal CTAs:**
+
+- "Send Quote" stays as the standard CTA on non-urgent jobs.
+- "Claim Lead" (urgent flow) → rename to **"Claim urgent job"** for clarity. The mechanic stays the same (Verified Pro only, first-come for contact details).
 
 ---
 
-## 4. Codex prompt for the payments work
+## 3. Fix the gallery upload
 
-Drop this whole block into Codex. It's self-contained and references actual files in this repo.
+Current `BusinessGalleryCard.tsx` flow looks correct, but the storage policy in `20260430174501_*.sql` requires `(storage.foldername(name))[1] = b.id::text` AND that `auth.uid() = b.owner_id`. The component uploads to `${businessId}/${uuid}.${ext}` which matches, so the policy *should* pass.
 
-```
-You are working in a React 18 + Vite + TypeScript + Tailwind project (Lovable
-project ID 5bc0edda-5b82-456e-972c-379b2b4c90fc) called Sjoh — a South African
-service-provider directory. Backend is Supabase (project ref zwgjbffesalpiaaycbac).
-Payment provider is Paystack ZA. The domain is sjoh.co.za.
+**Most likely real causes (will diagnose in build mode):**
 
-GOAL
-Production-harden the Paystack subscription + Urgent Boost flows so we can
-accept real money on launch day.
+1. The `business_images` row insert might fail silently — the toast surfaces it, but if RLS blocks it the upload object is orphaned.
+2. The lightbox in `PublicBusinessGallery.tsx` is already wired with shadcn `Dialog` — works, but the dashboard card has no preview/lightbox.
 
-PRICING MODEL (source of truth — do not change):
-- Basic Listing: R50/mo or R540/yr (10% off). Listed in directory only.
-- Verified Pro: R250/mo or R2700/yr. Can send quotes + claim leads.
-- 30-day free trial on Basic (2 months for early-access founding members).
-- Posting jobs is free. Urgent Boost on a job: from R50.
-- Zero commission on completed work.
+**Changes:**
 
-EXISTING CODE TO READ FIRST
-- src/lib/payments.ts — client-side checkout starter
-- src/pages/Pricing.tsx — pricing page
-- src/components/ApplyButton.tsx — gating logic for proposals
-- src/hooks/useProviderAccess.tsx — tier/trial/verification checks
-- supabase/functions/paystack-create-subscription/index.ts
-- supabase/functions/paystack-create-urgent-charge/index.ts
-- supabase/functions/paystack-webhook/index.ts
-- DB tables: provider_balances (tier, trial_ends_at, paystack_customer_code,
-  paystack_subscription_code, tier_expires_at, billing_cycle, next_renewal_at),
-  payment_events, opportunities (urgent_boost_paid_at, urgent_boost_amount_cents)
-
-TASKS
-
-1. Webhook hardening (paystack-webhook):
-   - Verify x-paystack-signature HMAC-SHA512 against PAYSTACK_SECRET_KEY on
-     every request. Reject 401 if mismatch.
-   - Make all event handling idempotent keyed on (paystack_reference, event).
-     Insert into payment_events with processed=false first; only mutate
-     provider_balances/opportunities once; mark processed=true.
-   - Handle these events end-to-end: charge.success, subscription.create,
-     subscription.disable, invoice.payment_failed, invoice.update,
-     invoice.create. For subscription.disable, set tier='basic_trial'
-     (downgrade) only AFTER tier_expires_at passes.
-   - Surface clear logs (function_id + reference) for every branch.
-
-2. Subscription lifecycle:
-   - On charge.success for purpose='subscription', upsert
-     provider_balances.{tier, billing_cycle, paystack_subscription_code,
-     paystack_customer_code, next_renewal_at, tier_expires_at}.
-   - tier_expires_at = paid_until + 3-day grace.
-   - Add a daily lifecycle-tick that downgrades expired pros to basic_trial
-     and emails them ('Your Verified Pro lapsed').
-
-3. Annual billing UX:
-   - Pricing page: monthly/annual toggle that recomputes the price and
-     passes billing_cycle to startSubscription(). Show 'Save R60 / R300'
-     savings copy.
-   - Confirm Paystack plan codes are wired for both cycles via env:
-     PAYSTACK_PLAN_BASIC_MONTHLY, PAYSTACK_PLAN_BASIC_ANNUAL,
-     PAYSTACK_PLAN_VERIFIED_PRO_MONTHLY, PAYSTACK_PLAN_VERIFIED_PRO_ANNUAL.
-     Fail loudly in the edge function if a required plan is missing.
-
-4. Urgent Boost:
-   - Audit paystack-create-urgent-charge — must validate the opportunity
-     belongs to auth.uid() and amount is one of {5000, 10000, 25000} kobo.
-   - On webhook charge.success for purpose='urgent_boost', set
-     opportunities.{is_urgent=true, urgent_boost_paid_at=now,
-     urgent_boost_amount_cents}.
-   - Trigger notify-pro-whatsapp + notify-new-job for matching Verified Pros
-     in the same province + category.
-
-5. Customer billing portal (minimal):
-   - Add a 'Billing' card to src/pages/Dashboard.tsx showing: current tier,
-     billing cycle, next renewal date, last invoice amount, 'Cancel
-     subscription' button (calls a new edge function paystack-cancel-sub
-     that hits POST /subscription/disable on Paystack and writes a row to
-     payment_events). Cancellation keeps access until tier_expires_at.
-
-6. Tests / sanity:
-   - Add a TEST_MODE flag (env) so the create-subscription function uses
-     Paystack test secret key when set; document toggle in README.
-   - Add a curl example in README for replaying a webhook locally with a
-     valid signature.
-
-CONSTRAINTS
-- Never edit src/integrations/supabase/client.ts or types.ts.
-- Edge functions: validate JWT in code, return CORS headers on every
-  response (including errors), use parameterized supabase calls only.
-- Use the migration tool for any schema changes.
-- All copy must match Sjoh SA voice (see existing strings in
-  src/lib/payments.ts toasts for tone — chankura / boet / aikona).
-
-DELIVERABLE
-A PR-style summary listing every file changed with a 1-line reason, plus
-one paragraph on what I (the operator) need to do in the Paystack dashboard
-(create plans, set webhook URL, copy plan codes into env).
-```
+- Wrap upload in proper try/catch with a clear error toast that prints both storage and DB errors separately.
+- After a successful storage upload but failed DB insert, delete the orphaned object.
+- **Add a lightbox to the dashboard card** (`BusinessGalleryCard.tsx`) — same `Dialog` pattern as `PublicBusinessGallery.tsx`. Click a thumbnail → full-size preview, with a "Remove" button inside the dialog.
+- Verify file input opens — confirmed by looking at the code, the `onClick={() => fileInputRef.current?.click()}` is wired correctly. If it still doesn't open in the user's browser, check console for a click handler being swallowed (will verify via console logs in build mode).
 
 ---
 
-## Approve and I'll execute parts 1–E (everything except payments). Reply with any changes — for example "skip the gallery for now" or "rename Claim Lead to Send Quote everywhere".
+## 4. Admin "view as" mode
+
+Quick way for you to see every screen as a logged-in pro without having to seed test accounts.
+
+**Approach (no impersonation tokens — too risky):** Add an admin-only toggle that fakes the dashboard data layer for the *current* admin session.
+
+- New page `/admin/preview` (admin-gated) that lists: every published business, every dashboard section, links to view each profile, each lead detail, each request, billing/verification states.
+- Add an "Admin tools" item to the `SiteHeader` dropdown (only when `isAdmin`) with links to:
+  - `/admin/preview` (new) — directory of all businesses + states
+  - `/admin/founding-members` (existing)
+  - `/admin/disputes` (existing)
+  - `/admin/concierge` (existing)
+- On the new preview page, render each Dashboard section in turn with a sample business's data passed in, so you can scroll the whole pro experience top to bottom.
+
+This is read-only and uses your existing admin role check via `useUserRoles().isAdmin`. No auth.users impersonation, no security holes.
+
+---
+
+## 5. What happens when you publish
+
+Right now `is_published: false`. When you click Publish:
+
+- **Anyone with the link** can hit `https://sjoh.co.za` and see:
+  - Homepage, directory (currently empty since `useDirectory` returns `[]` when DB is empty), all programmatic SEO routes (will mostly 404-ish empty), pricing, terms, privacy
+  - Login / Register / Apply as a Pro flows — fully functional, anyone can sign up
+  - The `/requests` board — public, anyone sees customer requests if any exist
+- **New signups can immediately:**
+  - Create an account (email/password — Google sign-in is wired but auto-confirm is on for email per current settings; verify before launch)
+  - Post a request (`/requests/new` is gated to logged-in)
+  - Apply to list a business (`/list`) — creates a `businesses` row in `workshop` status, *not* visible in the public directory until they flip to active
+  - Subscribe to a plan via Paystack (live keys depending on `payments.ts` config)
+
+**You said: "I don't want them to access the full site yet."** Two options for soft-launch — pick one in the next message:
+
+- **A. Email-collector landing only** — restore a coming-soon page at `/` that just collects `early_access_signups` and gates everything else behind admin login. No directory, no requests board, no pro applications.
+- **B. Open everything** — what's wired now. Pros can apply, customers can post, but the directory is empty so it'll feel quiet.
+
+My recommendation: **B with a top banner** that says "Sjoh is in early access — first 100 pros get founding-member pricing". You already have `FoundingSpotsBanner`. Real activity beats a coming-soon page for SEO and word-of-mouth.
+
+---
+
+## Out of scope (track separately)
+
+- Real "Profile views" tracking (needs a `business_views` table + insert from public profile page)
+- Functional Promotions add/edit form
+- Concierge & Dispute admin UI polish
+- Paystack hardening (already handed off as a Codex prompt)
+
+---
+
+## Questions I need answered before building
+
+1. **Soft-launch mode** — A (coming-soon) or B (open with banner)?
+2. **Admin preview page** — am I on the right track with a read-only `/admin/preview`, or do you want a true "log in as this user" impersonation? (The latter is doable but needs an edge function + careful RLS work.)
