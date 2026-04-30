@@ -142,12 +142,14 @@ const Opportunities = () => {
         </div>
 
         <div className="text-sm text-muted-foreground mb-4 tabular-nums">
-          {filtered.length} opportunit{filtered.length === 1 ? "y" : "ies"} found
+          {filtered.length} {isProView
+            ? `lead${filtered.length === 1 ? "" : "s"}`
+            : `request${filtered.length === 1 ? "" : "s"}`} found
         </div>
 
         {filtered.length === 0 ? (
           <div className="bg-card border border-border rounded-xl p-12 text-center">
-            <p className="text-ink-2">Aikona — no opportunities match your filters.</p>
+            <p className="text-ink-2">Aikona — nothing matches your filters yet.</p>
           </div>
         ) : (
           <div className="grid lg:grid-cols-2 gap-5">
