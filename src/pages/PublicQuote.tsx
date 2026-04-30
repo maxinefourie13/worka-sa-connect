@@ -9,6 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { formatRand } from "@/lib/mockData";
 import { toast } from "@/hooks/use-toast";
 import { SeoHead } from "@/components/SeoHead";
+import { QuoteRevisionRespondCard } from "@/components/QuoteRevisionRespondCard";
 import { cn } from "@/lib/utils";
 
 interface BusinessLite {
@@ -175,6 +176,10 @@ const PublicQuote = () => {
             </div>
           )}
         </div>
+
+        {memo.status === "accepted" && (
+          <QuoteRevisionRespondCard dealMemoId={memo.id} onResponded={refresh} />
+        )}
 
         <p className="text-xs text-muted-foreground text-center mt-6 leading-relaxed">
           <ShieldCheck className="size-3.5 inline mr-1" />
