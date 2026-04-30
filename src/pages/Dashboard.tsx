@@ -148,6 +148,9 @@ const StatCard = ({ label, value, hint }: { label: string; value: string; hint?:
 const OverviewSection = ({ onJump }: { onJump: (s: SectionKey) => void }) => {
   const { user } = useAuth();
   const access = useProviderAccess();
+  const { business } = useMyBusiness();
+  const stats = useMyBusinessStats(business?.id);
+  const activity = useRecentActivity(business?.id);
   const firstName =
     (user?.user_metadata?.display_name as string | undefined)?.split(" ")[0] ||
     user?.email?.split("@")[0] ||
@@ -161,6 +164,13 @@ const OverviewSection = ({ onJump }: { onJump: (s: SectionKey) => void }) => {
     : access.tier === "locked" ? "Account paused"
     : "No plan";
 
+  const profileUrl = business ? `${window.location.origin}/business/${business.slug}` : null;
+  const copyProfileLink = async () => {
+    if (!profileUrl) return;
+    await navigator.clipboard.writeText(profileUrl);
+    toast({ title: "Link copied", description: "Paste it into WhatsApp, Insta bio, or wherever your customers hang out." });
+  };
+
   return (
     <>
       <SubscriptionGapBanner />
@@ -170,9 +180,9 @@ const OverviewSection = ({ onJump }: { onJump: (s: SectionKey) => void }) => {
           <h1 className="font-display text-3xl font-medium tracking-tight">
             Howzit, {firstName}. Ready to dala what you must?
           </h1>
-          <p className="text-sm text-ink-2 mt-1">Your performance over the last 30 days.</p>
+          <p className="text-sm text-ink-2 mt-1">Your activity over the last 30 days.</p>
         </div>
-        <Button>
+        <Button onClick={() => onJump("promotions")}>
           <Plus className="size-4" />Add Promotion
         </Button>
       </header>
@@ -200,26 +210,46 @@ const OverviewSection = ({ onJump }: { onJump: (s: SectionKey) => void }) => {
       </button>
 
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        <StatCard label="Profile views" value="1,284" hint="+12%" />
-        <StatCard label="Enquiries" value="38" hint="+5" />
-        <StatCard label="Followers" value="318" hint="+24" />
+        <StatCard
+          label="Profile views"
+          value={stats.profileViews === null ? "—" : stats.profileViews.toLocaleString("en-ZA")}
+          hint={stats.profileViews === null ? "Coming soon" : undefined}
+        />
+        <StatCard
+          label="Enquiries (30d)"
+          value={stats.loading ? "…" : stats.enquiries30d.toLocaleString("en-ZA")}
+        />
+        <StatCard
+          label="Followers"
+          value={stats.loading ? "…" : stats.followers.toLocaleString("en-ZA")}
+        />
       </div>
       <div className="bg-card border border-border rounded-xl p-6">
         <h2 className="font-display text-lg font-semibold mb-4">Recent activity</h2>
-        <ul className="space-y-3 text-sm">
-          <li className="flex items-center justify-between py-2 border-b border-border last:border-0">
-            <span>New enquiry from <strong>Naledi Properties</strong></span>
-            <span className="text-xs text-muted-foreground">2h ago</span>
-          </li>
-          <li className="flex items-center justify-between py-2 border-b border-border last:border-0">
-            <span><strong>Sipho M.</strong> started following you</span>
-            <span className="text-xs text-muted-foreground">5h ago</span>
-          </li>
-          <li className="flex items-center justify-between py-2">
-            <span>Your listing was viewed <strong>83 times</strong> yesterday</span>
-            <span className="text-xs text-muted-foreground">1d ago</span>
-          </li>
-        </ul>
+        {activity.loading ? (
+          <p className="text-sm text-muted-foreground">Loading…</p>
+        ) : activity.items.length === 0 ? (
+          <div className="py-6 text-center">
+            <p className="text-sm text-ink-2">No activity yet, boet.</p>
+            <p className="text-xs text-muted-foreground mt-1 mb-4">
+              Once customers follow you, reveal your contact, or you send a quote — you'll see it here.
+            </p>
+            {profileUrl && (
+              <Button size="sm" variant="outline" onClick={copyProfileLink}>
+                Copy your profile link
+              </Button>
+            )}
+          </div>
+        ) : (
+          <ul className="space-y-3 text-sm">
+            {activity.items.map((it) => (
+              <li key={it.id} className="flex items-center justify-between py-2 border-b border-border last:border-0">
+                <span>{it.label}</span>
+                <span className="text-xs text-muted-foreground">{timeAgo(it.at)}</span>
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
 
       <ReferAProCard />
