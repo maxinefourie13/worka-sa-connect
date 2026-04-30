@@ -119,6 +119,9 @@ const PostOpportunity = () => {
       posted_by_name: user.email?.split("@")[0] ?? null,
       is_urgent: isUrgent,
       attachments: attachments as unknown as Json,
+      client_phone: String(form.get("client_phone") ?? "").trim() || null,
+      client_email: String(form.get("client_email") ?? "").trim() || (user.email ?? null),
+      contact_preference: String(form.get("contact_preference") ?? "whatsapp").toLowerCase(),
     };
 
     const { data: opp, error } = await supabase
