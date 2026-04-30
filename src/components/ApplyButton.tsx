@@ -130,7 +130,7 @@ export const ApplyButton = ({
           )}
         >
           {isUrgent ? <Siren className="size-3.5" strokeWidth={2.5} /> : <Send className="size-3.5" strokeWidth={2.5} />}
-          {submitted ? "Proposal sent ✓" : isUrgent ? "Claim urgent job" : "Apply for this job"}
+          {submitted ? "Quote sent ✓" : isUrgent ? "Claim Lead" : "Send Quote"}
         </Button>
         {showFoundingPill && !isUrgent && (
           <span className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest text-accent">
