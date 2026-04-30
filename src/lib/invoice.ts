@@ -142,7 +142,6 @@ export const generateInvoicePdf = (data: InvoiceData): jsPDF => {
     margin: { left: margin, right: margin },
   });
 
-  // @ts-expect-error - autoTable adds lastAutoTable
   let afterTableY = (doc as any).lastAutoTable.finalY + 16;
 
   // ---- Totals
