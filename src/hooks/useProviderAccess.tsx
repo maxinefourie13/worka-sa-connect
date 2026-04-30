@@ -2,11 +2,14 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 
-export type Tier = "none" | "basic_trial" | "basic" | "verified_pro_trial" | "verified_pro";
+export type Tier = "none" | "basic_trial" | "basic" | "verified_pro_trial" | "verified_pro" | "locked";
+export type ProviderStatus = "trialing" | "active" | "locked" | "none";
 
 export interface ProviderAccess {
   loading: boolean;
   tier: Tier;
+  /** Derived high-level state: trialing | active | locked | none. */
+  status: ProviderStatus;
   trialEndsAt: string | null;
   tierExpiresAt: string | null;
   /** Pro is on a paid plan or active trial → listed publicly. */
@@ -15,8 +18,12 @@ export interface ProviderAccess {
   hasVerifiedProAccess: boolean;
   /** True while the trial is still ticking. */
   isOnTrial: boolean;
+  /** True if account auto-locked after a lapsed trial without a payment method. */
+  isLocked: boolean;
   /** Days left of trial (0 if not on trial / expired). */
   trialDaysLeft: number;
+  /** True if this user owns at least one ID-verified business — required for Eish! Urgent jobs. */
+  hasKycBusiness: boolean;
   /** Founding-member perk fields */
   isFoundingMember: boolean;
   /** True if founding member AND hasn't used their 1 free proposal this calendar month. */
@@ -28,12 +35,15 @@ export interface ProviderAccess {
 const DEFAULT: ProviderAccess = {
   loading: true,
   tier: "none",
+  status: "none",
   trialEndsAt: null,
   tierExpiresAt: null,
   hasListingAccess: false,
   hasVerifiedProAccess: false,
   isOnTrial: false,
+  isLocked: false,
   trialDaysLeft: 0,
+  hasKycBusiness: false,
   isFoundingMember: false,
   foundingProposalAvailable: false,
   foundingProposalsResetAt: null,
