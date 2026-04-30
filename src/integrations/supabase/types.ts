@@ -286,6 +286,8 @@ export type Database = {
           client_phone: string | null
           client_user_id: string | null
           completed_at: string | null
+          completion_notes: string | null
+          completion_photo_url: string | null
           created_at: string
           id: string
           job_title: string
@@ -304,6 +306,8 @@ export type Database = {
           client_phone?: string | null
           client_user_id?: string | null
           completed_at?: string | null
+          completion_notes?: string | null
+          completion_photo_url?: string | null
           created_at?: string
           id?: string
           job_title: string
@@ -322,6 +326,8 @@ export type Database = {
           client_phone?: string | null
           client_user_id?: string | null
           completed_at?: string | null
+          completion_notes?: string | null
+          completion_photo_url?: string | null
           created_at?: string
           id?: string
           job_title?: string
@@ -1401,6 +1407,39 @@ export type Database = {
       }
       lock_lapsed_trials: { Args: never; Returns: number }
       mark_chaser_sent: { Args: { _id: string }; Returns: undefined }
+      mark_deal_memo_complete: {
+        Args: {
+          _completion_notes?: string
+          _completion_photo_url?: string
+          _deal_memo_id: string
+        }
+        Returns: {
+          accepted_at: string | null
+          business_id: string
+          cancelled_at: string | null
+          client_email: string
+          client_phone: string | null
+          client_user_id: string | null
+          completed_at: string | null
+          completion_notes: string | null
+          completion_photo_url: string | null
+          created_at: string
+          id: string
+          job_title: string
+          pro_user_id: string
+          review_chaser_sent_at: string | null
+          scope_of_work: string
+          status: Database["public"]["Enums"]["deal_memo_status"]
+          total_amount_zar: number
+          updated_at: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "deal_memos"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       mark_verification_pending: {
         Args: { _job_id: string }
         Returns: undefined
