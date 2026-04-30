@@ -434,6 +434,10 @@ export interface Opportunity {
   clientId?: string;
   /** When the urgent boost was paid; if within 72h, treated as boosted. */
   urgentBoostPaidAt?: string | null;
+  /** Sjoh-sourced lead from outside the platform (Facebook, WhatsApp, etc.) */
+  isConciergeLead?: boolean;
+  /** Where the original lead lives (FB post URL, wa.me link, etc.) */
+  externalContactUrl?: string | null;
 }
 
 export const OPPORTUNITIES: Opportunity[] = [
