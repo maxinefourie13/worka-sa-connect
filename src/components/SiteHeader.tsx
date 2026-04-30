@@ -97,9 +97,14 @@ export const SiteHeader = () => {
                     <Link to="/dashboard"><LayoutDashboard className="size-4 mr-2" />Dashboard</Link>
                   </DropdownMenuItem>
                   {isAdmin && (
-                    <DropdownMenuItem asChild>
-                      <Link to="/admin/founding-members"><Shield className="size-4 mr-2" />Admin · Founding</Link>
-                    </DropdownMenuItem>
+                    <>
+                      <DropdownMenuItem asChild>
+                        <Link to="/admin/founding-members"><Shield className="size-4 mr-2" />Admin · Founding</Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem asChild>
+                        <Link to="/admin/disputes"><Shield className="size-4 mr-2" />Admin · Disputes</Link>
+                      </DropdownMenuItem>
+                    </>
                   )}
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={handleSignOut}>

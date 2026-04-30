@@ -343,6 +343,122 @@ export type Database = {
         }
         Relationships: []
       }
+      dispute_actions: {
+        Row: {
+          action: string
+          actor_id: string
+          created_at: string
+          dispute_id: string
+          id: string
+          metadata: Json
+          notes: string | null
+        }
+        Insert: {
+          action: string
+          actor_id: string
+          created_at?: string
+          dispute_id: string
+          id?: string
+          metadata?: Json
+          notes?: string | null
+        }
+        Update: {
+          action?: string
+          actor_id?: string
+          created_at?: string
+          dispute_id?: string
+          id?: string
+          metadata?: Json
+          notes?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "dispute_actions_dispute_id_fkey"
+            columns: ["dispute_id"]
+            isOneToOne: false
+            referencedRelation: "disputes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      disputes: {
+        Row: {
+          assigned_admin_id: string | null
+          business_id: string | null
+          category: Database["public"]["Enums"]["dispute_category"]
+          created_at: string
+          deal_memo_id: string | null
+          details: string | null
+          evidence_urls: Json
+          id: string
+          kyc_data_provided_at: string | null
+          kyc_provided_to: string | null
+          opportunity_id: string | null
+          pro_suspended_at: string | null
+          pro_user_id: string | null
+          reference: string
+          reporter_email: string | null
+          reporter_id: string | null
+          reporter_name: string | null
+          resolution_notes: string | null
+          resolved_at: string | null
+          severity: Database["public"]["Enums"]["dispute_severity"]
+          status: Database["public"]["Enums"]["dispute_status"]
+          summary: string
+          updated_at: string
+        }
+        Insert: {
+          assigned_admin_id?: string | null
+          business_id?: string | null
+          category?: Database["public"]["Enums"]["dispute_category"]
+          created_at?: string
+          deal_memo_id?: string | null
+          details?: string | null
+          evidence_urls?: Json
+          id?: string
+          kyc_data_provided_at?: string | null
+          kyc_provided_to?: string | null
+          opportunity_id?: string | null
+          pro_suspended_at?: string | null
+          pro_user_id?: string | null
+          reference?: string
+          reporter_email?: string | null
+          reporter_id?: string | null
+          reporter_name?: string | null
+          resolution_notes?: string | null
+          resolved_at?: string | null
+          severity?: Database["public"]["Enums"]["dispute_severity"]
+          status?: Database["public"]["Enums"]["dispute_status"]
+          summary: string
+          updated_at?: string
+        }
+        Update: {
+          assigned_admin_id?: string | null
+          business_id?: string | null
+          category?: Database["public"]["Enums"]["dispute_category"]
+          created_at?: string
+          deal_memo_id?: string | null
+          details?: string | null
+          evidence_urls?: Json
+          id?: string
+          kyc_data_provided_at?: string | null
+          kyc_provided_to?: string | null
+          opportunity_id?: string | null
+          pro_suspended_at?: string | null
+          pro_user_id?: string | null
+          reference?: string
+          reporter_email?: string | null
+          reporter_id?: string | null
+          reporter_name?: string | null
+          resolution_notes?: string | null
+          resolved_at?: string | null
+          severity?: Database["public"]["Enums"]["dispute_severity"]
+          status?: Database["public"]["Enums"]["dispute_status"]
+          summary?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       early_access_signups: {
         Row: {
           claimed_founding_spot: boolean
@@ -1458,6 +1574,7 @@ export type Database = {
         }[]
       }
       generate_referral_code: { Args: never; Returns: string }
+      get_dispute_kyc_package: { Args: { _dispute_id: string }; Returns: Json }
       get_founding_spot_counts: {
         Args: never
         Returns: {
@@ -1582,6 +1699,10 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      mark_dispute_kyc_provided: {
+        Args: { _dispute_id: string; _notes?: string; _provided_to: string }
+        Returns: undefined
+      }
       mark_verification_pending: {
         Args: { _job_id: string }
         Returns: undefined
@@ -1660,6 +1781,10 @@ export type Database = {
         }
         Returns: string
       }
+      suspend_pro_from_dispute: {
+        Args: { _dispute_id: string; _reason?: string }
+        Returns: undefined
+      }
       transition_listing_states: {
         Args: never
         Returns: {
@@ -1674,6 +1799,23 @@ export type Database = {
       budget_type: "fixed" | "estimate" | "negotiable"
       business_plan: "free" | "standard" | "featured"
       deal_memo_status: "pending" | "accepted" | "completed" | "cancelled"
+      dispute_category:
+        | "fraud"
+        | "no_show"
+        | "poor_workmanship"
+        | "safety"
+        | "harassment"
+        | "payment"
+        | "identity"
+        | "other"
+      dispute_severity: "low" | "medium" | "high" | "critical"
+      dispute_status:
+        | "open"
+        | "investigating"
+        | "pro_suspended"
+        | "data_provided"
+        | "resolved"
+        | "rejected"
       opportunity_status: "open" | "closed" | "awarded"
       payment_event_kind:
         | "subscription_charge"
@@ -1831,6 +1973,25 @@ export const Constants = {
       budget_type: ["fixed", "estimate", "negotiable"],
       business_plan: ["free", "standard", "featured"],
       deal_memo_status: ["pending", "accepted", "completed", "cancelled"],
+      dispute_category: [
+        "fraud",
+        "no_show",
+        "poor_workmanship",
+        "safety",
+        "harassment",
+        "payment",
+        "identity",
+        "other",
+      ],
+      dispute_severity: ["low", "medium", "high", "critical"],
+      dispute_status: [
+        "open",
+        "investigating",
+        "pro_suspended",
+        "data_provided",
+        "resolved",
+        "rejected",
+      ],
       opportunity_status: ["open", "closed", "awarded"],
       payment_event_kind: [
         "subscription_charge",
