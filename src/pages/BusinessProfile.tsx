@@ -429,6 +429,18 @@ const BusinessProfile = () => {
                     <p className="text-[11px] text-muted-foreground mt-2 text-center">Sign in required. We hide contact info from scrapers.</p>
                   </div>
                 )}
+                <div className="mt-5 pt-5 border-t border-border">
+                  <Button asChild variant="outline" className="w-full">
+                    <Link to={user ? `/requests/new?pro=${business.slug}` : `/auth?next=${encodeURIComponent(`/requests/new?pro=${business.slug}`)}`}>
+                      <FileText className="size-4" /> Request a Quote from this Pro
+                    </Link>
+                  </Button>
+                  {!user && (
+                    <p className="text-[11px] text-muted-foreground mt-2 text-center">
+                      Sign up to use the secure Sjoh Quoting system — your number stays hidden until you accept.
+                    </p>
+                  )}
+                </div>
                 <p className="mt-4 text-xs text-muted-foreground leading-relaxed">
                   You deal with this business directly. Sjoh takes no commission.
                 </p>
