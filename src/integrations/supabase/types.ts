@@ -1104,6 +1104,56 @@ export type Database = {
         }
         Relationships: []
       }
+      quote_revisions: {
+        Row: {
+          created_at: string
+          deal_memo_id: string
+          id: string
+          new_amount_zar: number
+          previous_amount_zar: number
+          pro_user_id: string
+          reason: string
+          responded_at: string | null
+          responded_by: string | null
+          scope_addition: string | null
+          status: Database["public"]["Enums"]["quote_revision_status"]
+        }
+        Insert: {
+          created_at?: string
+          deal_memo_id: string
+          id?: string
+          new_amount_zar: number
+          previous_amount_zar: number
+          pro_user_id: string
+          reason: string
+          responded_at?: string | null
+          responded_by?: string | null
+          scope_addition?: string | null
+          status?: Database["public"]["Enums"]["quote_revision_status"]
+        }
+        Update: {
+          created_at?: string
+          deal_memo_id?: string
+          id?: string
+          new_amount_zar?: number
+          previous_amount_zar?: number
+          pro_user_id?: string
+          reason?: string
+          responded_at?: string | null
+          responded_by?: string | null
+          scope_addition?: string | null
+          status?: Database["public"]["Enums"]["quote_revision_status"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quote_revisions_deal_memo_id_fkey"
+            columns: ["deal_memo_id"]
+            isOneToOne: false
+            referencedRelation: "deal_memos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       rate_limits: {
         Row: {
           action: string
@@ -1541,6 +1591,10 @@ export type Database = {
         Returns: boolean
       }
       cancel_deal_memo: { Args: { _id: string }; Returns: undefined }
+      cancel_quote_revision: {
+        Args: { _revision_id: string }
+        Returns: undefined
+      }
       check_rate_limit: {
         Args: { _action: string; _max: number; _window_seconds: number }
         Returns: undefined
@@ -1734,6 +1788,19 @@ export type Database = {
         Args: { _business_id: string; _details?: string; _reason: string }
         Returns: string
       }
+      request_quote_revision: {
+        Args: {
+          _deal_memo_id: string
+          _new_amount: number
+          _reason: string
+          _scope_addition?: string
+        }
+        Returns: string
+      }
+      respond_to_quote_revision: {
+        Args: { _accept: boolean; _revision_id: string }
+        Returns: undefined
+      }
       reveal_contact: {
         Args: { _business_id: string }
         Returns: {
@@ -1828,6 +1895,7 @@ export type Database = {
       price_type: "fixed" | "from" | "quote"
       pro_referral_status: "pending" | "redeemed" | "expired"
       proposal_status: "pending" | "shortlisted" | "won" | "lost" | "withdrawn"
+      quote_revision_status: "pending" | "accepted" | "rejected" | "cancelled"
       sjoh_tier:
         | "none"
         | "basic_trial"
@@ -2005,6 +2073,7 @@ export const Constants = {
       price_type: ["fixed", "from", "quote"],
       pro_referral_status: ["pending", "redeemed", "expired"],
       proposal_status: ["pending", "shortlisted", "won", "lost", "withdrawn"],
+      quote_revision_status: ["pending", "accepted", "rejected", "cancelled"],
       sjoh_tier: [
         "none",
         "basic_trial",
