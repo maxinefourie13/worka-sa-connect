@@ -2,6 +2,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 
 type Tier = "basic" | "verified_pro";
+export type BillingCycle = "monthly" | "annual";
 
 async function startCheckout(
   fn: "paystack-create-subscription" | "paystack-create-urgent",
@@ -34,10 +35,10 @@ async function startCheckout(
 }
 
 export const payments = {
-  startSubscription: (tier: Tier) =>
+  startSubscription: (tier: Tier, billing_cycle: BillingCycle = "monthly") =>
     startCheckout(
       "paystack-create-subscription",
-      { tier },
-      `Starting ${tier === "basic" ? "On the Map" : "Ready for Work"} subscription`,
+      { tier, billing_cycle },
+      `Starting ${tier === "basic" ? "Basic Listing" : "Verified Pro"}${billing_cycle === "annual" ? " (yearly)" : ""} subscription`,
     ),
 };
