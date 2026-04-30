@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import {
   LayoutGrid, User, Sparkles, Briefcase, Users, CreditCard, Plus,
-  Zap, ShieldCheck, Siren, Bell, Mail, FileText,
+  Zap, ShieldCheck, Siren, Bell, Mail, FileText, MessageCircle,
 } from "lucide-react";
 import { QuotesSection } from "@/components/dashboard/QuotesSection";
 import { SiteHeader } from "@/components/SiteHeader";
