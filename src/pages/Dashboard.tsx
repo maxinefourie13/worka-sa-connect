@@ -7,7 +7,9 @@ import {
 import { QuotesSection } from "@/components/dashboard/QuotesSection";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Button } from "@/components/ui/button";
-import { formatRand, OPPORTUNITIES, PROMOTIONS, SJOH_TIERS } from "@/lib/mockData";
+import { formatRand, SJOH_TIERS } from "@/lib/mockData";
+import { useMyBusinessStats } from "@/hooks/useMyBusinessStats";
+import { useRecentActivity, timeAgo } from "@/hooks/useRecentActivity";
 import { useMyBusiness } from "@/hooks/useMyBusiness";
 import { VerificationBadges } from "@/components/VerificationBadges";
 import { toast } from "@/hooks/use-toast";
