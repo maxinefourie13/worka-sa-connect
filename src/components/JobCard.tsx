@@ -81,7 +81,7 @@ export const JobCard = ({ job, className, clientHireCount }: JobCardProps) => {
                 <UrgentBoostButton
                   opportunityId={job.id}
                   opportunityTitle={job.title}
-                  alreadyBoosted={isBoosted}
+                  alreadyUrgent={isBoosted}
                   size="sm"
                 />
               ) : (
@@ -90,6 +90,7 @@ export const JobCard = ({ job, className, clientHireCount }: JobCardProps) => {
                   jobTitle={job.title}
                   jobBudget={job.budget}
                   clientName={job.postedBy}
+                  isUrgent={isBoosted || job.isUrgent}
                   isConciergeLead={job.isConciergeLead}
                   externalContactUrl={job.externalContactUrl}
                 />
