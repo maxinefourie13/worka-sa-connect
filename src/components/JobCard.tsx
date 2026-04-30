@@ -85,7 +85,14 @@ export const JobCard = ({ job, className, clientHireCount }: JobCardProps) => {
                   size="sm"
                 />
               ) : (
-                <KlapButton jobId={job.id} jobTitle={job.title} jobBudget={job.budget} clientName={job.postedBy} />
+                <KlapButton
+                  jobId={job.id}
+                  jobTitle={job.title}
+                  jobBudget={job.budget}
+                  clientName={job.postedBy}
+                  isConciergeLead={job.isConciergeLead}
+                  externalContactUrl={job.externalContactUrl}
+                />
               )}
             </div>
           </div>
