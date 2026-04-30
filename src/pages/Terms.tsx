@@ -78,8 +78,12 @@ const Terms = () => {
             Sjoh charges Service Providers Subscription Fees and may charge optional fees for value-added features
             (including, without limitation, urgent lead boosts). All fees are quoted exclusive of value-added tax unless
             expressly stated otherwise. Subscription Fees are billed in advance on a recurring basis and are non-refundable
-            save as required by applicable law. Sjoh reserves the right to amend its fee schedule upon thirty (30) days&rsquo;
-            written notice to affected Users.
+            save as required by applicable law. Subscriptions may be billed monthly or annually at the User&rsquo;s
+            election; annual subscriptions are billed in a single up-front payment for the full twelve (12) month term and
+            are non-refundable in part or in whole on early cancellation. A User may switch from a monthly to an annual
+            subscription at any time, in which case the annual term commences on the next renewal date and no proration
+            is applied. Sjoh reserves the right to amend its fee schedule upon thirty (30) days&rsquo; written notice to
+            affected Users.
           </p>
           <p>
             Sjoh does not collect, hold or process payments in respect of the underlying Transaction between a Customer and
