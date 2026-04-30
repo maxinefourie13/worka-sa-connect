@@ -12,7 +12,7 @@ import { useBusinesses, useOpportunities } from "@/hooks/useDirectory";
 import { getCategoryGroupIcon } from "@/lib/categoryIcons";
 
 const HOW_IT_WORKS = [
-  { title: "Tell us what you need", body: "Search the directory or post a job in seconds." },
+  { title: "Tell us what you need", body: "Search the directory or post a request in seconds." },
   { title: "Get real people", body: "Local businesses ready to help — across all nine provinces." },
   { title: "Choose who you trust", body: "Browse profiles, reviews, and active promotions." },
   { title: "Get it done", body: "Contact them directly. No middleman. No commission." },
