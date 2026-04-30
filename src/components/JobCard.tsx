@@ -5,19 +5,27 @@ import { cn } from "@/lib/utils";
 import { KlapButton } from "@/components/KlapButton";
 import { UrgentBoostButton } from "@/components/UrgentBoostButton";
 import { useAuth } from "@/hooks/useAuth";
-import { History, Siren, Sparkles, Paperclip } from "lucide-react";
+import { History, Siren, Sparkles, Paperclip, MapPin } from "lucide-react";
+import { freshnessFromIso, competitionSignal } from "@/lib/leadSignals";
 
 interface JobCardProps {
   job: Opportunity;
   className?: string;
   /** Optional: how many jobs this client has previously hired on Sjoh. */
   clientHireCount?: number;
+  /** When true, render Pro-side signals (freshness + quote count). */
+  isProView?: boolean;
+  /** When set, show a "Near you" pip if this job's city matches. */
+  proCity?: string;
 }
 
-export const JobCard = ({ job, className, clientHireCount }: JobCardProps) => {
+export const JobCard = ({ job, className, clientHireCount, isProView, proCity }: JobCardProps) => {
   const { user } = useAuth();
   const isOwner = !!user && !!job.clientId && user.id === job.clientId;
   const isBoosted = !!job.urgentBoostPaidAt && (Date.now() - new Date(job.urgentBoostPaidAt).getTime()) < 72 * 3600 * 1000;
+  const fresh = freshnessFromIso(job.createdAt, job.postedAt);
+  const competition = competitionSignal(job.applicants);
+  const isNearby = !!proCity && !!job.city && proCity.trim().toLowerCase() === job.city.trim().toLowerCase();
 
   return (
     <div className={className}>
@@ -27,10 +35,37 @@ export const JobCard = ({ job, className, clientHireCount }: JobCardProps) => {
           isBoosted ? "border-accent/60 ring-1 ring-accent/30 hover:border-accent" : "border-border hover:border-primary/30",
         )}
       >
-        <div className="mb-3 flex flex-wrap items-center gap-2">
+        <div className="mb-3 flex flex-wrap items-center gap-1.5">
           {isBoosted && (
             <span className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-accent-foreground bg-accent px-2 py-1 rounded-full animate-pulse">
               <Siren className="size-3" strokeWidth={2.5} /> Urgent
+            </span>
+          )}
+          {isProView && (
+            <span
+              className={cn(
+                "inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded-full border",
+                fresh.badgeClass,
+              )}
+              title="When this lead was posted"
+            >
+              <span aria-hidden>{fresh.dot}</span> {fresh.label}
+            </span>
+          )}
+          {isProView && (
+            <span
+              className={cn(
+                "inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded-full border",
+                competition.badgeClass,
+              )}
+              title="How many pros have already quoted"
+            >
+              <span aria-hidden>{competition.dot}</span> {competition.label}
+            </span>
+          )}
+          {isProView && isNearby && (
+            <span className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded-full border bg-foreground text-background border-foreground">
+              <MapPin className="size-3" strokeWidth={2.5} /> Near you
             </span>
           )}
           {job.isConciergeLead && (
@@ -64,8 +99,8 @@ export const JobCard = ({ job, className, clientHireCount }: JobCardProps) => {
               <span>{job.city}, {job.province}</span>
               <span className="text-muted-foreground">·</span>
               <span>By {job.deadline}</span>
-              <span className="text-muted-foreground">·</span>
-              <span>{job.applicants} applied</span>
+              {!isProView && <span className="text-muted-foreground">·</span>}
+              {!isProView && <span>{job.applicants} applied</span>}
               {job.attachments && job.attachments.length > 0 && (
                 <>
                   <span className="text-muted-foreground">·</span>

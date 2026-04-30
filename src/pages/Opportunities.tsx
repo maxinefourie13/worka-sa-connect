@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Search, ShieldCheck, Construction } from "lucide-react";
+import { Search, ShieldCheck, Construction, MapPin, Clock, Siren } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
 import { Button } from "@/components/ui/button";
 import { JobCard } from "@/components/JobCard";
@@ -8,6 +8,8 @@ import { CATEGORIES, PROVINCES } from "@/lib/mockData";
 import { useOpportunities } from "@/hooks/useDirectory";
 import { useMyBusiness } from "@/hooks/useMyBusiness";
 import { cn } from "@/lib/utils";
+
+type SortMode = "nearest" | "newest" | "urgent";
 
 const Opportunities = () => {
   const location = useLocation();
@@ -19,6 +21,7 @@ const Opportunities = () => {
   const [category, setCategory] = useState("");
   const [province, setProvince] = useState("");
   const [verifiedOnly, setVerifiedOnly] = useState(false);
+  const [sortMode, setSortMode] = useState<SortMode>(isProView && myBiz?.city ? "nearest" : "newest");
 
   // Mock client hiring history — keyed by job id. In production this comes from a server-side count.
   const clientHireHistory = useMemo<Record<string, number>>(
@@ -31,6 +34,9 @@ const Opportunities = () => {
     [],
   );
 
+  const proCity = isProView ? myBiz?.city : undefined;
+  const proProvince = isProView ? myBiz?.province : undefined;
+
   const filtered = useMemo(() => {
     const list = opportunities.filter((o) => {
       if (keyword && !o.title.toLowerCase().includes(keyword.toLowerCase())) return false;
@@ -40,8 +46,34 @@ const Opportunities = () => {
       if (verifiedOnly && !clientHireHistory[o.id]) return false;
       return true;
     });
-    return list;
-  }, [opportunities, keyword, category, province, verifiedOnly, clientHireHistory]);
+
+    // Sort: nearest first uses Pro's city/province match; tie-broken by recency.
+    const ts = (o: { createdAt?: string }) => (o.createdAt ? new Date(o.createdAt).getTime() : 0);
+    const score = (o: { city: string; province: string }) => {
+      if (proCity && o.city.trim().toLowerCase() === proCity.trim().toLowerCase()) return 2;
+      if (proProvince && o.province === proProvince) return 1;
+      return 0;
+    };
+
+    if (sortMode === "urgent") {
+      return [...list].sort((a, b) => {
+        const ua = a.urgentBoostPaidAt ? 1 : 0;
+        const ub = b.urgentBoostPaidAt ? 1 : 0;
+        if (ua !== ub) return ub - ua;
+        return ts(b) - ts(a);
+      });
+    }
+    if (sortMode === "nearest" && (proCity || proProvince)) {
+      return [...list].sort((a, b) => {
+        const sa = score(a);
+        const sb = score(b);
+        if (sa !== sb) return sb - sa;
+        return ts(b) - ts(a);
+      });
+    }
+    // newest (default)
+    return [...list].sort((a, b) => ts(b) - ts(a));
+  }, [opportunities, keyword, category, province, verifiedOnly, clientHireHistory, sortMode, proCity, proProvince]);
 
   const verifiedCount = opportunities.filter((o) => clientHireHistory[o.id]).length;
 
@@ -124,8 +156,8 @@ const Opportunities = () => {
           </select>
         </div>
 
-        {/* Verified Pros filter chip */}
-        <div className="flex items-center gap-2 mb-6">
+        {/* Filter + sort chips */}
+        <div className="flex flex-wrap items-center gap-2 mb-6">
           <button
             onClick={() => setVerifiedOnly((v) => !v)}
             className={cn(
@@ -139,12 +171,39 @@ const Opportunities = () => {
             <ShieldCheck className="size-3.5" strokeWidth={2.5} />
             {verifiedOnly ? "Showing trusted clients only" : `Show only Verified Pros (${verifiedCount})`}
           </button>
+
+          {isProView && (
+            <div className="ml-auto inline-flex rounded-full border border-border bg-card p-0.5 text-xs font-bold uppercase tracking-widest">
+              {([
+                { key: "nearest", label: "Nearest", icon: MapPin, disabled: !proCity && !proProvince },
+                { key: "newest", label: "Newest", icon: Clock, disabled: false },
+                { key: "urgent", label: "Urgent", icon: Siren, disabled: false },
+              ] as const).map((s) => (
+                <button
+                  key={s.key}
+                  onClick={() => !s.disabled && setSortMode(s.key)}
+                  disabled={s.disabled}
+                  title={s.disabled ? "Set your business city to sort by nearest" : `Sort by ${s.label.toLowerCase()}`}
+                  className={cn(
+                    "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full transition-colors disabled:opacity-40",
+                    sortMode === s.key ? "bg-foreground text-background" : "text-ink-2 hover:text-foreground",
+                  )}
+                >
+                  <s.icon className="size-3.5" strokeWidth={2.5} />
+                  {s.label}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
-        <div className="text-sm text-muted-foreground mb-4 tabular-nums">
-          {filtered.length} {isProView
+        <div className="text-sm text-muted-foreground mb-4 tabular-nums flex items-center gap-2">
+          <span>{filtered.length} {isProView
             ? `lead${filtered.length === 1 ? "" : "s"}`
-            : `request${filtered.length === 1 ? "" : "s"}`} found
+            : `request${filtered.length === 1 ? "" : "s"}`} found</span>
+          {isProView && sortMode === "nearest" && proCity && (
+            <span className="text-ink-2">· nearest to <span className="font-semibold text-foreground">{proCity}</span></span>
+          )}
         </div>
 
         {filtered.length === 0 ? (
@@ -154,7 +213,13 @@ const Opportunities = () => {
         ) : (
           <div className="grid lg:grid-cols-2 gap-5">
             {filtered.map((o) => (
-              <JobCard key={o.id} job={o} clientHireCount={clientHireHistory[o.id]} />
+              <JobCard
+                key={o.id}
+                job={o}
+                clientHireCount={clientHireHistory[o.id]}
+                isProView={isProView}
+                proCity={proCity}
+              />
             ))}
           </div>
         )}
