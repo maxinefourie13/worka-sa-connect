@@ -164,6 +164,12 @@ const BusinessProfile = () => {
                       </span>
                     </p>
                     <p className="mt-1 text-xs sm:text-sm text-muted-foreground">{followers} followers</p>
+                    {verifiedHires > 0 && (
+                      <div className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-accent/10 border border-accent/30 px-2.5 py-1 text-xs font-semibold text-accent">
+                        <ShieldCheck className="size-3.5" />
+                        {verifiedHires} Verified Job{verifiedHires === 1 ? "" : "s"} Completed via Sjoh
+                      </div>
+                    )}
                   </div>
                   {/* Desktop / tablet action buttons */}
                   <div className="hidden sm:flex flex-wrap gap-2">
