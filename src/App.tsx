@@ -19,6 +19,12 @@ import BusinessProfile from "./pages/BusinessProfile.tsx";
 import Opportunities from "./pages/Opportunities.tsx";
 import PostOpportunity from "./pages/PostOpportunity.tsx";
 import Pricing from "./pages/Pricing.tsx";
+
+// Redirect helper for legacy /opportunities/:id → /requests/:id
+const RedirectRequestById = () => {
+  const { id } = useParams();
+  return <Navigate to={id ? `/requests/${id}` : "/requests"} replace />;
+};
 import ListBusiness from "./pages/ListBusiness.tsx";
 import Dashboard from "./pages/Dashboard.tsx";
 import CategoryLocationPage from "./pages/CategoryLocationPage.tsx";
