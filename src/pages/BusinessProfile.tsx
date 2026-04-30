@@ -265,6 +265,9 @@ const BusinessProfile = () => {
                         <h2 className="font-display text-lg sm:text-xl font-semibold mb-2 sm:mb-3">About</h2>
                         <p className="text-sm sm:text-base text-ink-2 leading-relaxed">{business.description}</p>
                       </Reveal>
+                      <Reveal delay={60}>
+                        <PublicBusinessGallery businessId={business.id} />
+                      </Reveal>
                       <Reveal delay={80}>
                         <h2 className="font-display text-lg sm:text-xl font-semibold mb-3 sm:mb-4">Services overview</h2>
                         <div className="grid sm:grid-cols-2 gap-3">
