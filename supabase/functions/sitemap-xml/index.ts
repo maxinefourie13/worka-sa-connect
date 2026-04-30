@@ -4,7 +4,16 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
 const SITE_URL = Deno.env.get("PUBLIC_SITE_URL") ?? "https://sjoh.co.za";
 
-const STATIC_ROUTES = ["/", "/directory", "/opportunities", "/pricing", "/list"];
+const STATIC_ROUTES = [
+  "/",
+  "/directory",
+  "/requests",
+  "/leads",
+  "/pricing",
+  "/list",
+  "/terms",
+  "/privacy",
+];
 
 const slugify = (s: string) =>
   s

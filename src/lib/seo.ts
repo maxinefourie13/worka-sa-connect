@@ -44,6 +44,69 @@ export const buildLocationCanonical = (
 };
 
 /**
+ * Map category slugs to the search-friendly noun real people type
+ * (e.g. someone Googles "plumber Cape Town", not "plumbing Cape Town").
+ * Used in <title>, <h1>, and meta descriptions on programmatic pages.
+ */
+export const CATEGORY_KEYWORD_MAP: Record<string, string> = {
+  plumbing: "Plumber",
+  electrical: "Electrician",
+  handyman: "Handyman",
+  roofing: "Roofer",
+  painting: "Painter",
+  carpentry: "Carpenter",
+  "appliance-repair": "Appliance Repair Technician",
+  "home-cleaning": "Home Cleaner",
+  "deep-cleaning": "Deep Cleaning Service",
+  "carpet-cleaning": "Carpet Cleaner",
+  "laundry-ironing": "Laundry & Ironing Service",
+  "window-cleaning": "Window Cleaner",
+  "post-construction-cleaning": "Post-Construction Cleaner",
+  "lawn-mowing": "Lawn Mowing Service",
+  "garden-services": "Gardener",
+  "tree-felling": "Tree Feller",
+  landscaping: "Landscaper",
+  irrigation: "Irrigation Specialist",
+  "pool-maintenance": "Pool Maintenance Service",
+  "mobile-car-wash": "Mobile Car Wash",
+  mechanics: "Mechanic",
+  "panel-beating": "Panel Beater",
+  "tire-services": "Tyre Fitter",
+  "vehicle-detailing": "Car Detailer",
+  "roadside-assistance": "Roadside Assistance",
+  builders: "Builder",
+  renovations: "Renovation Contractor",
+  tiling: "Tiler",
+  bricklaying: "Bricklayer",
+  paving: "Paver",
+  "steelwork-fabrication": "Steel Fabricator",
+  "event-planning": "Event Planner",
+  catering: "Caterer",
+  "decor-hiring": "Decor & Hiring Service",
+  photography: "Photographer",
+  "djs-entertainment": "DJ",
+  "kids-party-services": "Kids Party Service",
+  "web-design": "Web Designer",
+  "graphic-design": "Graphic Designer",
+  "social-media-management": "Social Media Manager",
+  copywriting: "Copywriter",
+  "virtual-assistants": "Virtual Assistant",
+  "it-support": "IT Support Specialist",
+  "personal-training": "Personal Trainer",
+  "hair-beauty": "Hair & Beauty Specialist",
+  "makeup-artists": "Makeup Artist",
+  "life-coaching": "Life Coach",
+  tutoring: "Tutor",
+};
+
+export const categoryKeyword = (slug: string | undefined): string => {
+  if (!slug) return "Service Provider";
+  if (CATEGORY_KEYWORD_MAP[slug]) return CATEGORY_KEYWORD_MAP[slug];
+  const cat = categoryFromSlug(slug);
+  return cat?.name ?? titleFromSlug(slug);
+};
+
+/**
  * Reserved top-level slugs that must NOT be matched by the programmatic
  * SEO category route. Keep in sync with the routes in App.tsx.
  */
@@ -51,6 +114,13 @@ export const RESERVED_TOP_LEVEL_SLUGS = new Set<string>([
   "directory",
   "business",
   "opportunities",
+  "requests",
+  "leads",
+  "quote",
+  "unsubscribe",
+  "preview-home",
+  "terms",
+  "privacy",
   "pricing",
   "list",
   "dashboard",
@@ -79,7 +149,6 @@ export interface BusinessForJsonLd {
   province: string;
   rating: number;
   review_count: number;
-  phone?: string | null;
   address?: string | null;
   website?: string | null;
   slug: string;
@@ -101,7 +170,8 @@ export const buildLocationJsonLd = (
         "@id": `${SITE_URL}/business/${b.slug}`,
         name: b.name,
         url: `${SITE_URL}/business/${b.slug}`,
-        telephone: b.phone ?? undefined,
+        // Deliberately omit telephone — we don't expose phone numbers
+        // in structured data to prevent bot scraping.
         address: {
           "@type": "PostalAddress",
           streetAddress: b.address ?? undefined,
