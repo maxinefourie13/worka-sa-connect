@@ -164,14 +164,19 @@ const EarlyAccessLanding = () => {
 
         {/* Signup card */}
         <section>
-          {/* Mobile mascot above the card */}
-          <div className="flex lg:hidden justify-center mb-6">
-            <img
-              src={sjohMascot}
-              alt="Sjoh mascot"
-              className="w-[200px] sm:w-[240px] h-auto select-none drop-shadow-2xl"
-              draggable={false}
-            />
+          {/* Mobile-only mascot above the card (md+ shows it under perks) */}
+          <div className="flex md:hidden justify-center mb-6">
+            <div
+              className="relative"
+              style={{ background: "radial-gradient(closest-side, hsl(5 100% 74% / 0.35), transparent 70%)" }}
+            >
+              <img
+                src={sjohMascot}
+                alt="Sjoh mascot — French bulldog in a coral hoodie"
+                className="w-[280px] sm:w-[340px] h-auto select-none drop-shadow-2xl"
+                draggable={false}
+              />
+            </div>
           </div>
 
           <div className="rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-sm shadow-2xl p-6 sm:p-8">
