@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Cookie } from "lucide-react";
 
 const COOKIE_KEY = "sjoh_cookie_consent";
 const COOKIE_AT_KEY = "sjoh_cookie_consent_at";
@@ -64,9 +65,9 @@ export const CookieConsent = () => {
             "0 25px 60px -15px hsl(5 100% 55% / 0.55), 0 10px 30px -10px hsl(5 80% 40% / 0.4)",
         }}
       >
-        {/* Floating coffee chip */}
-        <div className="absolute -top-5 left-6 sm:left-7 size-12 rounded-full bg-white text-2xl flex items-center justify-center shadow-lg ring-1 ring-black/5 -rotate-12">
-          <span aria-hidden>☕</span>
+        {/* Floating cookie chip */}
+        <div className="absolute -top-5 left-6 sm:left-7 size-12 rounded-full bg-white text-primary flex items-center justify-center shadow-lg ring-1 ring-black/5 -rotate-12">
+          <Cookie className="size-6" strokeWidth={2.25} aria-hidden />
         </div>
 
         <div className="pt-4">
@@ -84,7 +85,7 @@ export const CookieConsent = () => {
               onClick={() => handle("all")}
               className="inline-flex items-center justify-center rounded-full bg-white px-5 py-2.5 text-sm font-extrabold text-primary shadow-md hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 transition-all duration-150"
             >
-              Shot, dunk away ☕
+              Shot, dunk away
             </button>
             <button
               onClick={() => handle("essential")}

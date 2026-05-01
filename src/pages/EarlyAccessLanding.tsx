@@ -9,6 +9,7 @@ import { Typewriter } from "@/components/Typewriter";
 import { FoundingSpotsBanner } from "@/components/FoundingSpotsBanner";
 import sjohMascot from "@/assets/sjoh-mascot-hoodie.png";
 import sjohLogoWhite from "@/assets/sjoh-logo-white.png";
+import { Award, Gift, Handshake, ShieldCheck } from "lucide-react";
 
 const HERO_PHRASES = [
   "Tired of hiring mamparas?",
@@ -20,10 +21,10 @@ const HERO_PHRASES = [
 ];
 
 const PERKS = [
-  { emoji: "🏅", title: "Founder badge", body: "First 500 in get a permanent Founder badge on your profile. Forever." },
-  { emoji: "🎁", title: "Extra month free", body: "Founders get a bonus month on top of the regular trial. No card now." },
-  { emoji: "🤝", title: "Direct contact", body: "No commission, no middleman. You talk straight to the pro." },
-  { emoji: "✅", title: "Vetted Pros only", body: "Every Verified Pro is checked — ID, references, the lot." },
+  { Icon: Award, title: "Founder badge", body: "First 500 in get a permanent Founder badge on your profile. Forever." },
+  { Icon: Gift, title: "Extra month free", body: "Founders get a bonus month on top of the regular trial. No card now." },
+  { Icon: Handshake, title: "Direct contact", body: "No commission, no middleman. You talk straight to the pro." },
+  { Icon: ShieldCheck, title: "Vetted Pros only", body: "Every Verified Pro is checked — ID, references, the lot." },
 ];
 
 const EarlyAccessLanding = () => {
@@ -61,7 +62,7 @@ const EarlyAccessLanding = () => {
     }
 
     markEarlyAccessSeen();
-    toast({ title: "Founding spot locked in! 🏅", description: "Welcome to Sjoh. Check your email to confirm." });
+    toast({ title: "Founding spot locked in", description: "Welcome to Sjoh. Check your email to confirm." });
     navigate("/", { replace: true });
   };
 
@@ -132,8 +133,10 @@ const EarlyAccessLanding = () => {
           <ul className="mt-8 space-y-4">
             {PERKS.map((p) => (
               <li key={p.title} className="flex gap-3">
-                <span className="text-2xl shrink-0">{p.emoji}</span>
-                <div>
+                <span className="shrink-0 size-10 rounded-full bg-primary/15 text-primary flex items-center justify-center ring-1 ring-primary/25">
+                  <p.Icon className="size-5" strokeWidth={2.25} aria-hidden />
+                </span>
+                <div className="pt-1">
                   <div className="font-bold text-white">{p.title}</div>
                   <div className="text-sm text-white/65">{p.body}</div>
                 </div>
