@@ -5,14 +5,25 @@ import { toast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { markEarlyAccessSeen } from "@/components/EarlyAccessGate";
 import { SeoHead } from "@/components/SeoHead";
+import { Typewriter } from "@/components/Typewriter";
+import { FoundingSpotsBanner } from "@/components/FoundingSpotsBanner";
 import sjohMascot from "@/assets/sjoh-mascot.png";
 import sjohLogoWhite from "@/assets/sjoh-logo-white.png";
 
+const HERO_PHRASES = [
+  "Tired of hiring mamparas?",
+  "Sick of ghost-quotes?",
+  "Got skills to sell?",
+  "Need leads, not lurkers?",
+  "Done with no-shows?",
+  "Ready to get found, boet?",
+];
+
 const PERKS = [
+  { emoji: "🏅", title: "Founder badge", body: "First 500 in get a permanent Founder badge on your profile. Forever." },
+  { emoji: "🎁", title: "Extra month free", body: "Founders get a bonus month on top of the regular trial. No card now." },
   { emoji: "🤝", title: "Direct contact", body: "No commission, no middleman. You talk straight to the pro." },
   { emoji: "✅", title: "Vetted Pros only", body: "Every Verified Pro is checked — ID, references, the lot." },
-  { emoji: "💸", title: "Free to post", body: "Need a quote? Post it free. Boost it for R50 if it's urgent." },
-  { emoji: "🇿🇦", title: "Proudly SA", body: "Built for South Africa, by South Africans. Plumbers to web devs." },
 ];
 
 const EarlyAccessLanding = () => {
@@ -26,7 +37,7 @@ const EarlyAccessLanding = () => {
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!agree) {
-      toast({ title: "Tick the box, boet", description: "Agree to the Terms before joining.", variant: "destructive" });
+      toast({ title: "Tick the box, boet", description: "Agree to the Terms before claiming your spot.", variant: "destructive" });
       return;
     }
     if (password.length < 8) {
@@ -50,7 +61,7 @@ const EarlyAccessLanding = () => {
     }
 
     markEarlyAccessSeen();
-    toast({ title: "You're in! 🎉", description: "Welcome to Sjoh. Check your email to confirm." });
+    toast({ title: "Founding spot locked in! 🏅", description: "Welcome to Sjoh. Check your email to confirm." });
     navigate("/", { replace: true });
   };
 
@@ -68,8 +79,8 @@ const EarlyAccessLanding = () => {
       }}
     >
       <SeoHead
-        title="Sjoh — Early Access | Find someone who can do it properly"
-        description="Join the Sjoh early access. South Africa's no-commission directory of vetted pros — from plumbers to web devs."
+        title="Sjoh — Claim your founding spot | Find someone who can do it properly"
+        description="Join Sjoh as a founding member. South Africa's no-commission directory of vetted pros. First 500 get a Founder badge + extra month free. No card needed."
       />
 
       {/* faint coral vignette top */}
@@ -84,7 +95,7 @@ const EarlyAccessLanding = () => {
         <div className="mx-auto max-w-6xl px-5 py-4 flex items-center justify-between">
           <img src={sjohLogoWhite} alt="Sjoh" className="h-8 sm:h-9 w-auto" />
           <span className="text-[10px] sm:text-xs px-2.5 py-1 rounded-full bg-primary/15 text-primary font-bold uppercase tracking-widest border border-primary/20">
-            Early Access
+            Founding members open
           </span>
         </div>
       </header>
@@ -92,16 +103,31 @@ const EarlyAccessLanding = () => {
       <main className="relative mx-auto max-w-6xl px-5 py-10 lg:py-16 grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
         {/* Pitch + mascot */}
         <section>
-          <div className="inline-block text-xs font-bold uppercase tracking-wider text-primary bg-primary/10 px-3 py-1 rounded-full mb-5 border border-primary/20">
-            🇿🇦 Now in early access
+          {/* Typewriter eyebrow */}
+          <div className="mb-5 text-sm sm:text-base font-bold uppercase tracking-widest text-primary min-h-[1.5em]">
+            <Typewriter
+              phrases={HERO_PHRASES}
+              randomize
+              accentClassName="text-primary"
+              className="inline"
+            />
           </div>
+
           <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.05] text-white">
             Find someone who can do it{" "}
             <span className="text-primary">properly.</span>
           </h1>
-          <p className="mt-5 text-lg text-white/70 max-w-lg">
-            Sjoh is South Africa's no-commission directory of vetted pros — from plumbers and sparkies to web devs and designers. Sign up to get early access.
+          <p className="mt-5 text-lg text-white/75 max-w-lg">
+            South Africa's no-commission directory of vetted pros. We're letting in the{" "}
+            <strong className="text-white">first 500 founding members</strong> — claim a permanent{" "}
+            <strong className="text-white">Founder badge</strong> and an{" "}
+            <strong className="text-white">extra month free</strong> on top of the trial.{" "}
+            <span className="text-primary font-bold">No card needed now.</span>
           </p>
+
+          <div className="mt-5">
+            <FoundingSpotsBanner />
+          </div>
 
           <ul className="mt-8 space-y-4">
             {PERKS.map((p) => (
@@ -144,8 +170,10 @@ const EarlyAccessLanding = () => {
           </div>
 
           <div className="rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-sm shadow-2xl p-6 sm:p-8">
-            <h2 className="font-display text-2xl font-extrabold tracking-tight text-white">Pull in, boet.</h2>
-            <p className="text-sm text-white/65 mt-1">Create an account to unlock Sjoh.</p>
+            <h2 className="font-display text-2xl font-extrabold tracking-tight text-white">Claim your founding spot</h2>
+            <p className="text-sm text-white/70 mt-1">
+              500 founding members only. Founder badge + extra month free. No card now — just your details.
+            </p>
 
             <form onSubmit={onSubmit} className="mt-6 space-y-4">
               <div>
@@ -199,8 +227,12 @@ const EarlyAccessLanding = () => {
               </label>
 
               <Button type="submit" size="lg" className="w-full" disabled={submitting}>
-                {submitting ? "Creating account…" : "Get early access →"}
+                {submitting ? "Locking in your spot…" : "Claim my founding spot →"}
               </Button>
+
+              <p className="text-center text-[11px] text-white/55 leading-relaxed">
+                No card. No commitment. We'll only nudge you when we open the doors.
+              </p>
 
               <p className="text-center text-xs text-white/55">
                 Already have an account?{" "}
