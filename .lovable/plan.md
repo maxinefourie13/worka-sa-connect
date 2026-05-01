@@ -1,83 +1,46 @@
-## Two-part plan
+## Two small changes
 
-### Part 1 — Early Access landing: typewriter hero + founding-spots framing
+### 1. Cookie consent — make it stand out and feel like a "you should respond to this" prompt
 
-File: `src/pages/EarlyAccessLanding.tsx`
+File: `src/components/CookieConsent.tsx`
 
-**Hero typewriter line** (above the H1, replacing the static "🇿🇦 Now in early access" pill area). Reuses the existing `Typewriter` component, looping through SA-flavoured prompts:
+Currently it sits as a charcoal panel pinned to the bottom — visually it disappears into the dark landing page. Rework it so it clearly demands attention, both on the early-access landing and (after launch) on the homepage for first-time visitors.
 
-- "Tired of hiring mamparas?"
-- "Sick of ghost-quotes?"
-- "Got skills to sell?"
-- "Need leads, not lurkers?"
-- "Done with no-shows?"
-- "Ready to get found, boet?"
+Changes:
 
-Rendered in coral, small caps-style label above the H1 — same visual language as the homepage hero typewriter.
+- **Centered modal style on desktop, bottom sheet on mobile.** Render a soft full-page overlay (`bg-black/55 backdrop-blur-[2px]`) behind the card so the rest of the page dims. The card sits centered on `sm+`, full-width bottom sheet on mobile. Higher z-index (`z-[80]`) so it floats above everything including the header.
+- **Coral as the dominant surface.** Card background switches from `bg-neutral-900/95` to a coral gradient (`from-primary to-[hsl(5_85%_64%)]`) with white text, a soft coral glow ring (`ring-1 ring-white/20`, `shadow-[0_20px_60px_-15px_hsl(5_100%_60%/0.55)]`), and a rotated coffee/rusk emoji badge in the corner. The whole thing reads as a coral attention card, not a quiet footer note.
+- **Bigger heading + clearer hierarchy.** Headline jumps to `text-xl sm:text-2xl` and sits next to a circular white chip containing the ☕ emoji. Body copy stays the same words, but in cream-white (`text-white/90`).
+- **Button restyle for contrast on coral:**
+  - Primary `Shot, dunk away ☕` → solid white pill with coral text (`bg-white text-primary font-extrabold`), small lift on hover.
+  - `Just the essentials` → outlined pill (`border-white/40 text-white hover:bg-white/10`).
+  - `No rusks for me` → low-key text link (`text-white/70 underline-offset-4 hover:underline`).
+- **Entrance.** Add a subtle scale + fade-in (`animate-in fade-in zoom-in-95 duration-300`) and a small `animate-pulse`-once coral glow on first paint so it visually pings without being annoying.
+- **Behaviour stays the same** — soft gate, dismissable, choice persisted in `localStorage.sjoh_cookie_consent`. Already mounted globally in `src/App.tsx` so it'll show on the homepage for new users post-launch automatically.
+- **Body scroll lock** while open so it really feels like a modal you need to deal with (toggled via `document.body.style.overflow`).
 
-**Headline stays**: "Find someone who can do it properly."
-**Subheadline updated** to lead with the founding-member offer:
+No other files need touching for the cookie change — `App.tsx` mount stays as-is.
 
-> South Africa's no-commission directory of vetted pros. We're letting in the **first 500 founding members** — claim a permanent **Founder badge** and an **extra month free** on top of the trial. **No card needed now.**
+### 2. Swap mascot to the new (bigger) hoodie frenchie
 
-**Founding-spots banner**: drop in the existing `<FoundingSpotsBanner />` right under the subheadline so the live "X spots left" pill reinforces urgency.
+The new image is `user-uploads://dog-2.png` — a back-shot frenchie in a coral Sjoh hoodie. Use it on the early-access landing in place of the current `sjoh-mascot.png`.
 
-**Signup card rewrites**:
-- Card heading: change `"Pull in, boet."` → `"Claim your founding spot"`
-- Card sub: `"500 founding members only. Founder badge + extra month free. No card now — just your details."`
-- Submit button: `"Get early access →"` → `"Claim my founding spot →"`
-- Add a tiny reassurance line under the button: `"No card. No commitment. We'll only nudge you when we open the doors."`
+Steps:
 
-**Skip link copy** stays ("Just want to peek? Browse without signing up.").
+- Copy `user-uploads://dog-2.png` → `src/assets/sjoh-mascot-hoodie.png`.
+- In `src/pages/EarlyAccessLanding.tsx`:
+  - Swap the import: `import sjohMascot from "@/assets/sjoh-mascot-hoodie.png"`.
+  - Bump sizing on **both** placements:
+    - Desktop (under perks): `w-[280px] xl:w-[340px]` → `w-[420px] xl:w-[520px]`, and remove the `hidden lg:flex` constraint so it shows from `md:` up. Wrap in a soft coral radial glow (`bg-[radial-gradient(closest-side,hsl(5_100%_74%/0.35),transparent_70%)]`) so the dog feels haloed against the charcoal.
+    - Mobile (above signup card): `w-[200px] sm:w-[240px]` → `w-[280px] sm:w-[340px]`, same coral halo.
+  - Keep `drop-shadow-2xl` and `select-none / draggable={false}`.
 
----
-
-### Part 2 — Make logo / banner / gallery optional in signup, nudge later
-
-#### 2a. Signup wizard — `src/pages/ListBusiness.tsx`
-
-In the Step 1 ("Profile") block:
-- Add an `(optional)` tag and a friendly helper line above the Logo + Cover Image upload fields:
-
-  > **Make it look the part — when you're ready.** Logo, cover and gallery are optional. You can add them anytime from your dashboard. **Don't have a logo yet? You can [find a pro](/services/branding-design) for that too. 😉**
-
-- Update the `UploadField` component (or pass an `optional` prop) so each upload tile shows a small `Optional · recommended` chip and tweak the placeholder to: `"Click to upload — or skip for now"`.
-- Step 1 already has no required validation on uploads, so no logic changes needed beyond copy + chips.
-
-The Services field gets a similar tweak: helper text noting "You can refine this later from your dashboard."
-
-#### 2b. Dashboard — soften the visibility warning + add a returning reminder
-
-File: `src/components/ProfileVisibilityWarning.tsx`
-- Currently this component **only** flags missing photo / short bio. Keep the existing hidden-from-search logic as-is (those two are genuinely required for the public view).
-- New: extend the same component to also surface a **softer "incomplete profile" nudge** when the profile *is* visible but is missing nice-to-haves: no logo, no cover image, no gallery photos. Render this as a separate, friendlier card (not the red AlertTriangle one) — uses a `Sparkles` icon, coral accent, and copy:
-
-  > **Want more leads? Polish your profile.**
-  > A logo, cover photo and a few gallery shots make people 3× more likely to message you.
-  > **No designer? [Find a pro on Sjoh →](/services/branding-design)**
-  > Buttons: `[Add now]` → `/dashboard?section=profile`  ·  `[Remind me later]` (dismiss)
-
-- Dismissal stored in `localStorage` as `sjoh_profile_polish_dismissed_at` (timestamp). The nudge re-appears after 7 days, so it acts as a recurring gentle reminder rather than a one-shot.
-
-To check for missing assets it queries `businesses` for `image_url` (cover/logo proxy) and the count of rows in the gallery table the existing `BusinessGalleryCard` writes to (same source of truth).
-
-#### 2c. Profile section CTA copy
-
-In the Dashboard's `ProfileSection` (and `BusinessGalleryCard` heading area), replace any "required" framing on logo/cover/gallery uploads with the same "Optional — but worth it" copy and the "Don't have a logo? Find a pro." link.
-
----
-
-### Technical notes
-
-- `Typewriter` component already exists and supports the exact pattern needed — just pass `phrases`, `randomize`, and a small className.
-- `FoundingSpotsBanner` already hides itself when zero/loading, so safe to drop in unconditionally.
-- The "Find a pro" link points at `/services/branding-design` — that route is already handled by the programmatic category pages. If the slug doesn't resolve, we'll fall back to `/directory?category=branding-design`.
-- No DB migrations or schema changes. No new tables. Pure UI/copy + a localStorage-backed dismissal timer for the polish nudge.
-- No changes to auth, RLS, or storage buckets.
+The old `sjoh-mascot.png` stays in the repo (still used elsewhere) — we just stop importing it on this page.
 
 ### Files touched
 
-- `src/pages/EarlyAccessLanding.tsx` — hero typewriter, founding-spots framing, card copy.
-- `src/pages/ListBusiness.tsx` — mark logo/cover/services as optional, add helper + "find a pro" link.
-- `src/components/ProfileVisibilityWarning.tsx` — extend with a soft, recurring "polish your profile" nudge.
-- `src/components/dashboard/BusinessGalleryCard.tsx` — minor copy tweak to reinforce optional + "find a pro" link (heading subtitle only).
+- `src/components/CookieConsent.tsx` — coral modal restyle + scroll lock.
+- `src/assets/sjoh-mascot-hoodie.png` — new asset (copied from upload).
+- `src/pages/EarlyAccessLanding.tsx` — swap mascot import, enlarge both placements, add coral halo.
+
+No DB, RLS, auth, or routing changes.
