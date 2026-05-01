@@ -1,51 +1,98 @@
-## Goal
+## Part 1 — Fix the 3 security findings
 
-While the directory is still mostly empty, show a single dummy "Example Business" card in every category/location view, clearly labelled as a preview ("This is what your listing will look like"). It should never look like a real pro — no contact details, no clickable profile that suggests it's bookable.
+### A. Gallery storage policies reference the wrong `name` column
+The `Owners can upload gallery files` and `Owners can delete gallery files` policies use unqualified `(storage.foldername(name))[1]` *inside* an `EXISTS (SELECT 1 FROM public.businesses b ...)` subquery. Postgres resolves `name` to `businesses.name` (the business's display name), not the storage object's path. So the check almost never matches correctly.
 
-## Approach
+**Fix (migration):** Drop and recreate both policies, qualifying as `storage.objects.name`. We'll move the path check out of the EXISTS so it reads the outer row unambiguously:
 
-Create one shared synthetic `Business` object and inject it into the lists in three places. No DB writes — purely client-side, easy to remove later.
+```sql
+drop policy if exists "Owners can upload gallery files" on storage.objects;
+create policy "Owners can upload gallery files"
+  on storage.objects for insert to authenticated
+  with check (
+    bucket_id = 'business-gallery'
+    and exists (
+      select 1 from public.businesses b
+      where b.owner_id = auth.uid()
+        and (storage.foldername(storage.objects.name))[1] = b.id::text
+    )
+  );
+-- same shape for the delete policy
+```
 
-### 1. New file: `src/lib/exampleBusiness.ts`
+### B. Public exposure of `client_phone` / `client_email` on `opportunities`
+The table is readable by anon (`Opportunities are viewable by everyone`). Earlier migrations already `REVOKE`d column-level SELECT on `client_phone, client_email, contact_preference` from anon/authenticated — but the scanner is right that this is fragile (the columns are still on a publicly-selectable table, and anything doing `select *` will fail).
 
-Exports:
-- `EXAMPLE_BUSINESS_ID = "example-listing"` (sentinel id we can detect anywhere).
-- `buildExampleBusiness(category, categorySlug, province?, city?)` → returns a `Business` shaped object:
-  - `name: "Example Business"`
-  - `description: "This is what your listing will look like — your name, photo, services, and reviews live here. List your business to claim a real card."`
-  - `tags: ["Sample listing", "Preview"]`
-  - `isVerified: false`, `plan: "free"`, `rating: 0`, `reviewCount: 0`, `followers: 0`
-  - `image: undefined` so the warm gradient cover renders (no fake stock photo)
-  - `slug: "example-listing"` so we can intercept the click
+**Fix (migration):**
+1. Drop the public SELECT policy on `opportunities`.
+2. Replace with: anon + authenticated can SELECT, but only via a public view `opportunities_public` that omits `client_phone`, `client_email`, `contact_preference`, `external_contact_url`. Owners and admins keep full row access via a separate policy.
+3. Update the frontend (`useDirectory`, `Opportunities`, `LeadDetail`, etc.) to read from `opportunities_public` for list views; keep direct table reads only where the viewer is the owner / accepted pro (already gated through `get_revealed_contact` RPC).
 
-### 2. `src/components/BusinessCard.tsx`
+This neutralises the finding and keeps the existing reveal RPC flow.
 
-- Detect `business.id === EXAMPLE_BUSINESS_ID`.
-- When true:
-  - Replace the `<Link>` wrapper with a `<div>` (not navigable).
-  - Add a coral dashed border + a small badge in the top-left corner: **"Sample listing"** (replacing the Promo slot for this card only).
-  - Replace the Follow button with a `<Link to="/list">List your business →</Link>` styled as the primary CTA.
-  - Override the rating row with the copy: *"This is what your listing will look like."*
-- Keep the avatar circle, gradient cover, name, category/city, and tag chips intact so it visually matches a real card.
+### C. Realtime subscription on `provider_balances` exposes other users' data
+`provider_balances` is published to `supabase_realtime` (added in `20260430085320`). Anyone authenticated can `subscribe` to its topic and receive change events for any user's tier / billing / verification.
 
-### 3. Inject into the three list sources
+**Fix (migration):**
+- Remove the table from the realtime publication: `ALTER PUBLICATION supabase_realtime DROP TABLE public.provider_balances;`
+- The dashboard already polls / refetches via the regular query hook, so realtime isn't required here. If the user later wants realtime tier updates, we add `realtime.messages` RLS scoped to `auth.uid()`.
 
-**`src/hooks/useDirectory.tsx`** — in `useBusinesses()`, after fetching from `businesses_public`, prepend one example card built with a generic category (e.g. `CATEGORIES[0]`). The Directory + Index pages will then naturally surface it. To make sure it appears for every category filter, the Directory's filter logic currently does `cats.includes(b.categorySlug)` — so we instead make the example card pass any category filter by giving it a special slug `"*"` and patching the filter to always keep `EXAMPLE_BUSINESS_ID` regardless of `cats`/`provs`/`verifiedOnly`/`promoOnly`/`topRated`. Same treatment in `GroupLanding.tsx`'s filter.
+After applying the migration we'll mark all three findings as fixed.
 
-**`src/pages/CategoryLocationPage.tsx`** — after the Supabase `setRows(list)`, prepend a synthetic `BizRow` built from `categoryName`, `categorySlug`, `provinceName`, `cityName`. Render it inline in the existing card grid with the same dashed-coral preview styling and a "List your business" CTA instead of a profile link. Skip it from the JSON-LD array (don't pollute structured data).
+---
 
-**`src/pages/Index.tsx`** — already consumes `useBusinesses()`, so the example will show up automatically on the homepage carousel/list. Confirm the home renders use `BusinessCard` (it does via `useBusinesses`).
+## Part 2 — Reframe `/requests` as a two-tab "Get Quotes" page
 
-### 4. Sort safety
+Today `/requests` shows a list of customer requests (jobs other people posted). That's confusing for a customer who clicked "Get Quotes" expecting to find pros.
 
-In Directory and GroupLanding sort handlers, pin the example card to the top of the list regardless of sort mode so it's always the first card a visitor sees.
+### New structure for `/requests` (customer-facing)
 
-### 5. Easy removal
+Two tabs at the top:
 
-Everything is gated behind `EXAMPLE_BUSINESS_ID`. To remove later: delete `exampleBusiness.ts` and the three small injection blocks.
+**Tab 1 — "Get an instant quote" (default)**
+A how-it-works walkthrough + big CTA, no listings. Sections:
+1. Hero: *"Tell us what you need. Pros come to you."*  CTA → `/requests/new`.
+2. 3-step explainer card (icons + short copy):
+   - **1. Tell us the job** — category, location, budget, photos.
+   - **2. Vetted pros quote you** — usually within hours.
+   - **3. Pick your pro** — chat direct, no commission, no middleman.
+3. "What you'll need to send" mini-checklist (job title, description, suburb, when you need it, budget guide, optional photos) — sets expectations before they hit the form.
+4. "What you get back" panel — *quotes from verified pros, free, no obligation*.
+5. Pricing strip: *"Posting is free. Want it pushed to the top? Mark it Urgent — R50."*
+6. Big primary CTA → "Post your request" (`/requests/new`).
+7. Below: small "Recent requests on Sjoh" strip (3 cards) for social proof, with link to Tab 2.
 
-## Out of scope
+**Tab 2 — "View our pros"**
+Embeds the existing Directory listing (cards, filters: category, province, search, verified-only). Reuses the components used on `/directory` — no new fetching logic.
 
-- No DB seeding.
-- No changes to admin, dashboard, opportunities, or business profile page (clicking is disabled, so no profile route needed).
-- No JSON-LD / SEO output for the example card.
+### Header / nav changes (`SiteHeader.tsx`)
+- Rename nav item `"Get Quotes"` → keep label `"Get Quotes"` but it now lands on the new tabbed page.
+- The pro-side `/leads` route stays as-is ("Send Quotes").
+
+### Routing (`App.tsx`)
+- `/requests` renders the new `RequestsHub` page (with tabs).
+- `/leads` still renders the existing `Opportunities` component (pro view of customer requests — unchanged).
+- Old direct deep-links to a single request (`/requests/:id`) keep working.
+
+### Files to add / change
+- **Add** `src/pages/RequestsHub.tsx` — the new tabbed page (uses shadcn `Tabs`).
+- **Add** `src/components/requests/HowItWorksPanel.tsx` — the 3-step + checklist + CTA blocks, kept separate so we can reuse on the homepage if we want.
+- **Edit** `src/App.tsx` — point `/requests` at `RequestsHub`; keep `/leads` → `Opportunities`.
+- **Edit** `src/components/SiteHeader.tsx` — no label change needed; just confirm route.
+- **Edit** `src/pages/Opportunities.tsx` — strip out the `!isProView` branch (no longer reached from `/requests`); becomes pro-only.
+- **Edit** the data hook to read from the new `opportunities_public` view for the directory-style listings.
+
+### Copy (Sjoh SA voice)
+- Tab labels: **"Get an instant quote"** · **"View our pros"**
+- Hero (Tab 1): *"Need someone who can do it properly? Tell us the job — vetted SA pros come back to you with quotes. No commission. No middleman."*
+- Urgent strip: *"In a hurry? Mark it Urgent for R50 — your post jumps to the top of every pro's feed."*
+- Free / vetted reassurance: *"It's free for you. Always."*
+
+---
+
+## Order of execution
+1. Migration: gallery storage policies → opportunities public view → drop provider_balances from realtime publication.
+2. Update the frontend hook to use `opportunities_public`.
+3. Build `RequestsHub` + `HowItWorksPanel`, wire into routing.
+4. Trim `Opportunities.tsx` to pro-only.
+5. Mark the 3 security findings as fixed.

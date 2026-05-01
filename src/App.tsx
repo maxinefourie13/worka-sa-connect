@@ -16,6 +16,7 @@ import GroupLanding from "./pages/GroupLanding.tsx";
 import BusinessProfile from "./pages/BusinessProfile.tsx";
 import ExampleProfile from "./pages/ExampleProfile.tsx";
 import Opportunities from "./pages/Opportunities.tsx";
+import RequestsHub from "./pages/RequestsHub.tsx";
 import PostOpportunity from "./pages/PostOpportunity.tsx";
 import LeadDetail from "./pages/LeadDetail.tsx";
 import Pricing from "./pages/Pricing.tsx";
@@ -59,7 +60,7 @@ const App = () => {
               <Route path="/example-listing" element={<ExampleProfile />} />
               <Route path="/business/:slug" element={<BusinessProfile />} />
               {/* Customer-facing: Requests */}
-              <Route path="/requests" element={<Opportunities />} />
+              <Route path="/requests" element={<RequestsHub />} />
               <Route path="/requests/new" element={<ProtectedRoute><PostOpportunity /></ProtectedRoute>} />
               <Route path="/requests/:id" element={<LeadDetail />} />
               {/* Pro-facing: Leads (same board, different framing) */}

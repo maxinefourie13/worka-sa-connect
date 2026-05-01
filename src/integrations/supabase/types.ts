@@ -1082,6 +1082,13 @@ export type Database = {
             referencedRelation: "opportunities"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "proposals_opportunity_id_fkey"
+            columns: ["opportunity_id"]
+            isOneToOne: false
+            referencedRelation: "opportunities_public"
+            referencedColumns: ["id"]
+          },
         ]
       }
       provider_balances: {
@@ -1548,6 +1555,81 @@ export type Database = {
           claimed: number | null
           remaining: number | null
           role: string | null
+        }
+        Relationships: []
+      }
+      opportunities_public: {
+        Row: {
+          applicants_count: number | null
+          attachments: Json | null
+          budget: number | null
+          budget_type: Database["public"]["Enums"]["budget_type"] | null
+          category_name: string | null
+          category_slug: string | null
+          city: string | null
+          client_id: string | null
+          created_at: string | null
+          deadline: string | null
+          description: string | null
+          id: string | null
+          is_concierge_lead: boolean | null
+          is_urgent: boolean | null
+          posted_by_name: string | null
+          province: string | null
+          requirements: string[] | null
+          status: Database["public"]["Enums"]["opportunity_status"] | null
+          title: string | null
+          updated_at: string | null
+          urgent_boost_amount_cents: number | null
+          urgent_boost_paid_at: string | null
+        }
+        Insert: {
+          applicants_count?: number | null
+          attachments?: Json | null
+          budget?: number | null
+          budget_type?: Database["public"]["Enums"]["budget_type"] | null
+          category_name?: string | null
+          category_slug?: string | null
+          city?: string | null
+          client_id?: string | null
+          created_at?: string | null
+          deadline?: string | null
+          description?: string | null
+          id?: string | null
+          is_concierge_lead?: boolean | null
+          is_urgent?: boolean | null
+          posted_by_name?: string | null
+          province?: string | null
+          requirements?: string[] | null
+          status?: Database["public"]["Enums"]["opportunity_status"] | null
+          title?: string | null
+          updated_at?: string | null
+          urgent_boost_amount_cents?: number | null
+          urgent_boost_paid_at?: string | null
+        }
+        Update: {
+          applicants_count?: number | null
+          attachments?: Json | null
+          budget?: number | null
+          budget_type?: Database["public"]["Enums"]["budget_type"] | null
+          category_name?: string | null
+          category_slug?: string | null
+          city?: string | null
+          client_id?: string | null
+          created_at?: string | null
+          deadline?: string | null
+          description?: string | null
+          id?: string | null
+          is_concierge_lead?: boolean | null
+          is_urgent?: boolean | null
+          posted_by_name?: string | null
+          province?: string | null
+          requirements?: string[] | null
+          status?: Database["public"]["Enums"]["opportunity_status"] | null
+          title?: string | null
+          updated_at?: string | null
+          urgent_boost_amount_cents?: number | null
+          urgent_boost_paid_at?: string | null
         }
         Relationships: []
       }
