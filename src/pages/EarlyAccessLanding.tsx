@@ -7,7 +7,7 @@ import { markEarlyAccessSeen } from "@/components/EarlyAccessGate";
 import { SeoHead } from "@/components/SeoHead";
 import { Typewriter } from "@/components/Typewriter";
 import { FoundingSpotsBanner } from "@/components/FoundingSpotsBanner";
-import sjohMascot from "@/assets/sjoh-mascot.png";
+import sjohMascot from "@/assets/sjoh-mascot-hoodie.png";
 import sjohLogoWhite from "@/assets/sjoh-logo-white.png";
 
 const HERO_PHRASES = [
