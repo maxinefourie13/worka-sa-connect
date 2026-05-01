@@ -99,6 +99,7 @@ const App = () => {
               <Route path="*" element={<NotFound />} />
             </Routes>
             </EarlyAccessGate>
+            <CookieConsent />
           </BrowserRouter>
         </AuthProvider>
       </TooltipProvider>
