@@ -141,14 +141,19 @@ const EarlyAccessLanding = () => {
             ))}
           </ul>
 
-          {/* Mascot below perks on desktop, hidden on mobile to save space */}
-          <div className="hidden lg:flex justify-start mt-10">
-            <img
-              src={sjohMascot}
-              alt="Sjoh mascot"
-              className="w-[280px] xl:w-[340px] h-auto select-none drop-shadow-2xl"
-              draggable={false}
-            />
+          {/* Mascot below perks (md+), hidden on small screens — mobile version sits above signup card */}
+          <div className="hidden md:flex justify-center lg:justify-start mt-10">
+            <div
+              className="relative"
+              style={{ background: "radial-gradient(closest-side, hsl(5 100% 74% / 0.35), transparent 70%)" }}
+            >
+              <img
+                src={sjohMascot}
+                alt="Sjoh mascot — French bulldog in a coral hoodie"
+                className="w-[420px] xl:w-[520px] h-auto select-none drop-shadow-2xl"
+                draggable={false}
+              />
+            </div>
           </div>
 
           <div className="mt-6 lg:mt-8 hidden lg:flex items-center gap-3 text-xs text-white/60">
