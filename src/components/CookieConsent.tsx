@@ -65,9 +65,9 @@ export const CookieConsent = () => {
             "0 25px 60px -15px hsl(5 100% 55% / 0.55), 0 10px 30px -10px hsl(5 80% 40% / 0.4)",
         }}
       >
-        {/* Floating coffee chip */}
-        <div className="absolute -top-5 left-6 sm:left-7 size-12 rounded-full bg-white text-2xl flex items-center justify-center shadow-lg ring-1 ring-black/5 -rotate-12">
-          <span aria-hidden>☕</span>
+        {/* Floating cookie chip */}
+        <div className="absolute -top-5 left-6 sm:left-7 size-12 rounded-full bg-white text-primary flex items-center justify-center shadow-lg ring-1 ring-black/5 -rotate-12">
+          <Cookie className="size-6" strokeWidth={2.25} aria-hidden />
         </div>
 
         <div className="pt-4">
