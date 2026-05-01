@@ -85,7 +85,7 @@ export const CookieConsent = () => {
               onClick={() => handle("all")}
               className="inline-flex items-center justify-center rounded-full bg-white px-5 py-2.5 text-sm font-extrabold text-primary shadow-md hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 transition-all duration-150"
             >
-              Shot, dunk away ☕
+              Shot, dunk away
             </button>
             <button
               onClick={() => handle("essential")}
