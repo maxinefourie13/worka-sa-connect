@@ -62,7 +62,7 @@ const EarlyAccessLanding = () => {
     }
 
     markEarlyAccessSeen();
-    toast({ title: "Founding spot locked in! 🏅", description: "Welcome to Sjoh. Check your email to confirm." });
+    toast({ title: "Founding spot locked in", description: "Welcome to Sjoh. Check your email to confirm." });
     navigate("/", { replace: true });
   };
 
