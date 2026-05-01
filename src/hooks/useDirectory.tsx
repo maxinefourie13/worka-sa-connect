@@ -76,7 +76,7 @@ function mapOpportunity(row: any): Opportunity {
     clientId: row.client_id,
     urgentBoostPaidAt: boostedAt ?? null,
     isConciergeLead: !!row.is_concierge_lead,
-    externalContactUrl: row.external_contact_url ?? null,
+    externalContactUrl: row.external_contact_url ?? null, // not present on public view; only set by secure RPC
     attachments: Array.isArray(row.attachments) ? row.attachments : [],
   };
 }
@@ -104,7 +104,7 @@ export function useOpportunities(): State<Opportunity> {
     let cancelled = false;
     (async () => {
       const { data, error } = await supabase
-        .from("opportunities")
+        .from("opportunities_public")
         .select("*")
         .eq("status", "open")
         .order("urgent_boost_paid_at", { ascending: false, nullsFirst: false })
