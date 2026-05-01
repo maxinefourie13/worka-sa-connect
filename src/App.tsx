@@ -21,6 +21,7 @@ import PostOpportunity from "./pages/PostOpportunity.tsx";
 import LeadDetail from "./pages/LeadDetail.tsx";
 import Pricing from "./pages/Pricing.tsx";
 import { EarlyAccessGate } from "@/components/EarlyAccessGate";
+import { CookieConsent } from "@/components/CookieConsent";
 
 // Redirect helper for legacy /opportunities/:id → /requests/:id
 const RedirectRequestById = () => {
