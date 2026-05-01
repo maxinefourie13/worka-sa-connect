@@ -20,6 +20,7 @@ import RequestsHub from "./pages/RequestsHub.tsx";
 import PostOpportunity from "./pages/PostOpportunity.tsx";
 import LeadDetail from "./pages/LeadDetail.tsx";
 import Pricing from "./pages/Pricing.tsx";
+import { EarlyAccessGate } from "@/components/EarlyAccessGate";
 
 // Redirect helper for legacy /opportunities/:id → /requests/:id
 const RedirectRequestById = () => {
@@ -53,6 +54,7 @@ const App = () => {
           <Toaster />
           <Sonner />
           <BrowserRouter>
+            <EarlyAccessGate>
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/directory" element={<Directory />} />
@@ -95,6 +97,7 @@ const App = () => {
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
+            </EarlyAccessGate>
           </BrowserRouter>
         </AuthProvider>
       </TooltipProvider>
