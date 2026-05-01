@@ -133,8 +133,10 @@ const EarlyAccessLanding = () => {
           <ul className="mt-8 space-y-4">
             {PERKS.map((p) => (
               <li key={p.title} className="flex gap-3">
-                <span className="text-2xl shrink-0">{p.emoji}</span>
-                <div>
+                <span className="shrink-0 size-10 rounded-full bg-primary/15 text-primary flex items-center justify-center ring-1 ring-primary/25">
+                  <p.Icon className="size-5" strokeWidth={2.25} aria-hidden />
+                </span>
+                <div className="pt-1">
                   <div className="font-bold text-white">{p.title}</div>
                   <div className="text-sm text-white/65">{p.body}</div>
                 </div>
