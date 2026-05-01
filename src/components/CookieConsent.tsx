@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Cookie } from "lucide-react";
 
 const COOKIE_KEY = "sjoh_cookie_consent";
 const COOKIE_AT_KEY = "sjoh_cookie_consent_at";
