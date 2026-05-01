@@ -111,17 +111,33 @@ const ListBusiness = () => {
             <div className="space-y-5">
               <div>
                 <h2 className="font-display text-2xl font-semibold">Profile details</h2>
-                <p className="text-sm text-ink-2 mt-1">Show people what you do.</p>
+                <p className="text-sm text-ink-2 mt-1">Show people what you do. You can polish this later from your dashboard.</p>
               </div>
               <Field label="Description">
                 <textarea rows={4} className="input resize-none" placeholder="What you do, who you serve, what makes you good." />
               </Field>
+
+              <div className="rounded-xl border border-dashed border-primary/30 bg-primary-light/30 p-4">
+                <p className="text-sm font-bold text-foreground">
+                  Make it look the part — when you're ready. ✨
+                </p>
+                <p className="text-xs text-ink-2 mt-1 leading-relaxed">
+                  Logo, cover and gallery are <strong>optional</strong>. Skip them now and add them anytime from your dashboard.{" "}
+                  Don't have a logo yet?{" "}
+                  <Link to="/services/branding-design" className="text-primary font-semibold hover:underline">
+                    Find a pro on Sjoh
+                  </Link>{" "}
+                  for that too. 😉
+                </p>
+              </div>
+
               <div className="grid sm:grid-cols-2 gap-4">
-                <UploadField label="Logo" />
-                <UploadField label="Cover image" />
+                <UploadField label="Logo" optional />
+                <UploadField label="Cover image" optional />
               </div>
               <Field label="Services offered (comma separated)">
                 <input className="input" placeholder="e.g. COC inspections, solar PV, emergency callouts" />
+                <span className="block text-xs text-ink-2 mt-1.5">You can refine this list later from your dashboard.</span>
               </Field>
             </div>
           )}
@@ -259,12 +275,21 @@ const Field = ({ label, children }: { label: string; children: React.ReactNode }
   </label>
 );
 
-const UploadField = ({ label }: { label: string }) => (
+const UploadField = ({ label, optional = false }: { label: string; optional?: boolean }) => (
   <label className="block">
-    <span className="block text-sm font-semibold mb-1.5">{label}</span>
+    <span className="flex items-center gap-2 text-sm font-semibold mb-1.5">
+      {label}
+      {optional && (
+        <span className="text-[10px] font-bold uppercase tracking-wider text-primary bg-primary-light px-1.5 py-0.5 rounded">
+          Optional · recommended
+        </span>
+      )}
+    </span>
     <div className="border-2 border-dashed border-border rounded-lg p-6 text-center hover:border-primary/50 cursor-pointer transition-colors">
       <Upload className="size-5 mx-auto text-muted-foreground" />
-      <p className="text-xs text-muted-foreground mt-2">Click to upload</p>
+      <p className="text-xs text-muted-foreground mt-2">
+        {optional ? "Click to upload — or skip for now" : "Click to upload"}
+      </p>
     </div>
   </label>
 );

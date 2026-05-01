@@ -130,9 +130,12 @@ export function BusinessGalleryCard({ businessId }: { businessId: string }) {
     <div className="bg-card border border-border rounded-xl p-6">
       <div className="flex items-start justify-between gap-4 mb-4">
         <div>
-          <h2 className="font-display text-lg font-extrabold tracking-tight">Photo gallery</h2>
+          <h2 className="font-display text-lg font-extrabold tracking-tight">
+            Photo gallery <span className="text-[10px] font-bold uppercase tracking-wider text-primary bg-primary-light px-1.5 py-0.5 rounded align-middle ml-1">Optional</span>
+          </h2>
           <p className="text-sm text-ink-2 mt-0.5">
-            Show your work — installs, finished jobs, the team. Up to {MAX_IMAGES} photos.
+            Show your work — installs, finished jobs, the team. Up to {MAX_IMAGES} photos. No photos yet?{" "}
+            <a href="/services/branding-design" className="text-primary font-semibold hover:underline">Find a pro</a> to shoot some.
           </p>
         </div>
         <Button
