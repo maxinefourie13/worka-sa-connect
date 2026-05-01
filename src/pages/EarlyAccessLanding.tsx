@@ -165,7 +165,7 @@ const EarlyAccessLanding = () => {
                 </span>
               </label>
 
-              <Button type="submit" variant="premium" size="lg" className="w-full" disabled={submitting}>
+              <Button type="submit" size="lg" className="w-full" disabled={submitting}>
                 {submitting ? "Creating account…" : "Get early access →"}
               </Button>
 
