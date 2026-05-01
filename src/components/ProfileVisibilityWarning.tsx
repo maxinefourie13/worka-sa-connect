@@ -42,7 +42,7 @@ export const ProfileVisibilityWarning = () => {
 
       // Profile is visible — check polish-level gaps (gallery count).
       const { count } = await supabase
-        .from("business_gallery_images")
+        .from("business_images")
         .select("id", { count: "exact", head: true })
         .eq("business_id", data.id);
 
