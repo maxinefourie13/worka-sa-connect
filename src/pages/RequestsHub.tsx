@@ -42,7 +42,7 @@ const RequestsHub = () => {
       <SeoHead
         title="Get Quotes from Vetted SA Pros — Free | Sjoh"
         description="Tell us the job — vetted South African pros come back with quotes. Free for customers. No commission. No middleman."
-        path="/requests"
+        canonical="https://sjoh.co.za/requests"
       />
       <div className="container py-10 md:py-14">
         <header className="mb-8 max-w-3xl">
