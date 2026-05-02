@@ -14,7 +14,7 @@ const FAQS = [
   { q: "What is the difference between Basic Listing and Verified Pro?", a: "Basic Listing (R50/mo) keeps you in the directory so customers can find and contact you directly. Verified Pro (R250/mo) adds the verified badge, top placement, and the ability to send quotes on customer requests." },
   { q: "Pay monthly or yearly?", a: "Both. Pay yearly and you save 10% — that's R60 a year on Basic, or R300 a year on Verified Pro. Same plan, less moolah. Annual is non-refundable, so only pick yearly if you're sure." },
   { q: "Do you take commission on the work I do?", a: "Never. Sjoh is a directory — payments happen directly between you and your customer. We don't touch your money." },
-  { q: "What is the Eish! Urgent option?", a: "Posting a request is always free. If it's urgent, customers can flag it as Eish! Urgent at no extra charge — it gets pinned to the top of the feed for 72 hours and notifies Verified Pros nearby." },
+  { q: "What is the Eish! Urgent option?", a: "Posting a request is always free. If it's a real emergency — burst geyser, locked out, no power — customers can boost their job to Eish! Urgent for R50. It pins to the top of the feed for 72 hours, gets a flashing coral border, and pings every Verified Pro within 10km on WhatsApp." },
   { q: "What is Sjoh's Law?", a: "Three strikes and you're out. Flake on a job, do dangerous work, or refuse to pay for completed work — that's a strike. Three strikes and your ID is permanently banned." },
   { q: "Can I cancel any time?", a: "Yes. Cancel or downgrade from your dashboard. No contracts, no cancellation fees. Annual plans run their full term — no partial refunds." },
 ];
@@ -29,7 +29,10 @@ const Pricing = () => {
   const [cycle, setCycle] = useState<BillingCycle>("monthly");
 
   const handleTierClick = (slug: string) => {
-    if (!user) { navigate("/auth"); return; }
+    if (!user) {
+      navigate(`/login?next=${encodeURIComponent("/pricing")}`);
+      return;
+    }
     if (slug === "basic" || slug === "verified_pro") {
       payments.startSubscription(slug, cycle);
     } else {
@@ -185,7 +188,7 @@ const Pricing = () => {
                 Eish! Urgent — R50 SOS
               </h2>
               <p className="mt-2 text-background/85">
-                Burst geyser at 9pm? Locked out in your PJs? Mark a job <strong>Urgent</strong> for R50 and we klaxon every verified pro within 10km. Top of feed, flashing coral border, instant push.
+                Burst geyser at 9pm? Locked out in your PJs? Customers can boost a job to <strong>Eish! Urgent</strong> for R50 — we WhatsApp every Verified Pro within 10km, pin it to the top of the feed for 72 hours, and slap a flashing coral border on it. Sorted.
               </p>
             </div>
           </div>

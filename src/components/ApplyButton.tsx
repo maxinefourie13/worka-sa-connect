@@ -95,7 +95,11 @@ export const ApplyButton = ({
   }
 
   const handleClick = () => {
-    if (!user) { navigate("/auth"); return; }
+    if (!user) {
+      const next = `${window.location.pathname}${window.location.search}`;
+      navigate(`/login?next=${encodeURIComponent(next)}`);
+      return;
+    }
     if (loading) return;
 
     if (status === "locked") return setPaywall("locked");

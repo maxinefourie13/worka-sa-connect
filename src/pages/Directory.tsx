@@ -254,14 +254,6 @@ const DirectoryPage = () => {
               </div>
             )}
 
-            {/* Pagination (mock) */}
-            <div className="mt-10 flex items-center justify-center gap-2">
-              <Button variant="outline" size="sm" disabled>Previous</Button>
-              <Button variant="ink" size="sm">1</Button>
-              <Button variant="outline" size="sm">2</Button>
-              <Button variant="outline" size="sm">3</Button>
-              <Button variant="outline" size="sm">Next</Button>
-            </div>
           </div>
         </div>
       </div>

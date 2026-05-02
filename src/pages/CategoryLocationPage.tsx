@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link, useParams, Navigate } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { SiteLayout } from "@/components/SiteLayout";
 import { SeoHead } from "@/components/SeoHead";
 import { SjohSpinner } from "@/components/SjohSpinner";
+import NotFound from "@/pages/NotFound";
 import { supabase } from "@/integrations/supabase/client";
 import {
   categoryFromSlug,
@@ -47,7 +48,7 @@ const CategoryLocationPage = () => {
   // root-level SEO route from accidentally swallowing real app paths.
   const isKnownCategory = !!categorySlug && !!categoryFromSlug(categorySlug);
   if (categorySlug && (isReservedSlug(categorySlug) || !isKnownCategory)) {
-    return <Navigate to="/404" replace />;
+    return <NotFound />;
   }
 
   const category = categorySlug ? categoryFromSlug(categorySlug) : undefined;

@@ -6,6 +6,7 @@ import { Menu, X, LayoutDashboard, LogOut, Shield } from "lucide-react";
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useUserRoles } from "@/hooks/useUserRoles";
+import { useMyBusiness } from "@/hooks/useMyBusiness";
 import sjohLogo from "@/assets/sjoh-logo.png";
 import { ListingStatusBanner } from "@/components/ListingStatusBanner";
 import { EarlyAccessRibbon } from "@/components/EarlyAccessRibbon";
@@ -18,12 +19,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-const NAV = [
+const BASE_NAV = [
   { to: "/directory", label: "Browse" },
   { to: "/requests", label: "Get Quotes" },
-  { to: "/leads", label: "Send Quotes" },
   { to: "/pricing", label: "Pricing" },
 ];
+const PRO_NAV_ITEM = { to: "/leads", label: "Send Quotes" };
 
 const initials = (input: string) =>
   input
@@ -37,9 +38,15 @@ const initials = (input: string) =>
 export const SiteHeader = () => {
   const [open, setOpen] = useState(false);
   const { session, user, signOut } = useAuth();
-  const { isAdmin } = useUserRoles();
+  const { isAdmin, roles } = useUserRoles();
+  const { business } = useMyBusiness();
   const navigate = useNavigate();
   useBumpLastActive();
+
+  // Show "Send Quotes" only to users who actually act as Pros — they have the role
+  // or have started a business listing. Customers and logged-out browsers don't see it.
+  const isPro = roles.includes("pro") || !!business;
+  const NAV = isPro ? [...BASE_NAV.slice(0, 2), PRO_NAV_ITEM, ...BASE_NAV.slice(2)] : BASE_NAV;
 
   const displayName =
     (user?.user_metadata?.display_name as string | undefined) ||

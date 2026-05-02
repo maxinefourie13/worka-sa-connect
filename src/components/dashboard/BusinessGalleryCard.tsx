@@ -135,7 +135,7 @@ export function BusinessGalleryCard({ businessId }: { businessId: string }) {
           </h2>
           <p className="text-sm text-ink-2 mt-0.5">
             Show your work — installs, finished jobs, the team. Up to {MAX_IMAGES} photos. No photos yet?{" "}
-            <a href="/services/branding-design" className="text-primary font-semibold hover:underline">Find a pro</a> to shoot some.
+            <a href="/directory?category=photography" className="text-primary font-semibold hover:underline">Find a photographer</a> to shoot some.
           </p>
         </div>
         <Button

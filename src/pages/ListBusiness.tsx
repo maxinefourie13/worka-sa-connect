@@ -9,14 +9,24 @@ import { cn } from "@/lib/utils";
 const STEPS = ["Basics", "Profile", "Choose Plan", "Review", "Done"] as const;
 
 const PLANS = [
-  { id: "free", name: "Free", price: "R 0/mo", desc: "Get listed. Start showing up." },
-  { id: "standard", name: "Standard", price: "R 0 for 3 months", desc: "Full profile, promotions, opportunities.", recommended: true },
-  { id: "featured", name: "Featured", price: "R 250/mo", desc: "Get seen first. Top of search and homepage." },
+  {
+    id: "basic",
+    name: "Basic Listing",
+    price: "R50/mo",
+    desc: "Get found in the directory. Customers contact you direct — no commission.",
+  },
+  {
+    id: "verified_pro",
+    name: "Verified Pro",
+    price: "R250/mo",
+    desc: "Everything in Basic + send quotes on customer requests, Verified badge, top placement.",
+    recommended: true,
+  },
 ];
 
 const ListBusiness = () => {
   const [step, setStep] = useState(0);
-  const [plan, setPlan] = useState("standard");
+  const [plan, setPlan] = useState("verified_pro");
   const [groupSlug, setGroupSlug] = useState("");
   const [categorySlug, setCategorySlug] = useState("");
   const [whatsappConsent, setWhatsappConsent] = useState(false);
@@ -119,15 +129,15 @@ const ListBusiness = () => {
 
               <div className="rounded-xl border border-dashed border-primary/30 bg-primary-light/30 p-4">
                 <p className="text-sm font-bold text-foreground">
-                  Make it look the part — when you're ready. ✨
+                  Make it look the part — when you're ready.
                 </p>
                 <p className="text-xs text-ink-2 mt-1 leading-relaxed">
                   Logo, cover and gallery are <strong>optional</strong>. Skip them now and add them anytime from your dashboard.{" "}
                   Don't have a logo yet?{" "}
-                  <Link to="/services/branding-design" className="text-primary font-semibold hover:underline">
-                    Find a pro on Sjoh
+                  <Link to="/directory?category=graphic-design" className="text-primary font-semibold hover:underline">
+                    Find a designer on Sjoh
                   </Link>{" "}
-                  for that too. 😉
+                  for that too.
                 </p>
               </div>
 
@@ -183,25 +193,22 @@ const ListBusiness = () => {
               <div>
                 <h2 className="font-display text-2xl font-semibold">Review and confirm</h2>
                 <p className="text-sm text-ink-2 mt-1">
-                  {plan === "free"
-                    ? "You'll be listed on Sjoh in seconds."
-                    : "We'll start your 3-month free Standard plan. No card required."}
+                  Founding members get a 2-month free trial — no card required. After that, it's the price below or cancel anytime.
                 </p>
               </div>
               <div className="rounded-xl border border-border p-5 bg-secondary/40">
                 <p className="text-sm font-semibold mb-2">Selected plan</p>
-                <p className="font-display text-xl font-semibold capitalize">{plan}</p>
+                <p className="font-display text-xl font-semibold">
+                  {PLANS.find((p) => p.id === plan)?.name ?? "—"}
+                </p>
                 <p className="text-xs text-muted-foreground mt-1">
-                  {plan === "free" && "R 0 / month — basic listing."}
-                  {plan === "standard" && "R 0 for the first 3 months, then R 50 / month. Cancel anytime."}
-                  {plan === "featured" && "R 250 / month — top of search and homepage placement."}
+                  {plan === "basic" && "R50/month after your free trial. Get listed and let customers contact you direct."}
+                  {plan === "verified_pro" && "R250/month after your free trial. Send quotes on customer requests + Verified badge."}
                 </p>
               </div>
-              {plan !== "free" && (
-                <div className="rounded-xl border border-dashed border-border p-5 text-center text-sm text-muted-foreground">
-                  Stripe checkout will appear here in the live version.
-                </div>
-              )}
+              <div className="rounded-xl border border-dashed border-primary/40 bg-primary-light/30 p-5 text-sm text-ink-2 leading-relaxed">
+                <strong className="text-foreground">Heads up — early access.</strong> The full self-serve sign-up is still being built. Tap Confirm and we'll add you to the founding-member queue. The Sjoh team will reach out to finish setting up your listing within 24 hours.
+              </div>
 
               {/* Mandatory WhatsApp consent — POPIA-compliant, NOT pre-checked */}
               <label className="flex items-start gap-3 rounded-xl border border-border bg-card p-4 cursor-pointer hover:border-primary/40 transition-colors">
@@ -225,13 +232,13 @@ const ListBusiness = () => {
               <div className="size-16 rounded-full bg-primary-light text-primary mx-auto flex items-center justify-center mb-6">
                 <CheckCircle2 className="size-8" />
               </div>
-              <h2 className="font-display text-3xl font-medium tracking-tight">You're listed on Sjoh.</h2>
+              <h2 className="font-display text-3xl font-medium tracking-tight">You're on the founding-member list.</h2>
               <p className="mt-3 text-ink-2 max-w-md mx-auto">
-                Your profile is live in the directory. Start posting promotions and sending quotes on customer requests from your dashboard.
+                Sharp! The Sjoh team will reach out within 24 hours to finish setting up your listing and lock in your founding-member perks (Founder badge + extra month free, no card now).
               </p>
               <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
                 <Button onClick={() => navigate("/dashboard")}>Go to Dashboard</Button>
-                <Button variant="outline" onClick={() => navigate("/directory")}>View Directory</Button>
+                <Button variant="outline" onClick={() => navigate("/directory")}>Browse the Directory</Button>
               </div>
             </div>
           )}
@@ -243,7 +250,7 @@ const ListBusiness = () => {
               </Button>
               <Button onClick={next} disabled={step === 3 && !whatsappConsent}>
                 {step === 3 ? (
-                  <>Confirm and Publish</>
+                  <>Confirm — join the founding list</>
                 ) : (
                   <>Continue <ArrowRight className="size-4" /></>
                 )}
