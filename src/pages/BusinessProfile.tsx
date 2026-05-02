@@ -392,10 +392,19 @@ const BusinessProfile = () => {
                       </button>
                     )}
                   </li>
-                  <li className="flex items-start gap-2.5">
-                    <Globe className="size-4 text-muted-foreground mt-0.5 shrink-0" />
-                    <a href="#" className="hover:text-primary transition-colors break-all">{business.website}</a>
-                  </li>
+                  {business.website && (
+                    <li className="flex items-start gap-2.5">
+                      <Globe className="size-4 text-muted-foreground mt-0.5 shrink-0" />
+                      <a
+                        href={business.website.startsWith("http") ? business.website : `https://${business.website}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="hover:text-primary transition-colors break-all"
+                      >
+                        {business.website.replace(/^https?:\/\//, "")}
+                      </a>
+                    </li>
+                  )}
                   <li className="flex items-start gap-2.5">
                     <Clock className="size-4 text-muted-foreground mt-0.5 shrink-0" />
                     <span className="text-ink-2">{business.hours}</span>
