@@ -9,14 +9,24 @@ import { cn } from "@/lib/utils";
 const STEPS = ["Basics", "Profile", "Choose Plan", "Review", "Done"] as const;
 
 const PLANS = [
-  { id: "free", name: "Free", price: "R 0/mo", desc: "Get listed. Start showing up." },
-  { id: "standard", name: "Standard", price: "R 0 for 3 months", desc: "Full profile, promotions, opportunities.", recommended: true },
-  { id: "featured", name: "Featured", price: "R 250/mo", desc: "Get seen first. Top of search and homepage." },
+  {
+    id: "basic",
+    name: "Basic Listing",
+    price: "R50/mo",
+    desc: "Get found in the directory. Customers contact you direct — no commission.",
+  },
+  {
+    id: "verified_pro",
+    name: "Verified Pro",
+    price: "R250/mo",
+    desc: "Everything in Basic + send quotes on customer requests, Verified badge, top placement.",
+    recommended: true,
+  },
 ];
 
 const ListBusiness = () => {
   const [step, setStep] = useState(0);
-  const [plan, setPlan] = useState("standard");
+  const [plan, setPlan] = useState("verified_pro");
   const [groupSlug, setGroupSlug] = useState("");
   const [categorySlug, setCategorySlug] = useState("");
   const [whatsappConsent, setWhatsappConsent] = useState(false);
@@ -183,25 +193,22 @@ const ListBusiness = () => {
               <div>
                 <h2 className="font-display text-2xl font-semibold">Review and confirm</h2>
                 <p className="text-sm text-ink-2 mt-1">
-                  {plan === "free"
-                    ? "You'll be listed on Sjoh in seconds."
-                    : "We'll start your 3-month free Standard plan. No card required."}
+                  Founding members get a 2-month free trial — no card required. After that, it's the price below or cancel anytime.
                 </p>
               </div>
               <div className="rounded-xl border border-border p-5 bg-secondary/40">
                 <p className="text-sm font-semibold mb-2">Selected plan</p>
-                <p className="font-display text-xl font-semibold capitalize">{plan}</p>
+                <p className="font-display text-xl font-semibold">
+                  {PLANS.find((p) => p.id === plan)?.name ?? "—"}
+                </p>
                 <p className="text-xs text-muted-foreground mt-1">
-                  {plan === "free" && "R 0 / month — basic listing."}
-                  {plan === "standard" && "R 0 for the first 3 months, then R 50 / month. Cancel anytime."}
-                  {plan === "featured" && "R 250 / month — top of search and homepage placement."}
+                  {plan === "basic" && "R50/month after your free trial. Get listed and let customers contact you direct."}
+                  {plan === "verified_pro" && "R250/month after your free trial. Send quotes on customer requests + Verified badge."}
                 </p>
               </div>
-              {plan !== "free" && (
-                <div className="rounded-xl border border-dashed border-border p-5 text-center text-sm text-muted-foreground">
-                  Stripe checkout will appear here in the live version.
-                </div>
-              )}
+              <div className="rounded-xl border border-dashed border-primary/40 bg-primary-light/30 p-5 text-sm text-ink-2 leading-relaxed">
+                <strong className="text-foreground">Heads up — early access.</strong> The full self-serve sign-up is still being built. Tap Confirm and we'll add you to the founding-member queue. The Sjoh team will reach out to finish setting up your listing within 24 hours.
+              </div>
 
               {/* Mandatory WhatsApp consent — POPIA-compliant, NOT pre-checked */}
               <label className="flex items-start gap-3 rounded-xl border border-border bg-card p-4 cursor-pointer hover:border-primary/40 transition-colors">
