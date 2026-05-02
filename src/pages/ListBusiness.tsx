@@ -115,7 +115,7 @@ const ListBusiness = () => {
         plan: plan === "verified_pro" ? "verified_pro" : "basic",
         listing_status: "workshop",
         pre_launch: true,
-      });
+      }]);
 
       if (error) throw error;
 
