@@ -1,10 +1,13 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Check, ArrowRight, ArrowLeft, CheckCircle2, Upload } from "lucide-react";
+import { Check, ArrowRight, ArrowLeft, CheckCircle2, Upload, Loader2 } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
 import { Button } from "@/components/ui/button";
 import { CATEGORIES, CATEGORY_GROUPS, PROVINCES } from "@/lib/mockData";
 import { cn } from "@/lib/utils";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
+import { toast } from "@/hooks/use-toast";
 
 const STEPS = ["Basics", "Profile", "Choose Plan", "Review", "Done"] as const;
 
@@ -24,18 +27,121 @@ const PLANS = [
   },
 ];
 
+const slugify = (s: string) =>
+  s
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9\s-]/g, "")
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-")
+    .slice(0, 60);
+
 const ListBusiness = () => {
   const [step, setStep] = useState(0);
   const [plan, setPlan] = useState("verified_pro");
   const [groupSlug, setGroupSlug] = useState("");
   const [categorySlug, setCategorySlug] = useState("");
   const [whatsappConsent, setWhatsappConsent] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+
+  // Form fields
+  const [name, setName] = useState("");
+  const [province, setProvince] = useState("");
+  const [city, setCity] = useState("");
+  const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
+  const [website, setWebsite] = useState("");
+  const [description, setDescription] = useState("");
+  const [servicesText, setServicesText] = useState("");
+
+  const { user } = useAuth();
   const navigate = useNavigate();
 
   const subCats = groupSlug ? CATEGORIES.filter((c) => c.groupSlug === groupSlug) : [];
+  const selectedCategory = CATEGORIES.find((c) => c.slug === categorySlug);
+
+  const basicsValid =
+    name.trim().length > 1 &&
+    !!groupSlug &&
+    !!categorySlug &&
+    !!province &&
+    city.trim().length > 1 &&
+    (phone.trim().length > 5 || email.trim().length > 5);
+
+  const canContinue = (() => {
+    if (step === 0) return basicsValid;
+    if (step === 1) return description.trim().length > 10;
+    if (step === 3) return whatsappConsent && !submitting;
+    return true;
+  })();
 
   const next = () => setStep((s) => Math.min(s + 1, STEPS.length - 1));
   const prev = () => setStep((s) => Math.max(s - 1, 0));
+
+  const handleConfirm = async () => {
+    if (!user) {
+      toast({
+        title: "Almost there",
+        description: "Sign in or create an account to save your listing.",
+      });
+      navigate(`/login?next=${encodeURIComponent("/list")}`);
+      return;
+    }
+    if (!whatsappConsent || !selectedCategory || !basicsValid) return;
+
+    setSubmitting(true);
+    try {
+      const baseSlug = slugify(name);
+      const slug = `${baseSlug}-${Math.random().toString(36).slice(2, 7)}`;
+      const tags = servicesText
+        .split(",")
+        .map((s) => s.trim())
+        .filter(Boolean)
+        .slice(0, 20);
+
+      const { error } = await supabase.from("businesses").insert({
+        owner_id: user.id,
+        name: name.trim(),
+        slug,
+        category_slug: selectedCategory.slug,
+        category_name: selectedCategory.name,
+        province,
+        city: city.trim(),
+        phone: phone.trim() || null,
+        email: email.trim() || null,
+        website: website.trim() || null,
+        description: description.trim() || null,
+        tags,
+        plan: plan === "verified_pro" ? "verified_pro" : "basic",
+        listing_status: "workshop",
+        pre_launch: true,
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "You're on the founding-member list",
+        description: "We've saved your listing in workshop mode. Polish it from your dashboard anytime.",
+      });
+      next();
+    } catch (e: any) {
+      toast({
+        title: "Couldn't save your listing",
+        description: e?.message ?? "Please try again in a moment.",
+        variant: "destructive",
+      });
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handlePrimaryClick = () => {
+    if (step === 3) {
+      void handleConfirm();
+    } else {
+      next();
+    }
+  };
 
   return (
     <SiteLayout>
@@ -77,7 +183,14 @@ const ListBusiness = () => {
                 <h2 className="font-display text-2xl font-semibold">Business basics</h2>
                 <p className="text-sm text-ink-2 mt-1">Tell us who you are and how to reach you.</p>
               </div>
-              <Field label="Business name"><input className="input" placeholder="e.g. Khumalo Electrical Contractors" /></Field>
+              <Field label="Business name">
+                <input
+                  className="input"
+                  placeholder="e.g. Khumalo Electrical Contractors"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                />
+              </Field>
               <div className="grid sm:grid-cols-2 gap-4">
                 <Field label="Category group">
                   <select
@@ -104,15 +217,48 @@ const ListBusiness = () => {
                   </select>
                 </Field>
                 <Field label="Province">
-                  <select className="input cursor-pointer">
+                  <select
+                    className="input cursor-pointer"
+                    value={province}
+                    onChange={(e) => setProvince(e.target.value)}
+                  >
                     <option value="">Select a province</option>
                     {PROVINCES.map((p) => <option key={p} value={p}>{p}</option>)}
                   </select>
                 </Field>
-                <Field label="City / Suburb"><input className="input" placeholder="e.g. Sandton" /></Field>
-                <Field label="Phone"><input className="input" placeholder="+27 ..." /></Field>
-                <Field label="Email"><input type="email" className="input" placeholder="hello@yourbiz.co.za" /></Field>
-                <Field label="Website (optional)"><input className="input" placeholder="yourbiz.co.za" /></Field>
+                <Field label="City / Suburb">
+                  <input
+                    className="input"
+                    placeholder="e.g. Sandton"
+                    value={city}
+                    onChange={(e) => setCity(e.target.value)}
+                  />
+                </Field>
+                <Field label="Phone">
+                  <input
+                    className="input"
+                    placeholder="+27 ..."
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                  />
+                </Field>
+                <Field label="Email">
+                  <input
+                    type="email"
+                    className="input"
+                    placeholder="hello@yourbiz.co.za"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
+                </Field>
+                <Field label="Website (optional)">
+                  <input
+                    className="input"
+                    placeholder="yourbiz.co.za"
+                    value={website}
+                    onChange={(e) => setWebsite(e.target.value)}
+                  />
+                </Field>
               </div>
             </div>
           )}
@@ -124,7 +270,13 @@ const ListBusiness = () => {
                 <p className="text-sm text-ink-2 mt-1">Show people what you do. You can polish this later from your dashboard.</p>
               </div>
               <Field label="Description">
-                <textarea rows={4} className="input resize-none" placeholder="What you do, who you serve, what makes you good." />
+                <textarea
+                  rows={4}
+                  className="input resize-none"
+                  placeholder="What you do, who you serve, what makes you good."
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                />
               </Field>
 
               <div className="rounded-xl border border-dashed border-primary/30 bg-primary-light/30 p-4">
@@ -146,7 +298,12 @@ const ListBusiness = () => {
                 <UploadField label="Cover image" optional />
               </div>
               <Field label="Services offered (comma separated)">
-                <input className="input" placeholder="e.g. COC inspections, solar PV, emergency callouts" />
+                <input
+                  className="input"
+                  placeholder="e.g. COC inspections, solar PV, emergency callouts"
+                  value={servicesText}
+                  onChange={(e) => setServicesText(e.target.value)}
+                />
                 <span className="block text-xs text-ink-2 mt-1.5">You can refine this list later from your dashboard.</span>
               </Field>
             </div>
@@ -196,19 +353,34 @@ const ListBusiness = () => {
                   Founding members get a 2-month free trial — no card required. After that, it's the price below or cancel anytime.
                 </p>
               </div>
-              <div className="rounded-xl border border-border p-5 bg-secondary/40">
-                <p className="text-sm font-semibold mb-2">Selected plan</p>
-                <p className="font-display text-xl font-semibold">
-                  {PLANS.find((p) => p.id === plan)?.name ?? "—"}
-                </p>
-                <p className="text-xs text-muted-foreground mt-1">
-                  {plan === "basic" && "R50/month after your free trial. Get listed and let customers contact you direct."}
-                  {plan === "verified_pro" && "R250/month after your free trial. Send quotes on customer requests + Verified badge."}
-                </p>
+              <div className="rounded-xl border border-border p-5 bg-secondary/40 space-y-3">
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Listing</p>
+                  <p className="font-display text-lg font-semibold">{name || "—"}</p>
+                  <p className="text-xs text-ink-2">
+                    {selectedCategory?.name ?? "—"} · {city || "—"}{province ? `, ${province}` : ""}
+                  </p>
+                </div>
+                <div className="border-t border-border pt-3">
+                  <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Plan</p>
+                  <p className="font-display text-lg font-semibold">
+                    {PLANS.find((p) => p.id === plan)?.name ?? "—"}
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {plan === "basic" && "R50/month after your free trial. Get listed and let customers contact you direct."}
+                    {plan === "verified_pro" && "R250/month after your free trial. Send quotes on customer requests + Verified badge."}
+                  </p>
+                </div>
               </div>
               <div className="rounded-xl border border-dashed border-primary/40 bg-primary-light/30 p-5 text-sm text-ink-2 leading-relaxed">
-                <strong className="text-foreground">Heads up — early access.</strong> The full self-serve sign-up is still being built. Tap Confirm and we'll add you to the founding-member queue. The Sjoh team will reach out to finish setting up your listing within 24 hours.
+                <strong className="text-foreground">Heads up — early access.</strong> We'll save your listing in workshop mode so you can keep editing it from your dashboard. The Sjoh team will reach out within 24 hours to verify details and switch it live.
               </div>
+
+              {!user && (
+                <div className="rounded-xl border border-amber-300/60 bg-amber-50 p-4 text-sm text-amber-900">
+                  You'll be asked to sign in or create a free account when you tap Confirm — that's how we tie the listing to you.
+                </div>
+              )}
 
               {/* Mandatory WhatsApp consent — POPIA-compliant, NOT pre-checked */}
               <label className="flex items-start gap-3 rounded-xl border border-border bg-card p-4 cursor-pointer hover:border-primary/40 transition-colors">
@@ -234,7 +406,7 @@ const ListBusiness = () => {
               </div>
               <h2 className="font-display text-3xl font-medium tracking-tight">You're on the founding-member list.</h2>
               <p className="mt-3 text-ink-2 max-w-md mx-auto">
-                Sharp! The Sjoh team will reach out within 24 hours to finish setting up your listing and lock in your founding-member perks (Founder badge + extra month free, no card now).
+                Sharp! Your listing is saved in workshop mode. Polish it from your dashboard now, or wait for the Sjoh team to reach out within 24 hours to switch it live and lock in your founding-member perks.
               </p>
               <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
                 <Button onClick={() => navigate("/dashboard")}>Go to Dashboard</Button>
@@ -245,12 +417,16 @@ const ListBusiness = () => {
 
           {step < 4 && (
             <div className="flex items-center justify-between mt-8 pt-6 border-t border-border">
-              <Button variant="ghost" onClick={prev} disabled={step === 0}>
+              <Button variant="ghost" onClick={prev} disabled={step === 0 || submitting}>
                 <ArrowLeft className="size-4" /> Back
               </Button>
-              <Button onClick={next} disabled={step === 3 && !whatsappConsent}>
+              <Button onClick={handlePrimaryClick} disabled={!canContinue}>
                 {step === 3 ? (
-                  <>Confirm — join the founding list</>
+                  submitting ? (
+                    <><Loader2 className="size-4 animate-spin" /> Saving…</>
+                  ) : (
+                    <>Confirm — join the founding list</>
+                  )
                 ) : (
                   <>Continue <ArrowRight className="size-4" /></>
                 )}
