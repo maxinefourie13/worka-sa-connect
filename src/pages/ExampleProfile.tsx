@@ -70,8 +70,8 @@ const ExampleProfile = () => {
                 </div>
               </div>
               <div className="flex gap-2 shrink-0">
-                <Button variant="outline" disabled>
-                  Follow · 0
+                <Button variant="outline" asChild>
+                  <Link to="/directory">See real profiles →</Link>
                 </Button>
                 <Button asChild>
                   <Link to="/list">List your business →</Link>
@@ -182,16 +182,21 @@ const ExampleProfile = () => {
                 and email. No middleman, no commission.
               </p>
               <div className="mt-4 space-y-2">
-                <Button className="w-full" disabled>
-                  <Phone className="size-4" /> Reveal phone
+                <Button asChild className="w-full">
+                  <Link to="/list">
+                    <Phone className="size-4" /> List your business to get real contacts
+                  </Link>
                 </Button>
-                <Button variant="outline" className="w-full" disabled>
-                  <MessageCircle className="size-4" /> WhatsApp
-                </Button>
-                <Button variant="outline" className="w-full" disabled>
-                  <Mail className="size-4" /> Email
+                <Button asChild variant="outline" className="w-full">
+                  <Link to="/directory">
+                    <MessageCircle className="size-4" /> Browse real profiles instead
+                  </Link>
                 </Button>
               </div>
+              <p className="text-[11px] text-muted-foreground italic mt-3 leading-relaxed">
+                Heads up — this is a sample, so the buttons above just send you to the real thing.
+                On a real profile, customers tap Reveal to see your phone, email and WhatsApp. No middleman.
+              </p>
               <ul className="mt-5 space-y-2 text-xs text-muted-foreground">
                 <li className="flex items-center gap-2">
                   <Globe className="size-3.5" /> yourwebsite.co.za
