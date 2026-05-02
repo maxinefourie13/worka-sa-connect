@@ -9,7 +9,9 @@ import { Typewriter } from "@/components/Typewriter";
 import { FoundingSpotsBanner } from "@/components/FoundingSpotsBanner";
 import sjohMascot from "@/assets/sjoh-mascot-hoodie.png";
 import sjohLogoWhite from "@/assets/sjoh-logo-white.png";
-import { Award, Gift, Handshake, ShieldCheck } from "lucide-react";
+import { Award, Gift, Handshake, ShieldCheck, Hammer, Search } from "lucide-react";
+
+type Mode = "pro" | "customer";
 
 const HERO_PHRASES = [
   "Tired of hiring mamparas?",
@@ -29,11 +31,22 @@ const PERKS = [
 
 const EarlyAccessLanding = () => {
   const navigate = useNavigate();
+  const [mode, setMode] = useState<Mode>("pro");
   const [displayName, setDisplayName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [agree, setAgree] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+
+  const goBrowse = () => {
+    markEarlyAccessSeen();
+    navigate("/directory");
+  };
+
+  const goPostJob = () => {
+    markEarlyAccessSeen();
+    navigate("/requests/new");
+  };
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -182,77 +195,167 @@ const EarlyAccessLanding = () => {
             </div>
           </div>
 
-          <div className="rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-sm shadow-2xl p-6 sm:p-8">
-            <h2 className="font-display text-2xl font-extrabold tracking-tight text-white">Claim your founding spot</h2>
-            <p className="text-sm text-white/70 mt-1">
-              500 founding members only. Founder badge + extra month free. No card now — just your details.
-            </p>
-
-            <form onSubmit={onSubmit} className="mt-6 space-y-4">
-              <div>
-                <label className="block text-xs font-bold mb-1.5 text-white/80">What does your Ma call you?</label>
-                <input
-                  required
-                  value={displayName}
-                  onChange={(e) => setDisplayName(e.target.value)}
-                  placeholder="First name + surname"
-                  className="w-full rounded-lg border border-white/15 bg-white/5 text-white placeholder:text-white/35 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/40"
-                />
-              </div>
-              <div>
-                <label className="block text-xs font-bold mb-1.5 text-white/80">Email</label>
-                <input
-                  type="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="you@business.co.za"
-                  className="w-full rounded-lg border border-white/15 bg-white/5 text-white placeholder:text-white/35 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/40"
-                />
-              </div>
-              <div>
-                <label className="block text-xs font-bold mb-1.5 text-white/80">Password</label>
-                <input
-                  type="password"
-                  required
-                  minLength={8}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="At least 8 characters"
-                  className="w-full rounded-lg border border-white/15 bg-white/5 text-white placeholder:text-white/35 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/40"
-                />
-              </div>
-
-              <label className="flex items-start gap-2.5 text-xs cursor-pointer select-none">
-                <input
-                  type="checkbox"
-                  checked={agree}
-                  onChange={(e) => setAgree(e.target.checked)}
-                  required
-                  className="mt-0.5 size-4 rounded border-white/30 text-primary focus:ring-primary cursor-pointer shrink-0"
-                />
-                <span className="text-white/65">
-                  I agree to the{" "}
-                  <Link to="/terms" className="text-primary font-semibold hover:underline">Terms</Link>{" "}
-                  and{" "}
-                  <Link to="/privacy" className="text-primary font-semibold hover:underline">Privacy Policy</Link>.
+          {/* Mode chooser — Pro vs Customer */}
+          <div className="grid grid-cols-2 gap-2.5 mb-5">
+            <button
+              type="button"
+              onClick={() => setMode("pro")}
+              className={`text-left rounded-xl border p-3.5 transition-all ${
+                mode === "pro"
+                  ? "border-primary bg-primary/15 ring-2 ring-primary/40"
+                  : "border-white/15 bg-white/[0.03] hover:bg-white/[0.06]"
+              }`}
+              aria-pressed={mode === "pro"}
+            >
+              <div className="flex items-center gap-2">
+                <span className={`size-7 rounded-lg flex items-center justify-center ${
+                  mode === "pro" ? "bg-primary text-primary-foreground" : "bg-white/10 text-white/70"
+                }`}>
+                  <Hammer className="size-3.5" strokeWidth={2.5} />
                 </span>
-              </label>
+                <span className="font-bold text-sm text-white">I'm a Pro</span>
+              </div>
+              <p className="text-[11px] text-white/60 mt-1.5 leading-snug">
+                Get leads. No commission. Founding badge.
+              </p>
+            </button>
+            <button
+              type="button"
+              onClick={() => setMode("customer")}
+              className={`text-left rounded-xl border p-3.5 transition-all ${
+                mode === "customer"
+                  ? "border-primary bg-primary/15 ring-2 ring-primary/40"
+                  : "border-white/15 bg-white/[0.03] hover:bg-white/[0.06]"
+              }`}
+              aria-pressed={mode === "customer"}
+            >
+              <div className="flex items-center gap-2">
+                <span className={`size-7 rounded-lg flex items-center justify-center ${
+                  mode === "customer" ? "bg-primary text-primary-foreground" : "bg-white/10 text-white/70"
+                }`}>
+                  <Search className="size-3.5" strokeWidth={2.5} />
+                </span>
+                <span className="font-bold text-sm text-white">I need a Pro</span>
+              </div>
+              <p className="text-[11px] text-white/60 mt-1.5 leading-snug">
+                Find someone vetted. No middleman.
+              </p>
+            </button>
+          </div>
 
-              <Button type="submit" size="lg" className="w-full" disabled={submitting}>
-                {submitting ? "Locking in your spot…" : "Claim my founding spot →"}
+          {mode === "pro" ? (
+            <div className="rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-sm shadow-2xl p-6 sm:p-8">
+              <h2 className="font-display text-2xl font-extrabold tracking-tight text-white">Claim your founding spot</h2>
+              <p className="text-sm text-white/70 mt-1">
+                500 founding members only. Founder badge + extra month free. No card now — just your details.
+              </p>
+
+              <form onSubmit={onSubmit} className="mt-6 space-y-4">
+                <div>
+                  <label className="block text-xs font-bold mb-1.5 text-white/80">What does your Ma call you?</label>
+                  <input
+                    required
+                    value={displayName}
+                    onChange={(e) => setDisplayName(e.target.value)}
+                    placeholder="First name + surname"
+                    className="w-full rounded-lg border border-white/15 bg-white/5 text-white placeholder:text-white/35 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/40"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold mb-1.5 text-white/80">Email</label>
+                  <input
+                    type="email"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="you@business.co.za"
+                    className="w-full rounded-lg border border-white/15 bg-white/5 text-white placeholder:text-white/35 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/40"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold mb-1.5 text-white/80">Password</label>
+                  <input
+                    type="password"
+                    required
+                    minLength={8}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="At least 8 characters"
+                    className="w-full rounded-lg border border-white/15 bg-white/5 text-white placeholder:text-white/35 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/40"
+                  />
+                </div>
+
+                <label className="flex items-start gap-2.5 text-xs cursor-pointer select-none">
+                  <input
+                    type="checkbox"
+                    checked={agree}
+                    onChange={(e) => setAgree(e.target.checked)}
+                    required
+                    className="mt-0.5 size-4 rounded border-white/30 text-primary focus:ring-primary cursor-pointer shrink-0"
+                  />
+                  <span className="text-white/65">
+                    I agree to the{" "}
+                    <Link to="/terms" className="text-primary font-semibold hover:underline">Terms</Link>{" "}
+                    and{" "}
+                    <Link to="/privacy" className="text-primary font-semibold hover:underline">Privacy Policy</Link>.
+                  </span>
+                </label>
+
+                <Button type="submit" size="lg" className="w-full" disabled={submitting}>
+                  {submitting ? "Locking in your spot…" : "Claim my founding spot →"}
+                </Button>
+
+                <p className="text-center text-[11px] text-white/55 leading-relaxed">
+                  No card. No commitment. We'll only nudge you when we open the doors.
+                </p>
+
+                <p className="text-center text-xs text-white/55">
+                  Already have an account?{" "}
+                  <Link to="/login" className="text-primary font-semibold hover:underline">Log in</Link>
+                </p>
+              </form>
+            </div>
+          ) : (
+            <div className="rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-sm shadow-2xl p-6 sm:p-8">
+              <h2 className="font-display text-2xl font-extrabold tracking-tight text-white">
+                Find someone who can do it properly.
+              </h2>
+              <p className="text-sm text-white/70 mt-2 leading-relaxed">
+                No signup needed. Browse vetted SA pros and contact them direct — no commission, no middleman, no chancer.
+              </p>
+
+              <ul className="mt-5 space-y-2.5 text-sm text-white/75">
+                <li className="flex gap-2.5">
+                  <span className="text-primary mt-0.5">→</span>
+                  Real reviews, real pros across all nine provinces.
+                </li>
+                <li className="flex gap-2.5">
+                  <span className="text-primary mt-0.5">→</span>
+                  Tap, reveal contact, and sort it out yourself.
+                </li>
+                <li className="flex gap-2.5">
+                  <span className="text-primary mt-0.5">→</span>
+                  Free to use. Always.
+                </li>
+              </ul>
+
+              <Button onClick={goBrowse} size="lg" className="w-full mt-6">
+                Browse the directory →
               </Button>
 
-              <p className="text-center text-[11px] text-white/55 leading-relaxed">
-                No card. No commitment. We'll only nudge you when we open the doors.
-              </p>
-
-              <p className="text-center text-xs text-white/55">
-                Already have an account?{" "}
-                <Link to="/login" className="text-primary font-semibold hover:underline">Log in</Link>
-              </p>
-            </form>
-          </div>
+              <div className="mt-4 pt-4 border-t border-white/10 text-center">
+                <p className="text-xs text-white/60">
+                  Want pros to quote you instead?
+                </p>
+                <button
+                  onClick={goPostJob}
+                  className="mt-1.5 text-sm font-bold text-primary hover:underline"
+                >
+                  Post a request →
+                </button>
+              </div>
+            </div>
+          )}
 
           <button
             onClick={skipToBrowse}
