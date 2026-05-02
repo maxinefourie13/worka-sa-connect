@@ -9,7 +9,9 @@ import { Typewriter } from "@/components/Typewriter";
 import { FoundingSpotsBanner } from "@/components/FoundingSpotsBanner";
 import sjohMascot from "@/assets/sjoh-mascot-hoodie.png";
 import sjohLogoWhite from "@/assets/sjoh-logo-white.png";
-import { Award, Gift, Handshake, ShieldCheck } from "lucide-react";
+import { Award, Gift, Handshake, ShieldCheck, Hammer, Search } from "lucide-react";
+
+type Mode = "pro" | "customer";
 
 const HERO_PHRASES = [
   "Tired of hiring mamparas?",
@@ -29,11 +31,22 @@ const PERKS = [
 
 const EarlyAccessLanding = () => {
   const navigate = useNavigate();
+  const [mode, setMode] = useState<Mode>("pro");
   const [displayName, setDisplayName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [agree, setAgree] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+
+  const goBrowse = () => {
+    markEarlyAccessSeen();
+    navigate("/directory");
+  };
+
+  const goPostJob = () => {
+    markEarlyAccessSeen();
+    navigate("/requests/new");
+  };
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
