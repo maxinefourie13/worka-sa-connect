@@ -76,22 +76,50 @@ export const ProposalModal = ({ open, jobId, jobTitle, jobBudget, clientName, on
 
     setSubmitting(true);
 
-    if (user && myBusiness && jobId) {
-      const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(jobId);
-      if (isUuid) {
-        const { error } = await supabase.rpc("submit_proposal", {
-          _opportunity_id: jobId,
-          _business_id: myBusiness.id,
-          _message: scope,
-          _quote_amount: priceType === "quote" ? null : priceNum,
-        });
-        if (error) {
-          console.error("[submit_proposal] failed", error);
-          toast({ title: "Aikona!", description: error.message, variant: "destructive" });
-          setSubmitting(false);
-          return;
-        }
-      }
+    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(jobId);
+
+    // Demo / sample lead — don't pretend we sent a real quote.
+    if (!isUuid) {
+      setSubmitting(false);
+      toast({
+        title: "This is a sample lead",
+        description: "Browse live customer requests to send a real quote.",
+      });
+      onClose();
+      return;
+    }
+
+    if (!user) {
+      setSubmitting(false);
+      toast({
+        title: "Sign in to send a quote",
+        description: "Create your free account or log in, then quote in one click.",
+      });
+      onClose();
+      return;
+    }
+
+    if (!myBusiness) {
+      setSubmitting(false);
+      toast({
+        title: "Finish your listing first",
+        description: "We need your business profile before you can quote on jobs.",
+      });
+      onClose();
+      return;
+    }
+
+    const { error } = await supabase.rpc("submit_proposal", {
+      _opportunity_id: jobId,
+      _business_id: myBusiness.id,
+      _message: scope,
+      _quote_amount: priceType === "quote" ? null : priceNum,
+    });
+    if (error) {
+      console.error("[submit_proposal] failed", error);
+      toast({ title: "Aikona!", description: error.message, variant: "destructive" });
+      setSubmitting(false);
+      return;
     }
 
     setSubmitted(true);
