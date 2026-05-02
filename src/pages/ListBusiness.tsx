@@ -232,13 +232,13 @@ const ListBusiness = () => {
               <div className="size-16 rounded-full bg-primary-light text-primary mx-auto flex items-center justify-center mb-6">
                 <CheckCircle2 className="size-8" />
               </div>
-              <h2 className="font-display text-3xl font-medium tracking-tight">You're listed on Sjoh.</h2>
+              <h2 className="font-display text-3xl font-medium tracking-tight">You're on the founding-member list.</h2>
               <p className="mt-3 text-ink-2 max-w-md mx-auto">
-                Your profile is live in the directory. Start posting promotions and sending quotes on customer requests from your dashboard.
+                Sharp! The Sjoh team will reach out within 24 hours to finish setting up your listing and lock in your founding-member perks (Founder badge + extra month free, no card now).
               </p>
               <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
                 <Button onClick={() => navigate("/dashboard")}>Go to Dashboard</Button>
-                <Button variant="outline" onClick={() => navigate("/directory")}>View Directory</Button>
+                <Button variant="outline" onClick={() => navigate("/directory")}>Browse the Directory</Button>
               </div>
             </div>
           )}
@@ -250,7 +250,7 @@ const ListBusiness = () => {
               </Button>
               <Button onClick={next} disabled={step === 3 && !whatsappConsent}>
                 {step === 3 ? (
-                  <>Confirm and Publish</>
+                  <>Confirm — join the founding list</>
                 ) : (
                   <>Continue <ArrowRight className="size-4" /></>
                 )}
