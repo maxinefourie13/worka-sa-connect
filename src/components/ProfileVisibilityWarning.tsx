@@ -99,8 +99,8 @@ export const ProfileVisibilityWarning = () => {
           <p className="text-sm text-ink-2 mt-1 leading-relaxed">
             A logo, cover photo and a few gallery shots make people way more likely to message you.
             No designer?{" "}
-            <Link to="/services/branding-design" className="text-primary font-semibold hover:underline">
-              Find a pro on Sjoh →
+            <Link to="/directory?category=graphic-design" className="text-primary font-semibold hover:underline">
+              Find a designer on Sjoh →
             </Link>
           </p>
           <div className="mt-3 flex flex-wrap gap-2">

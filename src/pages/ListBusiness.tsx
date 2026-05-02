@@ -119,15 +119,15 @@ const ListBusiness = () => {
 
               <div className="rounded-xl border border-dashed border-primary/30 bg-primary-light/30 p-4">
                 <p className="text-sm font-bold text-foreground">
-                  Make it look the part — when you're ready. ✨
+                  Make it look the part — when you're ready.
                 </p>
                 <p className="text-xs text-ink-2 mt-1 leading-relaxed">
                   Logo, cover and gallery are <strong>optional</strong>. Skip them now and add them anytime from your dashboard.{" "}
                   Don't have a logo yet?{" "}
-                  <Link to="/services/branding-design" className="text-primary font-semibold hover:underline">
-                    Find a pro on Sjoh
+                  <Link to="/directory?category=graphic-design" className="text-primary font-semibold hover:underline">
+                    Find a designer on Sjoh
                   </Link>{" "}
-                  for that too. 😉
+                  for that too.
                 </p>
               </div>
 
