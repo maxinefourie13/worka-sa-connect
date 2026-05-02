@@ -112,7 +112,7 @@ const ListBusiness = () => {
         website: website.trim() || null,
         description: description.trim() || null,
         tags,
-        plan: plan === "verified_pro" ? "verified_pro" : "basic",
+        // plan tier lives in provider_balances; default 'free' here until billing is wired
         listing_status: "workshop",
         pre_launch: true,
       }]);
