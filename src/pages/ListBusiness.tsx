@@ -99,7 +99,7 @@ const ListBusiness = () => {
         .filter(Boolean)
         .slice(0, 20);
 
-      const { error } = await supabase.from("businesses").insert({
+      const { error } = await supabase.from("businesses").insert([{
         owner_id: user.id,
         name: name.trim(),
         slug,
