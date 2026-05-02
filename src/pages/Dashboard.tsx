@@ -325,11 +325,8 @@ const VerificationSection = () => {
           <div className="border border-border rounded-lg p-4">
             <p className="text-sm font-semibold">Trade certificates</p>
             <p className="text-xs text-muted-foreground mt-1">
-              Upload to become a Certified Pro
+              Got a Wireman's Licence, PIRB, or trade qualification? Certificate uploads are landing soon — we'll buzz you the moment they're live so you can claim your Certified Pro badge.
             </p>
-            <Button size="sm" variant="outline" className="mt-3" onClick={() => toast({ title: "Upload (coming soon)", description: "Certificate uploads land in the next update." })}>
-              Upload certificate
-            </Button>
           </div>
         </div>
       </div>
@@ -494,21 +491,18 @@ const PromotionsSection = () => {
 
   return (
     <>
-      <header className="flex items-center justify-between">
-        <div>
-          <h1 className="font-display text-3xl font-medium tracking-tight">Promotions</h1>
-          <p className="text-sm text-ink-2 mt-1">Run limited-time offers to attract new customers.</p>
-        </div>
-        <Button disabled title="Promotions editor lands soon"><Plus className="size-4" />Add Promotion</Button>
+      <header>
+        <h1 className="font-display text-3xl font-medium tracking-tight">Promotions</h1>
+        <p className="text-sm text-ink-2 mt-1">Run limited-time offers to attract new customers — coming soon.</p>
       </header>
       {loading ? (
         <div className="bg-card border border-border rounded-xl p-6 text-sm text-muted-foreground">Loading…</div>
       ) : items.length === 0 ? (
         <div className="bg-card border border-border rounded-xl p-8 text-center">
           <Sparkles className="size-8 mx-auto text-muted-foreground mb-2" />
-          <p className="text-sm font-semibold">No promotions running yet</p>
+          <p className="text-sm font-semibold">Promotions are landing soon</p>
           <p className="text-xs text-ink-2 mt-1 max-w-sm mx-auto">
-            Promotions show up on your profile and in search. The editor is on its way.
+            Limited-time offers will show up on your profile and in search. We'll buzz you the moment the editor goes live.
           </p>
         </div>
       ) : (
