@@ -51,10 +51,10 @@ export default {
           foreground: "hsl(var(--info-foreground))",
         },
         sa: {
-          green: "#007A4D",
-          gold: "#FFB81C",
+          green: "#B8E060",
+          gold: "#B8E060",
           red: "#DE3831",
-          blue: "#002395",
+          blue: "#8B9DEF",
         },
         popover: {
           DEFAULT: "hsl(var(--popover))",
