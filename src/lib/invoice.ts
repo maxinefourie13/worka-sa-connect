@@ -64,7 +64,7 @@ export const generateInvoicePdf = (data: InvoiceData): jsPDF => {
   const margin = 40;
 
   // ---- Header band: Sjoh brand bar
-  doc.setFillColor(232, 102, 90); // #e8665a — Sjoh coral primary
+  doc.setFillColor(0, 122, 77); // #e8665a — Sjoh coral primary
   doc.rect(0, 0, pageWidth, 56, "F");
   doc.setTextColor(255, 255, 255);
   doc.setFont("helvetica", "bold");
