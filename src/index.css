@@ -167,14 +167,14 @@
     @apply transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-pop;
   }
 
-  /* Moving black ↔ coral gradient — used on sample/preview cards */
+  /* Moving SA-flag gradient — used on sample/preview cards */
   .sample-gradient {
     background: linear-gradient(
       120deg,
-      hsl(0 0% 8%) 0%,
-      hsl(5 100% 64%) 35%,
-      hsl(0 0% 8%) 65%,
-      hsl(5 100% 64%) 100%
+      hsl(157 100% 24%) 0%,
+      hsl(43 100% 55%) 30%,
+      hsl(3 73% 53%) 60%,
+      hsl(227 100% 29%) 100%
     );
     background-size: 300% 300%;
     animation: sample-gradient-pan 7s ease-in-out infinite;
