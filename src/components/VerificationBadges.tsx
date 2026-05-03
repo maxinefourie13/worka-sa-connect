@@ -24,7 +24,7 @@ export const VerificationBadges = ({
       {idVerified && (
         <span
           title="ID verified — phone & ID checked"
-          className={cn("inline-flex items-center gap-1 font-bold uppercase tracking-widest text-primary bg-primary/10 px-2 py-0.5 rounded", text)}
+          className={cn("inline-flex items-center gap-1 font-bold uppercase tracking-widest text-info bg-info/10 px-2 py-0.5 rounded", text)}
         >
           <ShieldCheck className={icon} strokeWidth={2.5} />
           Verified
@@ -33,7 +33,7 @@ export const VerificationBadges = ({
       {certifiedPro && (
         <span
           title="Certified Pro — trade certificate uploaded and approved"
-          className={cn("inline-flex items-center gap-1 font-bold uppercase tracking-widest text-accent-foreground bg-accent px-2 py-0.5 rounded", text)}
+          className={cn("inline-flex items-center gap-1 font-bold uppercase tracking-widest text-success-foreground bg-success px-2 py-0.5 rounded", text)}
         >
           <BadgeCheck className={icon} strokeWidth={2.5} />
           Certified Pro
