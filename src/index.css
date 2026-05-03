@@ -29,13 +29,12 @@
     --popover: 0 0% 100%;
     --popover-foreground: 230 22% 8%;
 
-    /* Brand SA-green — used as the interactive primary.
-       White on this passes WCAG AA. The lighter --primary-glow
-       is reserved for accents, gradients, and large display. */
-    --primary: 157 100% 22%;            /* #007A4D — SA green, AA with white */
-    --primary-foreground: 0 0% 100%;
-    --primary-glow: 157 70% 38%;        /* lighter green for glows/gradients */
-    --primary-light: 157 50% 95%;       /* tinted green background */
+    /* Brand periwinkle — soft blue-violet primary. Dark ink sits on it
+       for AA contrast; deeper periwinkle is used for text/icons on white. */
+    --primary: 230 75% 68%;             /* #8B9DEF-ish periwinkle */
+    --primary-foreground: 230 22% 8%;   /* charcoal ink on periwinkle */
+    --primary-glow: 230 80% 78%;        /* lighter periwinkle for glows/gradients */
+    --primary-light: 230 80% 96%;       /* tinted periwinkle background */
 
     --secondary: 228 25% 96%;           /* near bg, slightly cooler */
     --secondary-foreground: 230 22% 8%;
@@ -43,9 +42,9 @@
     --muted: 228 25% 96%;
     --muted-foreground: 228 8% 46%;     /* #6b6f7e */
 
-    --accent: 43 100% 55%;              /* SA gold #FFB81C */
-    --accent-foreground: 230 22% 8%;    /* dark ink on gold for AA */
-    --accent-soft: 43 100% 92%;         /* tinted gold background */
+    --accent: 72 85% 70%;               /* bright green-yellow / chartreuse */
+    --accent-foreground: 230 22% 8%;    /* dark ink on chartreuse for AA */
+    --accent-soft: 72 85% 92%;          /* tinted chartreuse background */
 
     --info: 227 100% 29%;               /* SA blue #002395 */
     --info-foreground: 0 0% 100%;
@@ -57,33 +56,33 @@
 
     --border: 226 18% 91%;              /* #e4e6ed */
     --input: 226 18% 91%;
-    --ring: 157 100% 24%;               /* green focus ring */
+    --ring: 230 75% 68%;                /* periwinkle focus ring */
 
     --radius: 0.625rem;
 
     /* Sidebar (dashboard) */
     --sidebar-background: 0 0% 100%;
     --sidebar-foreground: 230 22% 8%;
-    --sidebar-primary: 157 100% 22%;
-    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-primary: 230 75% 68%;
+    --sidebar-primary-foreground: 230 22% 8%;
     --sidebar-accent: 228 25% 96%;
     --sidebar-accent-foreground: 230 22% 8%;
     --sidebar-border: 226 18% 91%;
-    --sidebar-ring: 157 100% 24%;
+    --sidebar-ring: 230 75% 68%;
 
     /* Gradients & shadows */
     --shadow-soft: 0 4px 20px -8px hsl(230 22% 8% / 0.08);
     --shadow-card: 0 1px 2px hsl(230 22% 8% / 0.04), 0 8px 24px -12px hsl(230 22% 8% / 0.08);
     --shadow-pop: 0 12px 40px -12px hsl(230 22% 8% / 0.18);
-    --shadow-coral: 0 12px 32px -12px hsl(43 100% 55% / 0.45); /* legacy name; gold glow */
+    --shadow-coral: 0 12px 32px -12px hsl(72 85% 70% / 0.45); /* legacy name; chartreuse glow */
 
-    /* Business card gradients — SA flag multi-accent rotation */
-    --grad-1: linear-gradient(135deg, hsl(157 100% 24%), hsl(157 70% 38%));   /* green */
-    --grad-2: linear-gradient(135deg, hsl(43 100% 55%), hsl(36 100% 48%));    /* gold */
-    --grad-3: linear-gradient(135deg, hsl(227 100% 29%), hsl(220 80% 42%));   /* blue */
-    --grad-4: linear-gradient(135deg, hsl(3 73% 53%), hsl(15 80% 52%));       /* red */
-    --grad-5: linear-gradient(135deg, hsl(157 100% 24%), hsl(43 100% 55%));   /* green→gold */
-    --grad-6: linear-gradient(135deg, hsl(227 100% 29%), hsl(3 73% 53%));     /* blue→red */
+    /* Business card gradients — periwinkle + chartreuse rotation */
+    --grad-1: linear-gradient(135deg, hsl(230 75% 68%), hsl(230 80% 78%));   /* periwinkle */
+    --grad-2: linear-gradient(135deg, hsl(72 85% 70%), hsl(80 80% 62%));     /* chartreuse */
+    --grad-3: linear-gradient(135deg, hsl(227 100% 29%), hsl(230 75% 68%));  /* deep blue → periwinkle */
+    --grad-4: linear-gradient(135deg, hsl(3 73% 53%), hsl(15 80% 52%));      /* red */
+    --grad-5: linear-gradient(135deg, hsl(230 75% 68%), hsl(72 85% 70%));    /* periwinkle → chartreuse */
+    --grad-6: linear-gradient(135deg, hsl(227 100% 29%), hsl(3 73% 53%));    /* blue → red */
   }
 
   .dark {
@@ -94,17 +93,17 @@
     --card-foreground: 228 33% 98%;
     --popover: 230 18% 12%;
     --popover-foreground: 228 33% 98%;
-    --primary: 157 70% 38%;
-    --primary-foreground: 0 0% 100%;
+    --primary: 230 75% 68%;
+    --primary-foreground: 230 22% 8%;
     --secondary: 230 14% 16%;
     --secondary-foreground: 228 33% 98%;
     --muted: 230 14% 16%;
     --muted-foreground: 228 12% 65%;
-    --accent: 43 100% 55%;
+    --accent: 72 85% 70%;
     --accent-foreground: 230 22% 8%;
     --border: 230 14% 18%;
     --input: 230 14% 18%;
-    --ring: 157 70% 38%;
+    --ring: 230 75% 68%;
   }
 }
 
@@ -171,9 +170,9 @@
   .sample-gradient {
     background: linear-gradient(
       120deg,
-      hsl(157 100% 24%) 0%,
-      hsl(43 100% 55%) 30%,
-      hsl(3 73% 53%) 60%,
+      hsl(230 75% 68%) 0%,
+      hsl(72 85% 70%) 35%,
+      hsl(230 80% 78%) 70%,
       hsl(227 100% 29%) 100%
     );
     background-size: 300% 300%;
