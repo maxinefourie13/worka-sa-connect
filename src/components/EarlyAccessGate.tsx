@@ -52,8 +52,7 @@ export const EarlyAccessGate = ({ children }: { children: ReactNode }) => {
     return <>{children}</>;
   }
 
-  // Early-access landing temporarily disabled — always show the app.
-  return <>{children}</>;
-  // if (hasEarlyAccess()) return <>{children}</>;
-  // return <EarlyAccessLanding />;
+  if (hasEarlyAccess()) return <>{children}</>;
+
+  return <EarlyAccessLanding />;
 };

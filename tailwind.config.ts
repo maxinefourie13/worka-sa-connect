@@ -49,12 +49,6 @@ export default {
         info: {
           DEFAULT: "hsl(var(--info))",
           foreground: "hsl(var(--info-foreground))",
-          soft: "hsl(var(--info-soft))",
-        },
-        success: {
-          DEFAULT: "hsl(var(--success))",
-          foreground: "hsl(var(--success-foreground))",
-          soft: "hsl(var(--success-soft))",
         },
         sa: {
           green: "#007A4D",

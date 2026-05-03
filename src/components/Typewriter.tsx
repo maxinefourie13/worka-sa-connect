@@ -32,9 +32,9 @@ export const Typewriter = ({
   accentClassName,
   reserveCurrentPhraseSpace = false,
 }: TypewriterProps) => {
-  // SA flag accent rotation — green / gold / red / blue per phrase.
-  // All four colours are equal peers in the Sjoh palette.
-  const ACCENT_ROTATION = ["text-success", "text-accent", "text-destructive", "text-info"];
+  // SA flag accent rotation — green / gold / blue per phrase.
+  // Red is intentionally excluded so the typewriter never reads as an "error".
+  const ACCENT_ROTATION = ["text-primary", "text-accent", "text-info"];
   const [order] = useState(() => {
     if (!randomize) return phrases.map((_, i) => i);
     const arr = phrases.map((_, i) => i);
@@ -79,11 +79,24 @@ export const Typewriter = ({
     return () => window.clearTimeout(timeoutId);
   }, [text, phase, orderIndex, order, phrases, typingSpeed, erasingSpeed, holdDuration, target]);
 
-  // Whole phrase takes the rotating SA-flag accent — one phrase green,
-  // next red, next blue, next gold, then loop.
+  // Tokenize so "Sjoh" and punctuation render in the accent color while
+  // the rest stays in whatever color the parent sets (foreground/charcoal).
+  // Split keeps the matched delimiters as their own tokens.
+  const splitTokens = (value: string) => value.split(/(Sjoh|[!?.,;:'"\-—…])/g).filter(Boolean);
+
   const activeAccent = accentClassName ?? ACCENT_ROTATION[orderIndex % ACCENT_ROTATION.length];
 
-  const renderTokens = (value: string) => <span className={activeAccent}>{value}</span>;
+  const renderTokens = (value: string) =>
+    splitTokens(value).map((tok, i) => {
+      const isAccent = tok === "Sjoh" || /^[!?.,;:'"\-—…]$/.test(tok);
+      return isAccent ? (
+        <span key={i} className={activeAccent}>
+          {tok}
+        </span>
+      ) : (
+        <span key={i}>{tok}</span>
+      );
+    });
 
   const caret = (
     <span
