@@ -32,9 +32,9 @@ export const Typewriter = ({
   accentClassName,
   reserveCurrentPhraseSpace = false,
 }: TypewriterProps) => {
-  // SA flag accent rotation — green / gold / blue per phrase.
-  // Red is intentionally excluded so the typewriter never reads as an "error".
-  const ACCENT_ROTATION = ["text-primary", "text-accent", "text-info"];
+  // SA flag accent rotation — green / gold / red / blue per phrase.
+  // All four colours are equal peers in the Sjoh palette.
+  const ACCENT_ROTATION = ["text-success", "text-accent", "text-destructive", "text-info"];
   const [order] = useState(() => {
     if (!randomize) return phrases.map((_, i) => i);
     const arr = phrases.map((_, i) => i);
