@@ -79,24 +79,11 @@ export const Typewriter = ({
     return () => window.clearTimeout(timeoutId);
   }, [text, phase, orderIndex, order, phrases, typingSpeed, erasingSpeed, holdDuration, target]);
 
-  // Tokenize so "Sjoh" and punctuation render in the accent color while
-  // the rest stays in whatever color the parent sets (foreground/charcoal).
-  // Split keeps the matched delimiters as their own tokens.
-  const splitTokens = (value: string) => value.split(/(Sjoh|[!?.,;:'"\-—…])/g).filter(Boolean);
-
+  // Whole phrase takes the rotating SA-flag accent — one phrase green,
+  // next red, next blue, next gold, then loop.
   const activeAccent = accentClassName ?? ACCENT_ROTATION[orderIndex % ACCENT_ROTATION.length];
 
-  const renderTokens = (value: string) =>
-    splitTokens(value).map((tok, i) => {
-      const isAccent = tok === "Sjoh" || /^[!?.,;:'"\-—…]$/.test(tok);
-      return isAccent ? (
-        <span key={i} className={activeAccent}>
-          {tok}
-        </span>
-      ) : (
-        <span key={i}>{tok}</span>
-      );
-    });
+  const renderTokens = (value: string) => <span className={activeAccent}>{value}</span>;
 
   const caret = (
     <span
