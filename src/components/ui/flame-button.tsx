@@ -96,7 +96,7 @@ export const FlameButton = React.forwardRef<HTMLButtonElement, FlameButtonProps>
             "border border-white/10 bg-foreground/90 text-background font-semibold uppercase tracking-wide",
             "shadow-[0_8px_24px_-8px_hsl(230_22%_8%_/_0.45)]",
             "transition-[transform,box-shadow,background-color] duration-200",
-            "hover:-translate-y-[1px] hover:shadow-[0_14px_36px_-10px_hsl(5_100%_70%_/_0.55)]",
+            "hover:-translate-y-[1px] hover:shadow-[0_14px_36px_-10px_hsl(43_100%_55%_/_0.55)]",
             "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
             "disabled:pointer-events-none disabled:opacity-50",
             "backdrop-blur-[1px]",
