@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 /*
-  Sjoh design system — bold modern sans, coral accent
+  Sjoh design system — bold modern sans, SA flag multi-accent
   All colors MUST be HSL.
   Palette source:
     bg          #f7f8fc
@@ -11,10 +11,10 @@
     ink/2       #3a3d4a
     muted       #6b6f7e
     border      #e4e6ed
-    coral       #ff7468  (brand accent)
-    coral-deep  #e85a4e  (darker, AA-safe with white text)
-    coral-soft  #ffe6e3  (tinted background)
-    amber       #f59e0b
+    sa-green    #007A4D  (primary / brand)
+    sa-gold     #FFB81C  (highlight / accent)
+    sa-red      #DE3831  (urgent / destructive)
+    sa-blue     #002395  (trust / info / link)
     white       #ffffff
 */
 
