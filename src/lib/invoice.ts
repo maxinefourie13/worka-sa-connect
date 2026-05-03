@@ -64,7 +64,7 @@ export const generateInvoicePdf = (data: InvoiceData): jsPDF => {
   const margin = 40;
 
   // ---- Header band: Sjoh brand bar
-  doc.setFillColor(0, 122, 77); // #e8665a — Sjoh coral primary
+  doc.setFillColor(0, 122, 77); // #007A4D — Sjoh SA green primary
   doc.rect(0, 0, pageWidth, 56, "F");
   doc.setTextColor(255, 255, 255);
   doc.setFont("helvetica", "bold");
@@ -168,7 +168,7 @@ export const generateInvoicePdf = (data: InvoiceData): jsPDF => {
   doc.setFontSize(13);
   doc.setTextColor(20, 20, 20);
   doc.text("TOTAL DUE", totalsX, afterTableY + 8);
-  doc.setTextColor(232, 102, 90);
+  doc.setTextColor(0, 122, 77);
   doc.text(fmtZAR(totals.total), valX, afterTableY + 8, { align: "right" });
   afterTableY += 32;
 
@@ -188,7 +188,7 @@ export const generateInvoicePdf = (data: InvoiceData): jsPDF => {
 
   // ---- Footer
   const footerY = doc.internal.pageSize.getHeight() - 40;
-  doc.setDrawColor(232, 102, 90);
+  doc.setDrawColor(0, 122, 77);
   doc.setLineWidth(2);
   doc.line(margin, footerY - 14, pageWidth - margin, footerY - 14);
   doc.setFont("helvetica", "normal");
