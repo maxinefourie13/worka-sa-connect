@@ -71,7 +71,7 @@ export const FlameButton = React.forwardRef<HTMLButtonElement, FlameButtonProps>
               top: yPct,
               transform: "translate(-50%, -50%)",
               background:
-                "radial-gradient(50% 50% at 50% 50%, hsl(5 100% 88% / 0.95) 0%, hsl(5 100% 74% / 0.85) 28%, hsl(5 100% 70% / 0.55) 50%, hsl(5 100% 70% / 0) 92%)",
+                "radial-gradient(50% 50% at 50% 50%, hsl(43 100% 88% / 0.95) 0%, hsl(43 100% 60% / 0.85) 28%, hsl(3 73% 53% / 0.55) 50%, hsl(3 73% 53% / 0) 92%)",
             }}
           />
           {/* Wide soft halo */}
@@ -84,7 +84,7 @@ export const FlameButton = React.forwardRef<HTMLButtonElement, FlameButtonProps>
               top: yPct,
               transform: "translate(-50%, -50%)",
               background:
-                "radial-gradient(43% 44% at 50% 50%, hsl(5 100% 92% / 0.9) 28%, hsl(5 100% 80% / 0.55) 55%, hsl(5 100% 70% / 0) 100%)",
+                "radial-gradient(43% 44% at 50% 50%, hsl(43 100% 92% / 0.9) 28%, hsl(43 100% 60% / 0.55) 55%, hsl(3 73% 53% / 0) 100%)",
             }}
           />
         </span>
@@ -96,7 +96,7 @@ export const FlameButton = React.forwardRef<HTMLButtonElement, FlameButtonProps>
             "border border-white/10 bg-foreground/90 text-background font-semibold uppercase tracking-wide",
             "shadow-[0_8px_24px_-8px_hsl(230_22%_8%_/_0.45)]",
             "transition-[transform,box-shadow,background-color] duration-200",
-            "hover:-translate-y-[1px] hover:shadow-[0_14px_36px_-10px_hsl(5_100%_70%_/_0.55)]",
+            "hover:-translate-y-[1px] hover:shadow-[0_14px_36px_-10px_hsl(43_100%_55%_/_0.55)]",
             "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
             "disabled:pointer-events-none disabled:opacity-50",
             "backdrop-blur-[1px]",

@@ -1,90 +1,67 @@
-# Site-wide audit: dead buttons + advertise-vs-logic mismatches
+## Goal
 
-I scanned every page and component for: links to nonexistent routes, permanently disabled buttons, mock-only forms, "coming soon" stubs presented as live features, and copy that contradicts the actual code/pricing model. Here's what I found and what to fix.
+Swap the coral-only brand for a **South African flag multi-accent system**. The neutral base (off-white background, near-black ink) stays the same — the flag colours show up as accents across buttons, badges, category tiles, gradients and highlights. Etsy-warm × Upwork-clean stays intact.
 
-## Critical (broken on the published site right now)
+## New palette (HSL tokens in `src/index.css`)
 
-### 1. `/auth` route doesn't exist → silent 404 when logged-out users click "Send Quote" or a paid plan
-- `src/components/ApplyButton.tsx:98` → `navigate("/auth")` — this is exactly the *"clicked Send Quote, nothing happens"* bug from earlier.
-- `src/pages/Pricing.tsx:32` → same bug when picking a plan while logged out.
-- Routes only define `/login`. Fix: change both to `navigate("/login?next=" + encodeURIComponent(currentPath))` so they bounce back after sign-in.
+```text
+sa-green   #007A4D   hsl(157 100% 24%)   primary buttons, brand
+sa-gold    #FFB81C   hsl(43 100% 55%)    highlights, badges, hover
+sa-red     #DE3831   hsl(3  73% 53%)     urgent / destructive / "Boost"
+sa-blue    #002395   hsl(227 100% 29%)   links, info, trust badges
+sa-black   #000000                        ink (already in use)
+sa-white   #FFFFFF                        surfaces (already in use)
+bg / ink / border / muted              unchanged from today
+```
 
-### 2. `/list` (Apply as a Pro) is a fake mock
-- `src/pages/ListBusiness.tsx` is the **primary site-wide CTA** ("Apply as a Pro" in the header, "List your business" everywhere) but the entire page is uncontrolled inputs with no form state, no Supabase write, no submit handler. Clicking "Confirm and Publish" just advances the step counter to a green "You're listed on Sjoh" screen — nothing was actually saved.
-- It also still advertises **stale plans**: `Free / Standard (R0 for 3 months) / Featured R250` — current model per memory is **Basic R50 + Verified Pro R250 with a 30-day trial (2 months for early access)**.
+Contrast: green and blue both pass AA on white for body+UI. Gold is reserved for fills with dark text or as a thin highlight (never gold text on white).
 
-  Fix: this is a bigger job — for *now* I'll (a) replace the fake plans with the correct ones from `SJOH_TIERS` so at least the copy is honest, and (b) add a clear "Early access — full sign-up opens soon. Drop your email to be first in" form on Step 4 that actually writes to the waitlist (same flow the early-access landing uses). Building the real multi-step business signup is a separate, larger task — flagged.
+## Token mapping
 
-### 3. `/services/branding-design` → 404 (3 dead links)
-- `src/pages/ListBusiness.tsx:127`, `src/components/ProfileVisibilityWarning.tsx:102`, `src/components/dashboard/BusinessGalleryCard.tsx:138`.
-- No `/services/*` route exists, and `branding-design` isn't a known category, so it falls through to `Navigate to="/404"` → which itself isn't a route → 404.
+| Token | Today (coral) | New |
+|---|---|---|
+| `--primary` / `--ring` | coral-deep | **sa-green** (157 90% 22% for AA) |
+| `--primary-glow` | coral light | **sa-green** lighter tint |
+| `--primary-light` | peach | **green-soft** (157 50% 95%) |
+| `--accent` | coral | **sa-gold** (warm highlight) |
+| `--accent-soft` | peach | gold-soft (43 100% 92%) |
+| `--destructive` | red | **sa-red** |
+| `--info` (new) | — | **sa-blue** |
+| Selection / focus glow | coral | green |
+| Sample-gradient (`.sample-gradient`) | black ↔ coral | rotates **green → gold → red → blue** |
+| Business gradients `--grad-1..6` | warm-only | rebalanced: green, gold, red, blue, green/gold, blue/red |
 
-  Fix: link these to `/directory?category=graphic-design` (closest real category) or remove the link and just say *"Find a designer in the directory →"* pointing at `/directory`.
+## Component-level sweeps
 
-### 4. `<Navigate to="/404">` is itself a dead route
-- `src/pages/CategoryLocationPage.tsx:50`. There's no `/404` route — only the catch-all `*`. Lands on NotFound by accident, but the URL bar then says `/404` which is confusing and not crawlable.
+1. **Hero typewriter** (`src/pages/Index.tsx`) — coral text → cycles through green/gold/blue per phrase (red kept out of the typewriter to avoid "error" feel).
+2. **Buttons** — default uses green; `variant="accent"` uses gold; "Urgent Boost" / `flame-button` uses red→gold gradient.
+3. **Badges** — Verified Pro → blue, Verified Hire → green, Urgent → red, Founding Member → gold.
+4. **Category tiles** (`src/lib/categoryIcons.tsx` consumers) — round-robin the 4 flag accents instead of all-coral.
+5. **Header / Footer** (`SiteHeader`, `SiteFooter`) — logo dot + active link underline → green; CTA stays primary (green).
+6. **Toasters / EmailUnsubscribe / VerifiedReviewPage** — accent classes already use `bg-accent` so they inherit the new gold automatically; no per-file copy changes needed.
+7. **Pricing page** — Basic card neutral, Verified Pro card uses green border + gold "popular" ribbon.
+8. **Tailwind config** (`tailwind.config.ts`) — add `sa: { green, gold, red, blue }` colour group + `info` token wired to `--info`.
 
-  Fix: render `<NotFound />` directly, or use `<Navigate replace to="/" />`.
+## Files touched
 
-### 5. `<a href="#">` website link on every business profile
-- `src/pages/BusinessProfile.tsx:397` — the website link in the contact rail is hardcoded to `#`, so clicking it just jumps to top of page.
+- `src/index.css` — token rewrite (primary, accent, destructive, ring, gradients, sample-gradient, selection)
+- `tailwind.config.ts` — add `sa.*` and `info` colours
+- `src/pages/Index.tsx` — typewriter colour cycle
+- `src/components/SiteHeader.tsx`, `src/components/SiteFooter.tsx` — brand mark colour
+- `src/components/VerifiedBadge.tsx`, `src/components/VerificationBadges.tsx`, `src/components/FoundingSpotsBanner.tsx`, `src/components/UrgentBoostButton.tsx`, `src/components/ui/flame-button.tsx` — re-tint to per-meaning flag colour
+- `src/components/BusinessCard.tsx` (+ anywhere `bg-grad-*` is set) — confirm new gradients still read well
+- `src/pages/Pricing.tsx` — popular ribbon → gold, recommended border → green
+- Category tile renderer (likely `src/pages/Index.tsx` / `GroupLanding.tsx`) — accent rotation
 
-  Fix: use `business.website` with `https://` prefix if missing, `target="_blank" rel="noopener noreferrer"`.
+No DB / RPC / edge function changes. Pure visual.
 
-## High (advertise ≠ reality)
+## Memory update
 
-### 6. Pricing FAQ contradicts the Urgent Boost section
-- `src/pages/Pricing.tsx:17` FAQ says: *"customers can flag it as Eish! Urgent at no extra charge"*.
-- `src/pages/Pricing.tsx:188` same page says: *"Mark a job Urgent for R50"*.
-- Memory says **Urgent Boost is R50**, customer-funded. Fix the FAQ answer.
+Rewrite the Core memory: remove "No green anywhere" and "coral is the brand". Replace with the SA flag multi-accent rule, token map, and the per-meaning colour assignments (green = primary, gold = highlight, red = urgent/destructive, blue = trust/info). Keep typography, voice, pricing, hero rules unchanged.
 
-### 7. Pricing copy uses old "klaxon" / Klaps-era voice
-- `Pricing.tsx:188` says "we klaxon every verified pro" — replace with on-brand SA copy ("we WhatsApp every verified pro within 10km, top of the feed, instant push").
+## QA after build
 
-### 8. Directory pagination is fake
-- `src/pages/Directory.tsx:259-263` renders `Previous / 1 / 2 / 3 / Next` buttons that are static — no state, no slicing, no page param. Looks live; isn't.
-
-  Fix: hide pagination entirely until real paging is implemented (the dataset is small enough that it isn't needed yet).
-
-### 9. Dashboard "Add Promotion" button is permanently disabled
-- `src/pages/Dashboard.tsx:502` → `<Button disabled title="Promotions editor lands soon">`. Page also says *"Run limited-time offers to attract new customers"* as if it's a real feature.
-
-  Fix: hide the button entirely and reword the empty state to *"Promotions are coming soon — we'll buzz you when they're live."* (don't tease an action you can't do).
-
-### 10. Dashboard "Upload certificate" toast says "coming soon"
-- `src/pages/Dashboard.tsx:330` — button just toasts "Upload (coming soon)".
-
-  Fix: hide the upload button until real upload is built, or swap for an existing certificate-request flow if there is one. Same principle: don't show buttons that don't do anything.
-
-### 11. Header always shows "Send Quotes" nav even for non-pros
-- `src/components/SiteHeader.tsx:24` puts `/leads` in the nav for everyone. A logged-out browser or a customer sees it, clicks → Opportunities page in pro view, with paywalls everywhere.
-
-  Fix: keep "Send Quotes" only when the user has a `pro` role / has a business listing. For everyone else, the "Get Quotes" link is enough.
-
-## Medium (cosmetic / smaller)
-
-### 12. `BusinessProfile` reveal buttons stay disabled after one click misuse
-- Spot-check only — `revealing` toggles correctly. Skipping unless I see a concrete bug.
-
-### 13. `/example-listing` "Reveal phone / WhatsApp / Email" — already fixed last turn.
-
-## Files to edit
-
-- `src/components/ApplyButton.tsx` — `/auth` → `/login?next=...`
-- `src/pages/Pricing.tsx` — `/auth` → `/login?next=/pricing`; fix Urgent FAQ; rewrite "klaxon" sentence in Sjoh voice.
-- `src/pages/ListBusiness.tsx` — replace stale `PLANS` with real tiers from `SJOH_TIERS`; replace mock submit with a real "join the waitlist" handler that writes to the same path the early-access landing uses; fix `/services/branding-design` link.
-- `src/components/ProfileVisibilityWarning.tsx` — fix `/services/branding-design` link.
-- `src/components/dashboard/BusinessGalleryCard.tsx` — fix `/services/branding-design` link.
-- `src/pages/CategoryLocationPage.tsx` — render `<NotFound />` instead of redirecting to `/404`.
-- `src/pages/BusinessProfile.tsx` — make the website link real (`href={normaliseUrl(business.website)}` + `target="_blank"`).
-- `src/pages/Directory.tsx` — remove the fake pagination block.
-- `src/pages/Dashboard.tsx` — remove disabled "Add Promotion" button + reword empty state; remove the "coming soon" certificate upload button.
-- `src/components/SiteHeader.tsx` — gate the `/leads` ("Send Quotes") nav item on having a pro role / business.
-
-## Out of scope for this pass
-
-- Building the **real** multi-step business sign-up flow at `/list` (that's a project on its own — I'll just stop the page from lying for now).
-- Building the **promotions editor** and the **certificate upload** — both stubs hidden, not implemented.
-- Building **real pagination** on the directory — hidden, not implemented.
-
-Want me to go ahead and apply all of the above? Reply "go" and I'll fix them in one batch.
+- Eyeball `/`, `/directory`, `/pricing`, `/dashboard`, `/business/:slug`, `/list-business`, `/login` at 849px and desktop.
+- Confirm no remaining coral hex codes via `rg -n "FF887C|e8665a|coral"`.
+- Confirm focus rings, hover states and toasts read correctly.
+- Spot-check AA contrast on green buttons and gold badges.

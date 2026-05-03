@@ -101,7 +101,7 @@ const EarlyAccessLanding = () => {
       <div
         aria-hidden
         className="pointer-events-none absolute inset-x-0 top-0 h-64"
-        style={{ background: "radial-gradient(600px 200px at 50% 0%, hsl(5 100% 74% / 0.10), transparent 70%)" }}
+        style={{ background: "radial-gradient(600px 200px at 50% 0%, hsl(43 100% 55% / 0.10), transparent 70%)" }}
       />
 
       {/* Top bar */}
@@ -161,7 +161,7 @@ const EarlyAccessLanding = () => {
           <div className="hidden md:flex justify-center lg:justify-start mt-10">
             <div
               className="relative"
-              style={{ background: "radial-gradient(closest-side, hsl(5 100% 74% / 0.35), transparent 70%)" }}
+              style={{ background: "radial-gradient(closest-side, hsl(43 100% 55% / 0.35), transparent 70%)" }}
             >
               <img
                 src={sjohMascot}
@@ -184,7 +184,7 @@ const EarlyAccessLanding = () => {
           <div className="flex md:hidden justify-center mb-6">
             <div
               className="relative"
-              style={{ background: "radial-gradient(closest-side, hsl(5 100% 74% / 0.35), transparent 70%)" }}
+              style={{ background: "radial-gradient(closest-side, hsl(43 100% 55% / 0.35), transparent 70%)" }}
             >
               <img
                 src={sjohMascot}

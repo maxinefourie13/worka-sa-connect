@@ -29,9 +29,12 @@ export const Typewriter = ({
   holdDuration = 2200,
   randomize = false,
   className,
-  accentClassName = "text-primary",
+  accentClassName,
   reserveCurrentPhraseSpace = false,
 }: TypewriterProps) => {
+  // SA flag accent rotation — green / gold / blue per phrase.
+  // Red is intentionally excluded so the typewriter never reads as an "error".
+  const ACCENT_ROTATION = ["text-primary", "text-accent", "text-info"];
   const [order] = useState(() => {
     if (!randomize) return phrases.map((_, i) => i);
     const arr = phrases.map((_, i) => i);
@@ -81,11 +84,13 @@ export const Typewriter = ({
   // Split keeps the matched delimiters as their own tokens.
   const splitTokens = (value: string) => value.split(/(Sjoh|[!?.,;:'"\-—…])/g).filter(Boolean);
 
+  const activeAccent = accentClassName ?? ACCENT_ROTATION[orderIndex % ACCENT_ROTATION.length];
+
   const renderTokens = (value: string) =>
     splitTokens(value).map((tok, i) => {
       const isAccent = tok === "Sjoh" || /^[!?.,;:'"\-—…]$/.test(tok);
       return isAccent ? (
-        <span key={i} className={accentClassName}>
+        <span key={i} className={activeAccent}>
           {tok}
         </span>
       ) : (

@@ -51,14 +51,14 @@ export const buildQuotationHtml = (input: QuotationInput): string => {
   .label{font-size:10px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.12em;margin-bottom:6px}
   .block p{margin:2px 0;font-size:14px}
   h2{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#64748b;margin:32px 0 12px}
-  .scope{background:#f8fafc;border-left:4px solid #FF887C;padding:16px 20px;border-radius:4px;font-size:14px;white-space:pre-wrap}
+  .scope{background:#f8fafc;border-left:4px solid #007A4D;padding:16px 20px;border-radius:4px;font-size:14px;white-space:pre-wrap}
   .price-row{display:flex;justify-content:space-between;align-items:center;padding:20px 24px;background:#0f172a;color:#fff;border-radius:8px;margin-top:8px}
   .price-row .num{font-size:32px;font-weight:700;letter-spacing:-.02em}
   .meta{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:24px;font-size:13px}
   .meta div{padding:12px 16px;background:#f8fafc;border-radius:6px}
   .footer{margin-top:48px;padding-top:24px;border-top:1px solid #e2e8f0;font-size:11px;color:#64748b;text-align:center}
   .footer strong{color:#0f172a}
-  .badge{display:inline-block;background:#FF887C;color:#fff;font-size:10px;font-weight:700;padding:3px 8px;border-radius:4px;text-transform:uppercase;letter-spacing:.1em;margin-left:8px;vertical-align:middle}
+  .badge{display:inline-block;background:#007A4D;color:#fff;font-size:10px;font-weight:700;padding:3px 8px;border-radius:4px;text-transform:uppercase;letter-spacing:.1em;margin-left:8px;vertical-align:middle}
   @media print{body{padding:24px}.no-print{display:none}}
   .print-btn{position:fixed;top:16px;right:16px;background:#0f172a;color:#fff;border:0;padding:10px 18px;border-radius:8px;font-weight:600;cursor:pointer;font-size:13px}
 </style></head><body>
