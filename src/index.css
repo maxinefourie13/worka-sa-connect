@@ -77,13 +77,13 @@
     --shadow-pop: 0 12px 40px -12px hsl(230 22% 8% / 0.18);
     --shadow-coral: 0 12px 32px -12px hsl(43 100% 55% / 0.45); /* legacy name; gold glow */
 
-    /* Business card gradients (used per-business via class names) */
-    --grad-1: linear-gradient(135deg, hsl(5 100% 70%), hsl(15 95% 62%));
-    --grad-2: linear-gradient(135deg, hsl(36 92% 50%), hsl(20 90% 55%));
-    --grad-3: linear-gradient(135deg, hsl(220 65% 45%), hsl(260 55% 50%));
-    --grad-4: linear-gradient(135deg, hsl(340 70% 50%), hsl(15 85% 55%));
-    --grad-5: linear-gradient(135deg, hsl(190 70% 40%), hsl(220 60% 45%));
-    --grad-6: linear-gradient(135deg, hsl(280 50% 45%), hsl(320 55% 50%));
+    /* Business card gradients — SA flag multi-accent rotation */
+    --grad-1: linear-gradient(135deg, hsl(157 100% 24%), hsl(157 70% 38%));   /* green */
+    --grad-2: linear-gradient(135deg, hsl(43 100% 55%), hsl(36 100% 48%));    /* gold */
+    --grad-3: linear-gradient(135deg, hsl(227 100% 29%), hsl(220 80% 42%));   /* blue */
+    --grad-4: linear-gradient(135deg, hsl(3 73% 53%), hsl(15 80% 52%));       /* red */
+    --grad-5: linear-gradient(135deg, hsl(157 100% 24%), hsl(43 100% 55%));   /* green→gold */
+    --grad-6: linear-gradient(135deg, hsl(227 100% 29%), hsl(3 73% 53%));     /* blue→red */
   }
 
   .dark {
@@ -94,17 +94,17 @@
     --card-foreground: 228 33% 98%;
     --popover: 230 18% 12%;
     --popover-foreground: 228 33% 98%;
-    --primary: 5 100% 70%;
-    --primary-foreground: 230 22% 8%;
+    --primary: 157 70% 38%;
+    --primary-foreground: 0 0% 100%;
     --secondary: 230 14% 16%;
     --secondary-foreground: 228 33% 98%;
     --muted: 230 14% 16%;
     --muted-foreground: 228 12% 65%;
-    --accent: 5 100% 70%;
+    --accent: 43 100% 55%;
     --accent-foreground: 230 22% 8%;
     --border: 230 14% 18%;
     --input: 230 14% 18%;
-    --ring: 5 100% 70%;
+    --ring: 157 70% 38%;
   }
 }
 
