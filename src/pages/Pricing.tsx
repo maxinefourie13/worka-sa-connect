@@ -94,7 +94,7 @@ const Pricing = () => {
               Yearly
               <span className={cn(
                 "text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full transition-transform",
-                cycle === "annual" ? "bg-primary text-primary-foreground animate-pop-in" : "bg-primary/15 text-primary",
+                cycle === "annual" ? "bg-accent text-accent-foreground animate-pop-in" : "bg-accent/20 text-accent-foreground/80",
               )}>
                 Save 10%
               </span>
