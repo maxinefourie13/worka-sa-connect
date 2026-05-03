@@ -71,7 +71,7 @@ export const FlameButton = React.forwardRef<HTMLButtonElement, FlameButtonProps>
               top: yPct,
               transform: "translate(-50%, -50%)",
               background:
-                "radial-gradient(50% 50% at 50% 50%, hsl(5 100% 88% / 0.95) 0%, hsl(5 100% 74% / 0.85) 28%, hsl(5 100% 70% / 0.55) 50%, hsl(5 100% 70% / 0) 92%)",
+                "radial-gradient(50% 50% at 50% 50%, hsl(43 100% 88% / 0.95) 0%, hsl(43 100% 60% / 0.85) 28%, hsl(3 73% 53% / 0.55) 50%, hsl(3 73% 53% / 0) 92%)",
             }}
           />
           {/* Wide soft halo */}
@@ -84,7 +84,7 @@ export const FlameButton = React.forwardRef<HTMLButtonElement, FlameButtonProps>
               top: yPct,
               transform: "translate(-50%, -50%)",
               background:
-                "radial-gradient(43% 44% at 50% 50%, hsl(5 100% 92% / 0.9) 28%, hsl(5 100% 80% / 0.55) 55%, hsl(5 100% 70% / 0) 100%)",
+                "radial-gradient(43% 44% at 50% 50%, hsl(43 100% 92% / 0.9) 28%, hsl(43 100% 60% / 0.55) 55%, hsl(3 73% 53% / 0) 100%)",
             }}
           />
         </span>
