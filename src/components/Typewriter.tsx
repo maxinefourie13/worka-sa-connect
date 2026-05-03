@@ -84,11 +84,13 @@ export const Typewriter = ({
   // Split keeps the matched delimiters as their own tokens.
   const splitTokens = (value: string) => value.split(/(Sjoh|[!?.,;:'"\-—…])/g).filter(Boolean);
 
+  const activeAccent = accentClassName ?? ACCENT_ROTATION[orderIndex % ACCENT_ROTATION.length];
+
   const renderTokens = (value: string) =>
     splitTokens(value).map((tok, i) => {
       const isAccent = tok === "Sjoh" || /^[!?.,;:'"\-—…]$/.test(tok);
       return isAccent ? (
-        <span key={i} className={accentClassName}>
+        <span key={i} className={activeAccent}>
           {tok}
         </span>
       ) : (
