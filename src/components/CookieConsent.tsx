@@ -60,9 +60,9 @@ export const CookieConsent = () => {
         className="relative w-full sm:max-w-lg rounded-t-3xl sm:rounded-3xl text-white p-6 sm:p-7 ring-1 ring-white/25 animate-in fade-in zoom-in-95 slide-in-from-bottom-4 duration-300"
         style={{
           background:
-            "linear-gradient(135deg, hsl(5 100% 70%) 0%, hsl(5 80% 58%) 100%)",
+            "linear-gradient(135deg, hsl(157 100% 24%) 0%, hsl(157 70% 38%) 100%)",
           boxShadow:
-            "0 25px 60px -15px hsl(5 100% 55% / 0.55), 0 10px 30px -10px hsl(5 80% 40% / 0.4)",
+            "0 25px 60px -15px hsl(157 100% 24% / 0.55), 0 10px 30px -10px hsl(157 90% 18% / 0.4)",
         }}
       >
         {/* Floating cookie chip */}
