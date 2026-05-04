@@ -66,7 +66,7 @@ export const SiteHeader = () => {
       <div className="container flex h-16 items-center justify-between gap-6">
         <div className="flex items-center gap-10">
           <Link to="/" className="flex items-center" aria-label="Sjoh home">
-            <img src={sjohLogo} alt="Sjoh!" className="h-10 md:h-12 w-auto" />
+            <img src={sjohLogo} alt="Sjoh!" className="h-20 md:h-24 w-auto" />
           </Link>
           <nav className="hidden lg:flex items-center gap-7">
             {NAV.map((n) => (
