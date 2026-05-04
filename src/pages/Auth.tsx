@@ -7,6 +7,7 @@ import { lovable } from "@/integrations/lovable";
 import { toast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { Loader2 } from "lucide-react";
+import sjohLogo from "@/assets/sjoh-logo.png";
 
 interface AuthShellProps {
   title: string;
@@ -18,8 +19,8 @@ interface AuthShellProps {
 const AuthShell = ({ title, subtitle, footer, children }: AuthShellProps) => (
   <SiteLayout>
     <div className="container py-16 max-w-md">
-      <Link to="/" className="font-display text-2xl font-semibold tracking-tight inline-block mb-10">
-        Sjoh<span className="text-primary">.</span>
+      <Link to="/" className="inline-block mb-10" aria-label="Sjoh home">
+        <img src={sjohLogo} alt="Sjoh!" className="h-8 w-auto" />
       </Link>
       <h1 className="font-display text-3xl font-medium tracking-tight">{title}</h1>
       <p className="mt-2 text-ink-2 text-sm">{subtitle}</p>

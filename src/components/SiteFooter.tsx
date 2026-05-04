@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import sjohLogo from "@/assets/sjoh-logo.png";
 
 const cols = [
   {
@@ -44,8 +45,8 @@ export const SiteFooter = () => {
       <div className="container py-16">
         <div className="grid gap-12 lg:grid-cols-5">
           <div className="space-y-4">
-            <Link to="/" className="font-display text-2xl font-semibold tracking-tight">
-              Sjoh<span className="text-primary">.</span>
+            <Link to="/" className="inline-block" aria-label="Sjoh home">
+              <img src={sjohLogo} alt="Sjoh!" className="h-7 w-auto" />
             </Link>
             <p className="text-sm text-muted-foreground max-w-xs leading-relaxed">
               Find someone who can do it properly. South Africa's directory for trusted service providers.
