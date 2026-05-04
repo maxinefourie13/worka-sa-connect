@@ -20,7 +20,7 @@ const AuthShell = ({ title, subtitle, footer, children }: AuthShellProps) => (
   <SiteLayout>
     <div className="container py-16 max-w-md">
       <Link to="/" className="inline-block mb-10" aria-label="Sjoh home">
-        <img src={sjohLogo} alt="Sjoh!" className="h-12 w-auto" />
+        <img src={sjohLogo} alt="Sjoh!" className="h-24 w-auto" />
       </Link>
       <h1 className="font-display text-3xl font-medium tracking-tight">{title}</h1>
       <p className="mt-2 text-ink-2 text-sm">{subtitle}</p>
