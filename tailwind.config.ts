@@ -51,8 +51,8 @@ export default {
           foreground: "hsl(var(--info-foreground))",
         },
         sa: {
-          green: "#B8E060",
-          gold: "#B8E060",
+          green: "#B0CBFF",
+          gold: "#B0CBFF",
           red: "#DE3831",
           blue: "#8B9DEF",
         },
