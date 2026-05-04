@@ -1,67 +1,56 @@
 ## Goal
 
-Swap the coral-only brand for a **South African flag multi-accent system**. The neutral base (off-white background, near-black ink) stays the same — the flag colours show up as accents across buttons, badges, category tiles, gradients and highlights. Etsy-warm × Upwork-clean stays intact.
+Adopt the new uploaded brand assets — the black "sjoh!" wordmark with periwinkle accents, plus the peace-sign + S monogram — as the official Sjoh logo and app icon. Replace the current `sjoh-logo.png`, the favicon, and the inline text-based "Sjoh." wordmarks so the brand reads consistently everywhere.
 
-## New palette (HSL tokens in `src/index.css`)
+## Asset selection
+
+From the four uploads:
+
+- **Untitled_Project-6.png** — black "sjoh!" wordmark, light-periwinkle dot on the i, periwinkle exclamation. → Primary logo (header, footer, emails, OG).
+- **Untitled_Project-9.png** — same wordmark in light periwinkle on white. → Reverse / on-dark variant (e.g. anywhere `sjoh-logo-white.png` is used today).
+- **Untitled_Project-8.png** — peace-hand + S monogram, two-tone periwinkle. → Favicon, app icon, square avatar, social profile mark.
+- **Untitled_Project-7.png** — just the dot + exclamation glyphs. → Skip for now (decorative only; can be reused later as a flourish).
+- **Untitled_Project-5.png** is essentially the same as -6 with slightly different proportions; we use -6 as the canonical wordmark.
+
+## File operations
+
+Copy the uploads into the project under stable names so existing imports keep working:
 
 ```text
-sa-green   #007A4D   hsl(157 100% 24%)   primary buttons, brand
-sa-gold    #FFB81C   hsl(43 100% 55%)    highlights, badges, hover
-sa-red     #DE3831   hsl(3  73% 53%)     urgent / destructive / "Boost"
-sa-blue    #002395   hsl(227 100% 29%)   links, info, trust badges
-sa-black   #000000                        ink (already in use)
-sa-white   #FFFFFF                        surfaces (already in use)
-bg / ink / border / muted              unchanged from today
+user-uploads://Untitled_Project-6.png  →  src/assets/sjoh-logo.png            (overwrite)
+user-uploads://Untitled_Project-9.png  →  src/assets/sjoh-logo-white.png      (overwrite — reverse variant)
+user-uploads://Untitled_Project-8.png  →  src/assets/sjoh-icon.png            (new — monogram)
+user-uploads://Untitled_Project-8.png  →  public/favicon.png                  (new — browser tab icon)
+user-uploads://Untitled_Project-8.png  →  public/apple-touch-icon.png         (new — iOS home screen)
 ```
 
-Contrast: green and blue both pass AA on white for body+UI. Gold is reserved for fills with dark text or as a thin highlight (never gold text on white).
+Delete `public/favicon.ico` so browsers stop falling back to the old icon.
 
-## Token mapping
+## Code changes
 
-| Token | Today (coral) | New |
-|---|---|---|
-| `--primary` / `--ring` | coral-deep | **sa-green** (157 90% 22% for AA) |
-| `--primary-glow` | coral light | **sa-green** lighter tint |
-| `--primary-light` | peach | **green-soft** (157 50% 95%) |
-| `--accent` | coral | **sa-gold** (warm highlight) |
-| `--accent-soft` | peach | gold-soft (43 100% 92%) |
-| `--destructive` | red | **sa-red** |
-| `--info` (new) | — | **sa-blue** |
-| Selection / focus glow | coral | green |
-| Sample-gradient (`.sample-gradient`) | black ↔ coral | rotates **green → gold → red → blue** |
-| Business gradients `--grad-1..6` | warm-only | rebalanced: green, gold, red, blue, green/gold, blue/red |
+1. **`index.html`** — swap favicon link from `/favicon.ico` to `/favicon.png`, add `apple-touch-icon` link, and replace the OG/Twitter image URL with the new monogram (uploaded once to a public location via the asset path `/favicon.png` works as a same-origin OG image too — but we'll point OG at a hosted version of the wordmark for richer previews; keeping the existing OG URL is fine if we want to defer that).
+2. **`src/components/SiteHeader.tsx`** — no code change needed; it already imports `sjoh-logo.png`. The new file picks up automatically. Verify `h-7 md:h-8` still looks balanced with the new aspect ratio (the wordmark includes the "!" so it's slightly wider than before).
+3. **`src/components/SiteFooter.tsx`** — replace the inline `Sjoh<span className="text-primary">.</span>` text with an `<img src={sjohLogo} …>` so the footer matches the header. Use `h-6` for footer scale.
+4. **`src/pages/Auth.tsx`** — same swap as the footer: replace the text wordmark with the logo image so the login/signup screen carries the real brand mark.
+5. **Mascot / brand mark spots** — anywhere using `sjoh-mascot*.png` stays as-is (the mascot is a separate character, not the logo). Only the wordmark and favicon change.
 
-## Component-level sweeps
-
-1. **Hero typewriter** (`src/pages/Index.tsx`) — coral text → cycles through green/gold/blue per phrase (red kept out of the typewriter to avoid "error" feel).
-2. **Buttons** — default uses green; `variant="accent"` uses gold; "Urgent Boost" / `flame-button` uses red→gold gradient.
-3. **Badges** — Verified Pro → blue, Verified Hire → green, Urgent → red, Founding Member → gold.
-4. **Category tiles** (`src/lib/categoryIcons.tsx` consumers) — round-robin the 4 flag accents instead of all-coral.
-5. **Header / Footer** (`SiteHeader`, `SiteFooter`) — logo dot + active link underline → green; CTA stays primary (green).
-6. **Toasters / EmailUnsubscribe / VerifiedReviewPage** — accent classes already use `bg-accent` so they inherit the new gold automatically; no per-file copy changes needed.
-7. **Pricing page** — Basic card neutral, Verified Pro card uses green border + gold "popular" ribbon.
-8. **Tailwind config** (`tailwind.config.ts`) — add `sa: { green, gold, red, blue }` colour group + `info` token wired to `--info`.
-
-## Files touched
-
-- `src/index.css` — token rewrite (primary, accent, destructive, ring, gradients, sample-gradient, selection)
-- `tailwind.config.ts` — add `sa.*` and `info` colours
-- `src/pages/Index.tsx` — typewriter colour cycle
-- `src/components/SiteHeader.tsx`, `src/components/SiteFooter.tsx` — brand mark colour
-- `src/components/VerifiedBadge.tsx`, `src/components/VerificationBadges.tsx`, `src/components/FoundingSpotsBanner.tsx`, `src/components/UrgentBoostButton.tsx`, `src/components/ui/flame-button.tsx` — re-tint to per-meaning flag colour
-- `src/components/BusinessCard.tsx` (+ anywhere `bg-grad-*` is set) — confirm new gradients still read well
-- `src/pages/Pricing.tsx` — popular ribbon → gold, recommended border → green
-- Category tile renderer (likely `src/pages/Index.tsx` / `GroupLanding.tsx`) — accent rotation
-
-No DB / RPC / edge function changes. Pure visual.
-
-## Memory update
-
-Rewrite the Core memory: remove "No green anywhere" and "coral is the brand". Replace with the SA flag multi-accent rule, token map, and the per-meaning colour assignments (green = primary, gold = highlight, red = urgent/destructive, blue = trust/info). Keep typography, voice, pricing, hero rules unchanged.
+No CSS / token changes — periwinkle palette already lives in `src/index.css` and matches the new artwork.
 
 ## QA after build
 
-- Eyeball `/`, `/directory`, `/pricing`, `/dashboard`, `/business/:slug`, `/list-business`, `/login` at 849px and desktop.
-- Confirm no remaining coral hex codes via `rg -n "FF887C|e8665a|coral"`.
-- Confirm focus rings, hover states and toasts read correctly.
-- Spot-check AA contrast on green buttons and gold badges.
+- `/` desktop + 729px viewport: header logo crisp, not clipped, "!" visible.
+- `/login`: wordmark renders, sized similarly to before.
+- Footer: wordmark replaces the old "Sjoh." text, aligned with the tagline.
+- Browser tab on `/`: new periwinkle peace-S favicon shows (hard-refresh to bust cache).
+- iOS "Add to Home Screen": apple-touch-icon picks up the monogram.
+- `rg -n "Sjoh<span"` returns no results after the sweep.
+
+## Files touched
+
+- `public/favicon.png` (new), `public/apple-touch-icon.png` (new), `public/favicon.ico` (delete)
+- `src/assets/sjoh-logo.png` (overwrite), `src/assets/sjoh-logo-white.png` (overwrite), `src/assets/sjoh-icon.png` (new)
+- `index.html` — favicon + apple-touch-icon links
+- `src/components/SiteFooter.tsx` — text wordmark → image
+- `src/pages/Auth.tsx` — text wordmark → image
+
+No DB, RLS, or edge function changes. Pure brand asset swap.
