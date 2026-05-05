@@ -176,6 +176,16 @@ const PostOpportunity = () => {
       return;
     }
 
+    // Save/update customer profile so they appear in the database.
+    const clientPhone = String(form.get("client_phone") ?? "").trim() || null;
+    supabase.from("profiles").upsert({
+      id: user.id,
+      display_name: user.email?.split("@")[0] ?? null,
+      phone: clientPhone,
+      city: String(form.get("city") ?? "").trim() || null,
+      province: String(form.get("province") ?? "").trim() || null,
+    }, { onConflict: "id" }).then(({ error }) => { if (error) console.error("[profile upsert]", error); });
+
     // Notify all matching pros (email + push). Fire and forget.
     supabase.functions
       .invoke("notify-new-job", { body: { opportunity_id: opp.id } })
@@ -440,6 +450,17 @@ const PostOpportunity = () => {
             />
             <span className="text-ink-2 leading-relaxed">
               I agree to the <Link to="/terms" className="text-primary font-semibold hover:underline">Terms of Service</Link> and confirm I will not offer or request illegal services.
+            </span>
+          </label>
+
+          <label className="flex items-start gap-2.5 text-sm cursor-pointer select-none">
+            <input
+              type="checkbox"
+              required
+              className="mt-0.5 size-4 rounded border-border text-primary focus:ring-primary cursor-pointer"
+            />
+            <span className="text-ink-2 leading-relaxed">
+              I understand that Sjoh! will save my contact details and request information to match me with service providers, in accordance with the <Link to="/privacy" className="text-primary font-semibold hover:underline">Privacy Policy</Link>. My phone number and email will only be shared with a pro once I accept their quote.
             </span>
           </label>
 

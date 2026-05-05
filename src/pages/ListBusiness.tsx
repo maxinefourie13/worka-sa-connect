@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Check, ArrowRight, ArrowLeft, CheckCircle2, Upload, Loader2 } from "lucide-react";
+import { Check, ArrowRight, ArrowLeft, CheckCircle2, Upload, Loader2, X } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
 import { Button } from "@/components/ui/button";
 import { CATEGORIES, CATEGORY_GROUPS, PROVINCES } from "@/lib/mockData";
@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "@/hooks/use-toast";
+import { compressIfImage } from "@/lib/compressImage";
 
 const STEPS = ["Basics", "Profile", "Choose Plan", "Review", "Done"] as const;
 
@@ -53,6 +54,12 @@ const ListBusiness = () => {
   const [website, setWebsite] = useState("");
   const [description, setDescription] = useState("");
   const [servicesText, setServicesText] = useState("");
+  const [logoUrl, setLogoUrl] = useState<string | null>(null);
+  const [coverUrl, setCoverUrl] = useState<string | null>(null);
+  const [uploadingLogo, setUploadingLogo] = useState(false);
+  const [uploadingCover, setUploadingCover] = useState(false);
+  const logoInputRef = useRef<HTMLInputElement>(null);
+  const coverInputRef = useRef<HTMLInputElement>(null);
 
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -77,6 +84,29 @@ const ListBusiness = () => {
 
   const next = () => setStep((s) => Math.min(s + 1, STEPS.length - 1));
   const prev = () => setStep((s) => Math.max(s - 1, 0));
+
+  const handleImageUpload = async (
+    file: File,
+    type: "logo" | "cover",
+    userId: string,
+  ) => {
+    const setter = type === "logo" ? setLogoUrl : setCoverUrl;
+    const loadingSetter = type === "logo" ? setUploadingLogo : setUploadingCover;
+    loadingSetter(true);
+    try {
+      const compressed = await compressIfImage(file);
+      const ext = compressed.name.split(".").pop() ?? "jpg";
+      const path = `${userId}/${type}-${Date.now()}.${ext}`;
+      const { error } = await supabase.storage
+        .from("business-images")
+        .upload(path, compressed, { contentType: compressed.type, upsert: true });
+      if (error) { toast({ title: "Upload failed", description: error.message, variant: "destructive" }); return; }
+      const { data } = supabase.storage.from("business-images").getPublicUrl(path);
+      setter(data.publicUrl);
+    } finally {
+      loadingSetter(false);
+    }
+  };
 
   const handleConfirm = async () => {
     if (!user) {
@@ -112,7 +142,8 @@ const ListBusiness = () => {
         website: website.trim() || null,
         description: description.trim() || null,
         tags,
-        // plan tier lives in provider_balances; default 'free' here until billing is wired
+        logo_url: logoUrl,
+        cover_image_url: coverUrl,
         listing_status: "workshop",
         pre_launch: true,
       }]);
@@ -294,8 +325,40 @@ const ListBusiness = () => {
               </div>
 
               <div className="grid sm:grid-cols-2 gap-4">
-                <UploadField label="Logo" optional />
-                <UploadField label="Cover image" optional />
+                {/* Logo upload */}
+                <div>
+                  <span className="flex items-center gap-2 text-sm font-semibold mb-1.5">
+                    Logo <span className="text-[10px] font-bold uppercase tracking-wider text-primary bg-primary/10 px-1.5 py-0.5 rounded">Optional · recommended</span>
+                  </span>
+                  <input ref={logoInputRef} type="file" accept="image/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f && user) handleImageUpload(f, "logo", user.id); }} />
+                  {logoUrl ? (
+                    <div className="relative rounded-lg overflow-hidden border border-border aspect-square">
+                      <img src={logoUrl} className="w-full h-full object-cover" alt="Logo" />
+                      <button onClick={() => setLogoUrl(null)} className="absolute top-1 right-1 bg-black/60 text-white rounded-full p-0.5"><X className="size-3" /></button>
+                    </div>
+                  ) : (
+                    <div onClick={() => logoInputRef.current?.click()} className="border-2 border-dashed border-border rounded-lg p-6 text-center hover:border-primary/50 cursor-pointer transition-colors">
+                      {uploadingLogo ? <Loader2 className="size-5 mx-auto animate-spin text-muted-foreground" /> : <><Upload className="size-5 mx-auto text-muted-foreground" /><p className="text-xs text-muted-foreground mt-2">Click to upload — or skip for now</p></>}
+                    </div>
+                  )}
+                </div>
+                {/* Cover image upload */}
+                <div>
+                  <span className="flex items-center gap-2 text-sm font-semibold mb-1.5">
+                    Cover image <span className="text-[10px] font-bold uppercase tracking-wider text-primary bg-primary/10 px-1.5 py-0.5 rounded">Optional · recommended</span>
+                  </span>
+                  <input ref={coverInputRef} type="file" accept="image/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f && user) handleImageUpload(f, "cover", user.id); }} />
+                  {coverUrl ? (
+                    <div className="relative rounded-lg overflow-hidden border border-border aspect-video">
+                      <img src={coverUrl} className="w-full h-full object-cover" alt="Cover" />
+                      <button onClick={() => setCoverUrl(null)} className="absolute top-1 right-1 bg-black/60 text-white rounded-full p-0.5"><X className="size-3" /></button>
+                    </div>
+                  ) : (
+                    <div onClick={() => coverInputRef.current?.click()} className="border-2 border-dashed border-border rounded-lg p-6 text-center hover:border-primary/50 cursor-pointer transition-colors">
+                      {uploadingCover ? <Loader2 className="size-5 mx-auto animate-spin text-muted-foreground" /> : <><Upload className="size-5 mx-auto text-muted-foreground" /><p className="text-xs text-muted-foreground mt-2">Click to upload — or skip for now</p></>}
+                    </div>
+                  )}
+                </div>
               </div>
               <Field label="Services offered (comma separated)">
                 <input
