@@ -5,6 +5,7 @@ import { SiteLayout } from "@/components/SiteLayout";
 import { Button } from "@/components/ui/button";
 import { LiabilityDisclaimer } from "@/components/LiabilityDisclaimer";
 import { CATEGORIES, CATEGORY_GROUPS, PROVINCES } from "@/lib/mockData";
+import { CityAutocomplete } from "@/components/CityAutocomplete";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import type { Json } from "@/integrations/supabase/types";
@@ -32,6 +33,7 @@ const PostOpportunity = () => {
   const [submitting, setSubmitting] = useState(false);
   const [groupSlug, setGroupSlug] = useState("");
   const [categorySlug, setCategorySlug] = useState("");
+  const [customCategory, setCustomCategory] = useState("");
   const [province, setProvince] = useState("");
   const [city, setCity] = useState("");
   const [agreeTerms, setAgreeTerms] = useState(false);
@@ -42,7 +44,10 @@ const PostOpportunity = () => {
   const [supplyChecking, setSupplyChecking] = useState(false);
 
   const subCats = groupSlug ? CATEGORIES.filter((c) => c.groupSlug === groupSlug) : [];
-  const selectedCategoryName = subCats.find((c) => c.slug === categorySlug)?.name || "this service";
+  const isOtherCategory = categorySlug.startsWith("other");
+  const selectedCategoryName = isOtherCategory
+    ? (customCategory || "this service")
+    : (subCats.find((c) => c.slug === categorySlug)?.name || "this service");
 
   // Supply transparency — quietly check how many active Pros match the
   // category + province (and optionally city) the customer has chosen.
@@ -144,7 +149,7 @@ const PostOpportunity = () => {
       title: titleVal,
       description: descVal,
       category_slug: categorySlug,
-      category_name: category?.name ?? group?.name ?? "Uncategorised",
+      category_name: isOtherCategory ? (customCategory || "Other") : (category?.name ?? group?.name ?? "Uncategorised"),
       province: String(form.get("province") ?? ""),
       city: String(form.get("city") ?? ""),
       budget: Number(form.get("budget") ?? 0),
@@ -296,13 +301,24 @@ const PostOpportunity = () => {
                 required
                 className="input cursor-pointer"
                 value={categorySlug}
-                onChange={(e) => setCategorySlug(e.target.value)}
+                onChange={(e) => { setCategorySlug(e.target.value); setCustomCategory(""); }}
                 disabled={!groupSlug}
               >
                 <option value="">{groupSlug ? "Select a service" : "Pick a group first"}</option>
                 {subCats.map((c) => <option key={c.slug} value={c.slug}>{c.name}</option>)}
               </select>
             </Field>
+            {isOtherCategory && (
+              <Field label="Describe the service" required>
+                <input
+                  required
+                  className="input"
+                  placeholder="e.g. Aquarium cleaning"
+                  value={customCategory}
+                  onChange={(e) => setCustomCategory(e.target.value)}
+                />
+              </Field>
+            )}
             <Field label="Province" required>
               <select
                 required
@@ -316,14 +332,7 @@ const PostOpportunity = () => {
               </select>
             </Field>
             <Field label="City / suburb" required>
-              <input
-                required
-                name="city"
-                className="input"
-                placeholder="e.g. Sandton"
-                value={city}
-                onChange={(e) => setCity(e.target.value)}
-              />
+              <CityAutocomplete required name="city" value={city} onChange={setCity} />
             </Field>
             <Field label="Budget (R)" required>
               <input required name="budget" type="number" min="0" className="input" placeholder="What are you willing to spend?" />

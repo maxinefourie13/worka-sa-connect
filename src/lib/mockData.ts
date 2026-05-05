@@ -53,6 +53,7 @@ export const CATEGORIES: Category[] = [
   { slug: "painting", name: "Painting", groupSlug: "home-maintenance", emoji: "🎨", count: 412 },
   { slug: "carpentry", name: "Carpentry", groupSlug: "home-maintenance", emoji: "🪚", count: 341 },
   { slug: "appliance-repair", name: "Appliance Repair", groupSlug: "home-maintenance", emoji: "🧰", count: 254 },
+  { slug: "other-home-maintenance", name: "Other", groupSlug: "home-maintenance", emoji: "✨", count: 0 },
 
   // Cleaning & Domestic
   { slug: "home-cleaning", name: "Home Cleaning", groupSlug: "cleaning-domestic", emoji: "🧹", count: 567 },
@@ -61,6 +62,7 @@ export const CATEGORIES: Category[] = [
   { slug: "laundry-ironing", name: "Laundry & Ironing", groupSlug: "cleaning-domestic", emoji: "👕", count: 142 },
   { slug: "window-cleaning", name: "Window Cleaning", groupSlug: "cleaning-domestic", emoji: "🪟", count: 124 },
   { slug: "post-construction-cleaning", name: "Post-Construction Cleaning", groupSlug: "cleaning-domestic", emoji: "🧽", count: 98 },
+  { slug: "other-cleaning-domestic", name: "Other", groupSlug: "cleaning-domestic", emoji: "✨", count: 0 },
 
   // Garden & Outdoor
   { slug: "lawn-mowing", name: "Lawn Mowing", groupSlug: "garden-outdoor", emoji: "🌱", count: 312 },
@@ -69,6 +71,7 @@ export const CATEGORIES: Category[] = [
   { slug: "landscaping", name: "Landscaping", groupSlug: "garden-outdoor", emoji: "🏞️", count: 234 },
   { slug: "irrigation", name: "Irrigation Systems", groupSlug: "garden-outdoor", emoji: "💧", count: 142 },
   { slug: "pool-maintenance", name: "Pool Maintenance", groupSlug: "garden-outdoor", emoji: "🏊", count: 198 },
+  { slug: "other-garden-outdoor", name: "Other", groupSlug: "garden-outdoor", emoji: "✨", count: 0 },
 
   // Automotive
   { slug: "mobile-car-wash", name: "Mobile Car Wash", groupSlug: "automotive", emoji: "🧼", count: 174 },
@@ -77,6 +80,7 @@ export const CATEGORIES: Category[] = [
   { slug: "tire-services", name: "Tire Services", groupSlug: "automotive", emoji: "🛞", count: 167 },
   { slug: "vehicle-detailing", name: "Vehicle Detailing", groupSlug: "automotive", emoji: "✨", count: 142 },
   { slug: "roadside-assistance", name: "Roadside Assistance", groupSlug: "automotive", emoji: "🛻", count: 138 },
+  { slug: "other-automotive", name: "Other", groupSlug: "automotive", emoji: "✨", count: 0 },
 
   // Construction & Renovation
   { slug: "builders", name: "Builders", groupSlug: "construction-renovation", emoji: "👷", count: 624 },
@@ -85,6 +89,7 @@ export const CATEGORIES: Category[] = [
   { slug: "bricklaying", name: "Bricklaying", groupSlug: "construction-renovation", emoji: "🧱", count: 234 },
   { slug: "paving", name: "Paving", groupSlug: "construction-renovation", emoji: "⬜", count: 198 },
   { slug: "steelwork-fabrication", name: "Steelwork & Fabrication", groupSlug: "construction-renovation", emoji: "🔩", count: 264 },
+  { slug: "other-construction-renovation", name: "Other", groupSlug: "construction-renovation", emoji: "✨", count: 0 },
 
   // Events & Occasions
   { slug: "event-planning", name: "Event Planning", groupSlug: "events-occasions", emoji: "📅", count: 287 },
@@ -93,6 +98,7 @@ export const CATEGORIES: Category[] = [
   { slug: "photography", name: "Photography", groupSlug: "events-occasions", emoji: "📷", count: 612 },
   { slug: "djs-entertainment", name: "DJs & Entertainment", groupSlug: "events-occasions", emoji: "🎧", count: 224 },
   { slug: "kids-party-services", name: "Kids Party Services", groupSlug: "events-occasions", emoji: "🎈", count: 142 },
+  { slug: "other-events-occasions", name: "Other", groupSlug: "events-occasions", emoji: "✨", count: 0 },
 
   // Business & Digital Services
   { slug: "web-design", name: "Web Design", groupSlug: "business-digital", emoji: "🌐", count: 524 },
@@ -101,6 +107,7 @@ export const CATEGORIES: Category[] = [
   { slug: "copywriting", name: "Copywriting", groupSlug: "business-digital", emoji: "📝", count: 187 },
   { slug: "virtual-assistants", name: "Virtual Assistants", groupSlug: "business-digital", emoji: "💬", count: 142 },
   { slug: "it-support", name: "IT Support", groupSlug: "business-digital", emoji: "💻", count: 1102 },
+  { slug: "other-business-digital", name: "Other", groupSlug: "business-digital", emoji: "✨", count: 0 },
 
   // Personal & Lifestyle
   { slug: "personal-training", name: "Personal Training", groupSlug: "personal-lifestyle", emoji: "🏋️", count: 156 },
@@ -109,6 +116,7 @@ export const CATEGORIES: Category[] = [
   { slug: "life-coaching", name: "Life Coaching", groupSlug: "personal-lifestyle", emoji: "🧭", count: 87 },
   { slug: "tutoring", name: "Tutoring", groupSlug: "personal-lifestyle", emoji: "📚", count: 387 },
   { slug: "babysitting", name: "Babysitting", groupSlug: "personal-lifestyle", emoji: "🧒", count: 142 },
+  { slug: "other-personal-lifestyle", name: "Other", groupSlug: "personal-lifestyle", emoji: "✨", count: 0 },
 
   // Moving & Logistics
   { slug: "furniture-removal", name: "Furniture Removal", groupSlug: "moving-logistics", emoji: "🛋️", count: 312 },
@@ -116,6 +124,7 @@ export const CATEGORIES: Category[] = [
   { slug: "courier-services", name: "Courier Services", groupSlug: "moving-logistics", emoji: "📮", count: 287 },
   { slug: "storage-solutions", name: "Storage Solutions", groupSlug: "moving-logistics", emoji: "📦", count: 142 },
   { slug: "packing-services", name: "Packing Services", groupSlug: "moving-logistics", emoji: "📋", count: 98 },
+  { slug: "other-moving-logistics", name: "Other", groupSlug: "moving-logistics", emoji: "✨", count: 0 },
 
   // Pet Services
   { slug: "pet-grooming", name: "Pet Grooming", groupSlug: "pet-services", emoji: "🐩", count: 187 },
@@ -123,6 +132,7 @@ export const CATEGORIES: Category[] = [
   { slug: "dog-walking", name: "Dog Walking", groupSlug: "pet-services", emoji: "🐕", count: 124 },
   { slug: "boarding", name: "Boarding", groupSlug: "pet-services", emoji: "🏡", count: 98 },
   { slug: "training", name: "Training", groupSlug: "pet-services", emoji: "🦮", count: 76 },
+  { slug: "other-pet-services", name: "Other", groupSlug: "pet-services", emoji: "✨", count: 0 },
 
   // Specialist & On-Demand
   { slug: "locksmiths", name: "Locksmiths", groupSlug: "specialist-ondemand", emoji: "🔐", count: 162 },
