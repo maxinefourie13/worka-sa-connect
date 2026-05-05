@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useState } from "react";
-import { FileText, Plus, Trash2, Download, MessageCircle, Loader2 } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { FileText, Plus, Trash2, Download, MessageCircle, Loader2, ImagePlus, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -10,6 +10,7 @@ import { toast } from "@/hooks/use-toast";
 import {
   computeInvoiceTotals,
   generateInvoicePdf,
+  fileToDataUrl,
   type InvoiceLineItem,
 } from "@/lib/invoice";
 
@@ -34,6 +35,8 @@ const buildWhatsAppShare = (phone: string | null | undefined, message: string) =
   return `https://wa.me/${digits}?text=${encodeURIComponent(message)}`;
 };
 
+const MAX_LOGO_BYTES = 2 * 1024 * 1024; // 2 MB
+
 export const InvoiceGenerator = ({
   dealMemoId,
   businessId,
@@ -52,19 +55,66 @@ export const InvoiceGenerator = ({
   const [busy, setBusy] = useState(false);
   const [savedInvoiceNumber, setSavedInvoiceNumber] = useState<string | null>(null);
 
+  // Logo state
+  const [logoDataUrl, setLogoDataUrl] = useState<string | null>(null);
+  const [logoPreview, setLogoPreview] = useState<string | null>(null);
+  const logoInputRef = useRef<HTMLInputElement>(null);
+
   useEffect(() => {
     if (!open || business) return;
     (async () => {
       const { data } = await supabase
         .from("businesses")
-        .select("name, email, phone, address, city, province")
+        .select("name, email, phone, address, city, province, logo_url")
         .eq("id", businessId)
         .maybeSingle();
-      if (data) setBusiness(data);
+      if (data) {
+        setBusiness(data);
+        // If business already has a stored logo URL, pre-load it as a data URL
+        if (data.logo_url) {
+          try {
+            const res = await fetch(data.logo_url);
+            const blob = await res.blob();
+            const file = new File([blob], "logo", { type: blob.type });
+            const dataUrl = await fileToDataUrl(file);
+            setLogoDataUrl(dataUrl);
+            setLogoPreview(data.logo_url);
+          } catch {
+            // Non-critical — just won't pre-populate
+          }
+        }
+      }
     })();
   }, [open, business, businessId]);
 
   const totals = useMemo(() => computeInvoiceTotals(items, vatIncluded), [items, vatIncluded]);
+
+  const handleLogoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.size > MAX_LOGO_BYTES) {
+      toast({ title: "Logo too large", description: "Max size is 2 MB. Try a smaller image.", variant: "destructive" });
+      return;
+    }
+    if (!file.type.startsWith("image/")) {
+      toast({ title: "Not an image", description: "Please upload a PNG or JPEG.", variant: "destructive" });
+      return;
+    }
+    try {
+      const dataUrl = await fileToDataUrl(file);
+      setLogoDataUrl(dataUrl);
+      setLogoPreview(dataUrl);
+    } catch {
+      toast({ title: "Couldn't read logo", variant: "destructive" });
+    }
+    // Reset input so same file can be re-selected
+    e.target.value = "";
+  };
+
+  const removeLogo = () => {
+    setLogoDataUrl(null);
+    setLogoPreview(null);
+  };
 
   const updateItem = (idx: number, patch: Partial<InvoiceLineItem>) => {
     setItems((prev) => prev.map((it, i) => (i === idx ? { ...it, ...patch } : it)));
@@ -92,7 +142,6 @@ export const InvoiceGenerator = ({
 
     setBusy(true);
 
-    // Generate invoice number: SJ-YYYYMMDD-XXXX (random suffix)
     const now = new Date();
     const ymd =
       now.getFullYear().toString() +
@@ -135,6 +184,7 @@ export const InvoiceGenerator = ({
         address: business.address,
         city: business.city,
         province: business.province,
+        logo_data_url: logoDataUrl,
       },
       customer,
       line_items: items,
@@ -164,7 +214,6 @@ export const InvoiceGenerator = ({
   const handleWhatsApp = async () => {
     const result = await buildAndSave();
     if (!result) return;
-    // Trigger download too so the Pro can attach in WhatsApp Web/App
     const url = URL.createObjectURL(result.pdfBlob);
     const a = document.createElement("a");
     a.href = url;
@@ -194,7 +243,7 @@ export const InvoiceGenerator = ({
             <div>
               <h3 className="font-display font-bold text-lg">Generate a Sjoh invoice</h3>
               <p className="text-sm text-ink-2 mt-1">
-                Send your customer a professional, branded PDF invoice — even if they paid you cash or EFT.
+                Send your customer a professional, branded PDF invoice — with your logo on it.
               </p>
             </div>
           </div>
@@ -209,6 +258,49 @@ export const InvoiceGenerator = ({
       <div className="flex items-center gap-2">
         <FileText className="size-5 text-primary" />
         <h3 className="font-display font-bold text-lg">New Sjoh invoice</h3>
+      </div>
+
+      {/* Logo upload */}
+      <div>
+        <Label className="text-xs uppercase tracking-wider text-muted-foreground">
+          Your logo (optional)
+        </Label>
+        <p className="text-xs text-ink-2 mt-1 mb-3">
+          Appears in the invoice header. PNG or JPEG, max 2 MB. Without a logo, "Sjoh" branding is used.
+        </p>
+        {logoPreview ? (
+          <div className="flex items-center gap-3">
+            <div className="h-14 w-32 rounded-lg border border-border bg-muted/30 flex items-center justify-center overflow-hidden p-1">
+              <img src={logoPreview} alt="Your logo" className="max-h-full max-w-full object-contain" />
+            </div>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={removeLogo}
+              className="gap-1.5 text-destructive border-destructive/40 hover:bg-destructive/5"
+            >
+              <X className="size-3.5" />
+              Remove
+            </Button>
+          </div>
+        ) : (
+          <button
+            type="button"
+            onClick={() => logoInputRef.current?.click()}
+            className="flex items-center gap-2 px-4 py-2.5 rounded-lg border border-dashed border-border hover:border-primary hover:bg-primary/5 transition-colors text-sm text-ink-2 hover:text-primary"
+          >
+            <ImagePlus className="size-4" />
+            Upload your logo
+          </button>
+        )}
+        <input
+          ref={logoInputRef}
+          type="file"
+          accept="image/png,image/jpeg,image/webp"
+          className="hidden"
+          onChange={handleLogoChange}
+        />
       </div>
 
       <div className="grid sm:grid-cols-2 gap-4 text-sm">
@@ -283,8 +375,14 @@ export const InvoiceGenerator = ({
       </div>
 
       <div className="rounded-xl bg-muted/40 border border-border p-4 text-sm space-y-1">
-        <div className="flex justify-between"><span className="text-ink-2">Subtotal</span><span>R {totals.subtotal.toLocaleString("en-ZA", { minimumFractionDigits: 2 })}</span></div>
-        <div className="flex justify-between"><span className="text-ink-2">{vatIncluded ? "VAT (15%)" : "VAT"}</span><span>{vatIncluded ? `R ${totals.vat.toLocaleString("en-ZA", { minimumFractionDigits: 2 })}` : "Not applicable"}</span></div>
+        <div className="flex justify-between">
+          <span className="text-ink-2">Subtotal</span>
+          <span>R {totals.subtotal.toLocaleString("en-ZA", { minimumFractionDigits: 2 })}</span>
+        </div>
+        <div className="flex justify-between">
+          <span className="text-ink-2">{vatIncluded ? "VAT (15%)" : "VAT"}</span>
+          <span>{vatIncluded ? `R ${totals.vat.toLocaleString("en-ZA", { minimumFractionDigits: 2 })}` : "Not applicable"}</span>
+        </div>
         <div className="flex justify-between font-bold text-base pt-2 border-t border-border mt-2">
           <span>Total due</span>
           <span className="text-primary">R {totals.total.toLocaleString("en-ZA", { minimumFractionDigits: 2 })}</span>

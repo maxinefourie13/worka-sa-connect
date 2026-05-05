@@ -633,7 +633,7 @@ export const STATS = {
 // =====================================================
 
 export interface SjohTier {
-  slug: "basic_trial" | "basic" | "verified_pro";
+  slug: "verified_pro" | "verified_pro_founder";
   name: string;
   price: number;
   period: string;
@@ -641,49 +641,31 @@ export interface SjohTier {
   features: string[];
   popular?: boolean;
   featured?: boolean;
+  founderPrice?: number;
 }
 
 export const SJOH_TIERS: SjohTier[] = [
-  {
-    slug: "basic_trial",
-    name: "Basic Listing — Free Trial",
-    price: 0,
-    period: "30 days free",
-    blurb: "Try Basic Listing free for 30 days. No card required.",
-    features: [
-      "Listed in the directory",
-      "Customers can find and contact you",
-      "No commission, ever",
-      "Upgrade anytime",
-    ],
-  },
-  {
-    slug: "basic",
-    name: "Basic Listing",
-    price: 50,
-    period: "/month",
-    blurb: "Stay listed so customers can find and contact you directly.",
-    popular: true,
-    features: [
-      "Permanent directory listing",
-      "Direct customer contact",
-      "No commission on jobs",
-      "Cancel anytime",
-    ],
-  },
   {
     slug: "verified_pro",
     name: "Verified Pro",
     price: 250,
     period: "/month",
-    blurb: "Send quotes, claim leads, and earn the verified badge.",
-    featured: true,
+    blurb: "Everything you need to get leads, send quotes, and grow your business. No commission. Ever.",
+    popular: true,
+    founderPrice: 150,
     features: [
-      "Everything in Basic Listing",
-      "Verified Pro badge",
-      "Send quotes on unlimited customer requests",
-      "Top of local search results",
-      "Branded PDF quotations",
+      "30-day free trial — no card required",
+      "Listed in the Sjoh directory",
+      "Receive & apply to customer job requests",
+      "Send unlimited branded PDF quotations",
+      "Coral Checkmark — SA ID verified badge",
+      "Invoice generator with your logo",
+      "WhatsApp lead notifications",
+      "Top placement in local search results",
+      "Google Reviews import",
+      "Response time & Trust Index score",
+      "0% commission — keep every cent you earn",
+      "Cancel anytime",
     ],
   },
 ];

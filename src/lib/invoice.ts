@@ -17,6 +17,7 @@ export type InvoiceData = {
     address?: string | null;
     city?: string | null;
     province?: string | null;
+    logo_data_url?: string | null; // base64 data URL for custom logo
   };
   customer: {
     name: string;
@@ -24,7 +25,7 @@ export type InvoiceData = {
     phone?: string | null;
   };
   line_items: InvoiceLineItem[];
-  vat_included: boolean; // true => 15% VAT added
+  vat_included: boolean;
   notes?: string | null;
 };
 
@@ -55,26 +56,59 @@ const fmtDate = (d: Date) =>
   d.toLocaleDateString("en-ZA", { day: "2-digit", month: "short", year: "numeric" });
 
 /**
+ * Converts a file to a base64 data URL string for embedding in PDFs.
+ * Call this in the UI before passing logo_data_url to generateInvoicePdf.
+ */
+export const fileToDataUrl = (file: File): Promise<string> =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = () => reject(new Error("Failed to read logo file"));
+    reader.readAsDataURL(file);
+  });
+
+/**
  * Generates a Sjoh-branded PDF invoice.
  * Returns the jsPDF instance so the caller can either save() or get a Blob.
+ * If business.logo_data_url is provided, the logo replaces the "Sjoh" wordmark
+ * in the header while a small "via Sjoh" credit remains in the footer.
  */
 export const generateInvoicePdf = (data: InvoiceData): jsPDF => {
   const doc = new jsPDF({ unit: "pt", format: "a4" });
   const pageWidth = doc.internal.pageSize.getWidth();
   const margin = 40;
 
-  // ---- Header band: Sjoh brand bar
-  doc.setFillColor(0, 122, 77); // #007A4D — Sjoh SA green primary
+  // ── Header band ───────────────────────────────────────────────────────────
+  doc.setFillColor(0, 35, 149); // #002395 — Sjoh deep blue
   doc.rect(0, 0, pageWidth, 56, "F");
-  doc.setTextColor(255, 255, 255);
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(22);
-  doc.text("Sjoh", margin, 36);
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(10);
-  doc.text("Find someone who can do it properly.", margin + 64, 36);
 
-  // ---- Invoice meta block (top right)
+  if (data.business.logo_data_url) {
+    // Custom logo: embed image in the left of the header band
+    try {
+      // Detect format from data URL prefix
+      const mime = data.business.logo_data_url.split(";")[0].split(":")[1] || "image/png";
+      const format = mime.includes("jpeg") || mime.includes("jpg") ? "JPEG" : "PNG";
+      // Fit logo into a 120×36 pt bounding box, vertically centred in the 56pt band
+      doc.addImage(data.business.logo_data_url, format, margin, 10, 120, 36);
+    } catch {
+      // If image embedding fails, fall back to business name text
+      doc.setTextColor(255, 255, 255);
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(18);
+      doc.text(data.business.name, margin, 36);
+    }
+  } else {
+    // Default Sjoh wordmark
+    doc.setTextColor(255, 255, 255);
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(22);
+    doc.text("Sjoh", margin, 36);
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(10);
+    doc.text("Find someone who can do it properly.", margin + 64, 36);
+  }
+
+  // ── Invoice meta (top right) ──────────────────────────────────────────────
   doc.setTextColor(20, 20, 20);
   doc.setFont("helvetica", "bold");
   doc.setFontSize(20);
@@ -84,7 +118,7 @@ export const generateInvoicePdf = (data: InvoiceData): jsPDF => {
   doc.text(`Invoice #: ${data.invoice_number}`, pageWidth - margin, 108, { align: "right" });
   doc.text(`Date: ${fmtDate(data.issued_at)}`, pageWidth - margin, 122, { align: "right" });
 
-  // ---- From / To columns
+  // ── From / To columns ─────────────────────────────────────────────────────
   let y = 150;
   doc.setFont("helvetica", "bold");
   doc.setFontSize(10);
@@ -120,7 +154,7 @@ export const generateInvoicePdf = (data: InvoiceData): jsPDF => {
   }
   y += maxRows * 13 + 16;
 
-  // ---- Line items table
+  // ── Line items table ──────────────────────────────────────────────────────
   const totals = computeInvoiceTotals(data.line_items, data.vat_included);
 
   autoTable(doc, {
@@ -144,9 +178,10 @@ export const generateInvoicePdf = (data: InvoiceData): jsPDF => {
 
   let afterTableY = (doc as any).lastAutoTable.finalY + 16;
 
-  // ---- Totals
+  // ── Totals ────────────────────────────────────────────────────────────────
   const totalsX = pageWidth - margin - 200;
   const valX = pageWidth - margin;
+
   doc.setFont("helvetica", "normal");
   doc.setFontSize(10);
   doc.setTextColor(80, 80, 80);
@@ -168,11 +203,11 @@ export const generateInvoicePdf = (data: InvoiceData): jsPDF => {
   doc.setFontSize(13);
   doc.setTextColor(20, 20, 20);
   doc.text("TOTAL DUE", totalsX, afterTableY + 8);
-  doc.setTextColor(0, 122, 77);
+  doc.setTextColor(0, 35, 149); // #002395 — Sjoh deep blue
   doc.text(fmtZAR(totals.total), valX, afterTableY + 8, { align: "right" });
   afterTableY += 32;
 
-  // ---- Notes
+  // ── Notes ─────────────────────────────────────────────────────────────────
   if (data.notes) {
     doc.setFont("helvetica", "bold");
     doc.setFontSize(10);
@@ -183,12 +218,11 @@ export const generateInvoicePdf = (data: InvoiceData): jsPDF => {
     doc.setTextColor(60, 60, 60);
     const noteLines = doc.splitTextToSize(data.notes, pageWidth - margin * 2);
     doc.text(noteLines, margin, afterTableY);
-    afterTableY += noteLines.length * 12 + 16;
   }
 
-  // ---- Footer
+  // ── Footer ────────────────────────────────────────────────────────────────
   const footerY = doc.internal.pageSize.getHeight() - 40;
-  doc.setDrawColor(0, 122, 77);
+  doc.setDrawColor(0, 35, 149);
   doc.setLineWidth(2);
   doc.line(margin, footerY - 14, pageWidth - margin, footerY - 14);
   doc.setFont("helvetica", "normal");

@@ -1,200 +1,179 @@
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Check, Siren, Sparkles } from "lucide-react";
+import { Check, Siren, Sparkles, Zap } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
 import { Button } from "@/components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { SJOH_TIERS, formatRand } from "@/lib/mockData";
-import { cn } from "@/lib/utils";
-import { payments, type BillingCycle } from "@/lib/payments";
+import { payments } from "@/lib/payments";
 import { useAuth } from "@/hooks/useAuth";
 
 const FAQS = [
-  { q: "How does the free trial work?", a: "New providers get 30 days on Basic Listing free — no card required. Early-access members get 2 months. After that, it is R50/month to stay listed." },
-  { q: "What is the difference between Basic Listing and Verified Pro?", a: "Basic Listing (R50/mo) keeps you in the directory so customers can find and contact you directly. Verified Pro (R250/mo) adds the verified badge, top placement, and the ability to send quotes on customer requests." },
-  { q: "Pay monthly or yearly?", a: "Both. Pay yearly and you save 10% — that's R60 a year on Basic, or R300 a year on Verified Pro. Same plan, less moolah. Annual is non-refundable, so only pick yearly if you're sure." },
-  { q: "Do you take commission on the work I do?", a: "Never. Sjoh is a directory — payments happen directly between you and your customer. We don't touch your money." },
-  { q: "What is the Eish! Urgent option?", a: "Posting a request is always free. If it's a real emergency — burst geyser, locked out, no power — customers can boost their job to Eish! Urgent for R50. It pins to the top of the feed for 72 hours, gets a flashing coral border, and pings every Verified Pro within 10km on WhatsApp." },
-  { q: "What is Sjoh's Law?", a: "Three strikes and you're out. Flake on a job, do dangerous work, or refuse to pay for completed work — that's a strike. Three strikes and your ID is permanently banned." },
-  { q: "Can I cancel any time?", a: "Yes. Cancel or downgrade from your dashboard. No contracts, no cancellation fees. Annual plans run their full term — no partial refunds." },
+  {
+    q: "How does the free trial work?",
+    a: "Sign up, complete your profile, and you get 30 days free — no card, no upfront commitment. After 30 days it's R250/month. Founding members who sign up during our launch get R150/month locked in forever.",
+  },
+  {
+    q: "Do you take commission on the work I do?",
+    a: "Never. Sjoh is a directory — payments happen directly between you and your customer. We don't touch your money, your invoice, or your quote. 0% commission means 0% commission.",
+  },
+  {
+    q: "What does the Coral Checkmark actually mean?",
+    a: "It means your SA ID has been verified by a third-party identity service. Customers know you are who you say you are. It's a once-off verification — no recurring cost.",
+  },
+  {
+    q: "Why do I need to verify my ID to get the Checkmark?",
+    a: "Because customers are letting strangers into their homes. The Checkmark tells them you've been ID-verified, not just self-registered. It costs a small once-off fee to cover our verification provider — and it sets you apart from every unverified competitor on other platforms.",
+  },
+  {
+    q: "What is the Eish! Urgent Boost?",
+    a: "Posting a job is always free for customers. If it's a real emergency — burst geyser, locked out, no power — they can boost their job to Eish! Urgent for R50. It pins to the top of the feed for 72 hours, gets a flashing coral border, and pings every Verified Pro within 10km on WhatsApp.",
+  },
+  {
+    q: "What is Sjoh's Law?",
+    a: "Three strikes and you're out. Flake on a job, do dangerous work, or refuse to pay for completed work — that's a strike. Three strikes and your ID is permanently banned from the platform.",
+  },
+  {
+    q: "Can I cancel any time?",
+    a: "Yes. Cancel from your dashboard whenever you want. No contracts, no cancellation fees, no hard feelings. Your listing stays active until the end of your billing period.",
+  },
+  {
+    q: "I already have a good reputation. Why do I need Sjoh?",
+    a: "Because your reputation is currently stuck in your phone. Sjoh gives it a home — a verified, portable profile with real reviews, a Trust Index, and a Coral Checkmark that follows you everywhere. Stop being 'a guy in a WhatsApp group' and start being a professional.",
+  },
 ];
-
-// Annual = pay 10 months, get 12 (i.e. 10% off the yearly cost).
-const annualPrice = (monthly: number) => Math.round(monthly * 12 * 0.9);
-const annualSaving = (monthly: number) => monthly * 12 - annualPrice(monthly);
 
 const Pricing = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const [cycle, setCycle] = useState<BillingCycle>("monthly");
+  const tier = SJOH_TIERS[0];
 
-  const handleTierClick = (slug: string) => {
+  const handleStart = () => {
     if (!user) {
       navigate(`/login?next=${encodeURIComponent("/pricing")}`);
       return;
     }
-    if (slug === "basic" || slug === "verified_pro") {
-      payments.startSubscription(slug, cycle);
-    } else {
-      navigate("/list");
-    }
+    payments.startSubscription("verified_pro", "monthly");
   };
 
   return (
     <SiteLayout>
       <div className="container py-16 md:py-20">
-        <header className="text-center max-w-2xl mx-auto mb-10">
-          <span className="text-xs font-bold uppercase tracking-widest text-primary">Provider plans</span>
+
+        <header className="text-center max-w-2xl mx-auto mb-14">
+          <span className="text-xs font-bold uppercase tracking-widest text-primary">Simple pricing</span>
           <h1 className="font-display text-4xl md:text-5xl font-extrabold tracking-tight mt-3 text-balance">
-            No commission. Just a small monthly fee.
+            One plan. Everything included.
           </h1>
           <p className="mt-4 text-lg text-ink-2">
-            Get listed, get found, keep 100% of what you earn.
+            No tiers. No upsells. No commission. Just a small monthly fee
+            to get your business properly in front of the right people.
           </p>
         </header>
 
-        {/* Bold no-commission promise — kills the "hidden costs" red-team */}
-        <div className="max-w-3xl mx-auto mb-12 rounded-2xl border-2 border-primary/40 bg-primary/5 p-5 md:p-6 flex items-start gap-4 hover:border-primary hover:shadow-pop transition-all duration-300">
-          <span className="size-12 rounded-xl bg-primary text-primary-foreground flex items-center justify-center shrink-0 font-display font-extrabold text-lg animate-pulse-ring">0%</span>
-          <div className="text-sm md:text-base">
-            <p className="font-display font-extrabold tracking-tight text-foreground">
-              0% commission. You keep every cent you earn.
-            </p>
-            <p className="text-ink-2 mt-1.5">
-              Your monthly plan covers <strong>unlimited quotes</strong> and your directory listing.
-              We don't take a cut of your invoice, we don't charge per message, and we don't touch your Paystack payouts. Clients pay you directly.
-            </p>
-          </div>
-        </div>
+        <div className="max-w-xl mx-auto">
+          <div className="relative bg-card border-2 border-primary rounded-3xl p-8 md:p-10 shadow-pop">
+            <span className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground text-[10px] font-bold uppercase tracking-widest px-4 py-1.5 rounded-full animate-soft-bob">
+              30-day free trial — no card needed
+            </span>
 
-
-        {/* Billing-cycle toggle */}
-        <div className="flex justify-center mb-8">
-          <div className="inline-flex items-center gap-1 p-1 rounded-full border border-border bg-card shadow-card">
-            <button
-              type="button"
-              onClick={() => setCycle("monthly")}
-              className={cn(
-                "px-5 py-2 rounded-full text-sm font-semibold transition-all duration-200 ease-out active:scale-95",
-                cycle === "monthly" ? "bg-foreground text-background shadow-sm" : "text-ink-2 hover:text-foreground hover:bg-secondary",
-              )}
-              aria-pressed={cycle === "monthly"}
-            >
-              Monthly
-            </button>
-            <button
-              type="button"
-              onClick={() => setCycle("annual")}
-              className={cn(
-                "px-5 py-2 rounded-full text-sm font-semibold transition-all duration-200 ease-out flex items-center gap-2 active:scale-95",
-                cycle === "annual" ? "bg-foreground text-background shadow-sm" : "text-ink-2 hover:text-foreground hover:bg-secondary",
-              )}
-              aria-pressed={cycle === "annual"}
-            >
-              Yearly
-              <span className={cn(
-                "text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full transition-transform",
-                cycle === "annual" ? "bg-primary text-primary-foreground animate-pop-in" : "bg-primary/15 text-primary",
-              )}>
-                Save 10%
-              </span>
-            </button>
-          </div>
-        </div>
-
-        {/* Tiers */}
-        <div className="grid lg:grid-cols-3 gap-5 max-w-6xl mx-auto">
-          {SJOH_TIERS.map((t) => {
-            const isPaidTier = t.slug === "basic" || t.slug === "verified_pro";
-            const showAnnual = isPaidTier && cycle === "annual";
-            const displayPrice = showAnnual ? annualPrice(t.price) : t.price;
-            const displayPeriod = showAnnual ? "/year" : t.period;
-            const saving = showAnnual ? annualSaving(t.price) : 0;
-            return (
-            <div
-              key={t.slug}
-              className={cn(
-                "group relative bg-card border rounded-2xl p-7 flex flex-col transition-all duration-300 ease-out hover:-translate-y-2",
-                t.popular
-                  ? "border-primary shadow-pop lg:scale-[1.03] hover:shadow-[0_20px_60px_-15px_hsl(var(--primary)/0.45)]"
-                  : t.featured
-                  ? "border-foreground shadow-pop hover:shadow-[0_20px_60px_-15px_hsl(var(--foreground)/0.4)]"
-                  : "border-border shadow-card hover:shadow-pop hover:border-primary/40",
-              )}
-            >
-              {t.popular && (
-                <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full animate-soft-bob">
-                  Most popular
-                </span>
-              )}
-              {t.featured && (
-                <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-foreground text-background text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full animate-soft-bob">
-                  Verified
-                </span>
-              )}
-              <h3 className="font-display text-2xl font-semibold">{t.name}</h3>
-              <p className="text-sm text-ink-2 mt-1">{t.blurb}</p>
-              <div className="mt-6 pb-6 border-b border-border">
-                <span className="font-display text-5xl font-medium tracking-tight">
-                  {displayPrice === 0 ? "R 0" : formatRand(displayPrice)}
-                </span>
-                <span className="text-sm text-muted-foreground"> {displayPeriod}</span>
-                {showAnnual && (
-                  <p className="mt-2 text-xs text-ink-2">
-                    ≈ {formatRand(Math.round(displayPrice / 12))}/mo · <span className="text-primary font-semibold">save {formatRand(saving)} a year</span>
-                  </p>
-                )}
-              </div>
-              <ul className="mt-5 space-y-3 flex-1">
-                {t.features.map((f) => (
-                  <li key={f} className="flex items-start gap-2.5 text-sm group/item">
-                    <Check className="size-4 text-primary mt-0.5 shrink-0 transition-transform duration-200 group-hover/item:scale-125" strokeWidth={3} />
-                    <span>{f}</span>
-                  </li>
-                ))}
-              </ul>
-              <Button
-                variant={t.popular ? "default" : t.featured ? "ink" : "outline"}
-                size="lg"
-                className="mt-7"
-                onClick={() => handleTierClick(t.slug)}
-              >
-                {t.slug === "basic_trial"
-                  ? "Start free trial"
-                  : showAnnual
-                    ? `Choose ${t.name} — yearly`
-                    : `Choose ${t.name}`}
-              </Button>
+            <div className="mt-2 mb-6">
+              <h2 className="font-display text-3xl font-bold">{tier.name}</h2>
+              <p className="text-ink-2 mt-2">{tier.blurb}</p>
             </div>
-            );
-          })}
+
+            <div className="pb-7 border-b border-border">
+              <div className="flex items-end gap-1">
+                <span className="font-display text-6xl font-medium tracking-tight">
+                  {formatRand(tier.price)}
+                </span>
+                <span className="text-muted-foreground mb-2 text-base">/month</span>
+              </div>
+              <p className="mt-2 text-sm text-ink-2">After your 30-day free trial. Cancel anytime.</p>
+            </div>
+
+            <ul className="mt-7 space-y-3.5">
+              {tier.features.map((f) => (
+                <li key={f} className="flex items-start gap-3 text-sm">
+                  <Check className="size-4 text-primary mt-0.5 shrink-0" strokeWidth={3} />
+                  <span>{f}</span>
+                </li>
+              ))}
+            </ul>
+
+            <Button size="lg" className="w-full mt-8 text-base font-bold h-14" onClick={handleStart}>
+              Start your free 30 days
+            </Button>
+            <p className="text-center text-xs text-muted-foreground mt-3">
+              No card required to start. You choose when you're ready to pay.
+            </p>
+          </div>
+
+          <div className="mt-5 rounded-2xl border border-accent/40 bg-accent/5 p-5 flex items-start gap-3">
+            <Sparkles className="size-5 text-accent shrink-0 mt-0.5" strokeWidth={2.5} />
+            <div className="text-sm">
+              <p className="font-bold text-foreground">
+                Founding Member pricing — {formatRand(tier.founderPrice!)}/month, locked forever.
+              </p>
+              <p className="text-ink-2 mt-1">
+                The first 500 pros who join get our founder rate of R150/month — never increases,
+                even when the price does. Plus your Coral Checkmark verification is on us.{" "}
+                <span className="font-semibold text-foreground">Don't let someone else take your spot.</span>
+              </p>
+            </div>
+          </div>
         </div>
 
-        {/* Founding-member perk */}
-        <p className="mt-6 text-center text-sm text-ink-2 max-w-2xl mx-auto">
-          <Sparkles className="size-4 text-accent inline -mt-0.5 mr-1" strokeWidth={2.5} />
-          <strong className="text-foreground">Founding members</strong> get <strong>1 free proposal a month</strong> — even on the On the Map plan. Our thank-you for showing up early.
-        </p>
+        <div className="max-w-3xl mx-auto mt-16 rounded-2xl border-2 border-primary/30 bg-primary/5 p-6 md:p-8 flex items-start gap-5 hover:border-primary hover:shadow-pop transition-all duration-300">
+          <span className="size-14 rounded-xl bg-primary text-primary-foreground flex items-center justify-center shrink-0 font-display font-extrabold text-xl animate-pulse-ring">
+            0%
+          </span>
+          <div>
+            <p className="font-display font-extrabold tracking-tight text-lg text-foreground">
+              You keep every cent you earn.
+            </p>
+            <p className="text-ink-2 mt-2 text-sm md:text-base">
+              Your R250/month covers unlimited quotes, your full directory listing, and every feature
+              in the platform. We don't take a cut of your invoice, charge per message, or touch your
+              Paystack payouts. Clients pay you directly — always.
+            </p>
+          </div>
+        </div>
 
-        {/* Eish Urgent */}
-        <section className="mt-16 max-w-4xl mx-auto rounded-2xl p-8 md:p-10 bg-foreground text-background">
+        <section className="mt-14 max-w-3xl mx-auto rounded-2xl p-8 md:p-10 bg-foreground text-background">
           <div className="flex items-start gap-4">
             <span className="size-12 rounded-xl bg-accent text-accent-foreground flex items-center justify-center shrink-0">
               <Siren className="size-6" strokeWidth={2.5} />
             </span>
             <div>
-              <span className="text-[10px] font-bold uppercase tracking-widest text-accent">Client side</span>
+              <span className="text-[10px] font-bold uppercase tracking-widest text-accent">For customers</span>
               <h2 className="font-display text-2xl md:text-3xl font-medium tracking-tight mt-1">
                 Eish! Urgent — R50 SOS
               </h2>
-              <p className="mt-2 text-background/85">
-                Burst geyser at 9pm? Locked out in your PJs? Customers can boost a job to <strong>Eish! Urgent</strong> for R50 — we WhatsApp every Verified Pro within 10km, pin it to the top of the feed for 72 hours, and slap a flashing coral border on it. Sorted.
+              <p className="mt-2 text-background/85 text-sm md:text-base">
+                Burst geyser at 9pm? Locked out in your PJs? Customers can boost a job to{" "}
+                <strong>Eish! Urgent</strong> for R50 — we WhatsApp every Verified Pro within 10km,
+                pin it to the top of the feed for 72 hours, and slap a flashing coral border on it. Sorted.
               </p>
             </div>
           </div>
         </section>
 
-        {/* FAQ */}
+        <div className="mt-14 max-w-3xl mx-auto grid sm:grid-cols-3 gap-4 text-center">
+          {[
+            { icon: <Zap className="size-5" />, title: "No hidden fees", body: "R250/month is all you pay. No setup fee, no listing fee, no per-quote charge." },
+            { icon: <Check className="size-5" />, title: "Cancel anytime", body: "Month-to-month. No contracts. Stop whenever you like — no penalty." },
+            { icon: <Sparkles className="size-5" />, title: "Built for SA", body: "ZAR pricing, SA ID verification, WhatsApp-first comms. Made here, for here." },
+          ].map((s) => (
+            <div key={s.title} className="bg-card border border-border rounded-xl p-5">
+              <span className="size-9 rounded-lg bg-primary/10 text-primary flex items-center justify-center mx-auto mb-3">
+                {s.icon}
+              </span>
+              <p className="font-semibold text-sm">{s.title}</p>
+              <p className="text-xs text-ink-2 mt-1.5 leading-relaxed">{s.body}</p>
+            </div>
+          ))}
+        </div>
+
         <div className="mt-24 max-w-2xl mx-auto">
           <h2 className="font-display text-3xl font-medium tracking-tight text-center mb-10">
             Frequently asked
@@ -205,13 +184,19 @@ const Pricing = () => {
                 <AccordionTrigger className="text-left font-semibold hover:no-underline py-5">
                   {f.q}
                 </AccordionTrigger>
-                <AccordionContent className="text-ink-2 pb-5">
-                  {f.a}
-                </AccordionContent>
+                <AccordionContent className="text-ink-2 pb-5">{f.a}</AccordionContent>
               </AccordionItem>
             ))}
           </Accordion>
         </div>
+
+        <div className="mt-20 text-center">
+          <p className="text-ink-2 text-sm mb-4">Ready to stop being a secret?</p>
+          <Button size="lg" className="text-base font-bold px-10 h-14" onClick={handleStart}>
+            Start your free 30 days — no card needed
+          </Button>
+        </div>
+
       </div>
     </SiteLayout>
   );
