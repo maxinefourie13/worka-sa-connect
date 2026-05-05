@@ -142,8 +142,7 @@ const ListBusiness = () => {
         website: website.trim() || null,
         description: description.trim() || null,
         tags,
-        logo_url: logoUrl,
-        cover_image_url: coverUrl,
+        image_url: logoUrl ?? coverUrl ?? null,
         listing_status: "workshop",
         pre_launch: true,
       }]);
