@@ -59,9 +59,30 @@ function currentMonthStart(): Date {
   return new Date(now.getFullYear(), now.getMonth(), 1);
 }
 
+const DEV_OVERRIDE = import.meta.env.DEV && import.meta.env.VITE_TIER_OVERRIDE === "verified_pro";
+
 export function useProviderAccess(): ProviderAccess {
   const { user } = useAuth();
   const [state, setState] = useState<ProviderAccess>(DEFAULT);
+
+  if (DEV_OVERRIDE) {
+    return {
+      loading: false,
+      tier: "verified_pro",
+      status: "active",
+      trialEndsAt: null,
+      tierExpiresAt: null,
+      hasListingAccess: true,
+      hasVerifiedProAccess: true,
+      isOnTrial: false,
+      isLocked: false,
+      trialDaysLeft: 0,
+      hasKycBusiness: true,
+      isFoundingMember: false,
+      foundingProposalAvailable: false,
+      foundingProposalsResetAt: null,
+    };
+  }
 
   useEffect(() => {
     if (!user) { setState({ ...DEFAULT, loading: false }); return; }
