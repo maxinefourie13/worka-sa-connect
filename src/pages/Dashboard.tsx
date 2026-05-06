@@ -210,11 +210,12 @@ const OverviewSection = ({ onJump }: { onJump: (s: SectionKey) => void }) => {
       </button>
 
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        <StatCard
-          label="Profile views"
-          value={stats.profileViews === null ? "—" : stats.profileViews.toLocaleString("en-ZA")}
-          hint={stats.profileViews === null ? "Coming soon" : undefined}
-        />
+        {stats.profileViews !== null && (
+          <StatCard
+            label="Profile views"
+            value={stats.profileViews.toLocaleString("en-ZA")}
+          />
+        )}
         <StatCard
           label="Enquiries (30d)"
           value={stats.loading ? "…" : stats.enquiries30d.toLocaleString("en-ZA")}
@@ -271,7 +272,7 @@ const VerificationSection = () => {
 
   const verifyHint: Record<typeof verification.status, string> = {
     not_required: "Available on paid tiers — your badge stays once verified.",
-    required: "Subscription active. Tap to verify your ID and unlock the Ready for Work badge.",
+    required: "Subscription active. Tap to verify your ID and unlock the Verified Pro badge.",
     pending: "We're processing your verification. This usually takes under a minute.",
     verified: verification.expiresAt
       ? `Re-verify by ${new Date(verification.expiresAt).toLocaleDateString("en-ZA")}`
@@ -493,16 +494,16 @@ const PromotionsSection = () => {
     <>
       <header>
         <h1 className="font-display text-3xl font-medium tracking-tight">Promotions</h1>
-        <p className="text-sm text-ink-2 mt-1">Run limited-time offers to attract new customers — coming soon.</p>
+        <p className="text-sm text-ink-2 mt-1">Run limited-time offers to attract new customers.</p>
       </header>
       {loading ? (
         <div className="bg-card border border-border rounded-xl p-6 text-sm text-muted-foreground">Loading…</div>
       ) : items.length === 0 ? (
         <div className="bg-card border border-border rounded-xl p-8 text-center">
           <Sparkles className="size-8 mx-auto text-muted-foreground mb-2" />
-          <p className="text-sm font-semibold">Promotions are landing soon</p>
+          <p className="text-sm font-semibold">No active promotions yet</p>
           <p className="text-xs text-ink-2 mt-1 max-w-sm mx-auto">
-            Limited-time offers will show up on your profile and in search. We'll buzz you the moment the editor goes live.
+            Limited-time offers will show up on your profile and in search results once you create one.
           </p>
         </div>
       ) : (
@@ -754,7 +755,9 @@ const BillingSection = () => {
           <Button variant="default" className="bg-accent text-accent-foreground hover:bg-accent/90" asChild>
             <Link to="/pricing">Change Plan</Link>
           </Button>
-          <Button variant="ghost" className="text-white hover:bg-white/10">Cancel Plan</Button>
+          <Button variant="ghost" className="text-white hover:bg-white/10" asChild>
+            <a href="mailto:hello@sjoh.co.za?subject=Cancel%20my%20Sjoh%20subscription">Cancel Plan</a>
+          </Button>
         </div>
       </div>
 
@@ -777,16 +780,9 @@ const BillingSection = () => {
 
       <div className="bg-card border border-border rounded-xl p-6">
         <h3 className="font-display text-lg font-semibold mb-4">Payment method</h3>
-        <div className="flex items-center justify-between p-4 border border-border rounded-lg">
-          <div className="flex items-center gap-3">
-            <div className="size-10 rounded bg-secondary flex items-center justify-center font-bold text-xs">VISA</div>
-            <div>
-              <p className="text-sm font-semibold">Visa ending 4242</p>
-              <p className="text-xs text-muted-foreground">Expires 09/27</p>
-            </div>
-          </div>
-          <Button variant="outline" size="sm">Update</Button>
-        </div>
+        <p className="text-sm text-muted-foreground">
+          Your card is managed securely by Paystack. To update your card, change your plan, or cancel, use the buttons above — Paystack will email you a secure update link if needed.
+        </p>
       </div>
     </>
   );

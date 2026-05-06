@@ -32,7 +32,6 @@ const GroupLanding = () => {
 
   const subs = CATEGORIES.filter((c) => c.groupSlug === group.slug);
   const subSlugs = subs.map((s) => s.slug);
-  const totalListings = subs.reduce((sum, c) => sum + c.count, 0);
   const featured = [
     ...allBusinesses.filter((b) => b.id === EXAMPLE_BUSINESS_ID),
     ...allBusinesses.filter(
@@ -60,7 +59,7 @@ const GroupLanding = () => {
                 {group.name}
               </h1>
               <p className="mt-2 text-ink-2 max-w-2xl">
-                {subs.length} services · {totalListings.toLocaleString("en-ZA")} verified businesses ready to graft.
+                {subs.length} services from verified pros ready to graft.
               </p>
               <div className="mt-5 flex flex-wrap gap-3">
                 <Button asChild>
@@ -130,9 +129,6 @@ const GroupLanding = () => {
               <span className="text-3xl shrink-0">{c.emoji}</span>
               <div className="min-w-0">
                 <p className="font-semibold text-sm group-hover:text-primary transition-colors leading-snug">{c.name}</p>
-                <p className="text-xs text-muted-foreground mt-0.5 tabular-nums">
-                  {c.count.toLocaleString("en-ZA")} listings
-                </p>
               </div>
             </Link>
           ))}

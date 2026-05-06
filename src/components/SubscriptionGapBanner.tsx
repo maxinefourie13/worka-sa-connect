@@ -27,7 +27,7 @@ export const SubscriptionGapBanner = () => {
           <p className="text-xs text-ink-2 mt-0.5">
             {isArchived
               ? "Your subscription lapsed more than 30 days ago. Resubscribe to bring your profile back."
-              : "Your trial has ended. Subscribe to On the Map (R50/mo) to be visible to customers again."}
+              : "Your trial has ended. Subscribe to Verified Pro (R250/mo) to be visible to customers again."}
           </p>
         </div>
       </div>

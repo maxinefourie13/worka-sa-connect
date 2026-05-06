@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Search, ShieldCheck, Construction, MapPin, Clock, Siren } from "lucide-react";
+import { Search, Construction, MapPin, Clock, Siren } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
 import { Button } from "@/components/ui/button";
 import { JobCard } from "@/components/JobCard";
@@ -20,19 +20,7 @@ const Opportunities = () => {
   const [keyword, setKeyword] = useState("");
   const [category, setCategory] = useState("");
   const [province, setProvince] = useState("");
-  const [verifiedOnly, setVerifiedOnly] = useState(false);
   const [sortMode, setSortMode] = useState<SortMode>(isProView && myBiz?.city ? "nearest" : "newest");
-
-  // Mock client hiring history — keyed by job id. In production this comes from a server-side count.
-  const clientHireHistory = useMemo<Record<string, number>>(
-    () => ({
-      "o1": 4,
-      "o3": 7,
-      "o5": 2,
-      "o6": 1,
-    }),
-    [],
-  );
 
   const proCity = isProView ? myBiz?.city : undefined;
   const proProvince = isProView ? myBiz?.province : undefined;
@@ -42,8 +30,6 @@ const Opportunities = () => {
       if (keyword && !o.title.toLowerCase().includes(keyword.toLowerCase())) return false;
       if (category && o.categorySlug !== category) return false;
       if (province && o.province !== province) return false;
-      // "Verified Pros only" filter — keeps jobs where the client has prior history (proxy for trust).
-      if (verifiedOnly && !clientHireHistory[o.id]) return false;
       return true;
     });
 
@@ -73,9 +59,7 @@ const Opportunities = () => {
     }
     // newest (default)
     return [...list].sort((a, b) => ts(b) - ts(a));
-  }, [opportunities, keyword, category, province, verifiedOnly, clientHireHistory, sortMode, proCity, proProvince]);
-
-  const verifiedCount = opportunities.filter((o) => clientHireHistory[o.id]).length;
+  }, [opportunities, keyword, category, province, sortMode, proCity, proProvince]);
 
   return (
     <SiteLayout>
@@ -158,20 +142,6 @@ const Opportunities = () => {
 
         {/* Filter + sort chips */}
         <div className="flex flex-wrap items-center gap-2 mb-6">
-          <button
-            onClick={() => setVerifiedOnly((v) => !v)}
-            className={cn(
-              "inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest px-3 py-1.5 rounded-full border transition-all",
-              verifiedOnly
-                ? "bg-primary text-primary-foreground border-primary"
-                : "bg-card text-ink-2 border-border hover:border-primary",
-            )}
-            title="Only show jobs from clients who've hired on Sjoh before"
-          >
-            <ShieldCheck className="size-3.5" strokeWidth={2.5} />
-            {verifiedOnly ? "Showing trusted clients only" : `Trusted clients only (${verifiedCount})`}
-          </button>
-
           {isProView && (
             <div className="ml-auto inline-flex rounded-full border border-border bg-card p-0.5 text-xs font-bold uppercase tracking-widest">
               {([
@@ -216,7 +186,6 @@ const Opportunities = () => {
               <JobCard
                 key={o.id}
                 job={o}
-                clientHireCount={clientHireHistory[o.id]}
                 isProView={isProView}
                 proCity={proCity}
               />

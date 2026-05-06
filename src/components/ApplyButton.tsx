@@ -34,7 +34,7 @@ interface Props {
  * here just stops obviously-blocked clicks and shows the right paywall:
  *  - Not signed in → /auth
  *  - Locked tier → choose a plan
- *  - On the Map (R50) → upgrade to Ready for Work
+ *  - Basic tier → upgrade to Verified Pro
  *  - Trial / no plan, urgent job → upgrade to R250 + ID check
  *  - Verified Pro, urgent job, no KYC → run ID check
  *  - Otherwise → open proposal modal (server has final say).
@@ -183,7 +183,7 @@ const PaywallDialog = ({ kind, onClose, onPickPlan, onRunKyc }: PaywallProps) =>
     locked: {
       icon: <Lock className="size-5 text-accent" strokeWidth={2.5} />,
       title: "Your account is paused",
-      body: "Your free trial ended without a payment method. Choose Basic Listing (R50/mo) or Verified Pro (R250/mo) to send quotes again.",
+      body: "Your free trial ended without a payment method. Subscribe to Verified Pro (R250/mo) to send quotes again.",
       cta: "Choose a plan",
       onCta: onPickPlan,
     },
@@ -197,7 +197,7 @@ const PaywallDialog = ({ kind, onClose, onPickPlan, onRunKyc }: PaywallProps) =>
     basic: {
       icon: <Sparkles className="size-5 text-primary" strokeWidth={2.5} />,
       title: "Upgrade to send quotes",
-      body: "Basic Listing (R50/mo) keeps you in the directory so customers can find and contact you. Upgrade to Verified Pro (R250/mo) to send quotes on customer requests.",
+      body: "You need Verified Pro (R250/mo) to send quotes on customer requests.",
       cta: "Upgrade to Verified Pro",
       onCta: onPickPlan,
     },

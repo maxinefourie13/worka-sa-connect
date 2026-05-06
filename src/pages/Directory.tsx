@@ -158,7 +158,6 @@ const DirectoryPage = () => {
                                   className="size-3.5 accent-primary"
                                 />
                                 <span className="flex-1 group-hover:text-primary transition-colors">{c.name}</span>
-                                <span className="text-xs text-muted-foreground tabular-nums">{c.count}</span>
                               </label>
                             </li>
                           ))}

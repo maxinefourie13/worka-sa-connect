@@ -14,16 +14,10 @@ const STEPS = ["Basics", "Profile", "Choose Plan", "Review", "Done"] as const;
 
 const PLANS = [
   {
-    id: "basic",
-    name: "Basic Listing",
-    price: "R50/mo",
-    desc: "Get found in the directory. Customers contact you direct — no commission.",
-  },
-  {
     id: "verified_pro",
     name: "Verified Pro",
     price: "R250/mo",
-    desc: "Everything in Basic + send quotes on customer requests, Verified badge, top placement.",
+    desc: "Send quotes on customer requests, get the Verified badge, top placement, and full directory listing.",
     recommended: true,
   },
 ];
@@ -429,8 +423,7 @@ const ListBusiness = () => {
                     {PLANS.find((p) => p.id === plan)?.name ?? "—"}
                   </p>
                   <p className="text-xs text-muted-foreground mt-1">
-                    {plan === "basic" && "R50/month after your free trial. Get listed and let customers contact you direct."}
-                    {plan === "verified_pro" && "R250/month after your free trial. Send quotes on customer requests + Verified badge."}
+                    R250/month after your free trial. Send quotes on customer requests + Verified badge.
                   </p>
                 </div>
               </div>

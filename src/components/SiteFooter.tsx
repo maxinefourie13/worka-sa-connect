@@ -13,24 +13,6 @@ const cols = [
     ],
   },
   {
-    title: "Support",
-    links: [
-      { to: "#", label: "Help Centre" },
-      { to: "#", label: "Contact Us" },
-      { to: "#", label: "Trust & Verification" },
-      { to: "#", label: "Report a Listing" },
-    ],
-  },
-  {
-    title: "Company",
-    links: [
-      { to: "#", label: "About Sjoh" },
-      { to: "#", label: "Careers" },
-      { to: "#", label: "Press" },
-      { to: "#", label: "Partners" },
-    ],
-  },
-  {
     title: "Legal",
     links: [
       { to: "/terms", label: "Terms of Service" },
@@ -43,7 +25,7 @@ export const SiteFooter = () => {
   return (
     <footer className="border-t border-border bg-card">
       <div className="container py-16">
-        <div className="grid gap-12 lg:grid-cols-5">
+        <div className="grid gap-12 lg:grid-cols-3">
           <div className="space-y-4">
             <Link to="/" className="inline-block" aria-label="Sjoh home">
               <img src={sjohLogo} alt="Sjoh!" className="h-20 w-auto" />

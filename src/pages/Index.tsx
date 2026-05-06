@@ -267,7 +267,7 @@ const HomePage = () => {
                   <div className="min-w-0">
                     <p className="font-semibold text-sm group-hover:text-primary transition-colors leading-snug">{g.name}</p>
                     <p className="text-xs text-muted-foreground mt-0.5 tabular-nums">
-                      {g.subCount} services · {g.count.toLocaleString("en-ZA")} listings
+                      {g.subCount} services
                     </p>
                   </div>
                 </Link>

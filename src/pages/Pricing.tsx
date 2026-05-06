@@ -10,7 +10,7 @@ import { useAuth } from "@/hooks/useAuth";
 const FAQS = [
   {
     q: "How does the free trial work?",
-    a: "Sign up, complete your profile, and you get 30 days free — no card, no upfront commitment. After 30 days it's R250/month. Founding members who sign up during our launch get R150/month locked in forever.",
+    a: "Sign up, complete your profile, and you get 30 days free — no card, no upfront commitment. Founding members get an extended 2-month trial. After your trial it's R250/month, or R150/month locked in forever for the first 500 founding members.",
   },
   {
     q: "Do you take commission on the work I do?",

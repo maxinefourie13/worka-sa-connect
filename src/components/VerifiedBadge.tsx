@@ -33,7 +33,7 @@ export const VerifiedBadge = ({ size = "sm", className, withLabel = false }: Pro
       </TooltipTrigger>
       <TooltipContent side="top" className="max-w-xs">
         <p className="text-xs">
-          <strong>ID-verified by Sjoh.</strong> This pro has gone through our verification process and is on the Ready for Work plan.
+          <strong>ID-verified by Sjoh.</strong> This pro has gone through our verification process and is a Verified Pro.
         </p>
       </TooltipContent>
     </Tooltip>

@@ -5,21 +5,20 @@ import { cn } from "@/lib/utils";
 import { ApplyButton } from "@/components/ApplyButton";
 import { UrgentBoostButton } from "@/components/UrgentBoostButton";
 import { useAuth } from "@/hooks/useAuth";
-import { History, Siren, Sparkles, Paperclip, MapPin } from "lucide-react";
+import { Siren, Sparkles, Paperclip, MapPin } from "lucide-react";
 import { freshnessFromIso, competitionSignal } from "@/lib/leadSignals";
 
 interface JobCardProps {
   job: Opportunity;
   className?: string;
   /** Optional: how many jobs this client has previously hired on Sjoh. */
-  clientHireCount?: number;
   /** When true, render Pro-side signals (freshness + quote count). */
   isProView?: boolean;
   /** When set, show a "Near you" pip if this job's city matches. */
   proCity?: string;
 }
 
-export const JobCard = ({ job, className, clientHireCount, isProView, proCity }: JobCardProps) => {
+export const JobCard = ({ job, className, isProView, proCity }: JobCardProps) => {
   const { user } = useAuth();
   const isOwner = !!user && !!job.clientId && user.id === job.clientId;
   const isBoosted = !!job.urgentBoostPaidAt && (Date.now() - new Date(job.urgentBoostPaidAt).getTime()) < 72 * 3600 * 1000;
@@ -79,7 +78,7 @@ export const JobCard = ({ job, className, clientHireCount, isProView, proCity }:
             {job.emoji}
           </div>
           <div className="flex-1 min-w-0">
-            <Link to={`/opportunities/${job.id}`} className="block">
+            <Link to={`/requests/${job.id}`} className="block">
               <h3 className="font-display text-base font-semibold leading-snug group-hover:text-primary transition-colors">
                 {job.title}
               </h3>
@@ -87,13 +86,6 @@ export const JobCard = ({ job, className, clientHireCount, isProView, proCity }:
             <p className="mt-1 text-xs text-muted-foreground">
               Posted by <span className="text-ink-2 font-medium">{job.postedBy}</span> · {job.postedAt}
             </p>
-
-            {typeof clientHireCount === "number" && clientHireCount > 0 && (
-              <div className="mt-2 inline-flex items-center gap-1.5 text-[11px] font-semibold text-primary bg-primary/10 px-2 py-0.5 rounded-full">
-                <History className="size-3" strokeWidth={2.5} />
-                Hired {clientHireCount} pro{clientHireCount === 1 ? "" : "s"} on Sjoh before
-              </div>
-            )}
 
             <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs text-ink-2">
               <span>{job.city}, {job.province}</span>
