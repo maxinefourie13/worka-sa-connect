@@ -185,3 +185,45 @@
   }
 }
 
+/* =====================================================================
+   SJOH v2 — SA bold palette landing page
+   Red #DC2828 · Navy #0A2463 · Green #0B6E3A · Gold #F5A623
+   Periwinkle #6B7CE8 · Pink #E83E8C · Dark #1A1A1A
+===================================================================== */
+:root {
+  --sa-red:   #DC2828;
+  --sa-navy:  #0A2463;
+  --sa-green: #0B6E3A;
+  --sa-gold:  #F5A623;
+  --sa-peri:  #6B7CE8;
+  --sa-pink:  #E83E8C;
+  --sa-dark:  #1A1A1A;
+  --sa-bg:    #FBFAF6;
+  --sa-shadow-card: 0 10px 30px -12px rgba(15,17,23,0.12);
+  --sa-shadow-pop:  0 24px 60px -20px rgba(15,17,23,0.22);
+}
+
+.font-display-bold { font-family: "Unbounded", "Plus Jakarta Sans", sans-serif; font-weight: 900; letter-spacing: -0.04em; }
+
+/* hero animations */
+@keyframes sa-spin { to { transform: rotate(360deg); } }
+@keyframes sa-caret-blink { 50% { opacity: 0; } }
+@keyframes sa-marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+@keyframes sa-float-bob {
+  0%, 100% { transform: translateY(0px) rotate(var(--rot, 0deg)); }
+  50%      { transform: translateY(-8px) rotate(var(--rot, 0deg)); }
+}
+
+.sa-tw-caret {
+  display: inline-block;
+  width: 5px; height: 0.88em;
+  margin-left: 4px;
+  background: var(--sa-navy);
+  vertical-align: -0.08em;
+  animation: sa-caret-blink 1.05s steps(1) infinite;
+}
+.sa-sticker-spin { animation: sa-spin 22s linear infinite; }
+.sa-marquee-track { animation: sa-marquee 22s linear infinite; }
+.sa-float-bob { animation: sa-float-bob 4s ease-in-out infinite; }
+
+
