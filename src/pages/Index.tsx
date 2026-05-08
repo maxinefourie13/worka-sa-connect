@@ -13,7 +13,6 @@ import { useBusinesses, useOpportunities } from "@/hooks/useDirectory";
 import { getCategoryGroupIcon } from "@/lib/categoryIcons";
 import heroGroup1 from "@/assets/hero-group-1.jpg";
 import heroGroup3 from "@/assets/hero-group-3.jpg";
-import sjohIconV2 from "@/assets/sjoh-icon-v2.png";
 
 const HERO_PHRASES = [
   "Sjoh! Tired of hiring mamparas? Find a vetted pro.",
@@ -44,7 +43,7 @@ const MARQUEE_ITEMS = [
 
 const HOW_STEPS = [
   { n: "01", icon: "🔍", title: "Tell us what you need", body: "Search the directory or post a request in seconds.", bg: "var(--sa-gold)", color: "var(--sa-dark)", rot: "-1.5deg" },
-  { n: "02", icon: "👥", title: "Get real people", body: "Local businesses ready to help across all nine provinces.", bg: "var(--sa-pink)", color: "#fff", rot: "1.2deg" },
+  { n: "02", icon: "👥", title: "Get real people", body: "Local businesses ready to help across all nine provinces.", bg: "var(--sa-red)", color: "#fff", rot: "1.2deg" },
   { n: "03", icon: "⭐", title: "Choose who you trust", body: "Browse profiles, reviews, and active promotions.", bg: "var(--sa-navy)", color: "#fff", rot: "-0.8deg" },
   { n: "04", icon: "✅", title: "Get it done", body: "Contact them directly. No middleman. No commission.", bg: "var(--sa-green)", color: "#fff", rot: "1.5deg" },
 ];
@@ -87,28 +86,6 @@ const HomePage = () => {
             "linear-gradient(180deg, #0A0A0F 0%, #1A1A2E 60%, #1A1A1A 100%)",
         }}
       >
-        {/* Spinning sticker top-left with new painterly icon */}
-        <div
-          aria-hidden
-          className="hidden md:grid place-items-center absolute z-[3] sa-sticker-spin"
-          style={{
-            width: 130, height: 130, borderRadius: "50%",
-            top: 80, left: "6%",
-            background: "var(--sa-dark)",
-            boxShadow: "var(--sa-shadow-pop)",
-          }}
-        >
-          <svg viewBox="0 0 100 100" className="absolute inset-0 w-full h-full">
-            <defs>
-              <path id="sticker-circ" d="M 50,50 m -40,0 a 40,40 0 1,1 80,0 a 40,40 0 1,1 -80,0" />
-            </defs>
-            <text fontSize="11" fontWeight="800" letterSpacing="2.5" style={{ fill: "#fff" }}>
-              <textPath href="#sticker-circ">SJOH! · LEKKER · SJOH! · LEKKER · </textPath>
-            </text>
-          </svg>
-          <img src={sjohIconV2} alt="" className="relative z-10 w-14 h-14 object-contain" />
-        </div>
-
         <div className="container relative pt-20 pb-24 lg:pt-28 lg:pb-32 text-center">
           <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur border border-white/20 text-xs font-semibold mb-4 text-white/85">
             <span className="size-2 rounded-full" style={{ background: "var(--sa-pink)" }} />
@@ -209,7 +186,7 @@ const HomePage = () => {
           </div>
           <div
             className="absolute z-[4] rounded-full shadow-pop flex items-center gap-2 px-4 py-2 sa-float-bob"
-            style={{ top: 460, right: "10%", background: "var(--sa-pink)", color: "#fff", ["--rot" as string]: "2deg", animationDelay: "1.8s" }}
+            style={{ top: 460, right: "10%", background: "var(--sa-red)", color: "#fff", ["--rot" as string]: "2deg", animationDelay: "1.8s" }}
           >
             <MessageCircle className="size-3.5" /> <span className="text-xs font-bold">3 quotes</span>
           </div>
@@ -313,10 +290,10 @@ const HomePage = () => {
         <div className="container py-12">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-4 divide-y md:divide-y-0 md:divide-x divide-border/60">
             {[
-              { v: "0%", l: "Commission on jobs", c: "var(--sa-pink)" },
+              { v: "0%", l: "Commission on jobs", c: "var(--sa-red)" },
               { v: "240+", l: "Service categories", c: "var(--sa-navy)" },
               { v: "11", l: "Industry groups", c: "var(--sa-green)" },
-              { v: "9", l: "Provinces covered", c: "var(--sa-gold)" },
+              { v: "9", l: "Provinces covered", c: "var(--sa-pink)" },
             ].map((s) => (
               <div key={s.l} className="flex flex-col items-center text-center pt-4 md:pt-0">
                 <span className="font-display-bold text-5xl md:text-6xl tabular-nums" style={{ color: s.c }}>

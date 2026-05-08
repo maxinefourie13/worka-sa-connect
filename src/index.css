@@ -127,7 +127,7 @@
   }
 
   h1, h2, h3, h4, h5, h6, .font-display {
-    @apply font-sans font-extrabold tracking-tight;
+    @apply font-display font-extrabold tracking-tight;
   }
   /* Main hero headings — push past 800 visually with a hairline stroke */
   h1, .font-display {
