@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import sjohLogo from "@/assets/sjoh-logo.png";
+import sjohLogo from "@/assets/sjoh-wordmark-v2.png";
 
 const cols = [
   {

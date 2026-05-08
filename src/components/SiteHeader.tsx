@@ -7,7 +7,7 @@ import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useUserRoles } from "@/hooks/useUserRoles";
 import { useMyBusiness } from "@/hooks/useMyBusiness";
-import sjohLogo from "@/assets/sjoh-logo.png";
+import sjohLogo from "@/assets/sjoh-wordmark-v2.png";
 import { ListingStatusBanner } from "@/components/ListingStatusBanner";
 import { EarlyAccessRibbon } from "@/components/EarlyAccessRibbon";
 import { useBumpLastActive } from "@/hooks/useBumpLastActive";

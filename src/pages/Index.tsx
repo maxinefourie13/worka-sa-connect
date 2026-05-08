@@ -11,7 +11,9 @@ import { FoundingSpotsBanner } from "@/components/FoundingSpotsBanner";
 import { CATEGORIES, CATEGORY_GROUPS, PROVINCES } from "@/lib/mockData";
 import { useBusinesses, useOpportunities } from "@/hooks/useDirectory";
 import { getCategoryGroupIcon } from "@/lib/categoryIcons";
-import bokaapPhoto from "@/assets/bo-kaap.jpg";
+import heroGroup1 from "@/assets/hero-group-1.jpg";
+import heroGroup3 from "@/assets/hero-group-3.jpg";
+import sjohIconV2 from "@/assets/sjoh-icon-v2.png";
 
 const HERO_PHRASES = [
   "Sjoh! Tired of hiring mamparas? Find a vetted pro.",
@@ -77,26 +79,26 @@ const HomePage = () => {
     <SiteLayout>
       {/* ========== HERO ========== */}
       <section className="relative overflow-hidden border-b border-border" style={{ background: "radial-gradient(ellipse 90% 70% at 50% -10%, #C7DCFF 0%, #E8F1FF 45%, hsl(var(--background)) 80%), hsl(var(--background))" }}>
-        {/* Spinning sticker top-left */}
+        {/* Spinning sticker top-left with new painterly icon */}
         <div
           aria-hidden
           className="hidden md:grid place-items-center absolute z-[3] sa-sticker-spin"
           style={{
-            width: 110, height: 110, borderRadius: "50%",
-            top: 90, left: "8%",
-            background: "var(--sa-gold)",
+            width: 130, height: 130, borderRadius: "50%",
+            top: 80, left: "6%",
+            background: "var(--sa-dark)",
             boxShadow: "var(--sa-shadow-pop)",
           }}
         >
           <svg viewBox="0 0 100 100" className="absolute inset-0 w-full h-full">
             <defs>
-              <path id="sticker-circ" d="M 50,50 m -36,0 a 36,36 0 1,1 72,0 a 36,36 0 1,1 -72,0" />
+              <path id="sticker-circ" d="M 50,50 m -40,0 a 40,40 0 1,1 80,0 a 40,40 0 1,1 -80,0" />
             </defs>
-            <text fontSize="13" fontWeight="800" letterSpacing="2" style={{ fill: "var(--sa-dark)" }}>
+            <text fontSize="11" fontWeight="800" letterSpacing="2.5" style={{ fill: "#fff" }}>
               <textPath href="#sticker-circ">SJOH! · LEKKER · SJOH! · LEKKER · </textPath>
             </text>
           </svg>
-          <div className="relative z-10 text-2xl">👌</div>
+          <img src={sjohIconV2} alt="" className="relative z-10 w-14 h-14 object-contain" />
         </div>
 
         <div className="container relative pt-20 pb-24 lg:pt-28 lg:pb-32 text-center">
@@ -250,7 +252,7 @@ const HomePage = () => {
           </div>
         </div>
         <div className="relative overflow-hidden min-h-[320px]">
-          <img src={bokaapPhoto} alt="Local pros" className="w-full h-full object-cover" />
+          <img src={heroGroup1} alt="Real South Africans on Sjoh" className="w-full h-full object-cover" />
           <div
             className="absolute font-display-bold text-[13px] leading-tight px-4 py-2.5 rounded-2xl shadow-xl"
             style={{ background: "var(--sa-gold)", color: "var(--sa-dark)", top: "16%", right: "7%", transform: "rotate(4deg)" }}
@@ -402,9 +404,15 @@ const HomePage = () => {
 
       {/* ========== CTA — green section with tilted stat cards ========== */}
       <section className="relative overflow-hidden grid md:grid-cols-2 gap-12 px-8 md:px-14 py-20" style={{ background: "var(--sa-green)" }}>
+        <img
+          aria-hidden
+          src={heroGroup3}
+          alt=""
+          className="absolute inset-0 w-full h-full object-cover opacity-20 pointer-events-none mix-blend-luminosity"
+        />
         <div
-          className="absolute pointer-events-none rounded-full opacity-10"
-          style={{ width: 500, height: 500, background: "#fff", top: -200, right: -100 }}
+          className="absolute pointer-events-none rounded-full opacity-15"
+          style={{ width: 500, height: 500, background: "var(--sa-gold)", top: -200, right: -100 }}
         />
         <div
           className="absolute pointer-events-none rounded-full opacity-10"
