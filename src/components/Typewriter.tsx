@@ -13,6 +13,8 @@ interface TypewriterProps {
   className?: string;
   /** Tailwind class applied to "Sjoh" + punctuation (defaults to coral primary) */
   accentClassName?: string;
+  /** Override the per-phrase accent color rotation. Pass an array of class strings. */
+  accentRotation?: string[];
   /** Reserve the current full phrase's wrapped layout before it finishes typing */
   reserveCurrentPhraseSpace?: boolean;
 }
@@ -30,11 +32,12 @@ export const Typewriter = ({
   randomize = false,
   className,
   accentClassName,
+  accentRotation,
   reserveCurrentPhraseSpace = false,
 }: TypewriterProps) => {
   // SA flag accent rotation — green / gold / blue per phrase.
   // Red is intentionally excluded so the typewriter never reads as an "error".
-  const ACCENT_ROTATION = ["text-primary", "text-accent", "text-info"];
+  const ACCENT_ROTATION = accentRotation ?? ["text-primary", "text-accent", "text-info"];
   const [order] = useState(() => {
     if (!randomize) return phrases.map((_, i) => i);
     const arr = phrases.map((_, i) => i);

@@ -205,6 +205,14 @@
 
 .font-display-bold { font-family: "Unbounded", "Plus Jakarta Sans", sans-serif; font-weight: 900; letter-spacing: -0.04em; }
 
+/* SA palette text utilities (for Typewriter rotation + ad hoc use) */
+.text-sa-red   { color: var(--sa-red); }
+.text-sa-navy  { color: var(--sa-navy); }
+.text-sa-green { color: var(--sa-green); }
+.text-sa-gold  { color: var(--sa-gold); }
+.text-sa-peri  { color: var(--sa-peri); }
+.text-sa-pink  { color: var(--sa-pink); }
+
 /* hero animations */
 @keyframes sa-spin { to { transform: rotate(360deg); } }
 @keyframes sa-caret-blink { 50% { opacity: 0; } }

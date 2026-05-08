@@ -44,7 +44,7 @@ const MARQUEE_ITEMS = [
 
 const HOW_STEPS = [
   { n: "01", icon: "🔍", title: "Tell us what you need", body: "Search the directory or post a request in seconds.", bg: "var(--sa-gold)", color: "var(--sa-dark)", rot: "-1.5deg" },
-  { n: "02", icon: "👥", title: "Get real people", body: "Local businesses ready to help across all nine provinces.", bg: "var(--sa-red)", color: "#fff", rot: "1.2deg" },
+  { n: "02", icon: "👥", title: "Get real people", body: "Local businesses ready to help across all nine provinces.", bg: "var(--sa-pink)", color: "#fff", rot: "1.2deg" },
   { n: "03", icon: "⭐", title: "Choose who you trust", body: "Browse profiles, reviews, and active promotions.", bg: "var(--sa-navy)", color: "#fff", rot: "-0.8deg" },
   { n: "04", icon: "✅", title: "Get it done", body: "Contact them directly. No middleman. No commission.", bg: "var(--sa-green)", color: "#fff", rot: "1.5deg" },
 ];
@@ -78,7 +78,15 @@ const HomePage = () => {
   return (
     <SiteLayout>
       {/* ========== HERO ========== */}
-      <section className="relative overflow-hidden border-b border-border" style={{ background: "radial-gradient(ellipse 90% 70% at 50% -10%, #C7DCFF 0%, #E8F1FF 45%, hsl(var(--background)) 80%), hsl(var(--background))" }}>
+      <section
+        className="relative overflow-hidden border-b border-border"
+        style={{
+          background:
+            "radial-gradient(ellipse 80% 60% at 30% 0%, rgba(232,62,140,0.35) 0%, transparent 55%)," +
+            "radial-gradient(ellipse 70% 60% at 80% 100%, rgba(107,124,232,0.30) 0%, transparent 50%)," +
+            "linear-gradient(180deg, #0A0A0F 0%, #1A1A2E 60%, #1A1A1A 100%)",
+        }}
+      >
         {/* Spinning sticker top-left with new painterly icon */}
         <div
           aria-hidden
@@ -102,31 +110,29 @@ const HomePage = () => {
         </div>
 
         <div className="container relative pt-20 pb-24 lg:pt-28 lg:pb-32 text-center">
-          <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/75 backdrop-blur border border-white/85 text-xs font-semibold mb-4 text-[#3a3d4a]">
-            <span className="size-2 rounded-full" style={{ background: "var(--sa-navy)" }} />
+          <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur border border-white/20 text-xs font-semibold mb-4 text-white/85">
+            <span className="size-2 rounded-full" style={{ background: "var(--sa-pink)" }} />
             No commission. No middlemen. Real grafters.
           </span>
           <div className="mb-8 flex justify-center">
             <FoundingSpotsBanner />
           </div>
 
-          {/* Typewriter — Unbounded display */}
+          {/* Typewriter — Unbounded display, white body with rotating SA-palette accent on "Sjoh!" */}
           <div className="min-h-[14rem] sm:min-h-[12rem] md:min-h-[13rem] lg:min-h-[14rem] flex items-center justify-center">
-            <h1
-              className="font-display-bold text-4xl sm:text-5xl md:text-6xl lg:text-7xl leading-[1.0] max-w-5xl mx-auto text-balance"
-              style={{ color: "var(--sa-dark)" }}
-            >
+            <h1 className="font-display-bold text-4xl sm:text-5xl md:text-6xl lg:text-7xl leading-[1.0] max-w-5xl mx-auto text-balance text-white">
               <Typewriter
                 phrases={HERO_PHRASES}
                 randomize
                 typingSpeed={75}
                 erasingSpeed={35}
                 holdDuration={3200}
+                accentRotation={["text-sa-pink", "text-sa-gold", "text-sa-peri", "text-sa-red"]}
               />
             </h1>
           </div>
 
-          <p className="mt-10 mb-3 text-sm md:text-base font-semibold uppercase tracking-widest text-muted-foreground">
+          <p className="mt-10 mb-3 text-sm md:text-base font-semibold uppercase tracking-widest text-white/55">
             What do you need?
           </p>
 
@@ -163,14 +169,14 @@ const HomePage = () => {
 
           {/* Popular pills */}
           <div className="mt-8 flex flex-wrap justify-center gap-2 max-w-2xl mx-auto">
-            <span className="text-xs font-semibold uppercase tracking-widest text-muted-foreground self-center mr-1">
+            <span className="text-xs font-semibold uppercase tracking-widest text-white/55 self-center mr-1">
               Popular:
             </span>
             {popularCats.map((c) => (
               <Link
                 key={c.slug}
                 to={`/directory?category=${c.slug}`}
-                className="text-sm font-medium px-3.5 py-1.5 rounded-full border border-border bg-card hover:border-accent hover:bg-accent-soft hover:-translate-y-0.5 hover:shadow-card transition-all duration-200 ease-out"
+                className="text-sm font-medium px-3.5 py-1.5 rounded-full border border-white/20 bg-white/10 text-white hover:bg-white/20 hover:border-white/40 hover:-translate-y-0.5 transition-all duration-200 ease-out"
               >
                 {c.name}
               </Link>
@@ -203,7 +209,7 @@ const HomePage = () => {
           </div>
           <div
             className="absolute z-[4] rounded-full shadow-pop flex items-center gap-2 px-4 py-2 sa-float-bob"
-            style={{ top: 460, right: "10%", background: "var(--sa-red)", color: "#fff", ["--rot" as string]: "2deg", animationDelay: "1.8s" }}
+            style={{ top: 460, right: "10%", background: "var(--sa-pink)", color: "#fff", ["--rot" as string]: "2deg", animationDelay: "1.8s" }}
           >
             <MessageCircle className="size-3.5" /> <span className="text-xs font-bold">3 quotes</span>
           </div>
@@ -261,7 +267,7 @@ const HomePage = () => {
           </div>
           <div
             className="absolute text-xs font-extrabold px-4 py-2.5 rounded-2xl shadow-xl"
-            style={{ background: "var(--sa-green)", color: "#fff", top: "44%", left: "6%", transform: "rotate(-3deg)" }}
+            style={{ background: "var(--sa-pink)", color: "#fff", top: "44%", left: "6%", transform: "rotate(-3deg)" }}
           >
             Join our chat? :)
           </div>
@@ -278,7 +284,7 @@ const HomePage = () => {
       <section className="bg-card py-20">
         <div className="container">
           <div className="text-center mb-16">
-            <div className="text-[11px] font-bold tracking-[0.1em] uppercase mb-3" style={{ color: "var(--sa-peri)" }}>
+            <div className="text-[11px] font-bold tracking-[0.1em] uppercase mb-3" style={{ color: "var(--sa-pink)" }}>
               ● How Sjoh works
             </div>
             <h2 className="font-display-bold text-4xl md:text-5xl leading-[0.95]" style={{ color: "var(--sa-dark)" }}>
@@ -307,7 +313,7 @@ const HomePage = () => {
         <div className="container py-12">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-4 divide-y md:divide-y-0 md:divide-x divide-border/60">
             {[
-              { v: "0%", l: "Commission on jobs", c: "var(--sa-red)" },
+              { v: "0%", l: "Commission on jobs", c: "var(--sa-pink)" },
               { v: "240+", l: "Service categories", c: "var(--sa-navy)" },
               { v: "11", l: "Industry groups", c: "var(--sa-green)" },
               { v: "9", l: "Provinces covered", c: "var(--sa-gold)" },
@@ -444,7 +450,7 @@ const HomePage = () => {
           {[
             { num: "0%", lbl: "Commission on jobs", bg: "var(--sa-gold)", color: "var(--sa-dark)", rot: "-1.5deg" },
             { num: "240+", lbl: "Service categories", bg: "var(--sa-navy)", color: "#fff", rot: "1.2deg" },
-            { num: "9", lbl: "Provinces covered", bg: "var(--sa-red)", color: "#fff", rot: "-0.8deg" },
+            { num: "9", lbl: "Provinces covered", bg: "var(--sa-pink)", color: "#fff", rot: "-0.8deg" },
           ].map((s) => (
             <div
               key={s.lbl}
