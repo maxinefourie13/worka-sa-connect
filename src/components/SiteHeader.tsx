@@ -20,8 +20,8 @@ import {
 
 const BASE_NAV = [
   { to: "/directory", label: "Browse" },
-  { to: "/requests", label: "Get Quotes" },
-  { to: "/pricing", label: "Pricing" },
+  { to: "/requests", label: "Post a Job" },
+  { to: "/pricing", label: "0% Commission" },
 ];
 const PRO_NAV_ITEM = { to: "/leads", label: "Send Quotes" };
 

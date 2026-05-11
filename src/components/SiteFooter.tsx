@@ -5,9 +5,9 @@ const cols = [
     title: "Platform",
     links: [
       { to: "/directory", label: "Browse Directory" },
-      { to: "/requests", label: "Get Quotes (post a job)" },
+      { to: "/requests", label: "Post a Job" },
       { to: "/leads", label: "Send Quotes (find work)" },
-      { to: "/pricing", label: "Pricing" },
+      { to: "/pricing", label: "0% Commission" },
       { to: "/list", label: "List Your Business" },
     ],
   },
@@ -32,7 +32,7 @@ export const SiteFooter = () => {
               </span>
             </Link>
             <p className="text-sm text-white/55 max-w-xs leading-relaxed">
-              Find someone who can do it properly. South Africa's directory for trusted service providers.
+              Find someone who can do it properly. No mamparas. No commissions. Just sorted.
             </p>
           </div>
           {cols.map((col) => (

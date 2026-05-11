@@ -220,7 +220,7 @@ const PostOpportunity = () => {
           <ArrowLeft className="size-4" /> Back to requests
         </Link>
         <header className="mb-8">
-          <span className="text-xs font-bold uppercase tracking-widest text-primary">Get Quotes</span>
+          <span className="text-xs font-bold uppercase tracking-widest text-primary">Post a Job</span>
           <h1 className="font-display text-3xl md:text-4xl font-extrabold tracking-tight mt-2">
             Tell us what you need.
           </h1>
@@ -228,7 +228,7 @@ const PostOpportunity = () => {
         </header>
 
         <form onSubmit={onSubmit} className="bg-card border border-border rounded-2xl p-6 md:p-8 space-y-5 shadow-card">
-          <Field label="What do you need?" required>
+          <Field label="What can we help you sort out?" required>
             <input required name="title" className="input" placeholder="e.g. Replace a burst geyser in Sandton" />
           </Field>
           <Field label="Describe the job" required>
@@ -466,7 +466,7 @@ const PostOpportunity = () => {
 
           <div className="pt-2 flex flex-col sm:flex-row gap-3">
             <Button type="submit" size="lg" className="flex-1" disabled={submitting || !agreeTerms || uploading}>
-              {submitting ? "Posting your request…" : "Get Quotes"}
+              {submitting ? "Posting your request…" : "Post a Job"}
             </Button>
             <Button type="button" variant="outline" size="lg" onClick={() => navigate(-1)}>Cancel</Button>
           </div>

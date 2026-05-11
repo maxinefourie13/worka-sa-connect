@@ -66,7 +66,7 @@ const Opportunities = () => {
       <div className="container py-12">
         <header className="mb-8 max-w-2xl">
           <span className="text-xs font-bold uppercase tracking-widest text-primary">
-            {isProView ? "Send Quotes" : "Get Quotes"}
+            {isProView ? "Send Quotes" : "Post a Job"}
           </span>
           <h1 className="font-display text-4xl md:text-5xl font-extrabold tracking-tight mt-2">
             {isProView ? "Find work. Send a quote." : "Tell pros what you need done."}
@@ -102,7 +102,7 @@ const Opportunities = () => {
               </p>
             </div>
             <Button variant="ink" size="lg" asChild>
-              <Link to="/requests/new">Get Quotes</Link>
+              <Link to="/requests/new">Post a Job</Link>
             </Button>
           </div>
         )}

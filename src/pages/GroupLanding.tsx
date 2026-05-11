@@ -66,7 +66,7 @@ const GroupLanding = () => {
                   <Link to={`/directory?group=${group.slug}`}>Browse all in {group.name}</Link>
                 </Button>
                 <Button variant="outline" asChild>
-                  <Link to="/requests/new">Get Quotes</Link>
+                  <Link to="/requests/new">Post a Job</Link>
                 </Button>
               </div>
             </div>

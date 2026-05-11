@@ -4,7 +4,7 @@ import { Cookie } from "lucide-react";
 const COOKIE_KEY = "sjoh_cookie_consent";
 const COOKIE_AT_KEY = "sjoh_cookie_consent_at";
 
-type CookieChoice = "all" | "essential" | "decline";
+type CookieChoice = "all" | "essential";
 
 const recordChoice = (choice: CookieChoice) => {
   try {
@@ -72,12 +72,12 @@ export const CookieConsent = () => {
 
         <div className="pt-4">
           <h2 className="font-display text-xl sm:text-2xl font-extrabold tracking-tight text-foreground">
-            In the mood for a rusk?
+            In the mood for a rusk? ☕
           </h2>
           <p className="mt-2 text-sm sm:text-[15px] text-foreground/85 leading-relaxed">
             <span className="font-extrabold">Sjoh!</span> We use digital cookies to make sure the site doesn't act like a mampara.
-            They help us remember your city and keep your account secure—no crumbs, no mess.
-            We promise we aren't here to sell your info to your nosy neighbour. Is it a "go" for the rusks?
+            They help us remember your city and keep things secure—no crumbs, no mess.
+            Is it a "go" for the rusks?
           </p>
 
           <div className="mt-5 flex flex-col sm:flex-row sm:flex-wrap gap-2.5">
@@ -92,12 +92,6 @@ export const CookieConsent = () => {
               className="inline-flex items-center justify-center rounded-full border border-foreground/40 px-5 py-2.5 text-sm font-bold text-foreground hover:bg-foreground/10 transition-all duration-150"
             >
               Just the essentials
-            </button>
-            <button
-              onClick={() => handle("decline")}
-              className="inline-flex items-center justify-center px-3 py-2.5 text-sm font-semibold text-foreground/70 underline-offset-4 hover:text-foreground hover:underline transition"
-            >
-              No rusks for me
             </button>
           </div>
         </div>

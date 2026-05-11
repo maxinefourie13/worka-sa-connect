@@ -34,11 +34,11 @@ export const EarlyAccessRibbon = () => {
       />
       <div className="container relative py-2 flex items-center gap-3 text-xs sm:text-sm">
         <span className="inline-flex items-center gap-1 shrink-0 px-2 py-0.5 rounded-full bg-accent/15 text-accent border border-accent/30 text-[10px] font-extrabold uppercase tracking-widest">
-          <Sparkles className="size-3 animate-pulse" strokeWidth={2.75} /> Early access
+          <Sparkles className="size-3 animate-pulse" strokeWidth={2.75} /> Founding member
         </span>
         <p className="leading-tight flex-1 min-w-0">
-          <span className="font-bold">First 500 pros lock in founding pricing forever.</span>{" "}
-          <span className="opacity-80 hidden sm:inline">List your business today.</span>
+          <span className="font-bold">Be a Founding Member.</span>{" "}
+          <span className="opacity-90 hidden sm:inline">Lock in 0% commission and special rates forever.</span>
         </p>
         <a
           href="/list"

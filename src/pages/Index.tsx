@@ -18,20 +18,20 @@ import heroGroup3 from "@/assets/hero-group-3.jpg";
 import solarInstaller from "@/assets/solar-installer.jpg";
 
 const HERO_PHRASES = [
-  "Sjoh! Tired of hiring mamparas? Find a vetted pro.",
-  "Sjoh! Bank balance looking like the temperature? Sell your skills.",
   "Sjoh! Your husband's DIY is a crime scene. Hire an actual professional.",
-  "Sjoh! Too much month at the end of the money? Start a hustle.",
-  "Sjoh! Kitchen looking like a swimming pool? Dala a vetted plumber.",
-  "Sjoh! Turn your 'I know a guy' status into a legit business.",
-  "Sjoh! Power bill giving you chest pains? Offer your services.",
-  "Sjoh! Don't let a mampara tile your bathroom. Get real quotes.",
-  "Sjoh! Got skills but no leads? List your services today.",
-  "Sjoh! Cousin's wiring giving you static shocks? Get a qualified electrician.",
-  "Sjoh! Stop grafting for your uncle. Start your own business.",
-  "Sjoh! Because 14 phone calls is 13 too many. Just post the job.",
-  "Sjoh! Can fix what the chancers broke? We need you.",
-  "Sjoh! Locked out in your old PJs? We've got vetted locksmiths.",
+  "Sjoh! Cousin's wiring giving you static shocks? Get a vetted sparky.",
+  "Sjoh! Kitchen looking like a swimming pool? Dala a plumber.",
+  "Sjoh! Don't let a mampara tile your bathroom. Get a tiler.",
+  "Sjoh! Locked out in your old PJs? Find a locksmith.",
+  "Sjoh! The 'I know a guy' guy ghosted you? Find a pro who shows up.",
+  "Sjoh! Company logo looks like MS Paint? Hire a real designer.",
+  "Sjoh! Spreadsheets making you cry? Dala an Excel pro.",
+  "Sjoh! The dog ate your garden... again. Find a landscaper.",
+  "Sjoh! Braai area looks like a construction site? Get a stone-mason.",
+  "Sjoh! Geyser acting like a steam engine? Get it sorted now.",
+  "Sjoh! Gate motor has given up the ghost? Find a technician.",
+  "Sjoh! Paving looking like a 4x4 track? Find a paving specialist.",
+  "Sjoh! Finding someone who can do it properly. Start here.",
 ];
 
 const MARQUEE_ITEMS = [
@@ -45,10 +45,10 @@ const MARQUEE_ITEMS = [
 ];
 
 const HOW_STEPS = [
-  { n: "01", Icon: Search, title: "Tell us what you need", body: "Search the directory or post a request in seconds.", bg: "var(--sa-gold)", color: "var(--sa-dark)", rot: "-1.5deg" },
-  { n: "02", Icon: UsersRound, title: "Get real people", body: "Local businesses ready to help across all nine provinces.", bg: "var(--sa-red)", color: "#fff", rot: "1.2deg" },
-  { n: "03", Icon: Star, title: "Choose who you trust", body: "Browse profiles, reviews, and active promotions.", bg: "var(--sa-navy)", color: "#fff", rot: "-0.8deg" },
-  { n: "04", Icon: CheckCircle2, title: "Get it done", body: "Contact them directly. No middleman. No commission.", bg: "var(--sa-green)", color: "#fff", rot: "1.5deg" },
+  { n: "01", Icon: Search, title: "Post the job", body: "Describe what you need in 60 seconds.", bg: "var(--sa-gold)", color: "var(--sa-dark)", rot: "-1.5deg" },
+  { n: "02", Icon: UsersRound, title: "Get real quotes", body: "Vetted local businesses send quotes to your dashboard.", bg: "var(--sa-red)", color: "#fff", rot: "1.2deg" },
+  { n: "03", Icon: Star, title: "Check the reviews", body: "Browse profiles, work history, and the Sjoh Trust Index.", bg: "var(--sa-navy)", color: "#fff", rot: "-0.8deg" },
+  { n: "04", Icon: CheckCircle2, title: "Get it sorted", body: "Contact them directly. No middleman. No commission.", bg: "var(--sa-green)", color: "#fff", rot: "1.5deg" },
 ];
 
 const HERO_SERVICE_CARDS = [
@@ -178,8 +178,9 @@ const HomePage = () => {
 
             <div className="mx-auto flex min-h-[11.5rem] max-w-5xl items-center justify-center sm:min-h-[10rem] lg:min-h-[12rem]">
               <h1 className="font-display-bold text-4xl sm:text-5xl md:text-6xl leading-[1.03] text-balance text-white">
+                <span className="text-sa-gold">Sjoh!</span>{" "}
                 <Typewriter
-                  phrases={HERO_PHRASES}
+                  phrases={HERO_PHRASES.map((phrase) => phrase.replace(/^Sjoh!\s*/, ""))}
                   randomize
                   typingSpeed={75}
                   erasingSpeed={35}
@@ -190,7 +191,7 @@ const HomePage = () => {
             </div>
 
             <p className="mt-4 mb-3 text-sm md:text-base font-semibold uppercase tracking-widest text-white/55">
-              What do you need?
+              What can we help you sort out?
             </p>
 
             <form
@@ -203,7 +204,7 @@ const HomePage = () => {
                   value={keyword}
                   onChange={(e) => setKeyword(e.target.value)}
                   type="text"
-                  placeholder="Search photographers, electricians, cleaners..."
+                  placeholder="Try 'Sparky', 'Tiler' or 'Graphic Designer'..."
                   className="w-full py-3.5 bg-transparent outline-none text-base placeholder:text-muted-foreground font-medium"
                 />
               </div>
@@ -574,9 +575,9 @@ const HomePage = () => {
             ● For service providers
           </div>
           <h2 className="font-display-bold text-white text-5xl md:text-6xl leading-[1.02] mb-5">
-            Get found by<br />people already<br />
+            Get found.<br />Get hired.<br />
             <span className="px-3 py-1 rounded-lg" style={{ background: "var(--sa-gold)", color: "var(--sa-dark)" }}>
-              looking.
+              Keep the whole quote.
             </span>
           </h2>
           <p className="text-white/75 text-base leading-relaxed max-w-md mb-8">

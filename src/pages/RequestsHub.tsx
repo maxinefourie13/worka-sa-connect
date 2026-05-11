@@ -55,7 +55,7 @@ const RequestsHub = () => {
           />
           <div className="relative max-w-3xl">
             <span className="text-xs font-bold uppercase tracking-widest text-sa-gold">
-              Get Quotes
+              Post a Job
             </span>
             <h1 className="font-display text-4xl md:text-5xl font-extrabold tracking-tight mt-2">
               Need someone who can do it properly?
