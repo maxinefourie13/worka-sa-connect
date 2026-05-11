@@ -7,7 +7,6 @@ import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useUserRoles } from "@/hooks/useUserRoles";
 import { useMyBusiness } from "@/hooks/useMyBusiness";
-import sjohLogo from "@/assets/sjoh-wordmark-v2.png";
 import { ListingStatusBanner } from "@/components/ListingStatusBanner";
 import { EarlyAccessRibbon } from "@/components/EarlyAccessRibbon";
 import { useBumpLastActive } from "@/hooks/useBumpLastActive";
@@ -60,21 +59,26 @@ export const SiteHeader = () => {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border/70 bg-background/85 backdrop-blur-md">
+    <header
+      className="sticky top-0 z-50 w-full border-b border-white/10 text-white backdrop-blur-md"
+      style={{ background: "rgba(5, 5, 5, 0.94)" }}
+    >
       <EarlyAccessRibbon />
       <ListingStatusBanner />
       <div className="container flex h-24 md:h-28 items-center justify-between gap-6">
         <div className="flex items-center gap-10">
           <Link to="/" className="flex items-center" aria-label="Sjoh home">
-            <img src={sjohLogo} alt="Sjoh!" className="h-20 md:h-24 w-auto" />
+            <span className="font-display text-4xl md:text-5xl font-black tracking-normal text-white">
+              sjoh<span className="text-sa-gold">!</span>
+            </span>
           </Link>
           <nav className="hidden lg:flex items-center gap-7">
             {NAV.map((n) => (
               <NavLink
                 key={n.to}
                 to={n.to}
-                className="text-sm font-medium text-ink-2 hover:text-foreground transition-colors"
-                activeClassName="text-foreground"
+                className="text-sm font-medium text-white/68 hover:text-white transition-colors"
+                activeClassName="text-white"
               >
                 {n.label}
               </NavLink>
@@ -90,7 +94,7 @@ export const SiteHeader = () => {
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <button
-                    className="size-9 rounded-full bg-primary/10 text-primary text-xs font-semibold flex items-center justify-center hover:bg-primary/15 transition-colors"
+                    className="size-9 rounded-full bg-sa-gold text-sa-dark text-xs font-semibold flex items-center justify-center hover:brightness-105 transition-colors"
                     aria-label="Account menu"
                   >
                     {initials(displayName)}
@@ -127,7 +131,7 @@ export const SiteHeader = () => {
             </>
           ) : (
             <>
-              <Button variant="ghost" size="sm" asChild>
+              <Button variant="ghost" size="sm" asChild className="text-white hover:bg-white/10 hover:text-white">
                 <Link to="/login">Log In</Link>
               </Button>
               <FlameButton asChild>
@@ -145,14 +149,14 @@ export const SiteHeader = () => {
         </button>
       </div>
       {open && (
-        <div className="lg:hidden border-t border-border bg-background">
+        <div className="lg:hidden border-t border-white/10 bg-[#050505]">
           <div className="container py-4 flex flex-col gap-1">
             {NAV.map((n) => (
               <Link
                 key={n.to}
                 to={n.to}
                 onClick={() => setOpen(false)}
-                className="py-2 text-sm font-medium text-ink-2"
+                className="py-2 text-sm font-medium text-white/75"
               >
                 {n.label}
               </Link>

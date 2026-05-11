@@ -10,7 +10,7 @@ interface Props {
 
 /**
  * Coral verification badge. Shown on every surface where a verified business appears.
- * Tooltip explains what it means. Encourages non-verified pros to upgrade to Ready for Work.
+ * Tooltip explains what it means. Encourages non-verified pros to upgrade to Verified Pro.
  */
 export const VerifiedBadge = ({ size = "sm", className, withLabel = false }: Props) => {
   const dims = size === "lg" ? "size-5" : size === "md" ? "size-4" : "size-3.5";

@@ -57,22 +57,23 @@ const Pricing = () => {
 
   return (
     <SiteLayout>
+      <div className="bg-[#050505] text-white">
       <div className="container py-16 md:py-20">
 
         <header className="text-center max-w-2xl mx-auto mb-14">
-          <span className="text-xs font-bold uppercase tracking-widest text-primary">Simple pricing</span>
+          <span className="text-xs font-bold uppercase tracking-widest text-sa-gold">Simple pricing</span>
           <h1 className="font-display text-4xl md:text-5xl font-extrabold tracking-tight mt-3 text-balance">
             One plan. Everything included.
           </h1>
-          <p className="mt-4 text-lg text-ink-2">
+          <p className="mt-4 text-lg text-white/60">
             No tiers. No upsells. No commission. Just a small monthly fee
             to get your business properly in front of the right people.
           </p>
         </header>
 
         <div className="max-w-xl mx-auto">
-          <div className="relative bg-card border-2 border-primary rounded-3xl p-8 md:p-10 shadow-pop">
-            <span className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground text-[10px] font-bold uppercase tracking-widest px-4 py-1.5 rounded-full animate-soft-bob">
+          <div className="relative bg-white text-sa-dark border-2 border-sa-gold rounded-3xl p-8 md:p-10 shadow-pop">
+            <span className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-sa-gold text-sa-dark text-[10px] font-bold uppercase tracking-widest px-4 py-1.5 rounded-full animate-soft-bob">
               30-day free trial — no card needed
             </span>
 
@@ -94,7 +95,7 @@ const Pricing = () => {
             <ul className="mt-7 space-y-3.5">
               {tier.features.map((f) => (
                 <li key={f} className="flex items-start gap-3 text-sm">
-                  <Check className="size-4 text-primary mt-0.5 shrink-0" strokeWidth={3} />
+                  <Check className="size-4 text-sa-green mt-0.5 shrink-0" strokeWidth={3} />
                   <span>{f}</span>
                 </li>
               ))}
@@ -108,30 +109,30 @@ const Pricing = () => {
             </p>
           </div>
 
-          <div className="mt-5 rounded-2xl border border-accent/40 bg-accent/5 p-5 flex items-start gap-3">
-            <Sparkles className="size-5 text-accent shrink-0 mt-0.5" strokeWidth={2.5} />
+          <div className="mt-5 rounded-2xl border border-sa-gold/50 bg-sa-gold/10 p-5 flex items-start gap-3">
+            <Sparkles className="size-5 text-sa-gold shrink-0 mt-0.5" strokeWidth={2.5} />
             <div className="text-sm">
-              <p className="font-bold text-foreground">
+              <p className="font-bold text-white">
                 Founding Member pricing — {formatRand(tier.founderPrice!)}/month, locked forever.
               </p>
-              <p className="text-ink-2 mt-1">
+              <p className="text-white/62 mt-1">
                 The first 500 pros who join get our founder rate of R150/month — never increases,
                 even when the price does. Plus your Coral Checkmark verification is on us.{" "}
-                <span className="font-semibold text-foreground">Don't let someone else take your spot.</span>
+                <span className="font-semibold text-white">Don't let someone else take your spot.</span>
               </p>
             </div>
           </div>
         </div>
 
-        <div className="max-w-3xl mx-auto mt-16 rounded-2xl border-2 border-primary/30 bg-primary/5 p-6 md:p-8 flex items-start gap-5 hover:border-primary hover:shadow-pop transition-all duration-300">
-          <span className="size-14 rounded-xl bg-primary text-primary-foreground flex items-center justify-center shrink-0 font-display font-extrabold text-xl animate-pulse-ring">
+        <div className="max-w-3xl mx-auto mt-16 rounded-2xl border-2 border-sa-green/30 bg-sa-green/15 p-6 md:p-8 flex items-start gap-5 hover:border-sa-green hover:shadow-pop transition-all duration-300">
+          <span className="size-14 rounded-xl bg-sa-green text-white flex items-center justify-center shrink-0 font-display font-extrabold text-xl animate-pulse-ring">
             0%
           </span>
           <div>
-            <p className="font-display font-extrabold tracking-tight text-lg text-foreground">
+            <p className="font-display font-extrabold tracking-tight text-lg text-white">
               You keep every cent you earn.
             </p>
-            <p className="text-ink-2 mt-2 text-sm md:text-base">
+            <p className="text-white/62 mt-2 text-sm md:text-base">
               Your R250/month covers unlimited quotes, your full directory listing, and every feature
               in the platform. We don't take a cut of your invoice, charge per message, or touch your
               Paystack payouts. Clients pay you directly — always.
@@ -139,17 +140,17 @@ const Pricing = () => {
           </div>
         </div>
 
-        <section className="mt-14 max-w-3xl mx-auto rounded-2xl p-8 md:p-10 bg-foreground text-background">
+        <section className="mt-14 max-w-3xl mx-auto rounded-2xl p-8 md:p-10 bg-[#101010] border border-white/10 text-white">
           <div className="flex items-start gap-4">
-            <span className="size-12 rounded-xl bg-accent text-accent-foreground flex items-center justify-center shrink-0">
+            <span className="size-12 rounded-xl bg-sa-red text-white flex items-center justify-center shrink-0">
               <Siren className="size-6" strokeWidth={2.5} />
             </span>
             <div>
-              <span className="text-[10px] font-bold uppercase tracking-widest text-accent">For customers</span>
+              <span className="text-[10px] font-bold uppercase tracking-widest text-sa-gold">For customers</span>
               <h2 className="font-display text-2xl md:text-3xl font-medium tracking-tight mt-1">
                 Eish! Urgent — R50 SOS
               </h2>
-              <p className="mt-2 text-background/85 text-sm md:text-base">
+              <p className="mt-2 text-white/85 text-sm md:text-base">
                 Burst geyser at 9pm? Locked out in your PJs? Customers can boost a job to{" "}
                 <strong>Eish! Urgent</strong> for R50 — we WhatsApp every Verified Pro within 10km,
                 pin it to the top of the feed for 72 hours, and slap a flashing coral border on it. Sorted.
@@ -164,12 +165,12 @@ const Pricing = () => {
             { icon: <Check className="size-5" />, title: "Cancel anytime", body: "Month-to-month. No contracts. Stop whenever you like — no penalty." },
             { icon: <Sparkles className="size-5" />, title: "Built for SA", body: "ZAR pricing, SA ID verification, WhatsApp-first comms. Made here, for here." },
           ].map((s) => (
-            <div key={s.title} className="bg-card border border-border rounded-xl p-5">
-              <span className="size-9 rounded-lg bg-primary/10 text-primary flex items-center justify-center mx-auto mb-3">
+            <div key={s.title} className="bg-white/[0.06] border border-white/10 rounded-xl p-5">
+              <span className="size-9 rounded-lg bg-sa-peri/15 text-sa-peri flex items-center justify-center mx-auto mb-3">
                 {s.icon}
               </span>
-              <p className="font-semibold text-sm">{s.title}</p>
-              <p className="text-xs text-ink-2 mt-1.5 leading-relaxed">{s.body}</p>
+              <p className="font-semibold text-sm text-white">{s.title}</p>
+              <p className="text-xs text-white/62 mt-1.5 leading-relaxed">{s.body}</p>
             </div>
           ))}
         </div>
@@ -178,25 +179,26 @@ const Pricing = () => {
           <h2 className="font-display text-3xl font-medium tracking-tight text-center mb-10">
             Frequently asked
           </h2>
-          <Accordion type="single" collapsible className="bg-card border border-border rounded-2xl overflow-hidden">
+          <Accordion type="single" collapsible className="bg-white/[0.06] border border-white/10 rounded-2xl overflow-hidden">
             {FAQS.map((f, i) => (
-              <AccordionItem key={i} value={`f-${i}`} className="border-b border-border last:border-0 px-5">
-                <AccordionTrigger className="text-left font-semibold hover:no-underline py-5">
+              <AccordionItem key={i} value={`f-${i}`} className="border-b border-white/10 last:border-0 px-5">
+                <AccordionTrigger className="text-left font-semibold hover:no-underline py-5 text-white">
                   {f.q}
                 </AccordionTrigger>
-                <AccordionContent className="text-ink-2 pb-5">{f.a}</AccordionContent>
+                <AccordionContent className="text-white/62 pb-5">{f.a}</AccordionContent>
               </AccordionItem>
             ))}
           </Accordion>
         </div>
 
         <div className="mt-20 text-center">
-          <p className="text-ink-2 text-sm mb-4">Ready to stop being a secret?</p>
+          <p className="text-white/60 text-sm mb-4">Ready to stop being a secret?</p>
           <Button size="lg" className="text-base font-bold px-10 h-14" onClick={handleStart}>
             Start your free 30 days — no card needed
           </Button>
         </div>
 
+      </div>
       </div>
     </SiteLayout>
   );

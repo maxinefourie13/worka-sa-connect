@@ -183,7 +183,7 @@ const ListBusiness = () => {
                   <span
                     className={cn(
                       "size-8 rounded-full flex items-center justify-center text-xs font-bold tabular-nums",
-                      i < step ? "bg-primary text-primary-foreground" : i === step ? "bg-foreground text-background" : "bg-secondary text-muted-foreground",
+                      i < step ? "bg-sa-green text-white" : i === step ? "bg-sa-navy text-white" : "bg-secondary text-muted-foreground",
                     )}
                   >
                     {i < step ? <Check className="size-4" /> : i + 1}
@@ -193,14 +193,14 @@ const ListBusiness = () => {
                   </span>
                 </div>
                 {i < STEPS.length - 1 && (
-                  <div className={cn("h-px flex-1 mx-1", i < step ? "bg-primary" : "bg-border")} />
+                  <div className={cn("h-px flex-1 mx-1", i < step ? "bg-sa-green" : "bg-border")} />
                 )}
               </div>
             ))}
           </div>
         </div>
 
-        <div className="bg-card border border-border rounded-2xl p-6 md:p-8 shadow-card">
+        <div className="bg-card border-2 border-sa-peri/25 rounded-2xl p-6 md:p-8 shadow-card">
           {step === 0 && (
             <div className="space-y-5">
               <div>
@@ -303,14 +303,14 @@ const ListBusiness = () => {
                 />
               </Field>
 
-              <div className="rounded-xl border border-dashed border-primary/30 bg-primary-light/30 p-4">
+              <div className="rounded-xl border border-dashed border-sa-gold/70 bg-sa-gold/10 p-4">
                 <p className="text-sm font-bold text-foreground">
                   Make it look the part — when you're ready.
                 </p>
                 <p className="text-xs text-ink-2 mt-1 leading-relaxed">
                   Logo, cover and gallery are <strong>optional</strong>. Skip them now and add them anytime from your dashboard.{" "}
                   Don't have a logo yet?{" "}
-                  <Link to="/directory?category=graphic-design" className="text-primary font-semibold hover:underline">
+                  <Link to="/directory?category=graphic-design" className="text-sa-pink font-semibold hover:underline">
                     Find a designer on Sjoh
                   </Link>{" "}
                   for that too.
@@ -321,7 +321,7 @@ const ListBusiness = () => {
                 {/* Logo upload */}
                 <div>
                   <span className="flex items-center gap-2 text-sm font-semibold mb-1.5">
-                    Logo <span className="text-[10px] font-bold uppercase tracking-wider text-primary bg-primary/10 px-1.5 py-0.5 rounded">Optional · recommended</span>
+                    Logo <span className="text-[10px] font-bold uppercase tracking-wider text-sa-pink bg-sa-pink/10 px-1.5 py-0.5 rounded">Optional · recommended</span>
                   </span>
                   <input ref={logoInputRef} type="file" accept="image/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f && user) handleImageUpload(f, "logo", user.id); }} />
                   {logoUrl ? (
@@ -330,7 +330,7 @@ const ListBusiness = () => {
                       <button onClick={() => setLogoUrl(null)} className="absolute top-1 right-1 bg-black/60 text-white rounded-full p-0.5"><X className="size-3" /></button>
                     </div>
                   ) : (
-                    <div onClick={() => logoInputRef.current?.click()} className="border-2 border-dashed border-border rounded-lg p-6 text-center hover:border-primary/50 cursor-pointer transition-colors">
+                    <div onClick={() => logoInputRef.current?.click()} className="border-2 border-dashed border-border rounded-lg p-6 text-center hover:border-sa-pink/60 cursor-pointer transition-colors">
                       {uploadingLogo ? <Loader2 className="size-5 mx-auto animate-spin text-muted-foreground" /> : <><Upload className="size-5 mx-auto text-muted-foreground" /><p className="text-xs text-muted-foreground mt-2">Click to upload — or skip for now</p></>}
                     </div>
                   )}
@@ -338,7 +338,7 @@ const ListBusiness = () => {
                 {/* Cover image upload */}
                 <div>
                   <span className="flex items-center gap-2 text-sm font-semibold mb-1.5">
-                    Cover image <span className="text-[10px] font-bold uppercase tracking-wider text-primary bg-primary/10 px-1.5 py-0.5 rounded">Optional · recommended</span>
+                    Cover image <span className="text-[10px] font-bold uppercase tracking-wider text-sa-peri bg-sa-peri/10 px-1.5 py-0.5 rounded">Optional · recommended</span>
                   </span>
                   <input ref={coverInputRef} type="file" accept="image/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f && user) handleImageUpload(f, "cover", user.id); }} />
                   {coverUrl ? (
@@ -347,7 +347,7 @@ const ListBusiness = () => {
                       <button onClick={() => setCoverUrl(null)} className="absolute top-1 right-1 bg-black/60 text-white rounded-full p-0.5"><X className="size-3" /></button>
                     </div>
                   ) : (
-                    <div onClick={() => coverInputRef.current?.click()} className="border-2 border-dashed border-border rounded-lg p-6 text-center hover:border-primary/50 cursor-pointer transition-colors">
+                    <div onClick={() => coverInputRef.current?.click()} className="border-2 border-dashed border-border rounded-lg p-6 text-center hover:border-sa-peri/60 cursor-pointer transition-colors">
                       {uploadingCover ? <Loader2 className="size-5 mx-auto animate-spin text-muted-foreground" /> : <><Upload className="size-5 mx-auto text-muted-foreground" /><p className="text-xs text-muted-foreground mt-2">Click to upload — or skip for now</p></>}
                     </div>
                   )}
@@ -379,17 +379,17 @@ const ListBusiness = () => {
                     onClick={() => setPlan(p.id)}
                     className={cn(
                       "w-full text-left border rounded-xl p-4 flex items-center gap-4 transition-all",
-                      plan === p.id ? "border-primary bg-primary-light/40 shadow-soft" : "border-border hover:border-primary/40",
+                      plan === p.id ? "border-sa-green bg-sa-green/10 shadow-soft" : "border-border hover:border-sa-green/40",
                     )}
                   >
-                    <span className={cn("size-5 rounded-full border-2 shrink-0 flex items-center justify-center", plan === p.id ? "border-primary bg-primary" : "border-border")}>
-                      {plan === p.id && <Check className="size-3 text-primary-foreground" strokeWidth={3} />}
+                    <span className={cn("size-5 rounded-full border-2 shrink-0 flex items-center justify-center", plan === p.id ? "border-sa-green bg-sa-green" : "border-border")}>
+                      {plan === p.id && <Check className="size-3 text-white" strokeWidth={3} />}
                     </span>
                     <div className="flex-1">
                       <div className="flex items-center gap-2">
                         <span className="font-semibold">{p.name}</span>
                         {p.recommended && (
-                          <span className="text-[10px] font-bold uppercase tracking-widest text-primary bg-primary-light px-2 py-0.5 rounded">Recommended</span>
+                          <span className="text-[10px] font-bold uppercase tracking-widest text-sa-dark bg-sa-gold px-2 py-0.5 rounded">Recommended</span>
                         )}
                       </div>
                       <p className="text-xs text-ink-2 mt-0.5">{p.desc}</p>
@@ -427,7 +427,7 @@ const ListBusiness = () => {
                   </p>
                 </div>
               </div>
-              <div className="rounded-xl border border-dashed border-primary/40 bg-primary-light/30 p-5 text-sm text-ink-2 leading-relaxed">
+              <div className="rounded-xl border border-dashed border-sa-peri/60 bg-sa-peri/10 p-5 text-sm text-ink-2 leading-relaxed">
                 <strong className="text-foreground">Heads up — early access.</strong> We'll save your listing in workshop mode so you can keep editing it from your dashboard. The Sjoh team will reach out within 24 hours to verify details and switch it live.
               </div>
 
@@ -456,7 +456,7 @@ const ListBusiness = () => {
 
           {step === 4 && (
             <div className="text-center py-8">
-              <div className="size-16 rounded-full bg-primary-light text-primary mx-auto flex items-center justify-center mb-6">
+              <div className="size-16 rounded-full bg-sa-green/10 text-sa-green mx-auto flex items-center justify-center mb-6">
                 <CheckCircle2 className="size-8" />
               </div>
               <h2 className="font-display text-3xl font-medium tracking-tight">You're on the founding-member list.</h2>
@@ -500,7 +500,7 @@ const ListBusiness = () => {
           font-size: 0.875rem; font-family: inherit; color: hsl(var(--foreground));
           transition: border-color 0.15s, box-shadow 0.15s;
         }
-        .input:focus { outline: none; border-color: hsl(var(--primary)); box-shadow: 0 0 0 3px hsl(var(--primary) / 0.15); }
+        .input:focus { outline: none; border-color: var(--sa-peri); box-shadow: 0 0 0 3px rgba(107, 124, 232, 0.18); }
       `}</style>
     </SiteLayout>
   );

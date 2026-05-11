@@ -87,28 +87,28 @@ const EarlyAccessLanding = () => {
   return (
     <div
       className="min-h-dvh w-full text-white relative overflow-hidden"
-      style={{
-        background:
-          "radial-gradient(1200px 800px at 75% 15%, hsl(220 10% 20%) 0%, hsl(220 12% 11%) 45%, hsl(220 14% 6%) 100%)",
-      }}
+      style={{ background: "#050505" }}
     >
       <SeoHead
         title="Sjoh — Claim your founding spot | Find someone who can do it properly"
         description="Join Sjoh as a founding member. South Africa's no-commission directory of vetted pros. First 500 get a Founder badge + extra month free. No card needed."
       />
 
-      {/* faint coral vignette top */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-0 h-64"
-        style={{ background: "radial-gradient(600px 200px at 50% 0%, hsl(43 100% 55% / 0.10), transparent 70%)" }}
+        className="pointer-events-none absolute inset-0 opacity-[0.14]"
+        style={{
+          backgroundImage:
+            "linear-gradient(rgba(255,255,255,0.18) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.18) 1px, transparent 1px)",
+          backgroundSize: "64px 64px",
+        }}
       />
 
       {/* Top bar */}
       <header className="relative border-b border-white/10">
         <div className="mx-auto max-w-6xl px-5 py-4 flex items-center justify-between">
           <img src={sjohLogoWhite} alt="Sjoh" className="h-8 sm:h-9 w-auto" />
-          <span className="text-[10px] sm:text-xs px-2.5 py-1 rounded-full bg-primary/15 text-primary font-bold uppercase tracking-widest border border-primary/20">
+          <span className="text-[10px] sm:text-xs px-2.5 py-1 rounded-full bg-sa-gold text-sa-dark font-bold uppercase tracking-widest border border-sa-gold">
             Founding members open
           </span>
         </div>
@@ -118,25 +118,25 @@ const EarlyAccessLanding = () => {
         {/* Pitch + mascot */}
         <section>
           {/* Typewriter eyebrow */}
-          <div className="mb-5 text-sm sm:text-base font-bold uppercase tracking-widest text-primary min-h-[1.5em]">
+          <div className="mb-5 text-sm sm:text-base font-bold uppercase tracking-widest text-sa-pink min-h-[1.5em]">
             <Typewriter
               phrases={HERO_PHRASES}
               randomize
-              accentClassName="text-primary"
+              accentClassName="text-sa-gold"
               className="inline"
             />
           </div>
 
           <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.05] text-white">
             Find someone who can do it{" "}
-            <span className="text-primary">properly.</span>
+            <span className="text-sa-gold">properly.</span>
           </h1>
           <p className="mt-5 text-lg text-white/75 max-w-lg">
             South Africa's no-commission directory of vetted pros. We're letting in the{" "}
             <strong className="text-white">first 500 founding members</strong> — claim a permanent{" "}
             <strong className="text-white">Founder badge</strong> and an{" "}
             <strong className="text-white">extra month free</strong> on top of the trial.{" "}
-            <span className="text-primary font-bold">No card needed now.</span>
+            <span className="text-sa-gold font-bold">No card needed now.</span>
           </p>
 
           <div className="mt-5">
@@ -146,7 +146,7 @@ const EarlyAccessLanding = () => {
           <ul className="mt-8 space-y-4">
             {PERKS.map((p) => (
               <li key={p.title} className="flex gap-3">
-                <span className="shrink-0 size-10 rounded-full bg-primary/15 text-primary flex items-center justify-center ring-1 ring-primary/25">
+                <span className="shrink-0 size-10 rounded-full bg-sa-gold/15 text-sa-gold flex items-center justify-center ring-1 ring-sa-gold/25">
                   <p.Icon className="size-5" strokeWidth={2.25} aria-hidden />
                 </span>
                 <div className="pt-1">
@@ -174,7 +174,7 @@ const EarlyAccessLanding = () => {
 
           <div className="mt-6 lg:mt-8 hidden lg:flex items-center gap-3 text-xs text-white/60">
             <span>Already have an account?</span>
-            <Link to="/login" className="font-bold text-primary hover:underline">Log in →</Link>
+            <Link to="/login" className="font-bold text-sa-gold hover:underline">Log in →</Link>
           </div>
         </section>
 
@@ -202,14 +202,14 @@ const EarlyAccessLanding = () => {
               onClick={() => setMode("pro")}
               className={`text-left rounded-xl border p-3.5 transition-all ${
                 mode === "pro"
-                  ? "border-primary bg-primary/15 ring-2 ring-primary/40"
+                  ? "border-sa-gold bg-sa-gold/15 ring-2 ring-sa-gold/40"
                   : "border-white/15 bg-white/[0.03] hover:bg-white/[0.06]"
               }`}
               aria-pressed={mode === "pro"}
             >
               <div className="flex items-center gap-2">
                 <span className={`size-7 rounded-lg flex items-center justify-center ${
-                  mode === "pro" ? "bg-primary text-primary-foreground" : "bg-white/10 text-white/70"
+                  mode === "pro" ? "bg-sa-gold text-sa-dark" : "bg-white/10 text-white/70"
                 }`}>
                   <Hammer className="size-3.5" strokeWidth={2.5} />
                 </span>
@@ -224,14 +224,14 @@ const EarlyAccessLanding = () => {
               onClick={() => setMode("customer")}
               className={`text-left rounded-xl border p-3.5 transition-all ${
                 mode === "customer"
-                  ? "border-primary bg-primary/15 ring-2 ring-primary/40"
+                  ? "border-sa-gold bg-sa-gold/15 ring-2 ring-sa-gold/40"
                   : "border-white/15 bg-white/[0.03] hover:bg-white/[0.06]"
               }`}
               aria-pressed={mode === "customer"}
             >
               <div className="flex items-center gap-2">
                 <span className={`size-7 rounded-lg flex items-center justify-center ${
-                  mode === "customer" ? "bg-primary text-primary-foreground" : "bg-white/10 text-white/70"
+                  mode === "customer" ? "bg-sa-gold text-sa-dark" : "bg-white/10 text-white/70"
                 }`}>
                   <Search className="size-3.5" strokeWidth={2.5} />
                 </span>
@@ -258,7 +258,7 @@ const EarlyAccessLanding = () => {
                     value={displayName}
                     onChange={(e) => setDisplayName(e.target.value)}
                     placeholder="First name + surname"
-                    className="w-full rounded-lg border border-white/15 bg-white/5 text-white placeholder:text-white/35 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/40"
+                    className="w-full rounded-lg border border-white/15 bg-white/5 text-white placeholder:text-white/35 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-sa-gold/50 focus:border-sa-gold/50"
                   />
                 </div>
                 <div>
@@ -269,7 +269,7 @@ const EarlyAccessLanding = () => {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="you@business.co.za"
-                    className="w-full rounded-lg border border-white/15 bg-white/5 text-white placeholder:text-white/35 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/40"
+                    className="w-full rounded-lg border border-white/15 bg-white/5 text-white placeholder:text-white/35 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-sa-gold/50 focus:border-sa-gold/50"
                   />
                 </div>
                 <div>
@@ -281,7 +281,7 @@ const EarlyAccessLanding = () => {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="At least 8 characters"
-                    className="w-full rounded-lg border border-white/15 bg-white/5 text-white placeholder:text-white/35 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/40"
+                    className="w-full rounded-lg border border-white/15 bg-white/5 text-white placeholder:text-white/35 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-sa-gold/50 focus:border-sa-gold/50"
                   />
                 </div>
 
@@ -291,13 +291,13 @@ const EarlyAccessLanding = () => {
                     checked={agree}
                     onChange={(e) => setAgree(e.target.checked)}
                     required
-                    className="mt-0.5 size-4 rounded border-white/30 text-primary focus:ring-primary cursor-pointer shrink-0"
+                    className="mt-0.5 size-4 rounded border-white/30 text-sa-gold focus:ring-sa-gold cursor-pointer shrink-0"
                   />
                   <span className="text-white/65">
                     I agree to the{" "}
-                    <Link to="/terms" className="text-primary font-semibold hover:underline">Terms</Link>{" "}
+                    <Link to="/terms" className="text-sa-gold font-semibold hover:underline">Terms</Link>{" "}
                     and{" "}
-                    <Link to="/privacy" className="text-primary font-semibold hover:underline">Privacy Policy</Link>.
+                    <Link to="/privacy" className="text-sa-gold font-semibold hover:underline">Privacy Policy</Link>.
                   </span>
                 </label>
 
@@ -311,7 +311,7 @@ const EarlyAccessLanding = () => {
 
                 <p className="text-center text-xs text-white/55">
                   Already have an account?{" "}
-                  <Link to="/login" className="text-primary font-semibold hover:underline">Log in</Link>
+                  <Link to="/login" className="text-sa-gold font-semibold hover:underline">Log in</Link>
                 </p>
               </form>
             </div>
@@ -326,15 +326,15 @@ const EarlyAccessLanding = () => {
 
               <ul className="mt-5 space-y-2.5 text-sm text-white/75">
                 <li className="flex gap-2.5">
-                  <span className="text-primary mt-0.5">→</span>
+                  <span className="text-sa-gold mt-0.5">→</span>
                   Real reviews, real pros across all nine provinces.
                 </li>
                 <li className="flex gap-2.5">
-                  <span className="text-primary mt-0.5">→</span>
+                  <span className="text-sa-gold mt-0.5">→</span>
                   Tap, reveal contact, and sort it out yourself.
                 </li>
                 <li className="flex gap-2.5">
-                  <span className="text-primary mt-0.5">→</span>
+                  <span className="text-sa-gold mt-0.5">→</span>
                   Free to use. Always.
                 </li>
               </ul>
@@ -349,7 +349,7 @@ const EarlyAccessLanding = () => {
                 </p>
                 <button
                   onClick={goPostJob}
-                  className="mt-1.5 text-sm font-bold text-primary hover:underline"
+                  className="mt-1.5 text-sm font-bold text-sa-gold hover:underline"
                 >
                   Post a request →
                 </button>

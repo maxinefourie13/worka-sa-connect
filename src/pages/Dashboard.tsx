@@ -85,9 +85,9 @@ const Dashboard = () => {
         <div className="grid lg:grid-cols-[240px_1fr] gap-8">
           {/* Sidebar */}
           <aside>
-            <div className="bg-card border border-border rounded-xl p-4">
+            <div className="bg-card border-2 border-sa-peri/20 rounded-xl p-4 shadow-card">
               <div className="flex items-center gap-3 px-2 py-2">
-                <div className="size-10 rounded-lg flex items-center justify-center font-display font-bold text-primary bg-primary/10 border border-primary/20">
+                <div className="size-10 rounded-lg flex items-center justify-center font-display font-bold text-sa-navy bg-sa-gold border border-sa-gold">
                   {sidebarInitial}
                 </div>
                 <div className="min-w-0">
@@ -105,7 +105,7 @@ const Dashboard = () => {
                       onClick={() => setSection(s.key)}
                       className={cn(
                         "w-full flex items-center gap-2.5 px-3 py-2 text-sm font-medium rounded-md transition-colors text-left",
-                        active ? "bg-primary-light text-primary" : "text-ink-2 hover:bg-secondary",
+                        active ? "bg-sa-peri/10 text-sa-peri" : "text-ink-2 hover:bg-secondary",
                       )}
                     >
                       <Icon className="size-4" />
@@ -136,7 +136,7 @@ const Dashboard = () => {
 };
 
 const StatCard = ({ label, value, hint }: { label: string; value: string; hint?: string }) => (
-  <div className="bg-card border border-border rounded-xl p-5">
+  <div className="bg-card border border-sa-navy/10 rounded-xl p-5 shadow-card">
     <div className="flex items-center justify-between">
       <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground">{label}</span>
       {hint && <span className="text-xs text-primary font-semibold">{hint}</span>}
@@ -190,23 +190,23 @@ const OverviewSection = ({ onJump }: { onJump: (s: SectionKey) => void }) => {
       {/* Plan highlight */}
       <button
         onClick={() => onJump("billing")}
-        className="w-full text-left bg-foreground text-background rounded-xl p-6 flex items-center justify-between gap-5 hover:opacity-95 transition-opacity"
+        className="w-full text-left sa-dark-gradient text-white rounded-xl p-6 flex items-center justify-between gap-5 hover:opacity-95 transition-opacity"
       >
         <div className="flex items-center gap-4">
-          <span className="size-12 rounded-xl bg-accent text-accent-foreground flex items-center justify-center">
+          <span className="size-12 rounded-xl bg-sa-gold text-sa-dark flex items-center justify-center">
             <CreditCard className="size-6" strokeWidth={2.5} />
           </span>
           <div>
-            <p className="text-xs font-bold uppercase tracking-widest text-background/70">Your plan</p>
+            <p className="text-xs font-bold uppercase tracking-widest text-white/70">Your plan</p>
             <p className="font-display text-3xl font-semibold mt-1">
               {planLabel}
               {access.isOnTrial && (
-                <span className="text-base text-background/60 font-normal"> · {access.trialDaysLeft}d left</span>
+                <span className="text-base text-white/60 font-normal"> · {access.trialDaysLeft}d left</span>
               )}
             </p>
           </div>
         </div>
-        <span className="text-sm font-semibold text-accent">Manage →</span>
+        <span className="text-sm font-semibold text-sa-gold">Manage →</span>
       </button>
 
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -1020,4 +1020,3 @@ const NotificationPrefsCard = () => {
 };
 
 export default Dashboard;
-

@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-import sjohLogo from "@/assets/sjoh-wordmark-v2.png";
 
 const cols = [
   {
@@ -23,26 +22,28 @@ const cols = [
 
 export const SiteFooter = () => {
   return (
-    <footer className="border-t border-border bg-card">
+    <footer className="border-t border-white/10 bg-[#050505] text-white">
       <div className="container py-16">
         <div className="grid gap-12 lg:grid-cols-3">
           <div className="space-y-4">
             <Link to="/" className="inline-block" aria-label="Sjoh home">
-              <img src={sjohLogo} alt="Sjoh!" className="h-20 w-auto" />
+              <span className="font-display text-4xl font-black tracking-normal text-white">
+                sjoh<span className="text-sa-gold">!</span>
+              </span>
             </Link>
-            <p className="text-sm text-muted-foreground max-w-xs leading-relaxed">
+            <p className="text-sm text-white/55 max-w-xs leading-relaxed">
               Find someone who can do it properly. South Africa's directory for trusted service providers.
             </p>
           </div>
           {cols.map((col) => (
             <div key={col.title}>
-              <h4 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-4 font-sans">
+              <h4 className="text-xs font-semibold uppercase tracking-widest text-white/40 mb-4 font-sans">
                 {col.title}
               </h4>
               <ul className="space-y-3">
                 {col.links.map((l) => (
                   <li key={l.label}>
-                    <Link to={l.to} className="text-sm text-ink-2 hover:text-foreground transition-colors">
+                    <Link to={l.to} className="text-sm text-white/68 hover:text-sa-gold transition-colors">
                       {l.label}
                     </Link>
                   </li>
@@ -51,11 +52,11 @@ export const SiteFooter = () => {
             </div>
           ))}
         </div>
-        <div className="mt-12 pt-8 border-t border-border flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-          <p className="text-xs text-muted-foreground">
+        <div className="mt-12 pt-8 border-t border-white/10 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <p className="text-xs text-white/45">
             © {new Date().getFullYear()} Sjoh. Proudly built in South Africa.
           </p>
-          <p className="text-xs text-muted-foreground">
+          <p className="text-xs text-white/45">
             POPIA-compliant. We protect your personal information under South African law.
           </p>
         </div>

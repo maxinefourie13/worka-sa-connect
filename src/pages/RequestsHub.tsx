@@ -44,21 +44,22 @@ const RequestsHub = () => {
         description="Tell us the job — vetted South African pros come back with quotes. Free for customers. No commission. No middleman."
         canonical="https://sjoh.co.za/requests"
       />
+      <div className="bg-[#050505] text-white">
       <div className="container py-10 md:py-14">
         <header className="mb-8 max-w-3xl">
-          <span className="text-xs font-bold uppercase tracking-widest text-primary">
+          <span className="text-xs font-bold uppercase tracking-widest text-sa-gold">
             Get Quotes
           </span>
           <h1 className="font-display text-4xl md:text-5xl font-extrabold tracking-tight mt-2">
             Need someone who can do it properly?
           </h1>
-          <p className="mt-3 text-ink-2 text-lg">
+          <p className="mt-3 text-white/60 text-lg">
             Tell us the job — vetted SA pros come back to you with quotes. Or browse the directory and contact a pro yourself. No commission. No middleman.
           </p>
         </header>
 
         <Tabs value={tab} onValueChange={handleTabChange} className="w-full">
-          <TabsList className="grid w-full max-w-md grid-cols-2 mb-8">
+          <TabsList className="grid w-full max-w-md grid-cols-2 mb-8 bg-white/10 border border-white/10">
             <TabsTrigger value="quote" className="font-semibold">
               <Sparkles className="size-4 mr-1.5" />
               Get an instant quote
@@ -77,6 +78,7 @@ const RequestsHub = () => {
             <BrowseProsPanel />
           </TabsContent>
         </Tabs>
+      </div>
       </div>
     </SiteLayout>
   );
@@ -127,13 +129,22 @@ const GetQuotePanel = ({ onBrowsePros }: { onBrowsePros: () => void }) => {
   return (
     <div className="space-y-12">
       {/* Hero CTA card */}
-      <section className="rounded-3xl bg-gradient-to-br from-primary via-primary to-primary-glow text-primary-foreground p-8 md:p-12 shadow-elegant relative overflow-hidden">
-        <div className="absolute -top-20 -right-20 size-72 rounded-full bg-primary-foreground/10 blur-3xl pointer-events-none" />
+      <section className="rounded-3xl bg-[#101010] text-white p-8 md:p-12 shadow-pop relative overflow-hidden border border-white/10">
+        <div
+          aria-hidden
+          className="absolute inset-0 opacity-[0.16]"
+          style={{
+            backgroundImage:
+              "linear-gradient(rgba(255,255,255,0.18) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.18) 1px, transparent 1px)",
+            backgroundSize: "56px 56px",
+          }}
+        />
+        <div className="absolute -bottom-10 right-10 h-3 w-60 rotate-[-8deg] bg-sa-gold pointer-events-none" />
         <div className="relative max-w-2xl">
           <h2 className="font-display text-3xl md:text-4xl font-extrabold tracking-tight">
             Tell us what you need. Pros come to you.
           </h2>
-          <p className="mt-3 text-primary-foreground/90 text-base md:text-lg">
+          <p className="mt-3 text-white/90 text-base md:text-lg">
             Post your job in under 2 minutes. Vetted pros in your area will quote you back — free, no obligation.
           </p>
           <div className="mt-6 flex flex-wrap gap-3">
@@ -146,7 +157,7 @@ const GetQuotePanel = ({ onBrowsePros }: { onBrowsePros: () => void }) => {
               variant="ghost"
               size="lg"
               onClick={onBrowsePros}
-              className="text-primary-foreground hover:bg-primary-foreground/15 hover:text-primary-foreground"
+              className="text-white hover:bg-white/15 hover:text-white"
             >
               Or browse pros yourself
             </Button>
@@ -163,15 +174,15 @@ const GetQuotePanel = ({ onBrowsePros }: { onBrowsePros: () => void }) => {
           {STEPS.map((s) => (
             <div
               key={s.title}
-              className="lift-card rounded-2xl border border-border bg-card p-6"
+              className="lift-card rounded-2xl border border-white/10 bg-white/[0.06] p-6"
             >
-              <div className="size-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-4">
+              <div className="size-12 rounded-xl bg-sa-peri/15 text-sa-peri flex items-center justify-center mb-4">
                 <s.icon className="size-6" strokeWidth={2.25} />
               </div>
               <h4 className="font-display text-lg font-extrabold tracking-tight">
                 {s.title}
               </h4>
-              <p className="text-ink-2 text-sm mt-2 leading-relaxed">{s.body}</p>
+              <p className="text-white/62 text-sm mt-2 leading-relaxed">{s.body}</p>
             </div>
           ))}
         </div>
@@ -179,45 +190,45 @@ const GetQuotePanel = ({ onBrowsePros }: { onBrowsePros: () => void }) => {
 
       {/* What you'll need + What you get back, side-by-side */}
       <section className="grid lg:grid-cols-2 gap-5">
-        <div className="rounded-2xl border border-border bg-card p-6 md:p-8">
-          <span className="text-xs font-bold uppercase tracking-widest text-primary">
+        <div className="rounded-2xl border border-white/10 bg-white/[0.06] p-6 md:p-8">
+          <span className="text-xs font-bold uppercase tracking-widest text-sa-pink">
             Before you start
           </span>
           <h4 className="font-display text-xl md:text-2xl font-extrabold tracking-tight mt-2">
             What you'll need to send
           </h4>
-          <p className="text-ink-2 text-sm mt-2">
+          <p className="text-white/62 text-sm mt-2">
             Have these ready — it'll take you 2 minutes, tops.
           </p>
           <ul className="mt-5 space-y-3">
             {CHECKLIST.map((item) => (
               <li key={item} className="flex items-start gap-3">
-                <span className="size-5 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0 mt-0.5">
+                <span className="size-5 rounded-full bg-sa-green/15 text-sa-green flex items-center justify-center shrink-0 mt-0.5">
                   <CheckCircle2 className="size-3.5" strokeWidth={2.5} />
                 </span>
-                <span className="text-sm text-foreground">{item}</span>
+                <span className="text-sm text-white/85">{item}</span>
               </li>
             ))}
           </ul>
         </div>
 
-        <div className="rounded-2xl border border-primary/30 bg-gradient-to-br from-primary/5 to-primary/10 p-6 md:p-8">
-          <span className="text-xs font-bold uppercase tracking-widest text-primary">
+        <div className="rounded-2xl border border-sa-peri/40 bg-sa-peri/15 p-6 md:p-8">
+          <span className="text-xs font-bold uppercase tracking-widest text-sa-peri">
             What you get back
           </span>
           <h4 className="font-display text-xl md:text-2xl font-extrabold tracking-tight mt-2">
             Quotes from vetted pros, in your inbox
           </h4>
-          <p className="text-ink-2 text-sm mt-2">
+          <p className="text-white/62 text-sm mt-2">
             We don't take a cent from you. Promise.
           </p>
           <ul className="mt-5 space-y-3">
             {PROMISES.map((p) => (
               <li key={p.text} className="flex items-start gap-3">
-                <span className="size-5 rounded-full bg-primary text-primary-foreground flex items-center justify-center shrink-0 mt-0.5">
+                <span className="size-5 rounded-full bg-sa-peri text-white flex items-center justify-center shrink-0 mt-0.5">
                   <p.icon className="size-3.5" strokeWidth={2.5} />
                 </span>
-                <span className="text-sm font-medium text-foreground">{p.text}</span>
+                <span className="text-sm font-medium text-white/85">{p.text}</span>
               </li>
             ))}
           </ul>
@@ -225,16 +236,16 @@ const GetQuotePanel = ({ onBrowsePros }: { onBrowsePros: () => void }) => {
       </section>
 
       {/* Urgent strip */}
-      <section className="rounded-2xl border border-amber/40 bg-amber/10 p-6 md:p-7 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <section className="rounded-2xl border border-sa-red/40 bg-sa-red/15 p-6 md:p-7 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-start gap-4">
-          <span className="size-11 rounded-xl bg-amber/20 text-amber flex items-center justify-center shrink-0">
+          <span className="size-11 rounded-xl bg-sa-red text-white flex items-center justify-center shrink-0">
             <Siren className="size-5" strokeWidth={2.5} />
           </span>
           <div>
             <h4 className="font-display text-lg font-extrabold tracking-tight">
               In a hurry? Mark it Urgent.
             </h4>
-            <p className="text-sm text-ink-2 mt-1">
+            <p className="text-sm text-white/62 mt-1">
               For <strong>R50</strong>, your post jumps to the top of every pro's feed and pings our top operators direct. Use it for burst pipes, locked-out emergencies, last-minute jobs.
             </p>
           </div>
@@ -242,7 +253,7 @@ const GetQuotePanel = ({ onBrowsePros }: { onBrowsePros: () => void }) => {
       </section>
 
       {/* Big CTA again */}
-      <section className="rounded-2xl border-2 border-primary/30 bg-card p-6 md:p-8 text-center">
+      <section className="rounded-2xl border-2 border-sa-gold bg-white text-sa-dark p-6 md:p-8 text-center">
         <h3 className="font-display text-2xl md:text-3xl font-extrabold tracking-tight">
           Ready? Post your request — it's free.
         </h3>
@@ -261,10 +272,10 @@ const GetQuotePanel = ({ onBrowsePros }: { onBrowsePros: () => void }) => {
         <section>
           <div className="flex items-end justify-between mb-5">
             <div>
-              <span className="text-xs font-bold uppercase tracking-widest text-primary">
+              <span className="text-xs font-bold uppercase tracking-widest text-sa-green">
                 Live on Sjoh right now
               </span>
-              <h3 className="font-display text-2xl font-extrabold tracking-tight mt-1">
+          <h3 className="font-display text-2xl font-extrabold tracking-tight mt-1 text-white">
                 Recent requests from other Saffas
               </h3>
             </div>
@@ -311,16 +322,16 @@ const BrowseProsPanel = () => {
 
   return (
     <div className="space-y-6">
-      <div className="rounded-2xl border border-border bg-card p-6 md:p-7">
+      <div className="rounded-2xl border border-white/10 bg-white/[0.06] p-6 md:p-7">
         <div className="flex items-start gap-4">
-          <span className="size-11 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
+          <span className="size-11 rounded-xl bg-sa-peri/15 text-sa-peri flex items-center justify-center shrink-0">
             <Search className="size-5" strokeWidth={2.5} />
           </span>
           <div>
             <h3 className="font-display text-xl md:text-2xl font-extrabold tracking-tight">
               Browse vetted SA pros
             </h3>
-            <p className="text-ink-2 text-sm mt-1">
+            <p className="text-white/62 text-sm mt-1">
               Prefer to pick someone yourself? Filter by category and province, check reviews, then message direct. Same vetted pros, no quoting required.
             </p>
           </div>
@@ -328,9 +339,9 @@ const BrowseProsPanel = () => {
       </div>
 
       {/* Filters */}
-      <div className="bg-card border border-border rounded-xl p-3 flex flex-col md:flex-row gap-3">
+      <div className="bg-white border border-sa-gold/50 rounded-xl p-3 flex flex-col md:flex-row gap-3">
         <div className="flex-1 flex items-center gap-2 px-3">
-          <Search className="size-4 text-muted-foreground" />
+          <Search className="size-4 text-sa-pink" />
           <input
             value={keyword}
             onChange={(e) => setKeyword(e.target.value)}
@@ -341,7 +352,7 @@ const BrowseProsPanel = () => {
         <select
           value={category}
           onChange={(e) => setCategory(e.target.value)}
-          className="text-sm font-medium border border-border rounded-md px-3 py-2 bg-background cursor-pointer min-w-[180px]"
+          className="text-sm font-medium border border-border rounded-md px-3 py-2 bg-background text-foreground cursor-pointer min-w-[180px]"
         >
           <option value="">All categories</option>
           {CATEGORIES.map((c) => (
@@ -353,7 +364,7 @@ const BrowseProsPanel = () => {
         <select
           value={province}
           onChange={(e) => setProvince(e.target.value)}
-          className="text-sm font-medium border border-border rounded-md px-3 py-2 bg-background cursor-pointer min-w-[180px]"
+          className="text-sm font-medium border border-border rounded-md px-3 py-2 bg-background text-foreground cursor-pointer min-w-[180px]"
         >
           <option value="">All provinces</option>
           {PROVINCES.map((p) => (
@@ -367,8 +378,8 @@ const BrowseProsPanel = () => {
           className={cn(
             "inline-flex items-center justify-center gap-1.5 text-xs font-bold uppercase tracking-widest px-4 py-2 rounded-md border transition-all",
             verifiedOnly
-              ? "bg-primary text-primary-foreground border-primary"
-              : "bg-background text-ink-2 border-border hover:border-primary",
+              ? "bg-sa-green text-white border-sa-green"
+              : "bg-background text-ink-2 border-border hover:border-sa-green",
           )}
         >
           <ShieldCheck className="size-3.5" strokeWidth={2.5} />
@@ -376,7 +387,7 @@ const BrowseProsPanel = () => {
         </button>
       </div>
 
-      <div className="text-sm text-muted-foreground tabular-nums">
+      <div className="text-sm text-white/50 tabular-nums">
         {filtered.length} {filtered.length === 1 ? "pro" : "pros"}
       </div>
 
@@ -393,12 +404,12 @@ const BrowseProsPanel = () => {
       )}
 
       {/* Bottom CTA */}
-      <div className="rounded-2xl bg-gradient-to-r from-primary to-primary-glow text-primary-foreground p-6 md:p-7 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mt-6">
+      <div className="rounded-2xl bg-[#101010] border border-white/10 text-white p-6 md:p-7 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mt-6">
         <div>
           <h4 className="font-display text-lg md:text-xl font-extrabold tracking-tight">
             Don't want to pick? Let pros come to you.
           </h4>
-          <p className="text-primary-foreground/85 text-sm mt-1">
+          <p className="text-white/85 text-sm mt-1">
             Post your request and we'll bring the quotes to your inbox — free.
           </p>
         </div>

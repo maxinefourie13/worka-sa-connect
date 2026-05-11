@@ -15,7 +15,7 @@ export default {
     extend: {
       fontFamily: {
         sans: ['"Plus Jakarta Sans"', "ui-sans-serif", "system-ui", "sans-serif"],
-        display: ['"Unbounded"', '"Plus Jakarta Sans"', "ui-sans-serif", "system-ui", "sans-serif"],
+        display: ['"Plus Jakarta Sans"', "ui-sans-serif", "system-ui", "sans-serif"],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -51,10 +51,14 @@ export default {
           foreground: "hsl(var(--info-foreground))",
         },
         sa: {
-          green: "#B0CBFF",
-          gold: "#B0CBFF",
-          red: "#DE3831",
-          blue: "#8B9DEF",
+          red: "#DC2828",
+          navy: "#0A2463",
+          green: "#0B6E3A",
+          gold: "#F5A623",
+          peri: "#6B7CE8",
+          pink: "#E83E8C",
+          dark: "#1A1A1A",
+          bg: "#FBFAF6",
         },
         popover: {
           DEFAULT: "hsl(var(--popover))",

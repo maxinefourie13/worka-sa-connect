@@ -8,6 +8,7 @@ import { useBusinesses } from "@/hooks/useDirectory";
 import { EXAMPLE_BUSINESS_ID } from "@/lib/exampleBusiness";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { getCategoryGroupIcon } from "@/lib/categoryIcons";
 
 const DirectoryPage = () => {
   const { data: businesses } = useBusinesses();
@@ -77,25 +78,27 @@ const DirectoryPage = () => {
 
   return (
     <SiteLayout>
-      <div className="container py-8">
+      <div className="bg-[#050505] text-white">
+      <div className="container py-10 md:py-14">
         {/* Breadcrumb */}
-        <nav className="flex items-center gap-2 text-xs text-muted-foreground mb-4">
-          <Link to="/" className="hover:text-foreground">Home</Link>
+        <nav className="flex items-center gap-2 text-xs text-white/45 mb-4">
+          <Link to="/" className="hover:text-white">Home</Link>
           <span>/</span>
-          <Link to="/directory" className="hover:text-foreground">Directory</Link>
+          <Link to="/directory" className="hover:text-white">Directory</Link>
           {activeGroup && (
             <>
               <span>/</span>
-              <span className="text-foreground font-medium">{activeGroup.name}</span>
+              <span className="text-white font-medium">{activeGroup.name}</span>
             </>
           )}
         </nav>
 
         <header className="mb-10 max-w-2xl">
+          <span className="text-xs font-bold uppercase tracking-widest text-sa-gold">Sjoh directory</span>
           <h1 className="font-display text-4xl md:text-5xl font-medium tracking-tight">
             {activeGroup ? activeGroup.name : "Find someone who can do it properly"}
           </h1>
-          <p className="mt-3 text-ink-2">
+          <p className="mt-3 text-white/60">
             {activeGroup
               ? `Browse trusted ${activeGroup.name.toLowerCase()} businesses across all 9 provinces.`
               : `Try: wedding photographer, electrician, steel fabrication. Trusted businesses across all 9 provinces.`}
@@ -104,7 +107,7 @@ const DirectoryPage = () => {
 
         {/* Mobile filter toggle */}
         <div className="lg:hidden mb-4">
-          <Button variant="outline" onClick={() => setFiltersOpen((o) => !o)} className="w-full">
+          <Button variant="outline" onClick={() => setFiltersOpen((o) => !o)} className="w-full bg-white/5 border-white/15 text-white hover:bg-white/10 hover:text-white">
             <SlidersHorizontal className="size-4" />
             {filtersOpen ? "Hide filters" : "Show filters"}
           </Button>
@@ -112,15 +115,16 @@ const DirectoryPage = () => {
 
         <div className="grid lg:grid-cols-[260px_1fr] gap-8">
           {/* Filters */}
-          <aside className={`${filtersOpen ? "block" : "hidden"} lg:block space-y-8`}>
+          <aside className={`${filtersOpen ? "block" : "hidden"} lg:block space-y-8 rounded-2xl border border-white/10 bg-white/[0.06] p-5 shadow-card`}>
             <div>
-              <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-3 font-sans">Category</h3>
+              <h3 className="text-xs font-bold uppercase tracking-widest text-white/45 mb-3 font-sans">Category</h3>
               <ul className="space-y-1 max-h-[420px] overflow-auto pr-1">
                 {CATEGORY_GROUPS.map((g) => {
                   const subs = CATEGORIES.filter((c) => c.groupSlug === g.slug);
                   const isOpen = openGroups[g.slug] ?? false;
                   const selectedCount = subs.filter((s) => cats.includes(s.slug)).length;
                   const allSelected = selectedCount === subs.length && subs.length > 0;
+                  const Icon = getCategoryGroupIcon(g.slug);
                   return (
                     <li key={g.slug}>
                       <div className="flex items-center gap-2">
@@ -131,23 +135,25 @@ const DirectoryPage = () => {
                             if (el) el.indeterminate = selectedCount > 0 && !allSelected;
                           }}
                           onChange={() => toggleGroup(g.slug)}
-                          className="size-4 accent-primary"
+                          className="size-4 accent-sa-gold"
                           aria-label={`Select all ${g.name}`}
                         />
                         <button
                           type="button"
                           onClick={() => setOpenGroups((o) => ({ ...o, [g.slug]: !isOpen }))}
-                          className="flex-1 flex items-center justify-between gap-2 py-1.5 text-sm font-semibold text-left hover:text-primary transition-colors"
+                          className="flex-1 flex items-center justify-between gap-2 py-1.5 text-sm font-semibold text-left text-white/88 hover:text-sa-gold transition-colors"
                         >
                           <span className="flex items-center gap-2">
-                            <span className="text-base">{g.emoji}</span>
+                            <span className="size-7 rounded-lg bg-white/10 text-sa-gold flex items-center justify-center shrink-0">
+                              <Icon className="size-3.5" strokeWidth={2.3} />
+                            </span>
                             {g.name}
                           </span>
-                          <ChevronDown className={cn("size-3.5 transition-transform", isOpen && "rotate-180")} />
+                          <ChevronDown className={cn("size-3.5 text-white/45 transition-transform", isOpen && "rotate-180")} />
                         </button>
                       </div>
                       {isOpen && (
-                        <ul className="mt-1 ml-6 space-y-1.5 border-l border-border pl-3">
+                        <ul className="mt-1 ml-9 space-y-1.5 border-l border-white/10 pl-3">
                           {subs.map((c) => (
                             <li key={c.slug}>
                               <label className="flex items-center gap-2.5 text-sm cursor-pointer group">
@@ -155,9 +161,9 @@ const DirectoryPage = () => {
                                   type="checkbox"
                                   checked={cats.includes(c.slug)}
                                   onChange={() => toggle(cats, c.slug, setCats)}
-                                  className="size-3.5 accent-primary"
+                                  className="size-3.5 accent-sa-gold"
                                 />
-                                <span className="flex-1 group-hover:text-primary transition-colors">{c.name}</span>
+                                <span className="flex-1 text-white/70 group-hover:text-sa-gold transition-colors">{c.name}</span>
                               </label>
                             </li>
                           ))}
@@ -170,16 +176,16 @@ const DirectoryPage = () => {
             </div>
 
             <div>
-              <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-3 font-sans">Province</h3>
+              <h3 className="text-xs font-bold uppercase tracking-widest text-white/45 mb-3 font-sans">Province</h3>
               <ul className="space-y-2">
                 {PROVINCES.map((p) => (
                   <li key={p}>
-                    <label className="flex items-center gap-2.5 text-sm cursor-pointer">
+                    <label className="flex items-center gap-2.5 text-sm text-white/80 cursor-pointer">
                       <input
                         type="checkbox"
                         checked={provs.includes(p)}
                         onChange={() => toggle(provs, p, setProvs)}
-                        className="size-4 accent-primary"
+                        className="size-4 accent-sa-gold"
                       />
                       <span>{p}</span>
                     </label>
@@ -189,23 +195,23 @@ const DirectoryPage = () => {
             </div>
 
             <div>
-              <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-3 font-sans">Status</h3>
+              <h3 className="text-xs font-bold uppercase tracking-widest text-white/45 mb-3 font-sans">Status</h3>
               <ul className="space-y-2">
                 <li>
-                  <label className="flex items-center gap-2.5 text-sm cursor-pointer">
-                    <input type="checkbox" checked={verifiedOnly} onChange={(e) => setVerifiedOnly(e.target.checked)} className="size-4 accent-primary" />
+                  <label className="flex items-center gap-2.5 text-sm text-white/80 cursor-pointer">
+                    <input type="checkbox" checked={verifiedOnly} onChange={(e) => setVerifiedOnly(e.target.checked)} className="size-4 accent-sa-gold" />
                     <span>Verified only</span>
                   </label>
                 </li>
                 <li>
-                  <label className="flex items-center gap-2.5 text-sm cursor-pointer">
-                    <input type="checkbox" checked={promoOnly} onChange={(e) => setPromoOnly(e.target.checked)} className="size-4 accent-primary" />
+                  <label className="flex items-center gap-2.5 text-sm text-white/80 cursor-pointer">
+                    <input type="checkbox" checked={promoOnly} onChange={(e) => setPromoOnly(e.target.checked)} className="size-4 accent-sa-gold" />
                     <span>Has active promo</span>
                   </label>
                 </li>
                 <li>
-                  <label className="flex items-center gap-2.5 text-sm cursor-pointer">
-                    <input type="checkbox" checked={topRated} onChange={(e) => setTopRated(e.target.checked)} className="size-4 accent-primary" />
+                  <label className="flex items-center gap-2.5 text-sm text-white/80 cursor-pointer">
+                    <input type="checkbox" checked={topRated} onChange={(e) => setTopRated(e.target.checked)} className="size-4 accent-sa-gold" />
                     <span>Rated 4.5 and above</span>
                   </label>
                 </li>
@@ -215,9 +221,9 @@ const DirectoryPage = () => {
 
           {/* Results */}
           <div>
-            <div className="bg-card border border-border rounded-xl p-3 flex flex-col md:flex-row gap-3 mb-6">
+            <div className="bg-white border-2 border-sa-gold/60 rounded-xl p-3 flex flex-col md:flex-row gap-3 mb-6 shadow-card">
               <div className="flex-1 flex items-center gap-2 px-3">
-                <Search className="size-4 text-muted-foreground" />
+                <Search className="size-4 text-sa-pink" />
                 <input
                   value={keyword}
                   onChange={(e) => setKeyword(e.target.value)}
@@ -242,7 +248,7 @@ const DirectoryPage = () => {
             </div>
 
             {filtered.length === 0 ? (
-              <div className="bg-card border border-border rounded-xl p-12 text-center">
+              <div className="bg-white border border-white/10 rounded-xl p-12 text-center">
                 <p className="text-ink-2">No businesses match your filters.</p>
               </div>
             ) : (
@@ -255,6 +261,7 @@ const DirectoryPage = () => {
 
           </div>
         </div>
+      </div>
       </div>
     </SiteLayout>
   );
