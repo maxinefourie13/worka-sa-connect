@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
-import { Search, Star, ArrowRight, ShieldCheck, Clock, CheckCircle2 } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { Search, Star, ArrowRight, ShieldCheck, Zap, CheckCircle2, UsersRound } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
 import { Button } from "@/components/ui/button";
 import { FlameButton } from "@/components/ui/flame-button";
@@ -11,6 +11,7 @@ import { FoundingSpotsBanner } from "@/components/FoundingSpotsBanner";
 import { CATEGORIES, CATEGORY_GROUPS, PROVINCES } from "@/lib/mockData";
 import { useBusinesses, useOpportunities } from "@/hooks/useDirectory";
 import { getCategoryGroupIcon } from "@/lib/categoryIcons";
+import { useReveal } from "@/hooks/useReveal";
 import heroGroup1 from "@/assets/hero-group-1.jpg";
 import heroGroup2 from "@/assets/hero-group-2.jpg";
 import heroGroup3 from "@/assets/hero-group-3.jpg";
@@ -44,10 +45,10 @@ const MARQUEE_ITEMS = [
 ];
 
 const HOW_STEPS = [
-  { n: "01", icon: "🔍", title: "Tell us what you need", body: "Search the directory or post a request in seconds.", bg: "var(--sa-gold)", color: "var(--sa-dark)", rot: "-1.5deg" },
-  { n: "02", icon: "👥", title: "Get real people", body: "Local businesses ready to help across all nine provinces.", bg: "var(--sa-red)", color: "#fff", rot: "1.2deg" },
-  { n: "03", icon: "⭐", title: "Choose who you trust", body: "Browse profiles, reviews, and active promotions.", bg: "var(--sa-navy)", color: "#fff", rot: "-0.8deg" },
-  { n: "04", icon: "✅", title: "Get it done", body: "Contact them directly. No middleman. No commission.", bg: "var(--sa-green)", color: "#fff", rot: "1.5deg" },
+  { n: "01", Icon: Search, title: "Tell us what you need", body: "Search the directory or post a request in seconds.", bg: "var(--sa-gold)", color: "var(--sa-dark)", rot: "-1.5deg" },
+  { n: "02", Icon: UsersRound, title: "Get real people", body: "Local businesses ready to help across all nine provinces.", bg: "var(--sa-red)", color: "#fff", rot: "1.2deg" },
+  { n: "03", Icon: Star, title: "Choose who you trust", body: "Browse profiles, reviews, and active promotions.", bg: "var(--sa-navy)", color: "#fff", rot: "-0.8deg" },
+  { n: "04", Icon: CheckCircle2, title: "Get it done", body: "Contact them directly. No middleman. No commission.", bg: "var(--sa-green)", color: "#fff", rot: "1.5deg" },
 ];
 
 const HERO_SERVICE_CARDS = [
@@ -62,6 +63,55 @@ const MESSAGE_THREAD = [
   { who: "Pro", text: "Ah, I’m so glad. It helps when the job brief is already clear before we chat." },
   { who: "Customer", text: "Five stars. I’m sending your profile to my cousin for her event too." },
 ];
+
+type CountingStatProps = {
+  value: number;
+  suffix?: string;
+  label: string;
+  color: string;
+  active: boolean;
+};
+
+const CountingStat = ({ value, suffix = "", label, color, active }: CountingStatProps) => {
+  const [displayValue, setDisplayValue] = useState(active ? value : 0);
+  const frameRef = useRef<number>();
+
+  useEffect(() => {
+    if (!active) return;
+
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setDisplayValue(value);
+      return;
+    }
+
+    const duration = 1200;
+    const startedAt = performance.now();
+
+    const tick = (now: number) => {
+      const progress = Math.min((now - startedAt) / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      setDisplayValue(Math.round(value * eased));
+
+      if (progress < 1) {
+        frameRef.current = requestAnimationFrame(tick);
+      }
+    };
+
+    frameRef.current = requestAnimationFrame(tick);
+    return () => {
+      if (frameRef.current) cancelAnimationFrame(frameRef.current);
+    };
+  }, [active, value]);
+
+  return (
+    <div className="flex flex-col items-center text-center pt-4 md:pt-0">
+      <span className="font-display-bold text-5xl md:text-6xl tabular-nums" style={{ color }}>
+        {displayValue.toLocaleString()}{suffix}
+      </span>
+      <span className="text-sm font-medium text-white/55 mt-2">{label}</span>
+    </div>
+  );
+};
 
 const HomePage = () => {
   const navigate = useNavigate();
@@ -88,6 +138,16 @@ const HomePage = () => {
     ...g,
     subCount: CATEGORIES.filter((c) => c.groupSlug === g.slug).length,
   }));
+  const { ref: statsRef, visible: statsVisible } = useReveal<HTMLElement>(0.35);
+  const stats = useMemo(
+    () => [
+      { value: 0, suffix: "%", label: "Commission on jobs", color: "var(--sa-red)" },
+      { value: 240, suffix: "+", label: "Service categories", color: "var(--sa-navy)" },
+      { value: 11, label: "Industry groups", color: "var(--sa-green)" },
+      { value: 9, label: "Provinces covered", color: "var(--sa-pink)" },
+    ],
+    [],
+  );
 
   return (
     <SiteLayout>
@@ -104,124 +164,135 @@ const HomePage = () => {
             backgroundSize: "64px 64px",
           }}
         />
-        <div className="container relative pt-14 pb-12 lg:pt-20 lg:pb-16">
-          <div className="grid lg:grid-cols-[minmax(0,0.96fr)_minmax(420px,0.74fr)] gap-8 lg:gap-12 items-center">
-            <div>
-              <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/8 border border-white/15 text-xs font-semibold mb-4 text-white/85">
+        <div className="container relative pt-14 pb-12 lg:pt-18 lg:pb-16">
+          <div className="mx-auto max-w-5xl text-center">
+            <div className="mb-5 flex flex-wrap items-center justify-center gap-3">
+              <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/8 border border-white/15 text-xs font-semibold text-white/85">
                 <span className="size-2 rounded-full" style={{ background: "var(--sa-pink)" }} />
-                No commission. No middlemen. Real grafters.
+                No commission. No middlemen. Real local pros.
               </span>
-              <div className="mb-6 max-w-md">
+              <div className="max-w-md">
                 <FoundingSpotsBanner />
-              </div>
-
-              <div className="min-h-[12rem] sm:min-h-[10.5rem] lg:min-h-[13.5rem] flex items-center">
-                <h1 className="font-display-bold text-4xl sm:text-5xl md:text-6xl leading-[1.03] max-w-4xl text-balance text-white">
-                  <Typewriter
-                    phrases={HERO_PHRASES}
-                    randomize
-                    typingSpeed={75}
-                    erasingSpeed={35}
-                    holdDuration={3200}
-                    accentRotation={["text-sa-pink", "text-sa-gold", "text-sa-peri", "text-sa-red"]}
-                  />
-                </h1>
-              </div>
-
-              <p className="mt-7 mb-3 text-sm md:text-base font-semibold uppercase tracking-widest text-white/55">
-                What do you need?
-              </p>
-
-              <form
-                onSubmit={onSearch}
-                className="w-full max-w-3xl bg-card p-2 rounded-[1.35rem] shadow-card border border-border flex flex-col md:flex-row gap-2 transition-shadow focus-within:shadow-pop"
-              >
-                <div className="flex-1 flex items-center gap-3 px-4">
-                  <Search className="size-4 text-muted-foreground shrink-0" />
-                  <input
-                    value={keyword}
-                    onChange={(e) => setKeyword(e.target.value)}
-                    type="text"
-                    placeholder="Search plumbers, electricians, designers..."
-                    className="w-full py-3.5 bg-transparent outline-none text-base placeholder:text-muted-foreground font-medium"
-                  />
-                </div>
-                <div className="hidden md:block w-px bg-border my-2" />
-                <div className="relative md:min-w-[190px]">
-                  <select
-                    value={province}
-                    onChange={(e) => setProvince(e.target.value)}
-                    className="w-full pl-4 pr-10 py-3.5 bg-transparent outline-none text-base font-medium appearance-none cursor-pointer text-foreground"
-                  >
-                    <option value="">All Provinces</option>
-                    {PROVINCES.map((p) => (
-                      <option key={p} value={p}>{p}</option>
-                    ))}
-                  </select>
-                  <span className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-muted-foreground text-xs">▾</span>
-                </div>
-                <FlameButton type="submit" size="lg">Find a Pro</FlameButton>
-              </form>
-
-              <div className="mt-7 flex flex-wrap gap-2 max-w-2xl">
-                <span className="text-xs font-semibold uppercase tracking-widest text-white/55 self-center mr-1">
-                  Popular:
-                </span>
-                {popularCats.map((c) => (
-                  <Link
-                    key={c.slug}
-                    to={`/directory?category=${c.slug}`}
-                    className="text-sm font-medium px-3.5 py-1.5 rounded-full border border-white/20 bg-white/10 text-white hover:bg-white/20 hover:border-white/40 hover:-translate-y-0.5 transition-all duration-200 ease-out"
-                  >
-                    {c.name}
-                  </Link>
-                ))}
               </div>
             </div>
 
-            <div className="relative min-h-[540px] hidden lg:block">
-              <div className="absolute right-0 top-2 w-[88%] overflow-hidden rounded-[2rem] border border-white/12 bg-white/[0.06] p-3 shadow-pop">
-                <img src={heroGroup2} alt="South Africans using Sjoh" className="h-[390px] w-full rounded-[1.45rem] object-cover" />
-                <div className="absolute left-7 top-7 rounded-full border border-white/20 bg-black/35 px-3 py-1.5 text-xs font-bold text-white backdrop-blur-md">
-                  Real people. Real work. All over SA.
-                </div>
-                <div className="absolute bottom-7 left-7 right-7 rounded-[1.4rem] border border-white/20 bg-white/18 p-4 text-white shadow-xl backdrop-blur-xl">
-                  <div className="flex items-center justify-between gap-3">
-                    <div>
-                      <div className="text-xs font-bold uppercase tracking-widest text-white/65">Search in progress</div>
-                      <div className="mt-1 font-display text-xl font-extrabold">Find a trusted pro</div>
-                    </div>
-                    <span className="rounded-full bg-sa-gold px-3 py-1 text-xs font-black text-sa-dark">9 provinces</span>
-                  </div>
-                  <div className="mt-3 flex items-center gap-2 text-sm text-white/80">
-                    <ShieldCheck className="size-4 text-sa-green" />
-                    Reviews, verified badges, clear job details
-                  </div>
-                </div>
-              </div>
+            <div className="mx-auto flex min-h-[11.5rem] max-w-5xl items-center justify-center sm:min-h-[10rem] lg:min-h-[12rem]">
+              <h1 className="font-display-bold text-4xl sm:text-5xl md:text-6xl leading-[1.03] text-balance text-white">
+                <Typewriter
+                  phrases={HERO_PHRASES}
+                  randomize
+                  typingSpeed={75}
+                  erasingSpeed={35}
+                  holdDuration={3200}
+                  accentRotation={["text-sa-pink", "text-sa-gold", "text-sa-peri", "text-sa-red"]}
+                />
+              </h1>
+            </div>
 
-              <div className="absolute -left-2 top-20 w-52 rotate-[-3deg] rounded-[1.5rem] border-2 border-black bg-sa-gold p-4 text-sa-dark shadow-[8px_8px_0_rgba(255,255,255,0.16)]">
+            <p className="mt-4 mb-3 text-sm md:text-base font-semibold uppercase tracking-widest text-white/55">
+              What do you need?
+            </p>
+
+            <form
+              onSubmit={onSearch}
+              className="mx-auto w-full max-w-4xl bg-card p-2 rounded-[1.35rem] shadow-card border border-border flex flex-col md:flex-row gap-2 transition-shadow focus-within:shadow-pop"
+            >
+              <div className="flex-1 flex items-center gap-3 px-4">
+                <Search className="size-4 text-muted-foreground shrink-0" />
+                <input
+                  value={keyword}
+                  onChange={(e) => setKeyword(e.target.value)}
+                  type="text"
+                  placeholder="Search photographers, electricians, cleaners..."
+                  className="w-full py-3.5 bg-transparent outline-none text-base placeholder:text-muted-foreground font-medium"
+                />
+              </div>
+              <div className="hidden md:block w-px bg-border my-2" />
+              <div className="relative md:min-w-[190px]">
+                <select
+                  value={province}
+                  onChange={(e) => setProvince(e.target.value)}
+                  className="w-full pl-4 pr-10 py-3.5 bg-transparent outline-none text-base font-medium appearance-none cursor-pointer text-foreground"
+                >
+                  <option value="">All Provinces</option>
+                  {PROVINCES.map((p) => (
+                    <option key={p} value={p}>{p}</option>
+                  ))}
+                </select>
+                <span className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-muted-foreground text-xs">▾</span>
+              </div>
+              <FlameButton type="submit" size="lg">Find a Pro</FlameButton>
+            </form>
+
+            <div className="mx-auto mt-6 flex max-w-3xl flex-wrap justify-center gap-2">
+              <span className="text-xs font-semibold uppercase tracking-widest text-white/55 self-center mr-1">
+                Popular:
+              </span>
+              {popularCats.map((c) => (
+                <Link
+                  key={c.slug}
+                  to={`/directory?category=${c.slug}`}
+                  className="text-sm font-medium px-3.5 py-1.5 rounded-full border border-white/20 bg-white/10 text-white hover:bg-white/20 hover:border-white/40 hover:-translate-y-0.5 transition-all duration-200 ease-out"
+                >
+                  {c.name}
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          <div className="mt-12 hidden lg:grid grid-cols-[0.78fr_1.25fr_0.78fr] gap-4 items-end">
+            <div className="space-y-4 pb-10">
+              <div className="rotate-[-2deg] rounded-[1.5rem] border-2 border-black bg-sa-gold p-4 text-sa-dark shadow-[8px_8px_0_rgba(255,255,255,0.16)]">
                 <div className="flex items-center gap-2 text-xs font-black uppercase tracking-widest">
-                  <Clock className="size-4" /> Warm lead
+                  <Zap className="size-4" /> Fast match
                 </div>
-                <p className="mt-2 text-sm font-bold leading-snug">Already knows the job, location, and budget.</p>
+                <p className="mt-2 text-sm font-bold leading-snug">Find the right pro fast, then compare reviews before you choose.</p>
               </div>
 
-              <div className="absolute -left-8 bottom-12 w-72 rounded-[1.4rem] border border-white/15 bg-[#111]/90 p-3 shadow-pop backdrop-blur-md">
-                <div className="px-2 pb-2 text-[10px] font-black uppercase tracking-widest text-white/42">Live requests</div>
+              <div className="rounded-[1.4rem] border border-white/15 bg-[#111]/90 p-3 shadow-pop backdrop-blur-md">
+                <div className="px-2 pb-2 text-[10px] font-black uppercase tracking-widest text-white/42">Live searches</div>
                 {HERO_SERVICE_CARDS.map((card) => (
                   <div key={card.title} className="flex items-center justify-between gap-3 border-b border-white/10 py-2.5 last:border-0">
                     <div>
                       <p className="text-sm font-extrabold text-white">{card.title}</p>
-                      <p className="text-[11px] text-white/48">{card.meta}</p>
+                      <p className="text-[11px] text-white/66">{card.meta}</p>
                     </div>
                     <span className="size-3 rounded-full" style={{ background: card.color }} />
                   </div>
                 ))}
               </div>
+            </div>
 
-              <div className="absolute right-5 -bottom-1 flex items-center gap-2 rounded-full border border-white/15 bg-white px-4 py-2 text-sm font-black text-sa-dark shadow-xl">
+            <div className="relative overflow-hidden rounded-[2rem] border border-white/12 bg-white/[0.06] p-3 shadow-pop">
+              <img src={heroGroup2} alt="South Africans using Sjoh" className="h-[420px] w-full rounded-[1.45rem] object-cover" />
+              <div className="absolute left-7 top-7 rounded-full border border-white/20 bg-black/35 px-3 py-1.5 text-xs font-bold text-white backdrop-blur-md">
+                Real people. Real work. All over SA.
+              </div>
+              <div className="absolute bottom-7 left-7 right-7 rounded-[1.4rem] border border-white/20 bg-white/18 p-4 text-white shadow-xl backdrop-blur-xl">
+                <div className="flex items-center justify-between gap-3">
+                  <div>
+                    <div className="text-xs font-bold uppercase tracking-widest text-white/65">Search in progress</div>
+                    <div className="mt-1 font-display text-xl font-extrabold">Compare trusted pros</div>
+                  </div>
+                  <span className="rounded-full bg-sa-gold px-3 py-1 text-xs font-black text-sa-dark">9 provinces</span>
+                </div>
+                <div className="mt-3 flex items-center gap-2 text-sm text-white/80">
+                  <ShieldCheck className="size-4 text-sa-green" />
+                  Reviews, verified badges, clear job details
+                </div>
+              </div>
+            </div>
+
+            <div className="space-y-4 pb-8">
+              <div className="flex w-fit items-center gap-2 rounded-full border border-white/15 bg-white px-4 py-2 text-sm font-black text-sa-dark shadow-xl">
                 <Star className="size-4 fill-sa-gold text-sa-gold" /> 4.9 average rating
+              </div>
+              <div className="rotate-[2deg] rounded-[1.5rem] border border-white/15 bg-white/10 p-5 text-white shadow-xl backdrop-blur-xl">
+                <div className="mb-3 flex items-center justify-between">
+                  <span className="text-[10px] font-black uppercase tracking-widest text-white/50">Proof before you call</span>
+                  <span className="rounded-full bg-sa-pink px-2.5 py-1 text-[10px] font-black">Reviews</span>
+                </div>
+                <p className="text-2xl font-black leading-tight">Profiles that show the work, the area, and the trust signals.</p>
               </div>
             </div>
           </div>
@@ -253,24 +324,31 @@ const HomePage = () => {
         <div className="container">
           <div className="relative min-h-[620px] overflow-hidden rounded-[2.25rem] border border-white/10">
             <img src={heroGroup1} alt="South Africans using Sjoh" className="absolute inset-0 h-full w-full object-cover" />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/82 via-black/28 to-black/8" />
+            <div
+              className="absolute inset-0"
+              style={{ background: "linear-gradient(90deg, rgba(0,0,0,0.78) 0%, rgba(0,0,0,0.52) 42%, rgba(0,0,0,0.16) 100%)" }}
+            />
+            <div
+              className="absolute inset-0"
+              style={{ background: "linear-gradient(0deg, rgba(0,0,0,0.78) 0%, rgba(0,0,0,0.12) 58%, rgba(0,0,0,0.18) 100%)" }}
+            />
             <div className="relative z-[1] flex min-h-[620px] flex-col justify-end p-6 md:p-10">
-              <div className="max-w-2xl">
+              <div className="max-w-2xl rounded-[1.5rem] border border-white/15 bg-black/48 p-5 backdrop-blur-sm">
                 <div className="text-[11px] font-bold tracking-[0.1em] uppercase mb-4 text-white/62">
                   ● Real help, close by
                 </div>
-                <h2 className="font-display-bold text-white text-4xl md:text-6xl leading-[1.02] mb-4">
+                <h2 className="font-display-bold text-white text-4xl md:text-6xl leading-[1.02] mb-4 drop-shadow-[0_4px_24px_rgba(0,0,0,0.7)]">
                   Find the skill.<br />Check the reviews.<br />Get it <span className="text-sa-gold">sorted.</span>
                 </h2>
-                <p className="text-white/70 text-base leading-relaxed max-w-md mb-7">
+                <p className="text-white/80 text-base leading-relaxed max-w-md drop-shadow-[0_2px_12px_rgba(0,0,0,0.75)]">
                   Search the directory, post a request, or list your business where people are already looking for exactly what you do.
                 </p>
               </div>
-              <div className="grid gap-3 md:grid-cols-3">
+              <div className="mt-4 grid gap-3 md:grid-cols-3">
                 {[
                   { title: "Post a request", body: "Share the job once and let interested pros come back to you.", cta: "Start here", to: "/requests/new" },
                   { title: "Browse vetted pros", body: "Compare profiles, reviews, work areas, and services across SA.", cta: "Open directory", to: "/directory" },
-                  { title: "List your business", body: "Turn searches into warm leads from people ready to hire.", cta: "Apply as a pro", to: "/list" },
+                  { title: "List your business", body: "Get found by customers who are already searching for your skill.", cta: "Apply as a pro", to: "/list" },
                 ].map((card) => (
                   <Link
                     key={card.title}
@@ -301,10 +379,10 @@ const HomePage = () => {
               ● After the job
             </div>
             <h2 className="font-display-bold text-white text-4xl md:text-5xl leading-[1.03]">
-              Good work turns into the next warm lead.
+              Good work makes the next search easier.
             </h2>
-            <p className="mt-4 max-w-md text-white/62">
-              Sjoh gives customers confidence before they hire, and gives business owners leads that already understand what they need.
+            <p className="mt-4 max-w-md text-white/76">
+              Sjoh gives customers confidence before they hire, and gives business owners enquiries from people already looking for their skill.
             </p>
           </div>
           <div className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.06] p-4 md:p-6">
@@ -326,7 +404,7 @@ const HomePage = () => {
               ))}
               <div className="ml-auto flex w-fit items-center gap-2 rounded-full border border-white/15 bg-black/45 px-4 py-2 text-xs font-bold text-white">
                 <CheckCircle2 className="size-4 text-sa-green" />
-                Verified review captured on Sjoh
+                Real feedback after a completed job
               </div>
             </div>
           </div>
@@ -336,47 +414,59 @@ const HomePage = () => {
       {/* ========== HOW IT WORKS — rotated colored cards ========== */}
       <section className="bg-[#101010] py-20">
         <div className="container">
-          <div className="text-center mb-16">
-            <div className="text-[11px] font-bold tracking-[0.1em] uppercase mb-3" style={{ color: "var(--sa-pink)" }}>
-              ● How Sjoh works
-            </div>
-            <h2 className="font-display-bold text-4xl md:text-5xl leading-[1.03] text-white">
-              Four steps.<br />One sorted job.
-            </h2>
-          </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-6xl mx-auto">
-            {HOW_STEPS.map((s) => (
-              <div
-                key={s.n}
-                className="rounded-3xl p-7 flex flex-col gap-3.5 min-h-[260px] transition-transform duration-200 hover:translate-y-[-4px]"
-                style={{ background: s.bg, color: s.color, transform: `rotate(${s.rot})` }}
-              >
-                <div className="font-display-bold text-4xl opacity-20">{s.n}</div>
-                <div className="size-11 rounded-xl bg-black/10 grid place-items-center text-xl">{s.icon}</div>
-                <h3 className="font-display-bold text-base mt-auto leading-tight">{s.title}</h3>
-                <p className="text-[13px] leading-snug opacity-75">{s.body}</p>
+          <div className="grid gap-8 lg:grid-cols-[0.95fr_1.05fr] lg:items-stretch">
+            <div className="relative min-h-[520px] overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.05]">
+              <img src={heroGroup3} alt="South Africans using Sjoh to find local services" className="absolute inset-0 h-full w-full object-cover" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/82 via-black/34 to-black/8" />
+              <div className="relative z-[1] flex h-full min-h-[520px] flex-col justify-end p-6 md:p-8">
+                <div className="max-w-md rounded-[1.35rem] border border-white/15 bg-black/52 p-5 backdrop-blur-sm">
+                  <div className="mb-4 w-fit rounded-full border border-white/20 bg-white/15 px-3 py-1.5 text-[11px] font-black uppercase tracking-widest text-white backdrop-blur-md">
+                    How Sjoh works
+                  </div>
+                  <h2 className="font-display-bold text-4xl md:text-5xl leading-[1.03] text-white">
+                    Search once.<br />Choose properly.
+                  </h2>
+                  <p className="mt-4 text-sm leading-relaxed text-white/80">
+                    Browse the directory, compare the trust signals, and move from “who do I call?” to “this is the right person.”
+                  </p>
+                </div>
               </div>
-            ))}
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2">
+              {HOW_STEPS.map((s) => (
+                <div
+                  key={s.n}
+                  className="rounded-[1.65rem] p-7 flex flex-col gap-3.5 min-h-[250px] transition-transform duration-200 hover:translate-y-[-4px]"
+                  style={{ background: s.bg, color: s.color, transform: `rotate(${s.rot})` }}
+                >
+                  <div className="flex items-start justify-between">
+                    <div className="font-display-bold text-4xl opacity-24">{s.n}</div>
+                    <div className="size-11 rounded-xl bg-black/10 grid place-items-center">
+                      <s.Icon className="size-5" strokeWidth={2.4} />
+                    </div>
+                  </div>
+                  <h3 className="font-display-bold text-lg mt-auto leading-tight">{s.title}</h3>
+                  <p className="text-[13px] leading-snug opacity-75">{s.body}</p>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </section>
 
       {/* ========== STATS BAR ========== */}
-      <section className="bg-[#050505] border-y border-white/10">
+      <section ref={statsRef} className="bg-[#050505] border-y border-white/10">
         <div className="container py-12">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-4 divide-y md:divide-y-0 md:divide-x divide-white/10">
-            {[
-              { v: "0%", l: "Commission on jobs", c: "var(--sa-red)" },
-              { v: "240+", l: "Service categories", c: "var(--sa-navy)" },
-              { v: "11", l: "Industry groups", c: "var(--sa-green)" },
-              { v: "9", l: "Provinces covered", c: "var(--sa-pink)" },
-            ].map((s) => (
-              <div key={s.l} className="flex flex-col items-center text-center pt-4 md:pt-0">
-                <span className="font-display-bold text-5xl md:text-6xl tabular-nums" style={{ color: s.c }}>
-                  {s.v}
-                </span>
-                <span className="text-sm font-medium text-white/55 mt-2">{s.l}</span>
-              </div>
+            {stats.map((s) => (
+              <CountingStat
+                key={s.label}
+                value={s.value}
+                suffix={s.suffix}
+                label={s.label}
+                color={s.color}
+                active={statsVisible}
+              />
             ))}
           </div>
         </div>

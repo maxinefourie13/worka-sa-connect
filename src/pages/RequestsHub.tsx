@@ -15,12 +15,12 @@ import {
 import { SiteLayout } from "@/components/SiteLayout";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { BusinessCard } from "@/components/BusinessCard";
 import { JobCard } from "@/components/JobCard";
-import { useBusinesses, useOpportunities } from "@/hooks/useDirectory";
+import { useOpportunities } from "@/hooks/useDirectory";
 import { CATEGORIES, PROVINCES } from "@/lib/mockData";
 import { SeoHead } from "@/components/SeoHead";
-import { cn } from "@/lib/utils";
+import heroGroup2 from "@/assets/hero-group-2.jpg";
+import heroGroup3 from "@/assets/hero-group-3.jpg";
 
 type TabKey = "quote" | "pros";
 
@@ -46,36 +46,44 @@ const RequestsHub = () => {
       />
       <div className="bg-[#050505] text-white">
       <div className="container py-10 md:py-14">
-        <header className="mb-8 max-w-3xl">
-          <span className="text-xs font-bold uppercase tracking-widest text-sa-gold">
-            Get Quotes
-          </span>
-          <h1 className="font-display text-4xl md:text-5xl font-extrabold tracking-tight mt-2">
-            Need someone who can do it properly?
-          </h1>
-          <p className="mt-3 text-white/60 text-lg">
-            Tell us the job — vetted SA pros come back to you with quotes. Or browse the directory and contact a pro yourself. No commission. No middleman.
-          </p>
+        <header className="relative mb-8 overflow-hidden rounded-[2rem] border border-white/10 bg-[#101010] p-6 md:p-10">
+          <img src={heroGroup3} alt="" aria-hidden className="absolute inset-0 h-full w-full object-cover opacity-28" />
+          <div
+            aria-hidden
+            className="absolute inset-0"
+            style={{ background: "linear-gradient(90deg, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.74) 48%, rgba(0,0,0,0.28) 100%)" }}
+          />
+          <div className="relative max-w-3xl">
+            <span className="text-xs font-bold uppercase tracking-widest text-sa-gold">
+              Get Quotes
+            </span>
+            <h1 className="font-display text-4xl md:text-5xl font-extrabold tracking-tight mt-2">
+              Need someone who can do it properly?
+            </h1>
+            <p className="mt-3 text-white/74 text-lg">
+              Tell us what you need and vetted SA pros come back to you with quotes. If you're a pro, browse live requests and send quotes to customers ready to hire.
+            </p>
+          </div>
         </header>
 
         <Tabs value={tab} onValueChange={handleTabChange} className="w-full">
-          <TabsList className="grid w-full max-w-md grid-cols-2 mb-8 bg-white/10 border border-white/10">
-            <TabsTrigger value="quote" className="font-semibold">
+          <TabsList className="grid h-auto w-full max-w-2xl grid-cols-2 mb-8 rounded-full border border-white/15 bg-white/[0.07] p-1.5 text-white/55">
+            <TabsTrigger value="quote" className="rounded-full py-3 font-extrabold data-[state=active]:bg-sa-gold data-[state=active]:text-sa-dark data-[state=active]:shadow-none">
               <Sparkles className="size-4 mr-1.5" />
-              Get an instant quote
+              Tell us what you need
             </TabsTrigger>
-            <TabsTrigger value="pros" className="font-semibold">
-              <Search className="size-4 mr-1.5" />
-              View our pros
+            <TabsTrigger value="pros" className="rounded-full py-3 font-extrabold data-[state=active]:bg-sa-green data-[state=active]:text-white data-[state=active]:shadow-none">
+              <Send className="size-4 mr-1.5" />
+              Quote on jobs
             </TabsTrigger>
           </TabsList>
 
           <TabsContent value="quote" className="mt-0">
-            <GetQuotePanel onBrowsePros={() => handleTabChange("pros")} />
+            <GetQuotePanel />
           </TabsContent>
 
           <TabsContent value="pros" className="mt-0">
-            <BrowseProsPanel />
+            <QuoteOnJobsPanel />
           </TabsContent>
         </Tabs>
       </div>
@@ -122,17 +130,19 @@ const PROMISES = [
   { icon: ShieldCheck, text: "We vet every pro before they can quote" },
 ];
 
-const GetQuotePanel = ({ onBrowsePros }: { onBrowsePros: () => void }) => {
+const GetQuotePanel = () => {
   const { data: opportunities } = useOpportunities();
   const recent = opportunities.slice(0, 3);
 
   return (
     <div className="space-y-12">
       {/* Hero CTA card */}
-      <section className="rounded-3xl bg-[#101010] text-white p-8 md:p-12 shadow-pop relative overflow-hidden border border-white/10">
+      <section className="rounded-[2rem] bg-[#101010] text-white p-8 md:p-12 shadow-pop relative overflow-hidden border border-white/10">
+        <img src={heroGroup2} alt="" aria-hidden className="absolute inset-0 h-full w-full object-cover opacity-24" />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/88 via-black/72 to-black/34" />
         <div
           aria-hidden
-          className="absolute inset-0 opacity-[0.16]"
+          className="absolute inset-0 opacity-[0.13]"
           style={{
             backgroundImage:
               "linear-gradient(rgba(255,255,255,0.18) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.18) 1px, transparent 1px)",
@@ -140,6 +150,9 @@ const GetQuotePanel = ({ onBrowsePros }: { onBrowsePros: () => void }) => {
           }}
         />
         <div className="absolute -bottom-10 right-10 h-3 w-60 rotate-[-8deg] bg-sa-gold pointer-events-none" />
+        <div className="absolute right-8 top-8 hidden rounded-[1.4rem] border-2 border-black bg-sa-red px-5 py-4 text-sm font-black text-white shadow-[8px_8px_0_rgba(255,255,255,0.16)] md:block">
+          Post once.<br />Compare properly.
+        </div>
         <div className="relative max-w-2xl">
           <h2 className="font-display text-3xl md:text-4xl font-extrabold tracking-tight">
             Tell us what you need. Pros come to you.
@@ -148,18 +161,13 @@ const GetQuotePanel = ({ onBrowsePros }: { onBrowsePros: () => void }) => {
             Post your job in under 2 minutes. Vetted pros in your area will quote you back — free, no obligation.
           </p>
           <div className="mt-6 flex flex-wrap gap-3">
-            <Button variant="ink" size="lg" asChild className="font-bold">
+            <Button size="lg" asChild className="rounded-full bg-sa-gold font-bold text-sa-dark hover:bg-sa-gold/90">
               <Link to="/requests/new">
                 Post your request <ArrowRight className="size-4" />
               </Link>
             </Button>
-            <Button
-              variant="ghost"
-              size="lg"
-              onClick={onBrowsePros}
-              className="text-white hover:bg-white/15 hover:text-white"
-            >
-              Or browse pros yourself
+            <Button variant="ghost" size="lg" asChild className="rounded-full border border-white/20 text-white hover:bg-white/15 hover:text-white">
+              <Link to="/directory">Or browse pros yourself</Link>
             </Button>
           </div>
         </div>
@@ -174,9 +182,12 @@ const GetQuotePanel = ({ onBrowsePros }: { onBrowsePros: () => void }) => {
           {STEPS.map((s) => (
             <div
               key={s.title}
-              className="lift-card rounded-2xl border border-white/10 bg-white/[0.06] p-6"
+              className="lift-card rounded-2xl border border-white/10 bg-white/[0.06] p-6 shadow-card"
             >
-              <div className="size-12 rounded-xl bg-sa-peri/15 text-sa-peri flex items-center justify-center mb-4">
+              <div
+                className="size-12 rounded-xl flex items-center justify-center mb-4"
+                style={{ background: s.title.startsWith("1") ? "var(--sa-gold)" : s.title.startsWith("2") ? "var(--sa-red)" : "var(--sa-green)", color: s.title.startsWith("1") ? "var(--sa-dark)" : "#fff" }}
+              >
                 <s.icon className="size-6" strokeWidth={2.25} />
               </div>
               <h4 className="font-display text-lg font-extrabold tracking-tight">
@@ -190,7 +201,7 @@ const GetQuotePanel = ({ onBrowsePros }: { onBrowsePros: () => void }) => {
 
       {/* What you'll need + What you get back, side-by-side */}
       <section className="grid lg:grid-cols-2 gap-5">
-        <div className="rounded-2xl border border-white/10 bg-white/[0.06] p-6 md:p-8">
+        <div className="rounded-2xl border border-sa-gold/30 bg-sa-gold/10 p-6 md:p-8">
           <span className="text-xs font-bold uppercase tracking-widest text-sa-pink">
             Before you start
           </span>
@@ -212,8 +223,8 @@ const GetQuotePanel = ({ onBrowsePros }: { onBrowsePros: () => void }) => {
           </ul>
         </div>
 
-        <div className="rounded-2xl border border-sa-peri/40 bg-sa-peri/15 p-6 md:p-8">
-          <span className="text-xs font-bold uppercase tracking-widest text-sa-peri">
+        <div className="rounded-2xl border border-sa-green/35 bg-sa-green/15 p-6 md:p-8">
+          <span className="text-xs font-bold uppercase tracking-widest text-sa-green">
             What you get back
           </span>
           <h4 className="font-display text-xl md:text-2xl font-extrabold tracking-tight mt-2">
@@ -225,7 +236,7 @@ const GetQuotePanel = ({ onBrowsePros }: { onBrowsePros: () => void }) => {
           <ul className="mt-5 space-y-3">
             {PROMISES.map((p) => (
               <li key={p.text} className="flex items-start gap-3">
-                <span className="size-5 rounded-full bg-sa-peri text-white flex items-center justify-center shrink-0 mt-0.5">
+                <span className="size-5 rounded-full bg-sa-green text-white flex items-center justify-center shrink-0 mt-0.5">
                   <p.icon className="size-3.5" strokeWidth={2.5} />
                 </span>
                 <span className="text-sm font-medium text-white/85">{p.text}</span>
@@ -253,14 +264,14 @@ const GetQuotePanel = ({ onBrowsePros }: { onBrowsePros: () => void }) => {
       </section>
 
       {/* Big CTA again */}
-      <section className="rounded-2xl border-2 border-sa-gold bg-white text-sa-dark p-6 md:p-8 text-center">
+      <section className="rounded-2xl border-2 border-sa-gold bg-sa-gold text-sa-dark p-6 md:p-8 text-center">
         <h3 className="font-display text-2xl md:text-3xl font-extrabold tracking-tight">
           Ready? Post your request — it's free.
         </h3>
         <p className="text-ink-2 mt-2 max-w-xl mx-auto">
           Takes about 2 minutes. You'll start getting quotes shortly after.
         </p>
-        <Button size="lg" asChild className="mt-5 font-bold">
+        <Button size="lg" asChild className="mt-5 rounded-full bg-sa-dark font-bold text-white hover:bg-sa-dark/90">
           <Link to="/requests/new">
             Post your request <ArrowRight className="size-4" />
           </Link>
@@ -292,61 +303,60 @@ const GetQuotePanel = ({ onBrowsePros }: { onBrowsePros: () => void }) => {
 };
 
 // ============================================================
-// Tab 2: View our pros
+// Tab 2: Quote on jobs
 // ============================================================
 
-const BrowseProsPanel = () => {
-  const { data: businesses } = useBusinesses();
+const QuoteOnJobsPanel = () => {
+  const { data: opportunities } = useOpportunities();
   const [keyword, setKeyword] = useState("");
   const [category, setCategory] = useState("");
   const [province, setProvince] = useState("");
-  const [verifiedOnly, setVerifiedOnly] = useState(false);
 
   const filtered = useMemo(() => {
-    return businesses.filter((b) => {
+    return opportunities.filter((o) => {
       if (keyword) {
         const k = keyword.toLowerCase();
         if (
-          !b.name.toLowerCase().includes(k) &&
-          !b.category.toLowerCase().includes(k) &&
-          !(b.tags || []).some((t) => t.toLowerCase().includes(k))
+          !o.title.toLowerCase().includes(k) &&
+          !o.category.toLowerCase().includes(k) &&
+          !o.city.toLowerCase().includes(k)
         )
           return false;
       }
-      if (category && b.categorySlug !== category) return false;
-      if (province && b.province !== province) return false;
-      if (verifiedOnly && !b.isVerified) return false;
+      if (category && o.categorySlug !== category) return false;
+      if (province && o.province !== province) return false;
       return true;
     });
-  }, [businesses, keyword, category, province, verifiedOnly]);
+  }, [opportunities, keyword, category, province]);
 
   return (
     <div className="space-y-6">
-      <div className="rounded-2xl border border-white/10 bg-white/[0.06] p-6 md:p-7">
+      <div className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.06] p-6 md:p-7">
+        <div className="absolute right-0 top-0 h-full w-1/3 bg-sa-green/20 blur-3xl" />
         <div className="flex items-start gap-4">
-          <span className="size-11 rounded-xl bg-sa-peri/15 text-sa-peri flex items-center justify-center shrink-0">
-            <Search className="size-5" strokeWidth={2.5} />
+          <span className="size-11 rounded-xl bg-sa-gold text-sa-dark flex items-center justify-center shrink-0">
+            <Send className="size-5" strokeWidth={2.5} />
           </span>
           <div>
             <h3 className="font-display text-xl md:text-2xl font-extrabold tracking-tight">
-              Browse vetted SA pros
+              Send quotes to customers already looking
             </h3>
             <p className="text-white/62 text-sm mt-1">
-              Prefer to pick someone yourself? Filter by category and province, check reviews, then message direct. Same vetted pros, no quoting required.
+              Browse live requests, choose the jobs that fit your business, and send a quote from your Sjoh profile.
             </p>
           </div>
         </div>
       </div>
 
       {/* Filters */}
-      <div className="bg-white border border-sa-gold/50 rounded-xl p-3 flex flex-col md:flex-row gap-3">
+      <div className="bg-white border-2 border-sa-gold rounded-[1.2rem] p-3 flex flex-col md:flex-row gap-3 shadow-[8px_8px_0_rgba(255,178,38,0.18)]">
         <div className="flex-1 flex items-center gap-2 px-3">
           <Search className="size-4 text-sa-pink" />
           <input
             value={keyword}
             onChange={(e) => setKeyword(e.target.value)}
-            placeholder="Search pros, services, or tags…"
-            className="w-full py-2 bg-transparent outline-none text-sm"
+            placeholder="Search requests, services, or city..."
+            className="w-full py-2 bg-transparent outline-none text-sm text-foreground placeholder:text-muted-foreground"
           />
         </div>
         <select
@@ -373,49 +383,37 @@ const BrowseProsPanel = () => {
             </option>
           ))}
         </select>
-        <button
-          onClick={() => setVerifiedOnly((v) => !v)}
-          className={cn(
-            "inline-flex items-center justify-center gap-1.5 text-xs font-bold uppercase tracking-widest px-4 py-2 rounded-md border transition-all",
-            verifiedOnly
-              ? "bg-sa-green text-white border-sa-green"
-              : "bg-background text-ink-2 border-border hover:border-sa-green",
-          )}
-        >
-          <ShieldCheck className="size-3.5" strokeWidth={2.5} />
-          Verified only
-        </button>
       </div>
 
       <div className="text-sm text-white/50 tabular-nums">
-        {filtered.length} {filtered.length === 1 ? "pro" : "pros"}
+        {filtered.length} live {filtered.length === 1 ? "request" : "requests"}
       </div>
 
       {filtered.length === 0 ? (
         <div className="bg-card border border-border rounded-xl p-12 text-center">
-          <p className="text-ink-2">Aikona — nothing matches your filters yet.</p>
+          <p className="text-ink-2">Aikona — no customer requests match your filters yet.</p>
         </div>
       ) : (
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
-          {filtered.map((b) => (
-            <BusinessCard key={b.id} business={b} />
+          {filtered.map((o) => (
+            <JobCard key={o.id} job={o} isProView />
           ))}
         </div>
       )}
 
       {/* Bottom CTA */}
-      <div className="rounded-2xl bg-[#101010] border border-white/10 text-white p-6 md:p-7 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mt-6">
+      <div className="rounded-2xl bg-sa-green border border-sa-green text-white p-6 md:p-7 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mt-6">
         <div>
           <h4 className="font-display text-lg md:text-xl font-extrabold tracking-tight">
-            Don't want to pick? Let pros come to you.
+            Want to quote on these jobs?
           </h4>
           <p className="text-white/85 text-sm mt-1">
-            Post your request and we'll bring the quotes to your inbox — free.
+            List your business first so customers can see who is replying.
           </p>
         </div>
-        <Button variant="ink" asChild className="font-bold shrink-0">
-          <Link to="/requests/new">
-            Get instant quotes <ArrowRight className="size-4" />
+        <Button asChild className="shrink-0 rounded-full bg-sa-gold font-bold text-sa-dark hover:bg-sa-gold/90">
+          <Link to="/list">
+            Apply as a pro <ArrowRight className="size-4" />
           </Link>
         </Button>
       </div>
