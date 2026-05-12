@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import {
   LayoutGrid, User, Sparkles, Briefcase, Users, CreditCard, Plus,
-  ShieldCheck, Bell, Mail, FileText, MessageCircle, Lock,
+  ShieldCheck, Bell, Mail, FileText, MessageCircle, Lock, ArrowUpRight,
 } from "lucide-react";
 import { QuotesSection } from "@/components/dashboard/QuotesSection";
 import { SiteHeader } from "@/components/SiteHeader";
@@ -79,20 +79,20 @@ const Dashboard = () => {
   const sidebarInitial = sidebarName.charAt(0).toUpperCase();
 
   return (
-    <div className="flex min-h-dvh flex-col bg-background">
+    <div className="flex min-h-dvh flex-col bg-[#e9ecef] text-sa-dark">
       <SiteHeader />
       <div className="flex-1 container py-8">
         <div className="grid lg:grid-cols-[240px_1fr] gap-8">
           {/* Sidebar */}
           <aside>
-            <div className="bg-card border-2 border-sa-peri/20 rounded-xl p-4 shadow-card">
+            <div className="sticky top-36 rounded-[2rem] border border-white/70 bg-white/62 p-4 shadow-[0_24px_70px_-45px_rgba(0,0,0,0.45)] backdrop-blur-xl">
               <div className="flex items-center gap-3 px-2 py-2">
-                <div className="size-10 rounded-lg flex items-center justify-center font-display font-bold text-sa-navy bg-sa-gold border border-sa-gold">
+                <div className="size-12 rounded-2xl flex items-center justify-center font-display font-black text-sa-dark bg-sa-gold border-[5px] border-[#e9ecef] shadow-lg">
                   {sidebarInitial}
                 </div>
                 <div className="min-w-0">
-                  <p className="text-sm font-semibold truncate">{sidebarName}</p>
-                  <p className="text-xs text-muted-foreground truncate">{sidebarRole}</p>
+                  <p className="text-sm font-black truncate">{sidebarName}</p>
+                  <p className="text-xs text-sa-dark/55 truncate">{sidebarRole}</p>
                 </div>
               </div>
               <nav className="mt-3 space-y-0.5">
@@ -104,8 +104,8 @@ const Dashboard = () => {
                       key={s.key}
                       onClick={() => setSection(s.key)}
                       className={cn(
-                        "w-full flex items-center gap-2.5 px-3 py-2 text-sm font-medium rounded-md transition-colors text-left",
-                        active ? "bg-sa-peri/10 text-sa-peri" : "text-ink-2 hover:bg-secondary",
+                        "w-full flex items-center gap-2.5 px-3 py-2.5 text-sm font-bold rounded-full transition-colors text-left",
+                        active ? "bg-sa-dark text-white shadow-sm" : "text-sa-dark/62 hover:bg-white/75 hover:text-sa-dark",
                       )}
                     >
                       <Icon className="size-4" />
@@ -136,12 +136,12 @@ const Dashboard = () => {
 };
 
 const StatCard = ({ label, value, hint }: { label: string; value: string; hint?: string }) => (
-  <div className="bg-card border border-sa-navy/10 rounded-xl p-5 shadow-card">
+  <div className="rounded-[1.5rem] border border-white/70 bg-white/65 p-5 shadow-[0_20px_60px_-45px_rgba(0,0,0,0.45)] backdrop-blur-xl">
     <div className="flex items-center justify-between">
-      <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground">{label}</span>
-      {hint && <span className="text-xs text-primary font-semibold">{hint}</span>}
+      <span className="text-xs font-black uppercase tracking-widest text-sa-dark/45">{label}</span>
+      {hint && <span className="text-xs text-sa-green font-bold">{hint}</span>}
     </div>
-    <p className="font-display text-3xl font-medium tabular-nums mt-4">{value}</p>
+    <p className="font-display text-4xl font-black tabular-nums mt-4">{value}</p>
   </div>
 );
 
@@ -177,12 +177,12 @@ const OverviewSection = ({ onJump }: { onJump: (s: SectionKey) => void }) => {
       <ProfileVisibilityWarning />
       <header className="flex items-center justify-between">
         <div>
-          <h1 className="font-display text-3xl font-medium tracking-tight">
+          <h1 className="font-display text-4xl font-black tracking-tight">
             Howzit, {firstName}. Ready to dala what you must?
           </h1>
-          <p className="text-sm text-ink-2 mt-1">Your activity over the last 30 days.</p>
+          <p className="text-sm text-sa-dark/58 mt-1">Your activity over the last 30 days.</p>
         </div>
-        <Button onClick={() => onJump("promotions")}>
+        <Button onClick={() => onJump("promotions")} className="rounded-full bg-sa-dark text-white hover:bg-sa-dark/90">
           <Plus className="size-4" />Add Promotion
         </Button>
       </header>
@@ -190,13 +190,15 @@ const OverviewSection = ({ onJump }: { onJump: (s: SectionKey) => void }) => {
       {/* Plan highlight */}
       <button
         onClick={() => onJump("billing")}
-        className="w-full text-left sa-dark-gradient text-white rounded-xl p-6 flex items-center justify-between gap-5 hover:opacity-95 transition-opacity"
+        className="relative w-full overflow-hidden text-left text-white rounded-[2rem] p-6 flex items-center justify-between gap-5 hover:opacity-95 transition-opacity shadow-[0_24px_70px_-45px_rgba(0,0,0,0.65)]"
+        style={{ background: "linear-gradient(135deg, #050505 0%, #0f2d1d 54%, var(--sa-green) 100%)" }}
       >
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_82%_20%,rgba(255,178,38,0.28),transparent_28%)]" />
         <div className="flex items-center gap-4">
-          <span className="size-12 rounded-xl bg-sa-gold text-sa-dark flex items-center justify-center">
+          <span className="relative size-12 rounded-2xl bg-sa-gold text-sa-dark flex items-center justify-center">
             <CreditCard className="size-6" strokeWidth={2.5} />
           </span>
-          <div>
+          <div className="relative">
             <p className="text-xs font-bold uppercase tracking-widest text-white/70">Your plan</p>
             <p className="font-display text-3xl font-semibold mt-1">
               {planLabel}
@@ -206,7 +208,9 @@ const OverviewSection = ({ onJump }: { onJump: (s: SectionKey) => void }) => {
             </p>
           </div>
         </div>
-        <span className="text-sm font-semibold text-sa-gold">Manage →</span>
+        <span className="relative grid size-11 place-items-center rounded-full bg-white text-sa-dark">
+          <ArrowUpRight className="size-4" strokeWidth={3} />
+        </span>
       </button>
 
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -225,8 +229,8 @@ const OverviewSection = ({ onJump }: { onJump: (s: SectionKey) => void }) => {
           value={stats.loading ? "…" : stats.followers.toLocaleString("en-ZA")}
         />
       </div>
-      <div className="bg-card border border-border rounded-xl p-6">
-        <h2 className="font-display text-lg font-semibold mb-4">Recent activity</h2>
+      <div className="rounded-[2rem] border border-white/70 bg-white/65 p-6 shadow-[0_20px_60px_-45px_rgba(0,0,0,0.45)] backdrop-blur-xl">
+        <h2 className="font-display text-xl font-black mb-4">Recent activity</h2>
         {activity.loading ? (
           <p className="text-sm text-muted-foreground">Loading…</p>
         ) : activity.items.length === 0 ? (
@@ -246,7 +250,7 @@ const OverviewSection = ({ onJump }: { onJump: (s: SectionKey) => void }) => {
             {activity.items.map((it) => (
               <li key={it.id} className="flex items-center justify-between py-2 border-b border-border last:border-0">
                 <span>{it.label}</span>
-                <span className="text-xs text-muted-foreground">{timeAgo(it.at)}</span>
+                <span className="text-xs text-sa-dark/45">{timeAgo(it.at)}</span>
               </li>
             ))}
           </ul>

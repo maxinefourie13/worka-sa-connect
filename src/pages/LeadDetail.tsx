@@ -9,6 +9,7 @@ import { toast } from "@/hooks/use-toast";
 import { MarkCompleteCard } from "@/components/MarkCompleteCard";
 import { QuoteRevisionCard } from "@/components/QuoteRevisionCard";
 import { InvoiceGenerator } from "@/components/InvoiceGenerator";
+import { getAttachmentPreviewSrc } from "@/lib/attachmentPreview";
 
 type Opp = {
   id: string;
@@ -238,7 +239,7 @@ const LeadDetail = () => {
                   {opp.attachments.map((a, i) => (
                     a.type?.startsWith("image/") ? (
                       <a key={i} href={a.url} target="_blank" rel="noreferrer" className="aspect-square rounded-lg overflow-hidden border border-border bg-muted">
-                        <img src={a.url} alt={a.name} className="size-full object-cover" />
+                        <img src={getAttachmentPreviewSrc(a)} alt={a.name} className="size-full object-cover" />
                       </a>
                     ) : (
                       <a key={i} href={a.url} target="_blank" rel="noreferrer" className="aspect-square rounded-lg border border-border bg-muted flex items-center justify-center text-xs text-ink-2 p-2 text-center break-words">

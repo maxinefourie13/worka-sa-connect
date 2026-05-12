@@ -7,6 +7,7 @@ import { UrgentBoostButton } from "@/components/UrgentBoostButton";
 import { useAuth } from "@/hooks/useAuth";
 import { BriefcaseBusiness, Siren, Sparkles, Paperclip, MapPin } from "lucide-react";
 import { freshnessFromIso, competitionSignal } from "@/lib/leadSignals";
+import { getAttachmentPreviewSrc } from "@/lib/attachmentPreview";
 
 interface JobCardProps {
   job: Opportunity;
@@ -117,7 +118,7 @@ export const JobCard = ({ job, className, isProView, proCity }: JobCardProps) =>
                       className="shrink-0 size-14 rounded-lg overflow-hidden border border-white/10 hover:border-sa-gold transition-colors"
                       onClick={(e) => e.stopPropagation()}
                     >
-                      <img src={a.url} alt={a.name} loading="lazy" className="size-full object-cover" />
+                      <img src={getAttachmentPreviewSrc(a)} alt={a.name} loading="lazy" className="size-full object-cover" />
                     </a>
                   ) : (
                     <a

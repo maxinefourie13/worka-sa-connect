@@ -33,18 +33,18 @@ export const EarlyAccessRibbon = () => {
         aria-hidden
       />
       <div className="container relative py-2 flex items-center gap-3 text-xs sm:text-sm">
-        <span className="inline-flex items-center gap-1 shrink-0 px-2 py-0.5 rounded-full bg-accent/15 text-accent border border-accent/30 text-[10px] font-extrabold uppercase tracking-widest">
-          <Sparkles className="size-3 animate-pulse" strokeWidth={2.75} /> Founding member
+        <span className="inline-flex shrink-0 items-center gap-1 rounded-full border border-sa-gold/35 bg-sa-gold/15 px-2 py-0.5 text-[10px] font-extrabold uppercase tracking-widest text-sa-gold">
+          <Sparkles className="size-3 animate-pulse" strokeWidth={2.75} /> Early access
         </span>
         <p className="leading-tight flex-1 min-w-0">
-          <span className="font-bold">Be a Founding Member.</span>{" "}
-          <span className="opacity-90 hidden sm:inline">Lock in 0% commission and special rates forever.</span>
+          <span className="font-bold">You’re early. Very early.</span>{" "}
+          <span className="hidden opacity-90 sm:inline">Sjoh is still onboarding pros, so some categories may look quiet. Founding pros lock in 0% commission.</span>
         </p>
         <a
           href="/list"
-          className="group shrink-0 inline-flex items-center gap-1 rounded-full bg-accent text-foreground px-3 py-1 text-xs font-extrabold hover:bg-accent/90 transition-all"
+          className="group inline-flex shrink-0 items-center gap-1 rounded-full bg-sa-gold px-3 py-1 text-xs font-extrabold text-sa-dark transition-all hover:bg-white"
         >
-          Claim your spot
+          List your business
           <ArrowRight className="size-3 transition-transform group-hover:translate-x-0.5" strokeWidth={3} />
         </a>
         <button

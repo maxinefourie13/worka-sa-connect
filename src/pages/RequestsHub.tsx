@@ -16,6 +16,7 @@ import { SiteLayout } from "@/components/SiteLayout";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { JobCard } from "@/components/JobCard";
+import { EarlyAccessNotice } from "@/components/EarlyAccessNotice";
 import { useOpportunities } from "@/hooks/useDirectory";
 import { CATEGORIES, PROVINCES } from "@/lib/mockData";
 import { SeoHead } from "@/components/SeoHead";
@@ -65,6 +66,14 @@ const RequestsHub = () => {
             </p>
           </div>
         </header>
+
+        <EarlyAccessNotice
+          className="mb-8"
+          title="Requests help us bring the right pros in."
+          body="Because Sjoh is still early, posting a job also shows us where demand is strongest. If there aren’t many pros in your area yet, we can use that signal to recruit the right ones next."
+          ctaLabel="Post your job"
+          ctaTo="/requests/new"
+        />
 
         <Tabs value={tab} onValueChange={handleTabChange} className="w-full">
           <TabsList className="grid h-auto w-full max-w-2xl grid-cols-2 mb-8 rounded-full border border-white/15 bg-white/[0.07] p-1.5 text-white/55">

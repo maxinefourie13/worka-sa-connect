@@ -239,6 +239,13 @@
 @keyframes sa-spin { to { transform: rotate(360deg); } }
 @keyframes sa-caret-blink { 50% { opacity: 0; } }
 @keyframes sa-marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+@keyframes sjoh-mark-color {
+  0%, 100% { color: var(--sa-gold); }
+  20% { color: var(--sa-red); }
+  40% { color: var(--sa-peri); }
+  60% { color: var(--sa-green); }
+  80% { color: var(--sa-pink); }
+}
 @keyframes sa-float-bob {
   0%, 100% { transform: translateY(0px) rotate(var(--rot, 0deg)); }
   50%      { transform: translateY(-8px) rotate(var(--rot, 0deg)); }
@@ -255,3 +262,4 @@
 .sa-sticker-spin { animation: sa-spin 22s linear infinite; }
 .sa-marquee-track { animation: sa-marquee 22s linear infinite; }
 .sa-float-bob { animation: sa-float-bob 4s ease-in-out infinite; }
+.animate-sjoh-mark { animation: sjoh-mark-color 5s ease-in-out infinite; }

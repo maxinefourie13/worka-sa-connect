@@ -4,14 +4,15 @@ import { Search, Star, ArrowRight, ShieldCheck, Zap, CheckCircle2, UsersRound } 
 import { SiteLayout } from "@/components/SiteLayout";
 import { Button } from "@/components/ui/button";
 import { FlameButton } from "@/components/ui/flame-button";
-import { BusinessCard } from "@/components/BusinessCard";
 import { JobCard } from "@/components/JobCard";
 import { Typewriter } from "@/components/Typewriter";
 import { FoundingSpotsBanner } from "@/components/FoundingSpotsBanner";
-import { CATEGORIES, CATEGORY_GROUPS, PROVINCES } from "@/lib/mockData";
+import { EarlyAccessNotice } from "@/components/EarlyAccessNotice";
+import { BUSINESSES, CATEGORIES, CATEGORY_GROUPS, PROVINCES } from "@/lib/mockData";
 import { useBusinesses, useOpportunities } from "@/hooks/useDirectory";
 import { getCategoryGroupIcon } from "@/lib/categoryIcons";
 import { useReveal } from "@/hooks/useReveal";
+import { cn } from "@/lib/utils";
 import heroGroup1 from "@/assets/hero-group-1.jpg";
 import heroGroup2 from "@/assets/hero-group-2.jpg";
 import heroGroup3 from "@/assets/hero-group-3.jpg";
@@ -128,7 +129,11 @@ const HomePage = () => {
 
   const { data: allBusinesses } = useBusinesses();
   const { data: allOpps } = useOpportunities();
-  const featured = allBusinesses.slice(0, 6);
+  const featuredRailRef = useRef<HTMLDivElement | null>(null);
+  const featured = [...allBusinesses, ...BUSINESSES]
+    .filter((business, index, businesses) => businesses.findIndex((item) => item.slug === business.slug) === index)
+    .sort((a, b) => (b.reviewCount - a.reviewCount) || (b.rating - a.rating))
+    .slice(0, 8);
   const latest = allOpps.slice(0, 3);
   const popularCatSlugs = ["plumbing", "electrical", "home-cleaning", "garden-services", "mechanics", "web-design"];
   const popularCats = popularCatSlugs
@@ -297,6 +302,17 @@ const HomePage = () => {
               </div>
             </div>
           </div>
+        </div>
+      </section>
+
+      <section className="bg-[#050505] px-4 py-8">
+        <div className="container">
+          <EarlyAccessNotice
+            title="Sjoh is open early, while the marketplace fills up."
+            body="That’s why some areas may look quiet right now. We’re onboarding vetted South African pros category by category, and founding businesses can still lock in 0% commission while the community grows."
+            ctaLabel="Get on early"
+            ctaTo="/list"
+          />
         </div>
       </section>
 
@@ -510,25 +526,115 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* ========== FEATURED BUSINESSES ========== */}
-      <section className="bg-[#050505] py-20">
+      {/* ========== FEATURED PROS RAIL ========== */}
+      <section className="bg-[#050505] py-20 overflow-hidden">
         <div className="container">
-        <div className="flex items-end justify-between mb-10">
-          <div className="max-w-xl">
-            <h2 className="font-display-bold text-3xl md:text-5xl leading-[1.03] text-white">
-              Featured businesses
-            </h2>
-            <p className="mt-3 text-white/55">Verified, top-rated, and active on Sjoh.</p>
+          <div className="mb-10 flex items-end justify-between gap-6">
+            <div className="max-w-3xl">
+              <div className="text-[11px] font-bold tracking-[0.1em] uppercase mb-3 text-sa-gold">
+                ● Pros of the month
+              </div>
+              <h2 className="font-display-bold text-4xl md:text-6xl leading-[1.02] text-white">
+                Local pros people keep recommending.
+              </h2>
+              <p className="mt-3 max-w-xl text-white/58">
+                Featured spots are picked from reviews, response rate, and profile quality. For now, these are example listings while Sjoh fills up.
+              </p>
+            </div>
+            <div className="hidden md:flex items-center gap-2">
+              <button
+                type="button"
+                aria-label="Scroll featured pros left"
+                onClick={() => featuredRailRef.current?.scrollBy({ left: -360, behavior: "smooth" })}
+                className="grid size-10 place-items-center rounded-full bg-white text-sa-dark font-black transition hover:-translate-x-0.5 hover:bg-sa-peri"
+              >
+                ←
+              </button>
+              <button
+                type="button"
+                aria-label="Scroll featured pros right"
+                onClick={() => featuredRailRef.current?.scrollBy({ left: 360, behavior: "smooth" })}
+                className="grid size-10 place-items-center rounded-full bg-sa-gold text-sa-dark font-black transition hover:translate-x-0.5 hover:bg-white"
+              >
+                →
+              </button>
+            </div>
           </div>
-          <Link to="/directory" className="text-sm font-semibold hover:underline hidden md:inline-block text-sa-gold">
-            See all
-          </Link>
-        </div>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {featured.map((b) => (
-            <BusinessCard key={b.id} business={b} />
-          ))}
-        </div>
+
+          <div
+            ref={featuredRailRef}
+            className="-mx-4 overflow-x-auto scroll-smooth px-4 pb-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          >
+            <div className="flex w-max gap-5">
+              {featured.map((b, index) => (
+                <Link
+                  key={b.id}
+                  to={`/business/${b.slug}`}
+                  className="group w-[282px] shrink-0 overflow-hidden rounded-[1.7rem] border border-white/10 bg-white/[0.06] p-4 text-white shadow-card transition-all duration-300 hover:-translate-y-1 hover:border-sa-gold hover:shadow-pop md:w-[330px]"
+                >
+                  <div
+                    className="mb-4 rounded-[1.35rem] p-5 min-h-[210px] flex flex-col"
+                    style={{
+                      background:
+                        index % 4 === 0 ? "var(--sa-gold)" :
+                        index % 4 === 1 ? "var(--sa-red)" :
+                        index % 4 === 2 ? "var(--sa-navy)" :
+                        "var(--sa-green)",
+                      color: index % 4 === 0 ? "var(--sa-dark)" : "#fff",
+                    }}
+                  >
+                    <div className="mb-4 flex items-center justify-between gap-2">
+                      <div className="flex flex-wrap gap-1.5">
+                        <span className="rounded-full bg-white/90 px-2.5 py-1 text-[10px] font-black uppercase tracking-widest text-sa-dark">
+                          #{index + 1}
+                        </span>
+                        <span className="rounded-full bg-white/90 px-2.5 py-1 text-[10px] font-black uppercase tracking-widest text-sa-dark">
+                          {b.category}
+                        </span>
+                      </div>
+                      <span className="grid size-9 place-items-center rounded-full bg-white text-sa-dark transition group-hover:rotate-[-12deg]">
+                        <ArrowRight className="size-4" strokeWidth={3} />
+                      </span>
+                    </div>
+                    <h3 className="mt-auto font-display text-3xl font-black leading-[0.95]">
+                      {b.name}
+                    </h3>
+                    <p className="mt-3 text-sm font-semibold opacity-78">
+                      {b.city}, {b.province}
+                    </p>
+                  </div>
+                  <div className="relative h-48 overflow-hidden rounded-[1.35rem] bg-white/10">
+                    {b.image ? (
+                      <img
+                        src={b.image}
+                        alt={`${b.name} work preview`}
+                        className="absolute inset-0 size-full object-cover transition duration-500 group-hover:scale-105"
+                        loading="lazy"
+                      />
+                    ) : (
+                      <div className={cn("absolute inset-0", b.gradient)} />
+                    )}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-transparent to-transparent" />
+                    <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between gap-3">
+                      <div className="rounded-full border border-white/20 bg-black/35 px-3 py-1.5 text-xs font-bold text-white backdrop-blur-md">
+                        {b.rating.toFixed(1)} rating · {b.reviewCount} reviews
+                      </div>
+                      <div className="grid size-12 place-items-center rounded-full border-[7px] border-[#050505] bg-sa-gold text-sa-dark">
+                        <ArrowRight className="size-4" strokeWidth={3} />
+                      </div>
+                    </div>
+                  </div>
+                  <div className="mt-4 flex flex-wrap gap-1.5">
+                    {b.tags.slice(0, 3).map((tag) => (
+                      <span key={tag} className="rounded-full border border-white/12 bg-white/8 px-2.5 py-1 text-[11px] font-bold text-white/70">
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
         </div>
       </section>
 

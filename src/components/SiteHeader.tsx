@@ -9,6 +9,7 @@ import { useUserRoles } from "@/hooks/useUserRoles";
 import { useMyBusiness } from "@/hooks/useMyBusiness";
 import { ListingStatusBanner } from "@/components/ListingStatusBanner";
 import { EarlyAccessRibbon } from "@/components/EarlyAccessRibbon";
+import { SjohWordmark } from "@/components/SjohWordmark";
 import { useBumpLastActive } from "@/hooks/useBumpLastActive";
 import {
   DropdownMenu,
@@ -68,9 +69,7 @@ export const SiteHeader = () => {
       <div className="container flex h-24 md:h-28 items-center justify-between gap-6">
         <div className="flex items-center gap-10">
           <Link to="/" className="flex items-center" aria-label="Sjoh home">
-            <span className="font-display text-4xl md:text-5xl font-black tracking-normal text-white">
-              sjoh<span className="text-sa-gold">!</span>
-            </span>
+            <SjohWordmark className="text-4xl md:text-5xl" />
           </Link>
           <nav className="hidden lg:flex items-center gap-7">
             {NAV.map((n) => (

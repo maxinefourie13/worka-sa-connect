@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { ArrowLeft, Phone, Mail, MessageCircle, MapPin, Clock, Globe, ShieldCheck, FileText } from "lucide-react";
+import { ArrowLeft, ArrowUpRight, Phone, Mail, MessageCircle, MapPin, Clock, Globe, ShieldCheck, FileText } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
 import { Button } from "@/components/ui/button";
 import { BUSINESS_VERIFICATION, formatRand } from "@/lib/mockData";
@@ -139,8 +139,10 @@ const BusinessProfile = () => {
   return (
     <SiteLayout>
       <SeoHead title={seoTitle} description={seoDesc} canonical={canonical} jsonLd={jsonLd} />
+      <div className="bg-[#e9ecef] pb-24">
       {/* Header / cover */}
-      <div className={cn("h-44 sm:h-56 md:h-72 relative overflow-hidden", !business.image && business.gradient)}>
+      <div className="container pt-6">
+      <div className={cn("h-[430px] sm:h-[500px] md:h-[560px] relative overflow-hidden rounded-[2.25rem] border border-white/70 shadow-[0_30px_90px_-50px_rgba(0,0,0,0.55)]", !business.image && business.gradient)}>
         {business.image && (
           <>
             <img
@@ -149,107 +151,117 @@ const BusinessProfile = () => {
               className="absolute inset-0 size-full object-cover animate-scale-in"
               loading="eager"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/25 to-black/30" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/28 to-black/18" />
           </>
         )}
-        <div className="container h-full relative">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_15%,rgba(255,178,38,0.28),transparent_30%),radial-gradient(circle_at_78%_30%,rgba(103,127,255,0.22),transparent_28%)]" />
+        <div className="h-full relative">
           <Link
             to="/directory"
-            className="absolute top-4 left-4 sm:top-5 sm:left-6 inline-flex items-center gap-1.5 text-white/90 hover:text-white text-xs sm:text-sm font-medium drop-shadow transition-colors"
+            className="absolute top-5 left-5 inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-black/25 px-3 py-2 text-white/90 hover:text-white text-xs sm:text-sm font-bold backdrop-blur-md transition-colors"
           >
             <ArrowLeft className="size-4" /> <span className="hidden xs:inline">Back to directory</span><span className="xs:hidden">Back</span>
           </Link>
           {business.plan === "featured" && (
-            <span className="absolute top-4 right-4 sm:top-5 sm:right-6 bg-foreground/85 text-background text-[10px] font-bold tracking-widest uppercase px-2 sm:px-2.5 py-1 rounded animate-fade-in">
+            <span className="absolute top-5 right-5 rounded-full border border-white/20 bg-sa-gold text-sa-dark text-[10px] font-black tracking-widest uppercase px-3 py-2 animate-fade-in">
               Featured
             </span>
           )}
-        </div>
-      </div>
-
-      <div className="container -mt-12 sm:-mt-16 relative pb-28 lg:pb-20">
-        <div className="grid lg:grid-cols-[1fr_340px] gap-6 lg:gap-10">
-          {/* Main */}
-          <div className="min-w-0">
+          <div className="absolute inset-x-4 bottom-4 sm:inset-x-6 sm:bottom-6">
             <Reveal>
-              <div className="bg-card border border-border rounded-2xl p-4 sm:p-6 md:p-8 shadow-card">
+              <div className="rounded-[2rem] border border-white/25 bg-white/18 p-5 sm:p-7 text-white shadow-pop backdrop-blur-xl">
                 <div className="flex flex-col md:flex-row md:items-end gap-4 sm:gap-5">
-                  <div className="size-20 sm:size-24 rounded-2xl bg-card border-4 border-card shadow-soft flex items-center justify-center font-display font-bold text-3xl sm:text-4xl text-foreground -mt-16 sm:-mt-20 transition-transform duration-500 hover:scale-105">
-                    {business.name.charAt(0)}
+                  <div className="relative -mb-1 size-24 sm:size-28 shrink-0">
+                    <div className="absolute inset-0 rounded-[2rem] bg-[#e9ecef]" aria-hidden />
+                    <div className="absolute left-2 top-2 size-20 sm:size-24 overflow-hidden rounded-[1.45rem] bg-white border-[7px] border-[#e9ecef] shadow-[0_20px_45px_-24px_rgba(0,0,0,0.7)] flex items-center justify-center font-display font-black text-3xl sm:text-4xl text-sa-dark transition-transform duration-500 hover:scale-105">
+                      {business.image ? (
+                        <img src={business.image} alt={`${business.name} logo`} className="size-full object-cover" />
+                      ) : (
+                        business.name.charAt(0)
+                      )}
+                    </div>
+                    <Link
+                      to={`/requests/new?pro=${business.slug}`}
+                      aria-label={`Request a quote from ${business.name}`}
+                      className="absolute -right-3 -bottom-3 grid size-11 place-items-center rounded-full border-[7px] border-[#e9ecef] bg-sa-gold text-sa-dark shadow-lg transition hover:rotate-[-12deg] hover:bg-sa-gold/90"
+                    >
+                      <ArrowUpRight className="size-4" strokeWidth={3} />
+                    </Link>
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h1 className="font-display text-2xl sm:text-3xl md:text-4xl font-semibold tracking-tight leading-tight break-words">
+                    <p className="text-xs font-black uppercase tracking-widest text-sa-gold">{business.category}</p>
+                    <h1 className="font-display text-3xl sm:text-4xl md:text-5xl font-black tracking-tight leading-tight break-words mt-1">
                       {business.name}
                     </h1>
-                    <VerificationBadges
-                      idVerified={BUSINESS_VERIFICATION[business.id]?.idVerified ?? business.isVerified}
-                      certifiedPro={BUSINESS_VERIFICATION[business.id]?.certifiedPro ?? false}
-                      certifications={BUSINESS_VERIFICATION[business.id]?.certifications ?? []}
-                      className="mt-2"
-                    />
-                    <p className="mt-2 text-xs sm:text-sm text-ink-2 flex flex-wrap items-center gap-x-2 sm:gap-x-3 gap-y-1">
-                      <span>{business.category}</span>
-                      <span className="opacity-50">·</span>
+                    <p className="mt-2 text-xs sm:text-sm text-white/78 flex flex-wrap items-center gap-x-2 sm:gap-x-3 gap-y-1">
                       <span>{business.city}, {business.province}</span>
                       <span className="opacity-50">·</span>
                       <span>
-                        <span className="font-semibold text-accent">{business.rating.toFixed(1)}</span>{" "}
-                        <span className="text-muted-foreground">({business.reviewCount} reviews)</span>
+                        <span className="font-black text-sa-gold">{business.rating.toFixed(1)}</span>{" "}
+                        <span className="text-white/68">({business.reviewCount} reviews)</span>
                       </span>
+                      <span className="opacity-50">·</span>
+                      <span>{followers} followers</span>
                     </p>
-                    <p className="mt-1 text-xs sm:text-sm text-muted-foreground">{followers} followers</p>
-                    {verifiedHires > 0 && (
-                      <div className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-accent/10 border border-accent/30 px-2.5 py-1 text-xs font-semibold text-accent">
-                        <ShieldCheck className="size-3.5" />
-                        {verifiedHires} Verified Job{verifiedHires === 1 ? "" : "s"} Completed via Sjoh
-                      </div>
-                    )}
+                    <div className="mt-3">
+                      <VerificationBadges
+                        idVerified={BUSINESS_VERIFICATION[business.id]?.idVerified ?? business.isVerified}
+                        certifiedPro={BUSINESS_VERIFICATION[business.id]?.certifiedPro ?? false}
+                        certifications={BUSINESS_VERIFICATION[business.id]?.certifications ?? []}
+                      />
+                    </div>
                   </div>
-                  {/* Desktop / tablet action buttons */}
-                  <div className="hidden sm:flex flex-wrap gap-2">
-                    <Button variant={following ? "soft" : "default"} onClick={toggleFollow} className="transition-all hover:scale-[1.02]">
+                  <div className="flex flex-wrap gap-2">
+                    <Button variant={following ? "soft" : "default"} onClick={toggleFollow} className="rounded-full bg-white text-sa-dark hover:bg-white/90">
                       {following ? "Following" : "Follow"}
                     </Button>
                     {hasContact ? (
                       <Button
-                        variant="outline"
                         asChild
-                        className="bg-[#25D366]/5 border-[#25D366]/40 text-[#1da851] hover:bg-[#25D366]/10 hover:text-[#1da851] transition-all hover:scale-[1.02]"
+                        className="rounded-full bg-sa-gold text-sa-dark hover:bg-sa-gold/90"
                       >
                         <a href={`https://wa.me/${phoneDigits}`} target="_blank" rel="noopener noreferrer">
                           WhatsApp
                         </a>
                       </Button>
                     ) : (
-                      <Button variant="outline" onClick={handleReveal} disabled={revealing} className="transition-all hover:scale-[1.02]">
-                        {revealing ? "Revealing…" : "Reveal contact"}
+                      <Button onClick={handleReveal} disabled={revealing} className="rounded-full bg-sa-gold text-sa-dark hover:bg-sa-gold/90">
+                        {revealing ? "Revealing..." : "Reveal contact"}
                       </Button>
                     )}
                   </div>
-                  {/* Mobile follow button only (the rest live in the sticky bottom bar) */}
-                  <div className="sm:hidden">
-                    <Button
-                      variant={following ? "soft" : "default"}
-                      onClick={toggleFollow}
-                      size="sm"
-                      className="w-full transition-all"
-                    >
-                      {following ? "Following" : "Follow"}
-                    </Button>
-                  </div>
                 </div>
+              </div>
+            </Reveal>
+          </div>
+        </div>
+      </div>
+      </div>
+
+      <div className="container mt-8 relative pb-28 lg:pb-20">
+        <div className="grid lg:grid-cols-[1fr_340px] gap-6 lg:gap-10">
+          {/* Main */}
+          <div className="min-w-0">
+            <Reveal>
+              <div className="rounded-[2rem] border border-white/70 bg-white/72 p-4 sm:p-6 md:p-8 shadow-[0_24px_70px_-45px_rgba(0,0,0,0.45)] backdrop-blur-xl">
+                {verifiedHires > 0 && (
+                  <div className="mb-5 inline-flex items-center gap-1.5 rounded-full bg-sa-green/10 border border-sa-green/30 px-3 py-1.5 text-xs font-bold text-sa-green">
+                    <ShieldCheck className="size-3.5" />
+                    {verifiedHires} Verified Job{verifiedHires === 1 ? "" : "s"} Completed via Sjoh
+                  </div>
+                )}
 
                 {/* Tabs */}
-                <div className="mt-6 sm:mt-8 border-b border-border flex gap-1 -mx-4 sm:-mx-6 px-4 sm:px-6 md:-mx-8 md:px-8 overflow-x-auto sticky top-14 sm:top-16 bg-card z-10 scrollbar-thin">
+                <div className="border border-black/10 bg-white/65 rounded-full flex gap-1 overflow-x-auto sticky top-28 p-1 z-10 scrollbar-thin backdrop-blur-xl">
                   {TABS.map((t) => (
                     <button
                       key={t.key}
                       onClick={() => setTab(t.key)}
                       className={cn(
-                        "px-3 sm:px-4 py-3 text-sm font-semibold border-b-2 transition-all -mb-px whitespace-nowrap",
+                        "px-4 py-2.5 text-sm font-bold rounded-full transition-all whitespace-nowrap",
                         tab === t.key
-                          ? "border-primary text-foreground"
-                          : "border-transparent text-muted-foreground hover:text-foreground hover:border-border",
+                          ? "bg-sa-dark text-white shadow-sm"
+                          : "text-sa-dark/55 hover:text-sa-dark hover:bg-white/70",
                       )}
                     >
                       {t.label}
@@ -275,7 +287,7 @@ const BusinessProfile = () => {
                             <div
                               key={s.name}
                               style={{ animationDelay: `${i * 60}ms` }}
-                              className="border border-border rounded-lg p-4 transition-all duration-300 hover:border-foreground/30 hover:shadow-soft hover:-translate-y-0.5 animate-fade-up"
+                              className="border border-black/10 bg-white/70 rounded-2xl p-4 transition-all duration-300 hover:border-sa-gold hover:shadow-soft hover:-translate-y-0.5 animate-fade-up"
                             >
                               <p className="font-semibold text-sm">{s.name}</p>
                               <p className="text-xs text-muted-foreground mt-1">{s.description}</p>
@@ -297,7 +309,7 @@ const BusinessProfile = () => {
                         <div
                           key={s.name}
                           style={{ animationDelay: `${i * 50}ms` }}
-                          className="border border-border rounded-lg p-4 sm:p-5 flex items-start justify-between gap-3 sm:gap-4 transition-all duration-300 hover:border-foreground/30 hover:shadow-soft hover:-translate-y-0.5 animate-fade-up"
+                          className="border border-black/10 bg-white/70 rounded-2xl p-4 sm:p-5 flex items-start justify-between gap-3 sm:gap-4 transition-all duration-300 hover:border-sa-gold hover:shadow-soft hover:-translate-y-0.5 animate-fade-up"
                         >
                           <div className="min-w-0">
                             <p className="font-semibold text-sm sm:text-base">{s.name}</p>
@@ -332,7 +344,7 @@ const BusinessProfile = () => {
                         <div
                           key={r.id}
                           style={{ animationDelay: `${i * 60}ms` }}
-                          className="border border-border rounded-lg p-4 sm:p-5 transition-all duration-300 hover:border-foreground/30 hover:shadow-soft animate-fade-up"
+                          className="border border-black/10 bg-white/70 rounded-2xl p-4 sm:p-5 transition-all duration-300 hover:border-sa-gold hover:shadow-soft animate-fade-up"
                         >
                           <div className="flex items-center justify-between gap-3">
                             <div className="min-w-0">
@@ -365,7 +377,7 @@ const BusinessProfile = () => {
           {/* Sidebar */}
           <aside className="space-y-5">
             <Reveal delay={120}>
-              <div className="bg-card border border-border rounded-2xl p-5 sm:p-6 shadow-card">
+              <div className="rounded-[2rem] border border-white/70 bg-white/72 p-5 sm:p-6 shadow-[0_24px_70px_-45px_rgba(0,0,0,0.45)] backdrop-blur-xl">
                 <h3 className="font-display text-lg font-semibold mb-4">Business details</h3>
                 <ul className="space-y-3 text-sm">
                   <li className="flex items-start gap-2.5">
@@ -413,9 +425,9 @@ const BusinessProfile = () => {
                 <div className="mt-5 pt-5 border-t border-border">
                   <p className="text-xs text-muted-foreground">Response rate</p>
                   <div className="mt-2 flex items-center gap-2">
-                    <div className="flex-1 h-2 rounded-full bg-secondary overflow-hidden">
+                    <div className="flex-1 h-2 rounded-full bg-black/10 overflow-hidden">
                       <div
-                        className="h-full bg-primary transition-[width] duration-1000 ease-out"
+                        className="h-full bg-sa-green transition-[width] duration-1000 ease-out"
                         style={{ width: `${business.responseRate}%` }}
                       />
                     </div>
@@ -446,7 +458,7 @@ const BusinessProfile = () => {
                   </div>
                 )}
                 <div className="mt-5 pt-5 border-t border-border">
-                  <Button asChild variant="outline" className="w-full">
+                  <Button asChild className="w-full rounded-full bg-sa-gold text-sa-dark hover:bg-sa-gold/90">
                     <Link to={user ? `/requests/new?pro=${business.slug}` : `/login?next=${encodeURIComponent(`/requests/new?pro=${business.slug}`)}`}>
                       <FileText className="size-4" /> Request a Quote from this Pro
                     </Link>
@@ -467,7 +479,7 @@ const BusinessProfile = () => {
             </Reveal>
 
             <Reveal delay={180}>
-              <div className="bg-card border border-border rounded-2xl p-5 sm:p-6 transition-shadow hover:shadow-card">
+              <div className="rounded-[2rem] border border-white/70 bg-white/72 p-5 sm:p-6 transition-shadow hover:shadow-card backdrop-blur-xl">
                 <h3 className="font-display text-lg font-semibold mb-2">Looking for similar?</h3>
                 <p className="text-sm text-ink-2 mb-4">Browse more {business.category} businesses in {business.province}.</p>
                 <Link
@@ -483,7 +495,7 @@ const BusinessProfile = () => {
       </div>
 
       {/* Mobile sticky action bar */}
-      <div className="lg:hidden fixed bottom-0 inset-x-0 z-40 bg-card/95 backdrop-blur border-t border-border shadow-pop animate-fade-up">
+      <div className="lg:hidden fixed bottom-0 inset-x-0 z-40 bg-white/90 backdrop-blur border-t border-white/70 shadow-pop animate-fade-up">
         <div className="container py-2.5">
           {hasContact ? (
             <div className="grid grid-cols-3 gap-2">
@@ -510,6 +522,7 @@ const BusinessProfile = () => {
             </Button>
           )}
         </div>
+      </div>
       </div>
     </SiteLayout>
   );

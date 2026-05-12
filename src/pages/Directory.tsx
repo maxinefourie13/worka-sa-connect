@@ -9,6 +9,7 @@ import { EXAMPLE_BUSINESS_ID } from "@/lib/exampleBusiness";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { getCategoryGroupIcon } from "@/lib/categoryIcons";
+import { EarlyAccessNotice } from "@/components/EarlyAccessNotice";
 
 const DirectoryPage = () => {
   const { data: businesses } = useBusinesses();
@@ -104,6 +105,14 @@ const DirectoryPage = () => {
               : `Try: wedding photographer, electrician, steel fabrication. Trusted businesses across all 9 provinces.`}
           </p>
         </header>
+
+        <EarlyAccessNotice
+          className="mb-8"
+          title="Some categories are still filling up."
+          body="You’re seeing Sjoh in early access. We’re onboarding vetted South African pros now, so if your area looks quiet today, it won’t stay that way for long."
+          ctaLabel="Know a good pro? Send them here"
+          ctaTo="/list"
+        />
 
         {/* Mobile filter toggle */}
         <div className="lg:hidden mb-4">
