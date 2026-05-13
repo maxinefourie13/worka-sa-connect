@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Search, Construction, MapPin, Clock, Siren } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
+import { SeoHead } from "@/components/SeoHead";
 import { Button } from "@/components/ui/button";
 import { JobCard } from "@/components/JobCard";
 import { CATEGORIES, PROVINCES } from "@/lib/mockData";
