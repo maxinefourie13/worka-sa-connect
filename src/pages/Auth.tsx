@@ -1,12 +1,15 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { SiteLayout } from "@/components/SiteLayout";
+import { SjohWordmark } from "@/components/SjohWordmark";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
 import { toast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
-import { Loader2 } from "lucide-react";
+import { Loader2, ShieldCheck, HandCoins, Handshake, Gift, Apple } from "lucide-react";
 import sjohLogo from "@/assets/sjoh-logo.png";
 
 interface AuthShellProps {
@@ -16,37 +19,73 @@ interface AuthShellProps {
   children: React.ReactNode;
 }
 
+const BrandPanel = () => (
+  <aside className="relative hidden lg:flex flex-col justify-between overflow-hidden rounded-3xl bg-gradient-to-br from-primary via-primary to-[hsl(227_100%_29%)] p-10 text-primary-foreground min-h-[560px]">
+    {/* soft glow */}
+    <div className="absolute -top-24 -right-24 size-72 rounded-full bg-accent/40 blur-3xl pointer-events-none" />
+    <div className="absolute -bottom-32 -left-20 size-80 rounded-full bg-white/15 blur-3xl pointer-events-none" />
+
+    <div className="relative z-10">
+      <Link to="/" aria-label="Sjoh home">
+        <SjohWordmark className="text-5xl" />
+      </Link>
+      <h2 className="font-display font-extrabold tracking-tight text-3xl mt-10 leading-tight text-primary-foreground">
+        Find someone who can do it properly.
+      </h2>
+      <p className="mt-3 text-primary-foreground/80 text-sm max-w-sm">
+        South Africa's no-commission directory of vetted local pros. Post the job, get real quotes, get it sorted.
+      </p>
+    </div>
+
+    <ul className="relative z-10 space-y-4 text-sm">
+      {[
+        { Icon: HandCoins, text: "0% commission. Ever." },
+        { Icon: ShieldCheck, text: "Vetted SA pros, real reviews." },
+        { Icon: Handshake, text: "Talk to them direct. No middleman." },
+      ].map(({ Icon, text }) => (
+        <li key={text} className="flex items-center gap-3">
+          <span className="flex size-9 items-center justify-center rounded-xl bg-white/15 backdrop-blur-sm">
+            <Icon className="size-4" />
+          </span>
+          <span className="font-semibold">{text}</span>
+        </li>
+      ))}
+    </ul>
+  </aside>
+);
+
 const AuthShell = ({ title, subtitle, footer, children }: AuthShellProps) => (
   <SiteLayout>
-    <div className="container py-16 max-w-md">
-      <Link to="/" className="inline-block mb-10" aria-label="Sjoh home">
-        <img src={sjohLogo} alt="Sjoh!" className="h-24 w-auto" />
-      </Link>
-      <h1 className="font-display text-3xl font-medium tracking-tight">{title}</h1>
-      <p className="mt-2 text-ink-2 text-sm">{subtitle}</p>
-      <div className="mt-8 bg-card border border-border rounded-2xl p-6 shadow-card">
-        {children}
+    <div className="relative">
+      {/* subtle periwinkle wash */}
+      <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(60%_50%_at_50%_0%,hsl(var(--primary)/0.10),transparent_70%)]" />
+      <div className="container py-12 md:py-16">
+        <div className="grid lg:grid-cols-2 gap-10 items-stretch max-w-6xl mx-auto">
+          <div className="flex flex-col">
+            <Link to="/" className="inline-block mb-8 lg:hidden" aria-label="Sjoh home">
+              <img src={sjohLogo} alt="Sjoh" className="h-14 w-auto" />
+            </Link>
+            <h1 className="font-display text-4xl md:text-5xl font-extrabold tracking-tight">{title}</h1>
+            <p className="mt-3 text-ink-2 text-base max-w-md">{subtitle}</p>
+            <div className="mt-8 bg-card border border-border rounded-2xl p-6 md:p-8 shadow-card">
+              {children}
+            </div>
+            <div className="mt-6 text-sm text-muted-foreground">{footer}</div>
+          </div>
+          <BrandPanel />
+        </div>
       </div>
-      <div className="mt-6 text-center text-sm text-muted-foreground">{footer}</div>
     </div>
   </SiteLayout>
 );
 
-const Field = ({ label, children }: { label: string; children: React.ReactNode }) => (
-  <label className="block">
-    <span className="block text-sm font-semibold mb-1.5">{label}</span>
-    {children}
-  </label>
-);
-
-const Style = () => (
-  <style>{`
-    .input { width: 100%; padding: 0.625rem 0.875rem; background: hsl(var(--background));
-      border: 1px solid hsl(var(--border)); border-radius: var(--radius);
-      font-size: 0.875rem; font-family: inherit; color: hsl(var(--foreground));
-      transition: border-color 0.15s, box-shadow 0.15s; }
-    .input:focus { outline: none; border-color: hsl(var(--primary)); box-shadow: 0 0 0 3px hsl(var(--primary) / 0.15); }
-  `}</style>
+const GoogleGlyph = () => (
+  <svg viewBox="0 0 48 48" className="size-4" aria-hidden="true">
+    <path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.5 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3 0 5.8 1.1 7.9 3l5.7-5.7C34 6 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"/>
+    <path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 16 19 13 24 13c3 0 5.8 1.1 7.9 3l5.7-5.7C34 6.6 29.3 4.6 24 4.6 16.3 4.6 9.7 8.9 6.3 14.7z"/>
+    <path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35 26.7 36 24 36c-5.3 0-9.7-3.4-11.3-8.1l-6.5 5C9.6 39.6 16.3 44 24 44z"/>
+    <path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.1-4.1 5.5l6.2 5.2C41 35 44 30 44 24c0-1.3-.1-2.4-.4-3.5z"/>
+  </svg>
 );
 
 const SocialButtons = () => {
@@ -64,7 +103,6 @@ const SocialButtons = () => {
         return;
       }
       if (result.redirected) return;
-      // Tokens received, session set — App will react via onAuthStateChange.
       window.location.href = "/dashboard";
     } catch (e) {
       toast({ title: "Sign-in failed", description: e instanceof Error ? e.message : "Unknown error", variant: "destructive" });
@@ -73,28 +111,14 @@ const SocialButtons = () => {
   };
 
   return (
-    <div className="space-y-2">
-      <Button
-        type="button"
-        variant="outline"
-        className="w-full"
-        size="lg"
-        onClick={() => handle("google")}
-        disabled={loading !== null}
-      >
-        {loading === "google" ? <Loader2 className="size-4 animate-spin" /> : <span className="font-bold text-base">G</span>}
-        Continue with Google
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+      <Button type="button" variant="outline" size="lg" className="w-full" onClick={() => handle("google")} disabled={loading !== null}>
+        {loading === "google" ? <Loader2 className="size-4 animate-spin" /> : <GoogleGlyph />}
+        Google
       </Button>
-      <Button
-        type="button"
-        variant="outline"
-        className="w-full"
-        size="lg"
-        onClick={() => handle("apple")}
-        disabled={loading !== null}
-      >
-        {loading === "apple" ? <Loader2 className="size-4 animate-spin" /> : <span className="font-bold text-base"></span>}
-        Continue with Apple
+      <Button type="button" variant="outline" size="lg" className="w-full" onClick={() => handle("apple")} disabled={loading !== null}>
+        {loading === "apple" ? <Loader2 className="size-4 animate-spin" /> : <Apple className="size-4" />}
+        Apple
       </Button>
     </div>
   );
@@ -107,7 +131,6 @@ const Divider = () => (
   </div>
 );
 
-// Redirect away from auth pages if already logged in
 const useRedirectIfAuthed = () => {
   const { session, loading } = useAuth();
   const navigate = useNavigate();
@@ -136,33 +159,33 @@ export const Login = () => {
       return;
     }
     toast({ title: "Welcome back" });
-    // onAuthStateChange + useRedirectIfAuthed will route us
   };
 
   return (
     <AuthShell
-      title="Welcome back"
-      subtitle="Log in to manage your business and applications."
+      title="Welcome back, boet."
+      subtitle="Log in to manage your business and pick up where you left off."
       footer={<>Don't have an account? <Link to="/register" className="text-primary font-semibold hover:underline">Register</Link></>}
     >
       <form className="space-y-4" onSubmit={onSubmit}>
-        <Field label="Email">
-          <input type="email" required className="input" placeholder="you@business.co.za" value={email} onChange={(e) => setEmail(e.target.value)} />
-        </Field>
-        <Field label="Password">
-          <input type="password" required className="input" placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} />
-        </Field>
+        <div className="space-y-1.5">
+          <Label htmlFor="login-email">Email</Label>
+          <Input id="login-email" type="email" required placeholder="you@business.co.za" value={email} onChange={(e) => setEmail(e.target.value)} />
+        </div>
+        <div className="space-y-1.5">
+          <Label htmlFor="login-password">Password</Label>
+          <Input id="login-password" type="password" required placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} />
+        </div>
         <div className="flex justify-end">
           <Link to="/forgot-password" className="text-xs text-muted-foreground hover:text-foreground">Forgot password?</Link>
         </div>
         <Button className="w-full" size="lg" disabled={submitting}>
           {submitting ? <Loader2 className="size-4 animate-spin" /> : null}
-          Log In
+          Log in
         </Button>
         <Divider />
         <SocialButtons />
       </form>
-      <Style />
     </AuthShell>
   );
 };
@@ -177,7 +200,6 @@ export const Register = () => {
   const [submitting, setSubmitting] = useState(false);
   const [referralCode, setReferralCode] = useState<string>("");
 
-  // Pick up ?ref=CODE from URL and remember it across the confirm-email round-trip.
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const fromUrl = params.get("ref")?.trim().toUpperCase();
@@ -217,7 +239,6 @@ export const Register = () => {
       return;
     }
 
-    // If we have an active session right away (e.g. auto-confirm), try to claim the referral now.
     if (referralCode && data.session) {
       const { error: refErr } = await supabase.rpc("claim_referral_code", { _code: referralCode });
       if (!refErr) {
@@ -232,25 +253,31 @@ export const Register = () => {
   return (
     <AuthShell
       title="Pull in, boet."
-      subtitle="The graft is waiting. Let's get you set up."
+      subtitle="The graft is waiting — let's get you set up in 60 seconds."
       footer={<>Already have an account? <Link to="/login" className="text-primary font-semibold hover:underline">Log in</Link></>}
     >
       <form className="space-y-4" onSubmit={onSubmit}>
         {referralCode && (
-          <div className="rounded-lg border border-primary/30 bg-primary/5 px-3 py-2 text-xs">
-            <div className="font-bold text-foreground">🎁 Referral applied: <span className="font-mono">{referralCode}</span></div>
-            <div className="text-ink-2 mt-0.5">When you upgrade to Verified Pro, you both get a free month.</div>
+          <div className="rounded-lg border border-primary/30 bg-primary/5 px-3 py-2 text-xs flex items-start gap-2">
+            <Gift className="size-4 text-primary shrink-0 mt-0.5" />
+            <div>
+              <div className="font-bold text-foreground">Referral applied: <span className="font-mono">{referralCode}</span></div>
+              <div className="text-ink-2 mt-0.5">When you upgrade to Verified Pro, you both get a free month.</div>
+            </div>
           </div>
         )}
-        <Field label="What does your Ma call you?">
-          <input required className="input" placeholder="First name + surname (or business name)" value={displayName} onChange={(e) => setDisplayName(e.target.value)} />
-        </Field>
-        <Field label="Email">
-          <input type="email" required className="input" placeholder="you@business.co.za" value={email} onChange={(e) => setEmail(e.target.value)} />
-        </Field>
-        <Field label="Password">
-          <input type="password" required minLength={8} className="input" placeholder="Make it stronger than Ouma's rusks." value={password} onChange={(e) => setPassword(e.target.value)} />
-        </Field>
+        <div className="space-y-1.5">
+          <Label htmlFor="reg-name">What does your Ma call you?</Label>
+          <Input id="reg-name" required placeholder="First name + surname (or business name)" value={displayName} onChange={(e) => setDisplayName(e.target.value)} />
+        </div>
+        <div className="space-y-1.5">
+          <Label htmlFor="reg-email">Email</Label>
+          <Input id="reg-email" type="email" required placeholder="you@business.co.za" value={email} onChange={(e) => setEmail(e.target.value)} />
+        </div>
+        <div className="space-y-1.5">
+          <Label htmlFor="reg-password">Password</Label>
+          <Input id="reg-password" type="password" required minLength={8} placeholder="Make it stronger than Ouma's rusks." value={password} onChange={(e) => setPassword(e.target.value)} />
+        </div>
         <label className="flex items-start gap-2.5 text-xs cursor-pointer select-none">
           <input
             type="checkbox"
@@ -265,12 +292,11 @@ export const Register = () => {
         </label>
         <Button className="w-full" size="lg" disabled={submitting || !agreeTerms}>
           {submitting ? <Loader2 className="size-4 animate-spin" /> : null}
-          Let's Gooi
+          Let's gooi
         </Button>
         <Divider />
         <SocialButtons />
       </form>
-      <Style />
     </AuthShell>
   );
 };
@@ -296,24 +322,24 @@ export const ForgotPassword = () => {
 
   return (
     <AuthShell
-      title="Reset your password"
-      subtitle="We'll send you a link to set a new password."
-      footer={<>Remembered it? <Link to="/login" className="text-primary font-semibold hover:underline">Back to login</Link></>}
+      title="Forgot the password?"
+      subtitle="No stress — pop in your email and we'll send a reset link."
+      footer={<>Remembered it? <Link to="/login" className="text-primary font-semibold hover:underline">Back to log in</Link></>}
     >
       {sent ? (
         <p className="text-sm">Check your inbox at <strong>{email}</strong> for the reset link.</p>
       ) : (
         <form className="space-y-4" onSubmit={onSubmit}>
-          <Field label="Email">
-            <input type="email" required className="input" placeholder="you@business.co.za" value={email} onChange={(e) => setEmail(e.target.value)} />
-          </Field>
+          <div className="space-y-1.5">
+            <Label htmlFor="forgot-email">Email</Label>
+            <Input id="forgot-email" type="email" required placeholder="you@business.co.za" value={email} onChange={(e) => setEmail(e.target.value)} />
+          </div>
           <Button className="w-full" size="lg" disabled={submitting}>
             {submitting ? <Loader2 className="size-4 animate-spin" /> : null}
-            Send Reset Link
+            Send reset link
           </Button>
         </form>
       )}
-      <Style />
     </AuthShell>
   );
 };
@@ -343,19 +369,19 @@ export const ResetPassword = () => {
   return (
     <AuthShell
       title="Set a new password"
-      subtitle="Enter your new password below."
-      footer={<Link to="/login" className="text-primary font-semibold hover:underline">Back to login</Link>}
+      subtitle="Pick something strong — you'll only have to do this once."
+      footer={<Link to="/login" className="text-primary font-semibold hover:underline">Back to log in</Link>}
     >
       <form className="space-y-4" onSubmit={onSubmit}>
-        <Field label="New password">
-          <input type="password" required minLength={8} className="input" placeholder="At least 8 characters" value={password} onChange={(e) => setPassword(e.target.value)} />
-        </Field>
+        <div className="space-y-1.5">
+          <Label htmlFor="reset-password">New password</Label>
+          <Input id="reset-password" type="password" required minLength={8} placeholder="At least 8 characters" value={password} onChange={(e) => setPassword(e.target.value)} />
+        </div>
         <Button className="w-full" size="lg" disabled={submitting}>
           {submitting ? <Loader2 className="size-4 animate-spin" /> : null}
-          Update Password
+          Update password
         </Button>
       </form>
-      <Style />
     </AuthShell>
   );
 };
