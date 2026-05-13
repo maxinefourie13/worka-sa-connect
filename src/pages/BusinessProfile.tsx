@@ -66,7 +66,7 @@ const BusinessProfile = () => {
   // setState which logs a warning and can re-render-loop under StrictMode.
   useEffect(() => {
     if (business) setFollowers(business.followers ?? 0);
-  }, [business?.id, business?.followers]);
+  }, [business]);
 
   if (loading) {
     return (

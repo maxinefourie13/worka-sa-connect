@@ -60,31 +60,32 @@ function currentMonthStart(): Date {
 }
 
 const DEV_OVERRIDE = import.meta.env.DEV && import.meta.env.VITE_TIER_OVERRIDE === "verified_pro";
+const DEV_OVERRIDE_ACCESS: ProviderAccess = {
+  loading: false,
+  tier: "verified_pro",
+  status: "active",
+  trialEndsAt: null,
+  tierExpiresAt: null,
+  hasListingAccess: true,
+  hasVerifiedProAccess: true,
+  isOnTrial: false,
+  isLocked: false,
+  trialDaysLeft: 0,
+  hasKycBusiness: true,
+  isFoundingMember: false,
+  foundingProposalAvailable: false,
+  foundingProposalsResetAt: null,
+};
 
 export function useProviderAccess(): ProviderAccess {
   const { user } = useAuth();
   const [state, setState] = useState<ProviderAccess>(DEFAULT);
 
-  if (DEV_OVERRIDE) {
-    return {
-      loading: false,
-      tier: "verified_pro",
-      status: "active",
-      trialEndsAt: null,
-      tierExpiresAt: null,
-      hasListingAccess: true,
-      hasVerifiedProAccess: true,
-      isOnTrial: false,
-      isLocked: false,
-      trialDaysLeft: 0,
-      hasKycBusiness: true,
-      isFoundingMember: false,
-      foundingProposalAvailable: false,
-      foundingProposalsResetAt: null,
-    };
-  }
-
   useEffect(() => {
+    if (DEV_OVERRIDE) {
+      setState(DEV_OVERRIDE_ACCESS);
+      return;
+    }
     if (!user) { setState({ ...DEFAULT, loading: false }); return; }
     (async () => {
       const [{ data: bal }, { data: foundingFlag }, kycRes] = await Promise.all([
@@ -168,5 +169,5 @@ export function useProviderAccess(): ProviderAccess {
     })();
   }, [user]);
 
-  return state;
+  return DEV_OVERRIDE ? DEV_OVERRIDE_ACCESS : state;
 }

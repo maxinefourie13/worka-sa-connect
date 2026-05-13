@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Pencil, Loader2, Clock, CheckCircle2, XCircle, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -42,7 +42,7 @@ export const QuoteRevisionCard = ({ dealMemoId, currentAmount, isAccepted, onCha
   const [scopeAddition, setScopeAddition] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
-  const refresh = async () => {
+  const refresh = useCallback(async () => {
     setLoading(true);
     const { data } = await (supabase as any)
       .from("quote_revisions")
@@ -51,9 +51,9 @@ export const QuoteRevisionCard = ({ dealMemoId, currentAmount, isAccepted, onCha
       .order("created_at", { ascending: false });
     setRevisions((data as Revision[] | null) ?? []);
     setLoading(false);
-  };
+  }, [dealMemoId]);
 
-  useEffect(() => { void refresh(); }, [dealMemoId]);
+  useEffect(() => { void refresh(); }, [refresh]);
 
   const pending = revisions.find((r) => r.status === "pending");
 

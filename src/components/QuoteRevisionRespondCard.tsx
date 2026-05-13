@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Pencil, CheckCircle2, XCircle, Loader2, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
@@ -28,7 +28,7 @@ export const QuoteRevisionRespondCard = ({ dealMemoId, onResponded }: Props) => 
   const [pending, setPending] = useState<Revision | null>(null);
   const [busy, setBusy] = useState(false);
 
-  const refresh = async () => {
+  const refresh = useCallback(async () => {
     const { data } = await (supabase as any)
       .from("quote_revisions")
       .select("*")
@@ -38,9 +38,9 @@ export const QuoteRevisionRespondCard = ({ dealMemoId, onResponded }: Props) => 
       .limit(1)
       .maybeSingle();
     setPending((data as Revision | null) ?? null);
-  };
+  }, [dealMemoId]);
 
-  useEffect(() => { void refresh(); }, [dealMemoId]);
+  useEffect(() => { void refresh(); }, [refresh]);
 
   if (!pending) return null;
 

@@ -43,13 +43,8 @@ const CategoryLocationPage = () => {
     citySlug?: string;
   }>();
 
-  // Guard: if the top-level slug is reserved (e.g. someone hits /api or /admin)
-  // OR isn't a known category, fall through to the 404 page. This prevents the
-  // root-level SEO route from accidentally swallowing real app paths.
   const isKnownCategory = !!categorySlug && !!categoryFromSlug(categorySlug);
-  if (categorySlug && (isReservedSlug(categorySlug) || !isKnownCategory)) {
-    return <NotFound />;
-  }
+  const isInvalidCategory = !!categorySlug && (isReservedSlug(categorySlug) || !isKnownCategory);
 
   const category = categorySlug ? categoryFromSlug(categorySlug) : undefined;
   const provinceName = provinceSlug ? provinceFromSlug(provinceSlug) : undefined;
@@ -60,7 +55,10 @@ const CategoryLocationPage = () => {
   const [siblingCities, setSiblingCities] = useState<string[]>([]);
 
   useEffect(() => {
-    if (!categorySlug) return;
+    if (!categorySlug || isInvalidCategory) {
+      setLoading(false);
+      return;
+    }
     let cancelled = false;
     setLoading(true);
 
@@ -109,7 +107,7 @@ const CategoryLocationPage = () => {
     return () => {
       cancelled = true;
     };
-  }, [categorySlug, provinceName, cityName, citySlug]);
+  }, [categorySlug, provinceName, cityName, citySlug, isInvalidCategory]);
 
   const categoryName = category?.name ?? (categorySlug ? titleFromSlug(categorySlug) : "Services");
   // Search-friendly noun (e.g. "Plumber" instead of "Plumbing") for headings + meta.
@@ -183,6 +181,13 @@ const CategoryLocationPage = () => {
         : []),
     ],
   };
+
+  // Guard: if the top-level slug is reserved (e.g. someone hits /api or /admin)
+  // OR isn't a known category, fall through to the 404 page. This prevents the
+  // root-level SEO route from accidentally swallowing real app paths.
+  if (isInvalidCategory) {
+    return <NotFound />;
+  }
 
   return (
     <SiteLayout>
