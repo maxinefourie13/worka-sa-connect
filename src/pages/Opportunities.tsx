@@ -64,6 +64,15 @@ const Opportunities = () => {
 
   return (
     <SiteLayout>
+      <SeoHead
+        title={isProView ? "Find leads near you on Sjoh" : "Post a job on Sjoh — get real quotes"}
+        description={
+          isProView
+            ? "Browse fresh customer jobs across South Africa. Filter by category, province, and urgency — quote directly, no commission."
+            : "Tell us what you need and get quotes from vetted South African pros. Posting is always free."
+        }
+        canonical={`https://sjoh.co.za${isProView ? "/leads" : "/requests"}`}
+      />
       <div className="container py-12">
         <header className="mb-8 max-w-2xl">
           <span className="text-xs font-bold uppercase tracking-widest text-primary">
