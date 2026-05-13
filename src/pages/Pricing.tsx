@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { Check, Siren, Sparkles, Zap } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
+import { SeoHead } from "@/components/SeoHead";
 import { Button } from "@/components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { SJOH_TIERS, formatRand } from "@/lib/mockData";
