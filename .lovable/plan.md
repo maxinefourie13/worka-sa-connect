@@ -1,56 +1,39 @@
 ## Goal
 
-Adopt the new uploaded brand assets — the black "sjoh!" wordmark with periwinkle accents, plus the peace-sign + S monogram — as the official Sjoh logo and app icon. Replace the current `sjoh-logo.png`, the favicon, and the inline text-based "Sjoh." wordmarks so the brand reads consistently everywhere.
+Bring the auth pages (Login, Register, Forgot Password, Reset Password) in line with the rest of Sjoh — bold Plus Jakarta extrabold headings, periwinkle accents, proper Sjoh voice, and an inviting layout instead of the current plain centered form.
 
-## Asset selection
+## What changes
 
-From the four uploads:
+**Layout (`AuthShell`)**
+- Replace the narrow centered single-column with a two-column split on desktop (form left, brand panel right). On mobile it stacks, form first.
+- Right panel: periwinkle gradient background with the Sjoh wordmark, a punchy SA-flavoured tagline, and 3 trust bullets ("No commission", "Vetted SA pros", "Direct contact — no middleman") with Lucide icons. Adds the same warmth the home page has.
+- Soft background: subtle periwinkle radial wash behind the form card so the page doesn't feel sterile.
 
-- **Untitled_Project-6.png** — black "sjoh!" wordmark, light-periwinkle dot on the i, periwinkle exclamation. → Primary logo (header, footer, emails, OG).
-- **Untitled_Project-9.png** — same wordmark in light periwinkle on white. → Reverse / on-dark variant (e.g. anywhere `sjoh-logo-white.png` is used today).
-- **Untitled_Project-8.png** — peace-hand + S monogram, two-tone periwinkle. → Favicon, app icon, square avatar, social profile mark.
-- **Untitled_Project-7.png** — just the dot + exclamation glyphs. → Skip for now (decorative only; can be reused later as a flourish).
-- **Untitled_Project-5.png** is essentially the same as -6 with slightly different proportions; we use -6 as the canonical wordmark.
+**Typography**
+- Headings switch from `font-medium` to `font-extrabold tracking-tight` (matches the Core rule for `font-display`).
+- Bigger H1 (text-4xl) so it carries the page like the rest of the site.
 
-## File operations
+**Form card**
+- Keep the rounded card but lift it: stronger shadow, slightly larger padding, periwinkle focus ring on inputs (already partially there).
+- Replace the inline `<style>` block + raw `<input className="input">` with shadcn `Input` and `Label` components for consistency with the rest of the app.
+- Social buttons: keep Google + Apple, but use the proper brand glyphs (inline SVG for Google "G" colour mark, Lucide `Apple` icon) instead of a plain bold "G" letter and an empty Apple button.
 
-Copy the uploads into the project under stable names so existing imports keep working:
+**Voice & copy**
+- Login subtitle: "Welcome back, boet. Let's get you back to the graft."
+- Register already has good voice — keep "Pull in, boet." but tighten the subtitle.
+- Forgot/Reset: keep functional but add Sjoh warmth ("No stress — we'll sort it.").
+- Per memory: no emojis. The current `🎁` on the referral pill becomes a Lucide `Gift` icon.
 
-```text
-user-uploads://Untitled_Project-6.png  →  src/assets/sjoh-logo.png            (overwrite)
-user-uploads://Untitled_Project-9.png  →  src/assets/sjoh-logo-white.png      (overwrite — reverse variant)
-user-uploads://Untitled_Project-8.png  →  src/assets/sjoh-icon.png            (new — monogram)
-user-uploads://Untitled_Project-8.png  →  public/favicon.png                  (new — browser tab icon)
-user-uploads://Untitled_Project-8.png  →  public/apple-touch-icon.png         (new — iOS home screen)
-```
+**Misc**
+- Logo at the top: keep but slightly smaller (h-16) since the right brand panel carries the brand on desktop.
+- Replace the empty Apple span with the actual Apple icon import.
 
-Delete `public/favicon.ico` so browsers stop falling back to the old icon.
+## Out of scope
 
-## Code changes
-
-1. **`index.html`** — swap favicon link from `/favicon.ico` to `/favicon.png`, add `apple-touch-icon` link, and replace the OG/Twitter image URL with the new monogram (uploaded once to a public location via the asset path `/favicon.png` works as a same-origin OG image too — but we'll point OG at a hosted version of the wordmark for richer previews; keeping the existing OG URL is fine if we want to defer that).
-2. **`src/components/SiteHeader.tsx`** — no code change needed; it already imports `sjoh-logo.png`. The new file picks up automatically. Verify `h-7 md:h-8` still looks balanced with the new aspect ratio (the wordmark includes the "!" so it's slightly wider than before).
-3. **`src/components/SiteFooter.tsx`** — replace the inline `Sjoh<span className="text-primary">.</span>` text with an `<img src={sjohLogo} …>` so the footer matches the header. Use `h-6` for footer scale.
-4. **`src/pages/Auth.tsx`** — same swap as the footer: replace the text wordmark with the logo image so the login/signup screen carries the real brand mark.
-5. **Mascot / brand mark spots** — anywhere using `sjoh-mascot*.png` stays as-is (the mascot is a separate character, not the logo). Only the wordmark and favicon change.
-
-No CSS / token changes — periwinkle palette already lives in `src/index.css` and matches the new artwork.
-
-## QA after build
-
-- `/` desktop + 729px viewport: header logo crisp, not clipped, "!" visible.
-- `/login`: wordmark renders, sized similarly to before.
-- Footer: wordmark replaces the old "Sjoh." text, aligned with the tagline.
-- Browser tab on `/`: new periwinkle peace-S favicon shows (hard-refresh to bust cache).
-- iOS "Add to Home Screen": apple-touch-icon picks up the monogram.
-- `rg -n "Sjoh<span"` returns no results after the sweep.
+- No auth logic changes (signIn/signUp/OAuth flows untouched).
+- No new routes, no new dependencies.
+- Email templates and post-auth pages unchanged.
 
 ## Files touched
 
-- `public/favicon.png` (new), `public/apple-touch-icon.png` (new), `public/favicon.ico` (delete)
-- `src/assets/sjoh-logo.png` (overwrite), `src/assets/sjoh-logo-white.png` (overwrite), `src/assets/sjoh-icon.png` (new)
-- `index.html` — favicon + apple-touch-icon links
-- `src/components/SiteFooter.tsx` — text wordmark → image
-- `src/pages/Auth.tsx` — text wordmark → image
-
-No DB, RLS, or edge function changes. Pure brand asset swap.
+- `src/pages/Auth.tsx` — only file edited.
