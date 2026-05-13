@@ -150,6 +150,32 @@ const HomePage = () => {
 
   return (
     <SiteLayout>
+      <SeoHead
+        title="Sjoh — Find someone who can do it properly"
+        description="South Africa's no-commission directory of vetted service providers. Plumbers, sparkies, designers, tutors and more — find someone who actually shows up."
+        canonical="https://sjoh.co.za/"
+        jsonLd={[
+          {
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            name: "Sjoh",
+            url: "https://sjoh.co.za/",
+            potentialAction: {
+              "@type": "SearchAction",
+              target: "https://sjoh.co.za/directory?q={search_term_string}",
+              "query-input": "required name=search_term_string",
+            },
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            name: "Sjoh",
+            url: "https://sjoh.co.za/",
+            description: "South African directory of vetted service providers. No commission, direct contact.",
+            areaServed: "ZA",
+          },
+        ]}
+      />
       {/* ========== HERO ========== */}
       <section
         className="relative overflow-hidden border-b border-white/10 bg-[#050505]"
