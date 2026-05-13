@@ -2,6 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Search, Star, ArrowRight, ShieldCheck, Zap, CheckCircle2, UsersRound } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
+import { SeoHead } from "@/components/SeoHead";
 import { Button } from "@/components/ui/button";
 import { FlameButton } from "@/components/ui/flame-button";
 import { JobCard } from "@/components/JobCard";
