@@ -392,60 +392,49 @@ const HomePage = () => {
       </section>
 
       {/* ========== HOMEPAGE EXPLAINER VIDEO ========== */}
-      <section className="bg-[#101010] py-20">
-        <div className="container grid gap-10 lg:grid-cols-[0.82fr_1.18fr] lg:items-center">
-          <div>
-            <div className="text-[11px] font-bold tracking-[0.1em] uppercase mb-4 text-sa-pink">
-              ● One job. Two wins.
+      <section className="bg-[#050505]">
+        <div className="px-5 py-10 md:px-10 lg:px-14 xl:px-20">
+          <div className="grid gap-6 md:grid-cols-[0.9fr_1.1fr] md:items-end">
+            <div>
+              <div className="mb-4 text-[11px] font-bold uppercase tracking-[0.16em] text-sa-gold">
+                ● For service providers
+              </div>
+              <h2 className="font-display-bold text-4xl leading-[1.02] text-white md:text-6xl">
+                Why should I sign up for Sjoh?
+              </h2>
             </div>
-            <h2 className="font-display-bold text-white text-4xl md:text-5xl leading-[1.03]">
-              See how Sjoh works in 45 seconds.
-            </h2>
-            <p className="mt-4 max-w-md text-white/76">
-              Customers find the right pro fast. Local businesses get real enquiries, accepted quotes, and 0% commission. Same marketplace, both sides sorted.
-            </p>
-            <div className="mt-6 flex flex-wrap gap-2">
-              {["Find a pro", "Get quotes", "Compare reviews", "Keep the quote"].map((item, index) => (
-                <span
-                  key={item}
-                  className="rounded-full border border-white/14 bg-white/[0.07] px-3.5 py-2 text-xs font-black uppercase tracking-widest text-white/72"
-                >
-                  <span
-                    className="mr-2 inline-block size-2 rotate-45 rounded-[2px]"
-                    style={{
-                      background:
-                        index === 0 ? "var(--sa-gold)" :
-                        index === 1 ? "var(--sa-peri)" :
-                        index === 2 ? "var(--sa-pink)" :
-                        "var(--sa-green)",
-                    }}
-                  />
-                  {item}
-                </span>
-              ))}
+            <div className="max-w-xl text-base leading-relaxed text-white/68 md:text-lg">
+              See how Sjoh helps local businesses get found, quote real enquiries, build trust, and keep the whole quote.
+              <div className="mt-5 flex flex-wrap gap-2">
+                {["Real enquiries", "Accepted quotes", "Good reviews", "0% commission"].map((item) => (
+                  <span key={item} className="rounded-full border border-white/14 bg-white/[0.07] px-3.5 py-2 text-xs font-black uppercase tracking-widest text-white/72">
+                    {item}
+                  </span>
+                ))}
+              </div>
             </div>
           </div>
-          <div className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.04] p-2 shadow-[0_30px_100px_rgba(0,0,0,0.35)]">
-            <div className="absolute inset-x-0 top-0 z-[1] h-1 bg-[linear-gradient(90deg,var(--sa-gold),var(--sa-red),var(--sa-green),var(--sa-peri),var(--sa-pink))]" />
-            <video
-              className="aspect-video w-full rounded-[1.55rem] object-cover"
-              src="/videos/sjoh-homepage-explainer.mp4"
-              autoPlay
-              muted
-              loop
-              playsInline
-              controls
-              poster="/videos/sjoh-homepage-explainer-poster.jpg"
-            >
-              Your browser does not support the video tag.
-            </video>
-            <div className="pointer-events-none absolute bottom-5 left-5 right-5 flex items-center justify-between gap-3">
-              <div className="rounded-full border border-white/16 bg-black/48 px-4 py-2 text-xs font-black uppercase tracking-widest text-white/78 backdrop-blur-md">
-                Homepage explainer
-              </div>
-              <div className="hidden rounded-full bg-sa-gold px-4 py-2 text-xs font-black uppercase tracking-widest text-sa-dark md:block">
-                0% commission
-              </div>
+        </div>
+        <div className="relative overflow-hidden border-y border-white/10 bg-[#050505]">
+          <div className="absolute inset-x-0 top-0 z-[1] h-1 bg-[linear-gradient(90deg,var(--sa-gold),var(--sa-red),var(--sa-green),var(--sa-peri),var(--sa-pink))]" />
+          <video
+            className="block aspect-video w-full object-cover"
+            src="/videos/sjoh-homepage-explainer.mp4"
+            autoPlay
+            muted
+            loop
+            playsInline
+            controls
+            poster="/videos/sjoh-homepage-explainer-poster.jpg"
+          >
+            Your browser does not support the video tag.
+          </video>
+          <div className="pointer-events-none absolute bottom-5 left-5 right-5 flex items-center justify-between gap-3 md:left-10 md:right-10">
+            <div className="rounded-full border border-white/16 bg-black/48 px-4 py-2 text-xs font-black uppercase tracking-widest text-white/78 backdrop-blur-md">
+              Business explainer
+            </div>
+            <div className="hidden rounded-full bg-sa-gold px-4 py-2 text-xs font-black uppercase tracking-widest text-sa-dark md:block">
+              Keep the whole quote
             </div>
           </div>
         </div>
