@@ -1,0 +1,21 @@
+# Sjoh
+
+> South Africa's no-commission directory of vetted service providers. Find someone who can do it properly — plumbers, electricians, designers, tutors and more, across all 9 provinces.
+
+Sjoh connects South African customers directly with verified local pros. Customers post jobs free; pros pay a flat monthly subscription with 0% commission. Direct contact, no middleman, no bidding wars.
+
+## Pages
+
+- [Home](/): What Sjoh is and how it works.
+- [Directory](/directory): Browse vetted South African service providers by category and province.
+- [Post a job](/requests): Customers post a job and receive direct quotes.
+- [Leads](/leads): Pros browse open jobs and quote directly.
+- [Pricing](/pricing): R250/month Verified Pro, 30-day free trial, 0% commission, FAQ.
+- [List your business](/list): How pros sign up and get verified.
+- [Terms](/terms): Terms of service.
+- [Privacy](/privacy): POPIA-compliant privacy policy.
+
+## Optional
+
+- [Login](/login)
+- [Register](/register)

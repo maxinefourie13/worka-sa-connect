@@ -87,7 +87,7 @@ const EarlyAccessLanding = () => {
   return (
     <div className="min-h-dvh w-full overflow-hidden bg-[#050505] text-white">
       <SeoHead
-        title="Sjoh — Claim your founding spot | Find someone who can do it properly"
+        title="Sjoh — Claim your founding spot"
         description="Join Sjoh as a founding member. South Africa's no-commission directory of vetted pros. First 500 get a Founder badge + extra month free. No card needed."
       />
 
