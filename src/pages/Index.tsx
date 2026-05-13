@@ -16,7 +16,6 @@ import { cn } from "@/lib/utils";
 import heroGroup1 from "@/assets/hero-group-1.jpg";
 import heroGroup2 from "@/assets/hero-group-2.jpg";
 import heroGroup3 from "@/assets/hero-group-3.jpg";
-import solarInstaller from "@/assets/solar-installer.jpg";
 
 const HERO_PHRASES = [
   "Sjoh! Your husband's DIY is a crime scene. Hire an actual professional.",
@@ -57,12 +56,6 @@ const HERO_SERVICE_CARDS = [
   { title: "Electrical COC", meta: "Pretoria · quote requested", color: "var(--sa-gold)" },
   { title: "Website refresh", meta: "Remote · budget shared", color: "var(--sa-peri)" },
   { title: "Garden service", meta: "Durban · this week", color: "var(--sa-green)" },
-];
-
-const MESSAGE_THREAD = [
-  { who: "Customer", text: "Thank you, the photos came out beautifully. I found you so quickly on Sjoh." },
-  { who: "Pro", text: "Ah, I’m so glad. It helps when the job brief is already clear before we chat." },
-  { who: "Customer", text: "Five stars. I’m sending your profile to my cousin for her event too." },
 ];
 
 type CountingStatProps = {
@@ -398,40 +391,60 @@ const HomePage = () => {
           </div>
       </section>
 
-      {/* ========== TRUST MESSAGES ========== */}
+      {/* ========== HOMEPAGE EXPLAINER VIDEO ========== */}
       <section className="bg-[#101010] py-20">
-        <div className="container grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
+        <div className="container grid gap-10 lg:grid-cols-[0.82fr_1.18fr] lg:items-center">
           <div>
             <div className="text-[11px] font-bold tracking-[0.1em] uppercase mb-4 text-sa-pink">
-              ● After the job
+              ● One job. Two wins.
             </div>
             <h2 className="font-display-bold text-white text-4xl md:text-5xl leading-[1.03]">
-              Good work makes the next search easier.
+              See how Sjoh works in 45 seconds.
             </h2>
             <p className="mt-4 max-w-md text-white/76">
-              Sjoh gives customers confidence before they hire, and gives business owners enquiries from people already looking for their skill.
+              Customers find the right pro fast. Local businesses get real enquiries, accepted quotes, and 0% commission. Same marketplace, both sides sorted.
             </p>
-          </div>
-          <div className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.06] p-4 md:p-6">
-            <img src={solarInstaller} alt="South African service provider at work" className="absolute inset-0 h-full w-full object-cover opacity-30" />
-            <div className="absolute inset-0 bg-black/50" />
-            <div className="relative z-[1] ml-auto max-w-xl space-y-3">
-              {MESSAGE_THREAD.map((msg, i) => (
-                <div
-                  key={`${msg.who}-${msg.text}`}
-                  className={`max-w-[86%] rounded-[1.35rem] border p-4 text-sm shadow-xl backdrop-blur-xl ${
-                    i % 2 === 0
-                      ? "mr-auto border-white/15 bg-white/90 text-sa-dark"
-                      : "ml-auto border-sa-gold/40 bg-sa-gold/95 text-sa-dark"
-                  }`}
+            <div className="mt-6 flex flex-wrap gap-2">
+              {["Find a pro", "Get quotes", "Compare reviews", "Keep the quote"].map((item, index) => (
+                <span
+                  key={item}
+                  className="rounded-full border border-white/14 bg-white/[0.07] px-3.5 py-2 text-xs font-black uppercase tracking-widest text-white/72"
                 >
-                  <div className="mb-1 text-[10px] font-black uppercase tracking-widest opacity-55">{msg.who}</div>
-                  <p className="font-semibold leading-relaxed">{msg.text}</p>
-                </div>
+                  <span
+                    className="mr-2 inline-block size-2 rotate-45 rounded-[2px]"
+                    style={{
+                      background:
+                        index === 0 ? "var(--sa-gold)" :
+                        index === 1 ? "var(--sa-peri)" :
+                        index === 2 ? "var(--sa-pink)" :
+                        "var(--sa-green)",
+                    }}
+                  />
+                  {item}
+                </span>
               ))}
-              <div className="ml-auto flex w-fit items-center gap-2 rounded-full border border-white/15 bg-black/45 px-4 py-2 text-xs font-bold text-white">
-                <CheckCircle2 className="size-4 text-sa-green" />
-                Real feedback after a completed job
+            </div>
+          </div>
+          <div className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.04] p-2 shadow-[0_30px_100px_rgba(0,0,0,0.35)]">
+            <div className="absolute inset-x-0 top-0 z-[1] h-1 bg-[linear-gradient(90deg,var(--sa-gold),var(--sa-red),var(--sa-green),var(--sa-peri),var(--sa-pink))]" />
+            <video
+              className="aspect-video w-full rounded-[1.55rem] object-cover"
+              src="/videos/sjoh-homepage-explainer.mp4"
+              autoPlay
+              muted
+              loop
+              playsInline
+              controls
+              poster="/videos/sjoh-homepage-explainer-poster.jpg"
+            >
+              Your browser does not support the video tag.
+            </video>
+            <div className="pointer-events-none absolute bottom-5 left-5 right-5 flex items-center justify-between gap-3">
+              <div className="rounded-full border border-white/16 bg-black/48 px-4 py-2 text-xs font-black uppercase tracking-widest text-white/78 backdrop-blur-md">
+                Homepage explainer
+              </div>
+              <div className="hidden rounded-full bg-sa-gold px-4 py-2 text-xs font-black uppercase tracking-widest text-sa-dark md:block">
+                0% commission
               </div>
             </div>
           </div>
