@@ -58,6 +58,20 @@ const Pricing = () => {
 
   return (
     <SiteLayout>
+      <SeoHead
+        title="Sjoh pricing — 0% commission, R250/month for pros"
+        description="Verified Pro is R250/month with a 30-day free trial. Customers post jobs free. No commission, no bidding wars — just direct work."
+        canonical="https://sjoh.co.za/pricing"
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          mainEntity: FAQS.map((f) => ({
+            "@type": "Question",
+            name: f.q,
+            acceptedAnswer: { "@type": "Answer", text: f.a },
+          })),
+        }}
+      />
       <div className="bg-[#050505] text-white">
       <div className="container py-16 md:py-20">
 
