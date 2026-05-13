@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { Search, SlidersHorizontal, ChevronDown } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
+import { SeoHead } from "@/components/SeoHead";
 import { BusinessCard } from "@/components/BusinessCard";
 import { CATEGORIES, CATEGORY_GROUPS, PROVINCES } from "@/lib/mockData";
 import { useBusinesses } from "@/hooks/useDirectory";
