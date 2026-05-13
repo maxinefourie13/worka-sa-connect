@@ -1,6 +1,6 @@
 import * as React from 'npm:react@18.3.1'
 import {
-  Body, Container, Head, Heading, Hr, Html, Preview, Section, Text,
+  Body, Button, Container, Head, Heading, Hr, Html, Preview, Section, Text,
 } from 'npm:@react-email/components@0.0.22'
 import type { TemplateEntry } from './registry.ts'
 
@@ -23,6 +23,7 @@ interface Props {
   total?: number
   vatIncluded?: boolean
   notes?: string | null
+  invoiceUrl?: string
 }
 
 const formatRand = (amount = 0) =>
@@ -42,6 +43,7 @@ const InvoiceSentEmail = ({
   total = 0,
   vatIncluded = false,
   notes,
+  invoiceUrl = SITE_URL,
 }: Props) => (
   <Html lang="en" dir="ltr">
     <Head />
@@ -80,6 +82,17 @@ const InvoiceSentEmail = ({
             })}
           </Text>
         </Section>
+
+        <Section style={ctaSection}>
+          <Button href={invoiceUrl} style={cta}>
+            View / Download Invoice
+          </Button>
+        </Section>
+
+        <Text style={smallText}>
+          Or paste this secure link into your browser:<br />
+          <a href={invoiceUrl} style={link}>{invoiceUrl}</a>
+        </Text>
 
         <Section style={table}>
           <Text style={tableHeading}>Invoice details</Text>
@@ -152,6 +165,7 @@ export const template = {
     total: 3277.5,
     vatIncluded: true,
     notes: 'Payment due within 7 days. Thank you.',
+    invoiceUrl: 'https://sjoh.co.za/invoice/example-token',
   },
 } satisfies TemplateEntry
 
@@ -190,6 +204,18 @@ const summaryCard = { backgroundColor: '#0F1117', borderRadius: '22px', padding:
 const label = { fontSize: '10px', fontWeight: 900, letterSpacing: '0.18em', textTransform: 'uppercase' as const, color: '#6B6F7E', margin: '0 0 8px' }
 const totalText = { fontSize: '38px', fontWeight: 900, color: '#F5A623', margin: 0 }
 const muted = { fontSize: '13px', color: '#6B6F7E', lineHeight: 1.45, margin: 0 }
+const ctaSection = { textAlign: 'center' as const, margin: '4px 0 14px' }
+const cta = {
+  backgroundColor: '#F5A623',
+  color: '#0F1117',
+  fontWeight: 900,
+  fontSize: '15px',
+  padding: '14px 28px',
+  borderRadius: '999px',
+  textDecoration: 'none',
+  display: 'inline-block',
+}
+const smallText = { fontSize: '12px', color: '#6B6F7E', lineHeight: 1.5, margin: '0 0 20px', textAlign: 'center' as const }
 const table = { border: '1px solid #E4E6ED', borderRadius: '18px', padding: '18px', margin: '0 0 18px' }
 const tableHeading = { fontSize: '15px', fontWeight: 900, color: '#0F1117', margin: '0 0 12px' }
 const row = { padding: '10px 0', borderTop: '1px solid #F0F1F5' }

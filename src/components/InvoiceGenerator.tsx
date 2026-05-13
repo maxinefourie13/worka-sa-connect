@@ -119,6 +119,12 @@ export const InvoiceGenerator = ({
   const removeItem = (idx: number) =>
     setItems((prev) => (prev.length > 1 ? prev.filter((_, i) => i !== idx) : prev));
 
+  const makeAccessToken = () => {
+    const bytes = new Uint8Array(24);
+    crypto.getRandomValues(bytes);
+    return Array.from(bytes, (byte) => byte.toString(16).padStart(2, "0")).join("");
+  };
+
   const buildAndSave = async (): Promise<{ invoiceId: string | null; invoiceNumber: string; pdfBlob: Blob } | null> => {
     if (!business) {
       toast({ title: "Loading your business details…", variant: "destructive" });
@@ -194,6 +200,45 @@ export const InvoiceGenerator = ({
     return { invoiceId, invoiceNumber, pdfBlob };
   };
 
+  const uploadInvoicePdf = async (
+    invoiceId: string,
+    invoiceNumber: string,
+    pdfBlob: Blob,
+  ): Promise<{ token: string; invoiceUrl: string } | null> => {
+    const token = makeAccessToken();
+    const expires = new Date(Date.now() + 1000 * 60 * 60 * 24 * 90).toISOString();
+    const pdfPath = `${proUserId}/${invoiceId}/${invoiceNumber}.pdf`;
+
+    const { error: uploadError } = await supabase.storage
+      .from("invoice-pdfs")
+      .upload(pdfPath, pdfBlob, {
+        contentType: "application/pdf",
+        upsert: true,
+      });
+
+    if (uploadError) {
+      toast({ title: "Couldn't upload invoice PDF", description: uploadError.message, variant: "destructive" });
+      return null;
+    }
+
+    const { error: updateError } = await (supabase as any).from("invoices").update({
+      pdf_path: pdfPath,
+      access_token: token,
+      access_token_expires_at: expires,
+      email_error: null,
+    }).eq("id", invoiceId);
+
+    if (updateError) {
+      toast({ title: "Couldn't secure invoice link", description: updateError.message, variant: "destructive" });
+      return null;
+    }
+
+    return {
+      token,
+      invoiceUrl: `${window.location.origin}/invoice/${token}`,
+    };
+  };
+
   const handleDownload = async () => {
     const result = await buildAndSave();
     if (!result) return;
@@ -215,8 +260,18 @@ export const InvoiceGenerator = ({
       toast({ title: "No customer email", description: "Download a copy instead — there isn't an email address on this job.", variant: "destructive" });
       return;
     }
+    if (!result.invoiceId) {
+      toast({ title: "Invoice not ready", description: "Please try again in a moment.", variant: "destructive" });
+      return;
+    }
 
     setBusy(true);
+    const secureInvoice = await uploadInvoicePdf(result.invoiceId, result.invoiceNumber, result.pdfBlob);
+    if (!secureInvoice) {
+      setBusy(false);
+      return;
+    }
+
     const { data, error } = await supabase.functions.invoke("send-transactional-email", {
       body: {
         templateName: "invoice-sent",
@@ -233,6 +288,7 @@ export const InvoiceGenerator = ({
           total: totals.total,
           vatIncluded,
           notes,
+          invoiceUrl: secureInvoice.invoiceUrl,
         },
       },
     });
