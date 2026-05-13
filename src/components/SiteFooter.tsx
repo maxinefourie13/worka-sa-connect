@@ -6,7 +6,7 @@ const cols = [
     links: [
       { to: "/directory", label: "Browse Directory" },
       { to: "/requests", label: "Post a Job" },
-      { to: "/leads", label: "Send Quotes (find work)" },
+      { to: "/leads", label: "Opportunities (find work)" },
       { to: "/pricing", label: "0% Commission" },
       { to: "/list", label: "List Your Business" },
     ],

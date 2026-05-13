@@ -126,7 +126,7 @@ export const ProposalModal = ({ open, jobId, jobTitle, jobBudget, clientName, on
     setSubmitting(false);
     toast({
       title: "Quote sent!",
-      description: "The client will see your pitch and reach out directly. No middleman, no commission.",
+      description: "The customer can compare it in Sjoh. If they accept, contact details unlock and the job moves into your dashboard.",
     });
     onSubmitted?.();
   };
@@ -170,7 +170,7 @@ export const ProposalModal = ({ open, jobId, jobTitle, jobBudget, clientName, on
           </div>
           <h2 className="font-display text-xl md:text-2xl font-semibold tracking-tight pr-8">{jobTitle}</h2>
           <p className="text-xs text-muted-foreground mt-2">
-            Quotes are <strong className="text-foreground">free & unlimited</strong> on Verified Pro. Client contacts you directly — no commission.
+            Quotes are <strong className="text-foreground">free & unlimited</strong> on Verified Pro. Contact details unlock after the customer accepts — no commission.
             {clientName && <> · For <strong>{clientName}</strong></>}
           </p>
         </div>
@@ -238,13 +238,13 @@ export const ProposalModal = ({ open, jobId, jobTitle, jobBudget, clientName, on
               {/* Pitch / scope */}
               <div>
                 <label className="text-xs font-bold uppercase tracking-widest text-ink-2 block mb-2">
-                  Your pitch <span className="text-accent">*</span>
+                  Scope and message <span className="text-accent">*</span>
                 </label>
                 <textarea
                   value={scope}
                   onChange={(e) => setScope(e.target.value)}
                   rows={5}
-                  placeholder="What's included, why you're the right oke, any relevant past work. Min 20 characters."
+                  placeholder="What's included, when you can start, and anything the customer should know before accepting. Min 20 characters."
                   className="w-full px-3 py-2.5 bg-background border border-border rounded-lg text-sm outline-none focus:border-primary resize-none"
                 />
                 <p className="text-[11px] text-muted-foreground mt-1 tabular-nums">
@@ -415,7 +415,7 @@ const SuccessState = ({
     </div>
     <h3 className="font-display text-2xl font-semibold tracking-tight">Quote sent!</h3>
     <p className="text-sm text-ink-2 mt-2 max-w-sm mx-auto">
-      Your pitch is in. The client will see it and reach out directly. No middleman, no commission.
+      Your quote is in. The customer can compare it in Sjoh, and if they accept, contact details unlock so you can get the work booked.
     </p>
 
     {isVerifiedPro ? (

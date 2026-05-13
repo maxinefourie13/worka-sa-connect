@@ -10,14 +10,14 @@ import { useAuth } from "@/hooks/useAuth";
 import { toast } from "@/hooks/use-toast";
 import { compressIfImage } from "@/lib/compressImage";
 
-const STEPS = ["Basics", "Profile", "Choose Plan", "Review", "Done"] as const;
+const STEPS = ["Basics", "Profile", "Founding Perks", "Review", "Done"] as const;
 
 const PLANS = [
   {
     id: "verified_pro",
     name: "Verified Pro",
     price: "R250/mo",
-    desc: "Send quotes on customer requests, get the Verified badge, top placement, and full directory listing.",
+    desc: "Send quotes on customer job requests, build verified reviews, get stronger placement, and keep the whole quote.",
     recommended: true,
   },
 ];
@@ -204,8 +204,8 @@ const ListBusiness = () => {
           {step === 0 && (
             <div className="space-y-5">
               <div>
-                <h2 className="font-display text-2xl font-semibold">Business basics</h2>
-                <p className="text-sm text-ink-2 mt-1">Tell us who you are and how to reach you.</p>
+                <h2 className="font-display text-2xl font-semibold">Start your business profile</h2>
+                <p className="text-sm text-ink-2 mt-1">This creates the profile customers will see when you send quotes. Keep it simple now — you can polish it later.</p>
               </div>
               <Field label="Business name">
                 <input
@@ -290,8 +290,8 @@ const ListBusiness = () => {
           {step === 1 && (
             <div className="space-y-5">
               <div>
-                <h2 className="font-display text-2xl font-semibold">Profile details</h2>
-                <p className="text-sm text-ink-2 mt-1">Show people what you do. You can polish this later from your dashboard.</p>
+                <h2 className="font-display text-2xl font-semibold">Make customers trust the quote</h2>
+                <p className="text-sm text-ink-2 mt-1">Add enough detail so when your quote lands, the customer knows who you are and why you are worth choosing.</p>
               </div>
               <Field label="Description">
                 <textarea
@@ -368,8 +368,8 @@ const ListBusiness = () => {
           {step === 2 && (
             <div className="space-y-5">
               <div>
-                <h2 className="font-display text-2xl font-semibold">Choose your plan</h2>
-                <p className="text-sm text-ink-2 mt-1">You can upgrade or downgrade anytime.</p>
+                <h2 className="font-display text-2xl font-semibold">Founding-member perks</h2>
+                <p className="text-sm text-ink-2 mt-1">Get in early while Sjoh fills the marketplace. You can quote, build reviews, and lock in 0% commission.</p>
               </div>
               <div className="space-y-3">
                 {PLANS.map((p) => (
@@ -423,7 +423,7 @@ const ListBusiness = () => {
                     {PLANS.find((p) => p.id === plan)?.name ?? "—"}
                   </p>
                   <p className="text-xs text-muted-foreground mt-1">
-                    R250/month after your free trial. Send quotes on customer requests + Verified badge.
+                    R250/month after your free trial. Send quotes on customer job requests, generate invoices, and collect verified reviews.
                   </p>
                 </div>
               </div>
@@ -459,13 +459,13 @@ const ListBusiness = () => {
               <div className="size-16 rounded-full bg-sa-green/10 text-sa-green mx-auto flex items-center justify-center mb-6">
                 <CheckCircle2 className="size-8" />
               </div>
-              <h2 className="font-display text-3xl font-medium tracking-tight">You're on the founding-member list.</h2>
+              <h2 className="font-display text-3xl font-medium tracking-tight">Your business profile is saved.</h2>
               <p className="mt-3 text-ink-2 max-w-md mx-auto">
-                Sharp! Your listing is saved in workshop mode. Polish it from your dashboard now, or wait for the Sjoh team to reach out within 24 hours to switch it live and lock in your founding-member perks.
+                Sharp! Next, polish your profile from the dashboard or browse opportunities to see what customers are asking for. We'll verify your details before switching the listing live.
               </p>
               <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
                 <Button onClick={() => navigate("/dashboard")}>Go to Dashboard</Button>
-                <Button variant="outline" onClick={() => navigate("/directory")}>Browse the Directory</Button>
+                <Button variant="outline" onClick={() => navigate("/leads")}>Browse Opportunities</Button>
               </div>
             </div>
           )}

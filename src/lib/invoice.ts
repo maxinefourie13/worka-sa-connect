@@ -55,6 +55,47 @@ const fmtZAR = (n: number) =>
 const fmtDate = (d: Date) =>
   d.toLocaleDateString("en-ZA", { day: "2-digit", month: "short", year: "numeric" });
 
+const COLORS = {
+  ink: [15, 17, 23] as const,
+  softInk: [58, 61, 74] as const,
+  muted: [107, 111, 126] as const,
+  paper: [251, 250, 246] as const,
+  line: [228, 230, 237] as const,
+  gold: [245, 166, 35] as const,
+  green: [11, 110, 58] as const,
+  red: [220, 40, 40] as const,
+  navy: [10, 36, 99] as const,
+  peri: [107, 124, 232] as const,
+  pink: [232, 62, 140] as const,
+  white: [255, 255, 255] as const,
+};
+
+const setFill = (doc: jsPDF, color: readonly [number, number, number]) =>
+  doc.setFillColor(color[0], color[1], color[2]);
+
+const setText = (doc: jsPDF, color: readonly [number, number, number]) =>
+  doc.setTextColor(color[0], color[1], color[2]);
+
+const setDraw = (doc: jsPDF, color: readonly [number, number, number]) =>
+  doc.setDrawColor(color[0], color[1], color[2]);
+
+const drawPill = (
+  doc: jsPDF,
+  label: string,
+  x: number,
+  y: number,
+  width: number,
+  color: readonly [number, number, number],
+  textColor: readonly [number, number, number] = COLORS.ink,
+) => {
+  setFill(doc, color);
+  doc.roundedRect(x, y, width, 18, 9, 9, "F");
+  setText(doc, textColor);
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(7);
+  doc.text(label, x + width / 2, y + 12, { align: "center" });
+};
+
 /**
  * Converts a file to a base64 data URL string for embedding in PDFs.
  * Call this in the UI before passing logo_data_url to generateInvoicePdf.
@@ -76,66 +117,93 @@ export const fileToDataUrl = (file: File): Promise<string> =>
 export const generateInvoicePdf = (data: InvoiceData): jsPDF => {
   const doc = new jsPDF({ unit: "pt", format: "a4" });
   const pageWidth = doc.internal.pageSize.getWidth();
+  const pageHeight = doc.internal.pageSize.getHeight();
   const margin = 40;
 
+  // Background canvas.
+  setFill(doc, COLORS.paper);
+  doc.rect(0, 0, pageWidth, pageHeight, "F");
+
   // ── Header band ───────────────────────────────────────────────────────────
-  doc.setFillColor(0, 35, 149); // #002395 — Sjoh deep blue
-  doc.rect(0, 0, pageWidth, 56, "F");
+  setFill(doc, COLORS.ink);
+  doc.rect(0, 0, pageWidth, 128, "F");
+
+  // Small SA-inspired accent strip, matching the site palette.
+  const stripY = 0;
+  const stripH = 6;
+  const stripW = pageWidth / 6;
+  [COLORS.gold, COLORS.red, COLORS.navy, COLORS.green, COLORS.peri, COLORS.pink].forEach((color, idx) => {
+    setFill(doc, color);
+    doc.rect(idx * stripW, stripY, stripW + 1, stripH, "F");
+  });
 
   if (data.business.logo_data_url) {
-    // Custom logo: embed image in the left of the header band
     try {
-      // Detect format from data URL prefix
       const mime = data.business.logo_data_url.split(";")[0].split(":")[1] || "image/png";
       const format = mime.includes("jpeg") || mime.includes("jpg") ? "JPEG" : "PNG";
-      // Fit logo into a 120×36 pt bounding box, vertically centred in the 56pt band
-      doc.addImage(data.business.logo_data_url, format, margin, 10, 120, 36);
+      setFill(doc, COLORS.white);
+      doc.roundedRect(margin, 28, 132, 46, 14, 14, "F");
+      doc.addImage(data.business.logo_data_url, format, margin + 10, 35, 112, 30);
     } catch {
-      // If image embedding fails, fall back to business name text
-      doc.setTextColor(255, 255, 255);
+      setText(doc, COLORS.white);
       doc.setFont("helvetica", "bold");
       doc.setFontSize(18);
-      doc.text(data.business.name, margin, 36);
+      doc.text(data.business.name, margin, 56);
     }
   } else {
-    // Default Sjoh wordmark
-    doc.setTextColor(255, 255, 255);
+    setText(doc, COLORS.white);
     doc.setFont("helvetica", "bold");
-    doc.setFontSize(22);
-    doc.text("Sjoh", margin, 36);
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(10);
-    doc.text("Find someone who can do it properly.", margin + 64, 36);
+    doc.setFontSize(32);
+    doc.text("sjoh", margin, 56);
+    setText(doc, COLORS.gold);
+    doc.text("!", margin + 66, 56);
   }
 
-  // ── Invoice meta (top right) ──────────────────────────────────────────────
-  doc.setTextColor(20, 20, 20);
+  setText(doc, COLORS.white);
   doc.setFont("helvetica", "bold");
-  doc.setFontSize(20);
-  doc.text("TAX INVOICE", pageWidth - margin, 90, { align: "right" });
+  doc.setFontSize(8);
+  doc.text("GENERATED VIA SJOH", margin, 90);
   doc.setFont("helvetica", "normal");
   doc.setFontSize(10);
-  doc.text(`Invoice #: ${data.invoice_number}`, pageWidth - margin, 108, { align: "right" });
-  doc.text(`Date: ${fmtDate(data.issued_at)}`, pageWidth - margin, 122, { align: "right" });
+  doc.text("Find someone who can do it properly. No middleman. No commission.", margin, 106);
+
+  // ── Invoice meta (top right) ──────────────────────────────────────────────
+  setText(doc, COLORS.white);
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(26);
+  doc.text("TAX INVOICE", pageWidth - margin, 50, { align: "right" });
+  drawPill(doc, "0% COMMISSION", pageWidth - margin - 104, 62, 104, COLORS.gold);
+  setText(doc, COLORS.white);
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(9);
+  doc.text(`Invoice # ${data.invoice_number}`, pageWidth - margin, 96, { align: "right" });
+  doc.text(`Issued ${fmtDate(data.issued_at)}`, pageWidth - margin, 110, { align: "right" });
+
+  // ── Main white sheet ──────────────────────────────────────────────────────
+  const sheetX = 28;
+  const sheetY = 148;
+  const sheetW = pageWidth - 56;
+  setFill(doc, COLORS.white);
+  doc.roundedRect(sheetX, sheetY, sheetW, pageHeight - 220, 22, 22, "F");
 
   // ── From / To columns ─────────────────────────────────────────────────────
-  let y = 150;
+  let y = 188;
   doc.setFont("helvetica", "bold");
   doc.setFontSize(10);
-  doc.setTextColor(110, 110, 110);
+  setText(doc, COLORS.muted);
   doc.text("FROM", margin, y);
   doc.text("BILL TO", pageWidth / 2, y);
 
-  doc.setTextColor(20, 20, 20);
-  doc.setFontSize(11);
-  y += 16;
+  y += 18;
+  setText(doc, COLORS.ink);
+  doc.setFontSize(13);
   doc.text(data.business.name, margin, y);
   doc.text(data.customer.name, pageWidth / 2, y);
 
   doc.setFont("helvetica", "normal");
   doc.setFontSize(10);
-  doc.setTextColor(80, 80, 80);
-  y += 14;
+  setText(doc, COLORS.softInk);
+  y += 16;
 
   const fromLines = [
     [data.business.address, data.business.city, data.business.province]
@@ -152,7 +220,7 @@ export const generateInvoicePdf = (data: InvoiceData): jsPDF => {
     if (fromLines[i]) doc.text(fromLines[i], margin, y + i * 13);
     if (toLines[i]) doc.text(toLines[i], pageWidth / 2, y + i * 13);
   }
-  y += maxRows * 13 + 16;
+  y += maxRows * 13 + 22;
 
   // ── Line items table ──────────────────────────────────────────────────────
   const totals = computeInvoiceTotals(data.line_items, data.vat_included);
@@ -166,8 +234,21 @@ export const generateInvoicePdf = (data: InvoiceData): jsPDF => {
       fmtZAR(Number(i.unit_price)),
       fmtZAR((Number(i.qty) || 0) * (Number(i.unit_price) || 0)),
     ]),
-    styles: { font: "helvetica", fontSize: 10, cellPadding: 8, textColor: [20, 20, 20] },
-    headStyles: { fillColor: [20, 20, 20], textColor: [255, 255, 255], fontStyle: "bold" },
+    styles: {
+      font: "helvetica",
+      fontSize: 10,
+      cellPadding: 10,
+      textColor: [...COLORS.ink],
+      lineColor: [...COLORS.line],
+      lineWidth: 0.5,
+    },
+    headStyles: {
+      fillColor: [...COLORS.ink],
+      textColor: [...COLORS.white],
+      fontStyle: "bold",
+      fontSize: 9,
+    },
+    alternateRowStyles: { fillColor: [248, 249, 252] },
     columnStyles: {
       1: { halign: "right", cellWidth: 50 },
       2: { halign: "right", cellWidth: 90 },
@@ -179,57 +260,62 @@ export const generateInvoicePdf = (data: InvoiceData): jsPDF => {
   let afterTableY = (doc as any).lastAutoTable.finalY + 16;
 
   // ── Totals ────────────────────────────────────────────────────────────────
-  const totalsX = pageWidth - margin - 200;
+  const totalsX = pageWidth - margin - 210;
   const valX = pageWidth - margin;
 
+  setFill(doc, COLORS.paper);
+  doc.roundedRect(totalsX - 20, afterTableY - 12, 230, data.vat_included ? 96 : 92, 16, 16, "F");
   doc.setFont("helvetica", "normal");
   doc.setFontSize(10);
-  doc.setTextColor(80, 80, 80);
+  setText(doc, COLORS.muted);
   doc.text("Subtotal", totalsX, afterTableY);
-  doc.setTextColor(20, 20, 20);
+  setText(doc, COLORS.ink);
   doc.text(fmtZAR(totals.subtotal), valX, afterTableY, { align: "right" });
   afterTableY += 16;
 
-  doc.setTextColor(80, 80, 80);
+  setText(doc, COLORS.muted);
   doc.text(data.vat_included ? "VAT (15%)" : "VAT", totalsX, afterTableY);
-  doc.setTextColor(20, 20, 20);
+  setText(doc, COLORS.ink);
   doc.text(data.vat_included ? fmtZAR(totals.vat) : "Not applicable", valX, afterTableY, { align: "right" });
   afterTableY += 18;
 
-  doc.setDrawColor(220, 220, 220);
+  setDraw(doc, COLORS.line);
   doc.line(totalsX, afterTableY - 6, valX, afterTableY - 6);
 
   doc.setFont("helvetica", "bold");
   doc.setFontSize(13);
-  doc.setTextColor(20, 20, 20);
+  setText(doc, COLORS.ink);
   doc.text("TOTAL DUE", totalsX, afterTableY + 8);
-  doc.setTextColor(0, 35, 149); // #002395 — Sjoh deep blue
+  setText(doc, COLORS.green);
+  doc.setFontSize(15);
   doc.text(fmtZAR(totals.total), valX, afterTableY + 8, { align: "right" });
   afterTableY += 32;
 
   // ── Notes ─────────────────────────────────────────────────────────────────
   if (data.notes) {
+    const notesY = Math.max(afterTableY + 8, (doc as any).lastAutoTable.finalY + 132);
+    setFill(doc, [255, 248, 235]);
+    doc.roundedRect(margin, notesY - 14, pageWidth - margin * 2, 66, 14, 14, "F");
     doc.setFont("helvetica", "bold");
     doc.setFontSize(10);
-    doc.setTextColor(110, 110, 110);
-    doc.text("NOTES", margin, afterTableY);
-    afterTableY += 14;
+    setText(doc, COLORS.ink);
+    doc.text("NOTES", margin + 16, notesY);
     doc.setFont("helvetica", "normal");
-    doc.setTextColor(60, 60, 60);
-    const noteLines = doc.splitTextToSize(data.notes, pageWidth - margin * 2);
-    doc.text(noteLines, margin, afterTableY);
+    setText(doc, COLORS.softInk);
+    const noteLines = doc.splitTextToSize(data.notes, pageWidth - margin * 2 - 32);
+    doc.text(noteLines, margin + 16, notesY + 16);
   }
 
   // ── Footer ────────────────────────────────────────────────────────────────
-  const footerY = doc.internal.pageSize.getHeight() - 40;
-  doc.setDrawColor(0, 35, 149);
-  doc.setLineWidth(2);
-  doc.line(margin, footerY - 14, pageWidth - margin, footerY - 14);
+  const footerY = pageHeight - 48;
+  setDraw(doc, COLORS.ink);
+  doc.setLineWidth(1.5);
+  doc.line(margin, footerY - 16, pageWidth - margin, footerY - 16);
   doc.setFont("helvetica", "normal");
   doc.setFontSize(9);
-  doc.setTextColor(120, 120, 120);
+  setText(doc, COLORS.muted);
   doc.text("Generated via Sjoh — sjoh.co.za", margin, footerY);
-  doc.text("Thank you for your business.", pageWidth - margin, footerY, { align: "right" });
+  doc.text("Payment stays between customer and provider.", pageWidth - margin, footerY, { align: "right" });
 
   return doc;
 };

@@ -209,7 +209,7 @@ const LeadDetail = () => {
     <SiteLayout>
       <div className="container py-8 md:py-12 max-w-3xl">
         <Link to={isOwner ? "/dashboard" : "/leads"} className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground mb-6">
-          <ArrowLeft className="size-4" /> {isOwner ? "Back to dashboard" : "Back to leads"}
+          <ArrowLeft className="size-4" /> {isOwner ? "Back to dashboard" : "Back to opportunities"}
         </Link>
 
         <header className="mb-6">
@@ -255,7 +255,7 @@ const LeadDetail = () => {
               <Lock className="size-5 text-muted-foreground shrink-0 mt-0.5" />
               <div>
                 <div className="font-semibold mb-1">Full details locked</div>
-                <p className="text-ink-2">Verified Pros (R250/mo) can see the full description and photos. Upgrade your plan to unlock leads in your area.</p>
+                <p className="text-ink-2">Verified Pros (R250/mo) can see the full description and photos. Upgrade your plan to unlock job requests in your area.</p>
                 <Button asChild size="sm" className="mt-3"><Link to="/pricing">See plans</Link></Button>
               </div>
             </div>
@@ -384,7 +384,7 @@ const LeadDetail = () => {
                 </div>
               ) : (
                 <div className="text-sm text-ink-2">
-                  You haven't sent a quote on this lead yet. <Link to="/leads" className="text-primary font-semibold underline">Browse the lead board</Link> to find this and send one.
+                  You haven't sent a quote on this job request yet. <Link to="/leads" className="text-primary font-semibold underline">Browse opportunities</Link> to find this and send one.
                 </div>
               )
             )}

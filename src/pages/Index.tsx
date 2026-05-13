@@ -397,7 +397,7 @@ const HomePage = () => {
                 {[
                   { title: "Post a request", body: "Share the job once and let interested pros come back to you.", cta: "Start here", to: "/requests/new" },
                   { title: "Browse vetted pros", body: "Compare profiles, reviews, work areas, and services across SA.", cta: "Open directory", to: "/directory" },
-                  { title: "List your business", body: "Get found by customers who are already searching for your skill.", cta: "Apply as a pro", to: "/list" },
+                  { title: "List your business", body: "Get found by customers who are already searching for your skill.", cta: "List your business", to: "/list" },
                 ].map((card) => (
                   <Link
                     key={card.title}
@@ -730,7 +730,7 @@ const HomePage = () => {
           </p>
           <div className="flex gap-3 flex-wrap">
             <Button size="lg" asChild className="font-bold rounded-full" style={{ background: "var(--sa-gold)", color: "var(--sa-dark)" }}>
-              <Link to="/list">Apply as a Pro <ArrowRight className="size-4" /></Link>
+              <Link to="/list">List your business <ArrowRight className="size-4" /></Link>
             </Button>
             <Button size="lg" variant="outline" asChild className="font-bold rounded-full bg-white/10 border-white/30 text-white hover:bg-white/20">
               <Link to="/pricing">30-day free trial</Link>

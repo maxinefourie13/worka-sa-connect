@@ -15,6 +15,7 @@ import { template as earlyAccessProWaitlist } from './early-access-pro-waitlist.
 import { template as earlyAccessCustomerWaitlist } from './early-access-customer-waitlist.tsx'
 import { template as verifiedReviewChaser } from './verified-review-chaser.tsx'
 import { template as staleLeadFallback } from './stale-lead-fallback.tsx'
+import { template as invoiceSent } from './invoice-sent.tsx'
 
 export const TEMPLATES: Record<string, TemplateEntry> = {
   'early-access-pro': earlyAccessPro,
@@ -23,4 +24,5 @@ export const TEMPLATES: Record<string, TemplateEntry> = {
   'early-access-customer-waitlist': earlyAccessCustomerWaitlist,
   'verified-review-chaser': verifiedReviewChaser,
   'stale-lead-fallback': staleLeadFallback,
+  'invoice-sent': invoiceSent,
 }

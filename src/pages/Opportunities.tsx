@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Search, Construction, MapPin, Clock, Siren } from "lucide-react";
+import { Search, Construction, MapPin, Clock, Siren, ArrowRight, UserPlus } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
 import { SeoHead } from "@/components/SeoHead";
 import { Button } from "@/components/ui/button";
@@ -76,17 +76,36 @@ const Opportunities = () => {
       <div className="container py-12">
         <header className="mb-8 max-w-2xl">
           <span className="text-xs font-bold uppercase tracking-widest text-primary">
-            {isProView ? "Send Quotes" : "Post a Job"}
+            {isProView ? "Business opportunities" : "Customer requests"}
           </span>
           <h1 className="font-display text-4xl md:text-5xl font-extrabold tracking-tight mt-2">
-            {isProView ? "Find work. Send a quote." : "Tell pros what you need done."}
+            {isProView ? "Find jobs worth quoting." : "Tell pros what you need done."}
           </h1>
           <p className="mt-3 text-ink-2">
             {isProView
-              ? "Real customer requests, ready for a quote. Contact the customer directly once they accept — no commission."
-              : "Post a request and pros will quote you. Or browse the directory and contact someone yourself — no middleman, no commission."}
+              ? "Real customer job requests from people looking for help now. Quote the right jobs, wait for the customer to accept, then contact details unlock — no commission."
+              : "Post a request and pros will quote you in your Sjoh dashboard. Or browse the directory and contact someone yourself — no middleman, no commission."}
           </p>
         </header>
+
+        {isProView && !myBiz && (
+          <div className="rounded-2xl border border-sa-gold/40 bg-sa-gold/10 p-6 md:p-8 mb-10 flex flex-col md:flex-row md:items-center justify-between gap-5">
+            <div className="flex items-start gap-4">
+              <span className="size-11 rounded-xl bg-sa-gold text-sa-dark flex items-center justify-center shrink-0">
+                <UserPlus className="size-5" strokeWidth={2.5} />
+              </span>
+              <div>
+                <h2 className="font-display text-lg font-extrabold">Create your business profile before you quote.</h2>
+                <p className="text-sm text-ink-2 mt-1.5">
+                  Customers need to compare your service area, reviews, and trust signals before accepting. Setup takes a few minutes and you can polish it later.
+                </p>
+              </div>
+            </div>
+            <Button asChild className="rounded-full bg-sa-dark text-white hover:bg-sa-dark/90">
+              <Link to="/list">List your business <ArrowRight className="size-4" /></Link>
+            </Button>
+          </div>
+        )}
 
         {isWorkshopMode && isProView && (
           <div className="rounded-2xl border-2 border-dashed border-primary/40 bg-primary/5 p-6 md:p-8 mb-10 flex items-start gap-4">
@@ -94,7 +113,7 @@ const Opportunities = () => {
               <Construction className="size-5" strokeWidth={2.5} />
             </span>
             <div>
-              <h2 className="font-display text-lg font-semibold">No leads yet — we haven't opened the doors to customers.</h2>
+              <h2 className="font-display text-lg font-semibold">No job requests yet — we haven't opened the doors to customers.</h2>
               <p className="text-sm text-ink-2 mt-1.5">
                 When we launch, this is where new customer requests in your area land. Until then, get your profile sharp so you're first in line. We'll holla the moment we open.
               </p>
@@ -124,7 +143,7 @@ const Opportunities = () => {
             <input
               value={keyword}
               onChange={(e) => setKeyword(e.target.value)}
-              placeholder={isProView ? "Search leads…" : "Search requests…"}
+              placeholder={isProView ? "Search job requests, services, or city…" : "Search requests…"}
               className="w-full py-2 bg-transparent outline-none text-sm"
             />
           </div>
@@ -179,7 +198,7 @@ const Opportunities = () => {
 
         <div className="text-sm text-muted-foreground mb-4 tabular-nums flex items-center gap-2">
           <span>{filtered.length} {isProView
-            ? `job${filtered.length === 1 ? "" : "s"} to quote`
+            ? `job request${filtered.length === 1 ? "" : "s"} to quote`
             : `open request${filtered.length === 1 ? "" : "s"}`}</span>
           {isProView && sortMode === "nearest" && proCity && (
             <span className="text-ink-2">· nearest to <span className="font-semibold text-foreground">{proCity}</span></span>

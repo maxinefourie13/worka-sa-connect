@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { FileText, Plus, Trash2, Download, MessageCircle, Loader2, ImagePlus, X } from "lucide-react";
+import { FileText, Plus, Trash2, Download, Mail, Loader2, ImagePlus, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -27,14 +27,6 @@ type Props = {
   defaultDescription?: string;
 };
 
-const buildWhatsAppShare = (phone: string | null | undefined, message: string) => {
-  if (!phone) return null;
-  let digits = phone.replace(/\D/g, "");
-  if (digits.startsWith("0")) digits = "27" + digits.slice(1);
-  if (!digits.startsWith("27")) digits = "27" + digits;
-  return `https://wa.me/${digits}?text=${encodeURIComponent(message)}`;
-};
-
 const MAX_LOGO_BYTES = 2 * 1024 * 1024; // 2 MB
 
 export const InvoiceGenerator = ({
@@ -54,6 +46,7 @@ export const InvoiceGenerator = ({
   const [business, setBusiness] = useState<any>(null);
   const [busy, setBusy] = useState(false);
   const [savedInvoiceNumber, setSavedInvoiceNumber] = useState<string | null>(null);
+  const [savedInvoiceId, setSavedInvoiceId] = useState<string | null>(null);
 
   // Logo state
   const [logoDataUrl, setLogoDataUrl] = useState<string | null>(null);
@@ -126,7 +119,7 @@ export const InvoiceGenerator = ({
   const removeItem = (idx: number) =>
     setItems((prev) => (prev.length > 1 ? prev.filter((_, i) => i !== idx) : prev));
 
-  const buildAndSave = async (): Promise<{ invoiceNumber: string; pdfBlob: Blob } | null> => {
+  const buildAndSave = async (): Promise<{ invoiceId: string | null; invoiceNumber: string; pdfBlob: Blob } | null> => {
     if (!business) {
       toast({ title: "Loading your business details…", variant: "destructive" });
       return null;
@@ -150,8 +143,10 @@ export const InvoiceGenerator = ({
     const suffix = Math.floor(1000 + Math.random() * 9000);
     const invoiceNumber = savedInvoiceNumber ?? `SJ-${ymd}-${suffix}`;
 
+    let invoiceId = savedInvoiceId;
+
     if (!savedInvoiceNumber) {
-      const { error } = await supabase.from("invoices").insert({
+      const { data, error } = await supabase.from("invoices").insert({
         invoice_number: invoiceNumber,
         pro_user_id: proUserId,
         business_id: businessId,
@@ -165,13 +160,15 @@ export const InvoiceGenerator = ({
         total_zar: totals.total,
         vat_included: vatIncluded,
         notes,
-      });
+      }).select("id").single();
       if (error) {
         setBusy(false);
         toast({ title: "Couldn't save invoice", description: error.message, variant: "destructive" });
         return null;
       }
+      invoiceId = data?.id ?? null;
       setSavedInvoiceNumber(invoiceNumber);
+      setSavedInvoiceId(invoiceId);
     }
 
     const doc = generateInvoicePdf({
@@ -194,7 +191,7 @@ export const InvoiceGenerator = ({
 
     const pdfBlob = doc.output("blob");
     setBusy(false);
-    return { invoiceNumber, pdfBlob };
+    return { invoiceId, invoiceNumber, pdfBlob };
   };
 
   const handleDownload = async () => {
@@ -208,69 +205,129 @@ export const InvoiceGenerator = ({
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
-    toast({ title: "Invoice downloaded", description: "Sharp! Send it to your customer on WhatsApp." });
+    toast({ title: "Invoice downloaded", description: "Saved a copy for your records." });
   };
 
-  const handleWhatsApp = async () => {
+  const handleEmail = async () => {
     const result = await buildAndSave();
     if (!result) return;
-    const url = URL.createObjectURL(result.pdfBlob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `${result.invoiceNumber}.pdf`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-
-    const msg = `Hi ${customer.name}, here's your Sjoh invoice ${result.invoiceNumber} for R${totals.total.toLocaleString("en-ZA", { minimumFractionDigits: 2 })}. I've attached the PDF — let me know if anything needs changing.`;
-    const link = buildWhatsAppShare(customer.phone, msg);
-    if (link) {
-      window.open(link, "_blank", "noopener,noreferrer");
-    } else {
-      toast({ title: "PDF saved", description: "No customer phone on file — share the PDF manually." });
+    if (!customer.email) {
+      toast({ title: "No customer email", description: "Download a copy instead — there isn't an email address on this job.", variant: "destructive" });
+      return;
     }
+
+    setBusy(true);
+    const { data, error } = await supabase.functions.invoke("send-transactional-email", {
+      body: {
+        templateName: "invoice-sent",
+        recipientEmail: customer.email,
+        idempotencyKey: `invoice:${result.invoiceId ?? result.invoiceNumber}:sent`,
+        templateData: {
+          invoiceNumber: result.invoiceNumber,
+          businessName: business?.name ?? "Your Sjoh pro",
+          customerName: customer.name,
+          issuedAt: new Date().toISOString(),
+          lineItems: items,
+          subtotal: totals.subtotal,
+          vat: totals.vat,
+          total: totals.total,
+          vatIncluded,
+          notes,
+        },
+      },
+    });
+
+    if (error || data?.success === false) {
+      if (result.invoiceId) {
+        await (supabase as any).from("invoices").update({
+          status: "failed",
+          email_error: error?.message ?? data?.reason ?? "Email could not be queued",
+        }).eq("id", result.invoiceId);
+      }
+      setBusy(false);
+      toast({
+        title: "Couldn't send invoice",
+        description: error?.message ?? "The invoice is saved, but the email did not send. Try again or download a copy.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (result.invoiceId) {
+      await (supabase as any).from("invoices").update({
+        status: "sent",
+        sent_at: new Date().toISOString(),
+        email_error: null,
+      }).eq("id", result.invoiceId);
+    }
+
+    setBusy(false);
+    toast({ title: "Invoice sent", description: `Sjoh emailed invoice ${result.invoiceNumber} to ${customer.email}.` });
   };
 
   if (!open) {
     return (
-      <div className="bg-card border border-border rounded-2xl p-6 shadow-card">
+      <div className="relative overflow-hidden rounded-[1.75rem] border border-white/15 bg-[#101010] p-6 text-white shadow-pop">
+        <div className="absolute inset-x-0 top-0 h-1.5 bg-gradient-to-r from-[#F5A623] via-[#DC2828] via-[#0A2463] via-[#0B6E3A] via-[#6B7CE8] to-[#E83E8C]" />
+        <div className="absolute -right-16 -top-20 size-48 rounded-full bg-[#F5A623]/20 blur-3xl" />
+        <div className="absolute -left-20 bottom-0 size-48 rounded-full bg-[#6B7CE8]/20 blur-3xl" />
         <div className="flex items-start justify-between gap-4 flex-wrap">
           <div className="flex items-start gap-3">
-            <div className="size-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
-              <FileText className="size-5 text-primary" />
+            <div className="size-11 rounded-2xl bg-[#F5A623] flex items-center justify-center shrink-0 text-[#101010] shadow-[6px_6px_0_rgba(255,255,255,0.16)]">
+              <FileText className="size-5" />
             </div>
             <div>
-              <h3 className="font-display font-bold text-lg">Generate a Sjoh invoice</h3>
-              <p className="text-sm text-ink-2 mt-1">
-                Send your customer a professional, branded PDF invoice — with your logo on it.
+              <p className="text-[10px] font-black uppercase tracking-[0.24em] text-[#F5A623]">After the quote is accepted</p>
+              <h3 className="font-display font-black text-2xl leading-tight mt-1">Generate a Sjoh invoice</h3>
+              <p className="text-sm text-white/70 mt-2 max-w-xl">
+                Build a polished invoice with your business details, line items, VAT, and direct payment notes.
               </p>
             </div>
           </div>
-          <Button onClick={() => setOpen(true)}>Create invoice</Button>
+          <Button onClick={() => setOpen(true)} className="bg-[#F5A623] text-[#101010] hover:bg-[#ffbd3b] rounded-full font-black">
+            Create invoice
+          </Button>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="bg-card border border-border rounded-2xl p-6 shadow-card space-y-5">
-      <div className="flex items-center gap-2">
-        <FileText className="size-5 text-primary" />
-        <h3 className="font-display font-bold text-lg">New Sjoh invoice</h3>
+    <div className="relative overflow-hidden rounded-[1.75rem] border border-white/15 bg-[#101010] p-6 text-white shadow-pop space-y-6">
+      <div className="absolute inset-x-0 top-0 h-1.5 bg-gradient-to-r from-[#F5A623] via-[#DC2828] via-[#0A2463] via-[#0B6E3A] via-[#6B7CE8] to-[#E83E8C]" />
+      <div className="absolute -right-20 -top-20 size-56 rounded-full bg-[#F5A623]/15 blur-3xl" />
+      <div className="absolute -left-20 bottom-20 size-56 rounded-full bg-[#0A2463]/30 blur-3xl" />
+
+      <div className="relative flex items-start justify-between gap-4 flex-wrap">
+        <div className="flex items-start gap-3">
+          <div className="size-11 rounded-2xl bg-[#F5A623] flex items-center justify-center text-[#101010] shadow-[6px_6px_0_rgba(255,255,255,0.16)]">
+            <FileText className="size-5" />
+          </div>
+          <div>
+            <p className="text-[10px] font-black uppercase tracking-[0.24em] text-[#F5A623]">Invoice builder</p>
+            <h3 className="font-display font-black text-2xl leading-tight mt-1">New Sjoh invoice</h3>
+            <p className="text-sm text-white/65 mt-2">Add the work, check the totals, then send it to the customer by email.</p>
+          </div>
+        </div>
+        <div className="rounded-2xl border border-white/15 bg-white/10 px-4 py-3 text-right">
+          <div className="text-[10px] uppercase tracking-[0.18em] text-white/50 font-black">Total due</div>
+          <div className="font-display text-2xl font-black text-[#F5A623]">
+            R {totals.total.toLocaleString("en-ZA", { minimumFractionDigits: 2 })}
+          </div>
+        </div>
       </div>
 
       {/* Logo upload */}
-      <div>
-        <Label className="text-xs uppercase tracking-wider text-muted-foreground">
+      <div className="relative rounded-2xl border border-white/10 bg-white/[0.06] p-4">
+        <Label className="text-xs uppercase tracking-wider text-white/50">
           Your logo (optional)
         </Label>
-        <p className="text-xs text-ink-2 mt-1 mb-3">
+        <p className="text-xs text-white/55 mt-1 mb-3">
           Appears in the invoice header. PNG or JPEG, max 2 MB. Without a logo, "Sjoh" branding is used.
         </p>
         {logoPreview ? (
           <div className="flex items-center gap-3">
-            <div className="h-14 w-32 rounded-lg border border-border bg-muted/30 flex items-center justify-center overflow-hidden p-1">
+            <div className="h-14 w-32 rounded-xl border border-white/15 bg-white flex items-center justify-center overflow-hidden p-1">
               <img src={logoPreview} alt="Your logo" className="max-h-full max-w-full object-contain" />
             </div>
             <Button
@@ -288,7 +345,7 @@ export const InvoiceGenerator = ({
           <button
             type="button"
             onClick={() => logoInputRef.current?.click()}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-lg border border-dashed border-border hover:border-primary hover:bg-primary/5 transition-colors text-sm text-ink-2 hover:text-primary"
+            className="flex items-center gap-2 px-4 py-2.5 rounded-full border border-dashed border-white/20 hover:border-[#F5A623] hover:bg-[#F5A623]/10 transition-colors text-sm text-white/70 hover:text-[#F5A623]"
           >
             <ImagePlus className="size-4" />
             Upload your logo
@@ -303,31 +360,31 @@ export const InvoiceGenerator = ({
         />
       </div>
 
-      <div className="grid sm:grid-cols-2 gap-4 text-sm">
-        <div>
-          <Label className="text-xs text-muted-foreground">Bill to</Label>
-          <div className="font-semibold">{customer.name}</div>
-          {customer.email && <div className="text-ink-2">{customer.email}</div>}
-          {customer.phone && <div className="text-ink-2">{customer.phone}</div>}
+      <div className="relative grid sm:grid-cols-2 gap-4 text-sm">
+        <div className="rounded-2xl border border-white/10 bg-white/[0.06] p-4">
+          <Label className="text-xs text-white/50 uppercase tracking-wider">Bill to</Label>
+          <div className="font-bold mt-1">{customer.name}</div>
+          {customer.email && <div className="text-white/60">{customer.email}</div>}
+          {customer.phone && <div className="text-white/60">{customer.phone}</div>}
         </div>
-        <div className="flex items-center justify-end gap-3">
+        <div className="rounded-2xl border border-white/10 bg-white/[0.06] p-4 flex items-center justify-between gap-3">
           <Label htmlFor="vat-toggle" className="text-sm">Add VAT (15%)</Label>
           <Switch id="vat-toggle" checked={vatIncluded} onCheckedChange={setVatIncluded} />
         </div>
       </div>
 
-      <div className="space-y-3">
-        <Label className="text-xs uppercase tracking-wider text-muted-foreground">Line items</Label>
+      <div className="relative space-y-3">
+        <Label className="text-xs uppercase tracking-wider text-white/50">Line items</Label>
         {items.map((item, idx) => (
           <div key={idx} className="grid grid-cols-12 gap-2 items-start">
             <Input
-              className="col-span-6"
+              className="col-span-6 bg-white text-[#101010] border-white/20"
               placeholder="Description (e.g. Geyser replacement labour)"
               value={item.description}
               onChange={(e) => updateItem(idx, { description: e.target.value })}
             />
             <Input
-              className="col-span-2"
+              className="col-span-2 bg-white text-[#101010] border-white/20"
               type="number"
               min={1}
               placeholder="Qty"
@@ -335,7 +392,7 @@ export const InvoiceGenerator = ({
               onChange={(e) => updateItem(idx, { qty: Number(e.target.value) || 0 })}
             />
             <Input
-              className="col-span-3"
+              className="col-span-3 bg-white text-[#101010] border-white/20"
               type="number"
               min={0}
               step="0.01"
@@ -347,7 +404,7 @@ export const InvoiceGenerator = ({
               type="button"
               variant="ghost"
               size="icon"
-              className="col-span-1"
+              className="col-span-1 text-white/70 hover:bg-white/10 hover:text-white"
               onClick={() => removeItem(idx)}
               disabled={items.length === 1}
               aria-label="Remove line"
@@ -356,13 +413,13 @@ export const InvoiceGenerator = ({
             </Button>
           </div>
         ))}
-        <Button type="button" variant="outline" size="sm" onClick={addItem}>
+        <Button type="button" variant="outline" size="sm" onClick={addItem} className="rounded-full border-white/20 bg-white/5 text-white hover:bg-white/10">
           <Plus className="size-4" /> Add line
         </Button>
       </div>
 
-      <div>
-        <Label htmlFor="invoice-notes" className="text-xs uppercase tracking-wider text-muted-foreground">
+      <div className="relative">
+        <Label htmlFor="invoice-notes" className="text-xs uppercase tracking-wider text-white/50">
           Notes (optional)
         </Label>
         <Textarea
@@ -370,44 +427,44 @@ export const InvoiceGenerator = ({
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
           rows={2}
-          className="mt-1"
+          className="mt-1 bg-white text-[#101010] border-white/20"
         />
       </div>
 
-      <div className="rounded-xl bg-muted/40 border border-border p-4 text-sm space-y-1">
+      <div className="relative rounded-2xl bg-white text-[#101010] border border-white/15 p-4 text-sm space-y-1">
         <div className="flex justify-between">
-          <span className="text-ink-2">Subtotal</span>
+          <span className="text-[#3a3d4a]">Subtotal</span>
           <span>R {totals.subtotal.toLocaleString("en-ZA", { minimumFractionDigits: 2 })}</span>
         </div>
         <div className="flex justify-between">
-          <span className="text-ink-2">{vatIncluded ? "VAT (15%)" : "VAT"}</span>
+          <span className="text-[#3a3d4a]">{vatIncluded ? "VAT (15%)" : "VAT"}</span>
           <span>{vatIncluded ? `R ${totals.vat.toLocaleString("en-ZA", { minimumFractionDigits: 2 })}` : "Not applicable"}</span>
         </div>
-        <div className="flex justify-between font-bold text-base pt-2 border-t border-border mt-2">
+        <div className="flex justify-between font-black text-base pt-2 border-t border-border mt-2">
           <span>Total due</span>
-          <span className="text-primary">R {totals.total.toLocaleString("en-ZA", { minimumFractionDigits: 2 })}</span>
+          <span className="text-[#0B6E3A]">R {totals.total.toLocaleString("en-ZA", { minimumFractionDigits: 2 })}</span>
         </div>
       </div>
 
-      <div className="flex flex-wrap gap-2">
-        <Button onClick={handleDownload} disabled={busy} className="flex-1 min-w-[160px]">
-          {busy ? <Loader2 className="size-4 animate-spin" /> : <Download className="size-4" />}
-          Download PDF
+      <div className="relative flex flex-wrap gap-2">
+        <Button onClick={handleEmail} disabled={busy} className="flex-1 min-w-[160px] rounded-full bg-[#F5A623] text-[#101010] hover:bg-[#ffbd3b] font-black">
+          {busy ? <Loader2 className="size-4 animate-spin" /> : <Mail className="size-4" />}
+          Send invoice by email
         </Button>
         <Button
-          onClick={handleWhatsApp}
+          onClick={handleDownload}
           disabled={busy}
           variant="secondary"
-          className="flex-1 min-w-[160px] bg-[#25D366] hover:bg-[#1FB855] text-white"
+          className="flex-1 min-w-[160px] rounded-full bg-white/10 hover:bg-white/15 text-white font-black border border-white/15"
         >
-          {busy ? <Loader2 className="size-4 animate-spin" /> : <MessageCircle className="size-4" />}
-          Send via WhatsApp
+          {busy ? <Loader2 className="size-4 animate-spin" /> : <Download className="size-4" />}
+          Download copy
         </Button>
-        <Button variant="ghost" onClick={() => setOpen(false)}>Cancel</Button>
+        <Button variant="ghost" onClick={() => setOpen(false)} className="text-white/70 hover:bg-white/10 hover:text-white">Cancel</Button>
       </div>
 
-      <p className="text-xs text-muted-foreground">
-        The invoice is saved to your Sjoh records. Sjoh does not handle the payment — settle directly with your customer.
+      <p className="relative text-xs text-white/50">
+        The invoice is saved to your Sjoh records. Sjoh does not handle the payment — the customer pays you directly.
       </p>
     </div>
   );

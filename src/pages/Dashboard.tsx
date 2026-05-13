@@ -3,6 +3,7 @@ import { Link, useSearchParams } from "react-router-dom";
 import {
   LayoutGrid, User, Sparkles, Briefcase, Users, CreditCard, Plus,
   ShieldCheck, Bell, Mail, FileText, MessageCircle, Lock, ArrowUpRight,
+  Search,
 } from "lucide-react";
 import { QuotesSection } from "@/components/dashboard/QuotesSection";
 import { SiteHeader } from "@/components/SiteHeader";
@@ -35,7 +36,7 @@ const SECTIONS: { key: SectionKey; label: string; icon: typeof LayoutGrid }[] = 
   { key: "verification", label: "Verification", icon: ShieldCheck },
   { key: "profile", label: "My Profile", icon: User },
   { key: "promotions", label: "Promotions", icon: Sparkles },
-  { key: "opportunities", label: "Won jobs", icon: Briefcase },
+  { key: "opportunities", label: "Job pipeline", icon: Briefcase },
   { key: "followers", label: "Followers", icon: Users },
   { key: "billing", label: "Billing", icon: CreditCard },
   { key: "privacy", label: "Data & Privacy", icon: Lock },
@@ -182,9 +183,14 @@ const OverviewSection = ({ onJump }: { onJump: (s: SectionKey) => void }) => {
           </h1>
           <p className="text-sm text-sa-dark/58 mt-1">Your activity over the last 30 days.</p>
         </div>
-        <Button onClick={() => onJump("promotions")} className="rounded-full bg-sa-dark text-white hover:bg-sa-dark/90">
-          <Plus className="size-4" />Add Promotion
-        </Button>
+        <div className="flex flex-wrap gap-2">
+          <Button asChild className="rounded-full bg-sa-dark text-white hover:bg-sa-dark/90">
+            <Link to="/leads"><Search className="size-4" />Browse opportunities</Link>
+          </Button>
+          <Button onClick={() => onJump("promotions")} variant="outline" className="rounded-full bg-white/60">
+            <Plus className="size-4" />Add Promotion
+          </Button>
+        </div>
       </header>
 
       {/* Plan highlight */}
@@ -229,6 +235,41 @@ const OverviewSection = ({ onJump }: { onJump: (s: SectionKey) => void }) => {
           value={stats.loading ? "…" : stats.followers.toLocaleString("en-ZA")}
         />
       </div>
+
+      <div className="rounded-[2rem] border border-white/70 bg-white/65 p-6 shadow-[0_20px_60px_-45px_rgba(0,0,0,0.45)] backdrop-blur-xl">
+        <div className="flex items-start justify-between gap-4 flex-wrap">
+          <div>
+            <p className="text-xs font-black uppercase tracking-widest text-sa-gold">Your next best steps</p>
+            <h2 className="font-display text-xl font-black mt-1">Get found, quote, get paid, build trust.</h2>
+            <p className="text-sm text-sa-dark/60 mt-1 max-w-2xl">
+              Sjoh works best when your profile is ready before you send quotes. Then accepted jobs move into your pipeline for invoices and reviews.
+            </p>
+          </div>
+        </div>
+        <div className="mt-5 grid md:grid-cols-4 gap-3">
+          {[
+            { label: "1. Finish profile", body: "Add services, photos and service areas.", action: "Profile", onClick: () => onJump("profile") },
+            { label: "2. Build trust", body: "Verify your ID and connect review proof.", action: "Verify", onClick: () => onJump("verification") },
+            { label: "3. Quote jobs", body: "Find customer requests worth replying to.", action: "Browse", href: "/leads" },
+            { label: "4. Close the loop", body: "Invoice accepted work and collect reviews.", action: "Pipeline", onClick: () => onJump("opportunities") },
+          ].map((item) => (
+            <div key={item.label} className="rounded-2xl border border-sa-dark/10 bg-white/70 p-4">
+              <p className="font-black text-sm">{item.label}</p>
+              <p className="text-xs text-sa-dark/58 mt-1 min-h-8">{item.body}</p>
+              {item.href ? (
+                <Button asChild size="sm" variant="outline" className="mt-3 rounded-full">
+                  <Link to={item.href}>{item.action}</Link>
+                </Button>
+              ) : (
+                <Button size="sm" variant="outline" className="mt-3 rounded-full" onClick={item.onClick}>
+                  {item.action}
+                </Button>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+
       <div className="rounded-[2rem] border border-white/70 bg-white/65 p-6 shadow-[0_20px_60px_-45px_rgba(0,0,0,0.45)] backdrop-blur-xl">
         <h2 className="font-display text-xl font-black mb-4">Recent activity</h2>
         {activity.loading ? (
@@ -571,8 +612,8 @@ const OpportunitiesSection = () => {
   return (
     <>
       <header>
-        <h1 className="font-display text-3xl font-extrabold tracking-tight">Won jobs</h1>
-        <p className="text-sm text-ink-2 mt-1">Quotes you've sent and where they stand.</p>
+        <h1 className="font-display text-3xl font-extrabold tracking-tight">Job pipeline</h1>
+        <p className="text-sm text-ink-2 mt-1">Track quotes you've sent, accepted jobs, and what needs your next action.</p>
       </header>
       {loading ? (
         <div className="bg-card border border-border rounded-xl p-6 text-sm text-muted-foreground">Loading…</div>
@@ -580,8 +621,8 @@ const OpportunitiesSection = () => {
         <div className="bg-card border border-border rounded-xl p-8 text-center">
           <Briefcase className="size-8 mx-auto text-muted-foreground mb-2" />
           <p className="text-sm font-semibold">No quotes sent yet</p>
-          <p className="text-xs text-ink-2 mt-1">Hop over to Send Quotes and get the ball rolling.</p>
-          <Button asChild size="sm" className="mt-4"><Link to="/leads">Find work →</Link></Button>
+          <p className="text-xs text-ink-2 mt-1">Browse opportunities and send your first quote.</p>
+          <Button asChild size="sm" className="mt-4"><Link to="/leads">Browse opportunities →</Link></Button>
         </div>
       ) : (
         <div className="bg-card border border-border rounded-xl divide-y divide-border">

@@ -24,7 +24,7 @@ const BASE_NAV = [
   { to: "/requests", label: "Post a Job" },
   { to: "/pricing", label: "0% Commission" },
 ];
-const PRO_NAV_ITEM = { to: "/leads", label: "Send Quotes" };
+const PRO_NAV_ITEM = { to: "/leads", label: "Opportunities" };
 
 const initials = (input: string) =>
   input
@@ -43,7 +43,7 @@ export const SiteHeader = () => {
   const navigate = useNavigate();
   useBumpLastActive();
 
-  // Show "Send Quotes" only to users who actually act as Pros — they have the role
+  // Show "Opportunities" only to users who actually act as Pros — they have the role
   // or have started a business listing. Customers and logged-out browsers don't see it.
   const isPro = roles.includes("pro") || !!business;
   const NAV = isPro ? [...BASE_NAV.slice(0, 2), PRO_NAV_ITEM, ...BASE_NAV.slice(2)] : BASE_NAV;
@@ -88,7 +88,7 @@ export const SiteHeader = () => {
           {session ? (
             <>
               <Button variant="outline" size="sm" asChild>
-                <Link to="/list">Apply as a Pro</Link>
+                <Link to="/list">List your business</Link>
               </Button>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -134,7 +134,7 @@ export const SiteHeader = () => {
                 <Link to="/login">Log In</Link>
               </Button>
               <FlameButton asChild>
-                <Link to="/list">Apply as a Pro</Link>
+                <Link to="/list">List your business</Link>
               </FlameButton>
             </>
           )}
@@ -176,7 +176,7 @@ export const SiteHeader = () => {
                     <Link to="/login" onClick={() => setOpen(false)}>Log In</Link>
                   </Button>
                   <Button className="flex-1" asChild>
-                    <Link to="/list" onClick={() => setOpen(false)}>Apply as a Pro</Link>
+                    <Link to="/list" onClick={() => setOpen(false)}>List your business</Link>
                   </Button>
                 </>
               )}

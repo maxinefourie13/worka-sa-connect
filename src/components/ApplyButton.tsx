@@ -134,7 +134,7 @@ export const ApplyButton = ({
           )}
         >
           {isUrgent ? <Siren className="size-3.5" strokeWidth={2.5} /> : <Send className="size-3.5" strokeWidth={2.5} />}
-          {submitted ? "Quote sent ✓" : isUrgent ? "Claim urgent job" : "Send Quote"}
+          {submitted ? "Quote sent ✓" : isUrgent ? "Quote urgent job" : "Send Quote"}
         </Button>
         {showFoundingPill && !isUrgent && (
           <span className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest text-accent">
@@ -203,15 +203,15 @@ const PaywallDialog = ({ kind, onClose, onPickPlan, onRunKyc }: PaywallProps) =>
     },
     "trial-urgent": {
       icon: <Siren className="size-5 text-accent" strokeWidth={2.5} />,
-      title: "Urgent leads need Verified Pro",
-      body: "Urgent customer requests are reserved for Verified Pros with a verified ID. Upgrade to R250/mo and complete the ID check to claim emergency leads.",
+      title: "Urgent jobs need Verified Pro",
+      body: "Urgent customer requests are reserved for Verified Pros with a verified ID. Upgrade to R250/mo and complete the ID check to quote emergency jobs.",
       cta: "Upgrade & verify",
       onCta: onPickPlan,
     },
     "kyc-needed": {
       icon: <ShieldCheck className="size-5 text-accent" strokeWidth={2.5} />,
       title: "Verify your ID first",
-      body: "Urgent leads are only sent to pros with a verified SA ID. Complete the quick ID check on your profile and you're in.",
+      body: "Urgent job requests are only sent to pros with a verified SA ID. Complete the quick ID check on your profile and you're in.",
       cta: "Verify my ID",
       onCta: onRunKyc,
     },

@@ -62,7 +62,7 @@ const RequestsHub = () => {
               Need someone who can do it properly?
             </h1>
             <p className="mt-3 text-white/74 text-lg">
-              Tell us what you need and vetted SA pros come back to you with quotes. If you're a pro, browse live requests and send quotes to customers ready to hire.
+              Tell us what you need once. Vetted SA pros send quotes back to your Sjoh dashboard, then you choose who to contact.
             </p>
           </div>
         </header>
@@ -83,7 +83,7 @@ const RequestsHub = () => {
             </TabsTrigger>
             <TabsTrigger value="pros" className="rounded-full py-3 font-extrabold data-[state=active]:bg-sa-green data-[state=active]:text-white data-[state=active]:shadow-none">
               <Send className="size-4 mr-1.5" />
-              Quote on jobs
+              For businesses
             </TabsTrigger>
           </TabsList>
 
@@ -111,17 +111,17 @@ const STEPS = [
   {
     icon: ClipboardList,
     title: "1. Tell us the job",
-    body: "Pick a category, your suburb, and what needs doing. Add photos if you've got them — pros love a clear brief.",
+    body: "Pick a category, your suburb, and what needs doing. Add photos if you've got them so pros can quote properly.",
   },
   {
     icon: Send,
     title: "2. Vetted pros quote you",
-    body: "Real SA pros in your area get notified. Most quotes land within a few hours, often faster.",
+    body: "Real SA businesses in your area send quotes to your Sjoh dashboard. Your contact details stay private until you accept.",
   },
   {
     icon: Handshake,
     title: "3. Pick your pro, chat direct",
-    body: "Compare quotes, check reviews, then message or call your pro directly. No middleman taking a cut.",
+    body: "Compare price, scope, reviews and timing. Accept the best quote, then contact details unlock so you can get it sorted.",
   },
 ];
 
@@ -237,10 +237,10 @@ const GetQuotePanel = () => {
             What you get back
           </span>
           <h4 className="font-display text-xl md:text-2xl font-extrabold tracking-tight mt-2">
-            Quotes from vetted pros, in your inbox
+            Quotes from vetted pros, in your dashboard
           </h4>
           <p className="text-white/62 text-sm mt-2">
-            We don't take a cent from you. Promise.
+            We keep the quote trail tidy, then you pay the business directly. Sjoh never takes commission.
           </p>
           <ul className="mt-5 space-y-3">
             {PROMISES.map((p) => (
@@ -312,7 +312,7 @@ const GetQuotePanel = () => {
 };
 
 // ============================================================
-// Tab 2: Quote on jobs
+// Tab 2: For businesses
 // ============================================================
 
 const QuoteOnJobsPanel = () => {
@@ -348,10 +348,10 @@ const QuoteOnJobsPanel = () => {
           </span>
           <div>
             <h3 className="font-display text-xl md:text-2xl font-extrabold tracking-tight">
-              Send quotes to customers already looking
+              Find work worth quoting
             </h3>
             <p className="text-white/62 text-sm mt-1">
-              Browse live requests, choose the jobs that fit your business, and send a quote from your Sjoh profile.
+              Browse live customer requests, choose the jobs that fit your service area, and send a quote from your Sjoh business profile.
             </p>
           </div>
         </div>
@@ -364,7 +364,7 @@ const QuoteOnJobsPanel = () => {
           <input
             value={keyword}
             onChange={(e) => setKeyword(e.target.value)}
-            placeholder="Search requests, services, or city..."
+            placeholder="Search job requests, services, or city..."
             className="w-full py-2 bg-transparent outline-none text-sm text-foreground placeholder:text-muted-foreground"
           />
         </div>
@@ -395,7 +395,7 @@ const QuoteOnJobsPanel = () => {
       </div>
 
       <div className="text-sm text-white/50 tabular-nums">
-        {filtered.length} live {filtered.length === 1 ? "request" : "requests"}
+        {filtered.length} live job {filtered.length === 1 ? "request" : "requests"}
       </div>
 
       {filtered.length === 0 ? (
@@ -417,12 +417,12 @@ const QuoteOnJobsPanel = () => {
             Want to quote on these jobs?
           </h4>
           <p className="text-white/85 text-sm mt-1">
-            List your business first so customers can see who is replying.
+            Create a business profile first so customers can compare your quote, reviews, service area, and trust signals.
           </p>
         </div>
         <Button asChild className="shrink-0 rounded-full bg-sa-gold font-bold text-sa-dark hover:bg-sa-gold/90">
           <Link to="/list">
-            Apply as a pro <ArrowRight className="size-4" />
+            List your business <ArrowRight className="size-4" />
           </Link>
         </Button>
       </div>
