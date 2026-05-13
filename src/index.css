@@ -246,6 +246,13 @@
   60% { color: var(--sa-green); }
   80% { color: var(--sa-pink); }
 }
+@keyframes sa-card-colors {
+  0%, 100% { background-color: var(--sa-gold); color: var(--sa-dark); }
+  20% { background-color: var(--sa-red); color: #fff; }
+  40% { background-color: var(--sa-peri); color: #fff; }
+  60% { background-color: var(--sa-green); color: #fff; }
+  80% { background-color: var(--sa-pink); color: #fff; }
+}
 @keyframes sa-float-bob {
   0%, 100% { transform: translateY(0px) rotate(var(--rot, 0deg)); }
   50%      { transform: translateY(-8px) rotate(var(--rot, 0deg)); }
@@ -263,3 +270,4 @@
 .sa-marquee-track { animation: sa-marquee 22s linear infinite; }
 .sa-float-bob { animation: sa-float-bob 4s ease-in-out infinite; }
 .animate-sjoh-mark { animation: sjoh-mark-color 5s ease-in-out infinite; }
+.animate-sa-card-colors { animation: sa-card-colors 8s ease-in-out infinite; }

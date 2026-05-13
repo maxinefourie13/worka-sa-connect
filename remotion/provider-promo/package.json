@@ -1,0 +1,24 @@
+{
+  "name": "sjoh-provider-promo",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "studio": "remotion studio",
+    "still:vertical": "remotion still ProviderPovVertical --frame=520 --scale=0.25",
+    "still:landscape": "remotion still ProviderPovLandscape --frame=520 --scale=0.25",
+    "render:vertical": "remotion render ProviderPovVertical out/provider-pov-vertical.mp4",
+    "render:landscape": "remotion render ProviderPovLandscape out/provider-pov-landscape.mp4"
+  },
+  "dependencies": {
+    "@remotion/cli": "^4.0.357",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "remotion": "^4.0.357"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.23",
+    "@types/react-dom": "^18.3.7",
+    "typescript": "^5.8.3"
+  }
+}

@@ -248,7 +248,7 @@ const HomePage = () => {
 
           <div className="mt-12 hidden lg:grid grid-cols-[0.78fr_1.25fr_0.78fr] gap-4 items-end">
             <div className="space-y-4 pb-10">
-              <div className="rotate-[-2deg] rounded-[1.5rem] border-2 border-black bg-sa-gold p-4 text-sa-dark shadow-[8px_8px_0_rgba(255,255,255,0.16)]">
+              <div className="animate-sa-card-colors rotate-[-2deg] rounded-[1.5rem] border-2 border-black p-4 shadow-[8px_8px_0_rgba(255,255,255,0.16)]">
                 <div className="flex items-center gap-2 text-xs font-black uppercase tracking-widest">
                   <Zap className="size-4" /> Fast match
                 </div>
@@ -319,49 +319,61 @@ const HomePage = () => {
       {/* ========== MARQUEE STRIP ========== */}
       <div
         aria-hidden
-        className="overflow-hidden whitespace-nowrap py-3.5"
-        style={{ background: "var(--sa-gold)", borderTop: "3px solid var(--sa-dark)", borderBottom: "3px solid var(--sa-dark)" }}
+        className="relative overflow-hidden whitespace-nowrap border-y border-black/10 bg-white py-5"
       >
-        <div className="inline-flex sa-marquee-track">
+        <div className="pointer-events-none absolute inset-y-0 left-0 z-[1] w-20 bg-gradient-to-r from-white to-transparent" />
+        <div className="pointer-events-none absolute inset-y-0 right-0 z-[1] w-20 bg-gradient-to-l from-white to-transparent" />
+        <div className="inline-flex sa-marquee-track items-center">
           {[...MARQUEE_ITEMS, ...MARQUEE_ITEMS, ...MARQUEE_ITEMS].map((t, i) => (
             <span
               key={i}
-              className="font-display-bold inline-flex items-center gap-3.5 px-8 text-[17px]"
-              style={{ color: "var(--sa-dark)" }}
+              className="font-display-bold inline-flex items-center gap-4 px-7 text-[15px] text-sa-dark/78 md:text-[17px]"
             >
               {t}
-              <span className="text-xs opacity-50">✦</span>
+              <span
+                className="size-2.5 rotate-45 rounded-[2px]"
+                style={{
+                  background:
+                    i % 5 === 0 ? "var(--sa-gold)" :
+                    i % 5 === 1 ? "var(--sa-red)" :
+                    i % 5 === 2 ? "var(--sa-peri)" :
+                    i % 5 === 3 ? "var(--sa-green)" :
+                    "var(--sa-pink)",
+                }}
+              />
             </span>
           ))}
         </div>
       </div>
 
       {/* ========== PHOTO BAND — local work, product cards ========== */}
-      <section className="bg-[#050505] px-4 py-16">
-        <div className="container">
-          <div className="relative min-h-[620px] overflow-hidden rounded-[2.25rem] border border-white/10">
+      <section className="bg-[#050505] py-16">
+          <div className="relative min-h-[620px] overflow-hidden border-y border-white/10">
             <img src={heroGroup1} alt="South Africans using Sjoh" className="absolute inset-0 h-full w-full object-cover" />
             <div
               className="absolute inset-0"
-              style={{ background: "linear-gradient(90deg, rgba(0,0,0,0.78) 0%, rgba(0,0,0,0.52) 42%, rgba(0,0,0,0.16) 100%)" }}
+              style={{ background: "linear-gradient(90deg, rgba(0,0,0,0.84) 0%, rgba(0,0,0,0.54) 36%, rgba(0,0,0,0.16) 72%, rgba(0,0,0,0.06) 100%)" }}
             />
             <div
               className="absolute inset-0"
-              style={{ background: "linear-gradient(0deg, rgba(0,0,0,0.78) 0%, rgba(0,0,0,0.12) 58%, rgba(0,0,0,0.18) 100%)" }}
+              style={{ background: "linear-gradient(0deg, rgba(0,0,0,0.42) 0%, rgba(0,0,0,0.08) 48%, rgba(0,0,0,0.22) 100%)" }}
             />
-            <div className="relative z-[1] flex min-h-[620px] flex-col justify-end p-6 md:p-10">
-              <div className="max-w-2xl rounded-[1.5rem] border border-white/15 bg-black/48 p-5 backdrop-blur-sm">
-                <div className="text-[11px] font-bold tracking-[0.1em] uppercase mb-4 text-white/62">
+            <div className="relative z-[1] flex min-h-[620px] items-end px-5 py-12 md:px-10 md:py-16 lg:px-14 xl:px-20">
+              <div className="max-w-3xl">
+                <div className="mb-4 text-[11px] font-black uppercase tracking-[0.18em] text-white/78 drop-shadow-[0_2px_14px_rgba(0,0,0,0.95)]">
                   ● Real help, close by
                 </div>
-                <h2 className="font-display-bold text-white text-4xl md:text-6xl leading-[1.02] mb-4 drop-shadow-[0_4px_24px_rgba(0,0,0,0.7)]">
+                <h2 className="mb-4 font-display-bold text-5xl leading-[0.98] text-white drop-shadow-[0_6px_34px_rgba(0,0,0,0.95)] md:text-7xl">
                   Find the skill.<br />Check the reviews.<br />Get it <span className="text-sa-gold">sorted.</span>
                 </h2>
-                <p className="text-white/80 text-base leading-relaxed max-w-md drop-shadow-[0_2px_12px_rgba(0,0,0,0.75)]">
+                <p className="max-w-xl text-lg font-medium leading-relaxed text-white/86 drop-shadow-[0_3px_18px_rgba(0,0,0,0.95)]">
                   Search the directory, post a request, or list your business where people are already looking for exactly what you do.
                 </p>
               </div>
-              <div className="mt-4 grid gap-3 md:grid-cols-3">
+            </div>
+          </div>
+          <div className="border-b border-white/10 bg-[#050505] px-5 py-5 md:px-10 lg:px-14 xl:px-20">
+              <div className="grid gap-3 md:grid-cols-3">
                 {[
                   { title: "Post a request", body: "Share the job once and let interested pros come back to you.", cta: "Start here", to: "/requests/new" },
                   { title: "Browse vetted pros", body: "Compare profiles, reviews, work areas, and services across SA.", cta: "Open directory", to: "/directory" },
@@ -370,7 +382,7 @@ const HomePage = () => {
                   <Link
                     key={card.title}
                     to={card.to}
-                    className="group min-h-[190px] rounded-[1.4rem] border border-white/18 bg-white/16 p-5 text-white backdrop-blur-xl transition hover:-translate-y-1 hover:bg-white/22"
+                    className="group min-h-[160px] rounded-[1.25rem] border border-white/12 bg-white/[0.055] p-5 text-white transition hover:-translate-y-1 hover:border-sa-gold/50 hover:bg-white/[0.09]"
                   >
                     <div className="flex items-center justify-between">
                       <span className="text-xs font-black uppercase tracking-widest text-white/55">{card.cta}</span>
@@ -378,14 +390,12 @@ const HomePage = () => {
                         <ArrowRight className="size-4" />
                       </span>
                     </div>
-                    <h3 className="mt-10 font-display text-2xl font-extrabold">{card.title}</h3>
+                    <h3 className="mt-8 font-display text-2xl font-extrabold">{card.title}</h3>
                     <p className="mt-2 text-sm leading-relaxed text-white/68">{card.body}</p>
                   </Link>
                 ))}
               </div>
-            </div>
           </div>
-        </div>
       </section>
 
       {/* ========== TRUST MESSAGES ========== */}
