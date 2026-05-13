@@ -80,6 +80,11 @@ const DirectoryPage = () => {
 
   return (
     <SiteLayout>
+      <SeoHead
+        title="Browse the Sjoh directory of South African pros"
+        description="Search vetted South African service providers by category and province. Plumbers, electricians, designers, tutors and more — verified, contactable, no commission."
+        canonical="https://sjoh.co.za/directory"
+      />
       <div className="bg-[#050505] text-white">
       <div className="container py-10 md:py-14">
         {/* Breadcrumb */}
