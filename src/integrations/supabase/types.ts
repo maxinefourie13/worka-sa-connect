@@ -195,6 +195,7 @@ export type Database = {
           kyc_verified_at: string | null
           last_active_at: string
           listing_status: string
+          logo_url: string | null
           name: string
           no_show_count: number
           owner_id: string
@@ -241,6 +242,7 @@ export type Database = {
           kyc_verified_at?: string | null
           last_active_at?: string
           listing_status?: string
+          logo_url?: string | null
           name: string
           no_show_count?: number
           owner_id: string
@@ -287,6 +289,7 @@ export type Database = {
           kyc_verified_at?: string | null
           last_active_at?: string
           listing_status?: string
+          logo_url?: string | null
           name?: string
           no_show_count?: number
           owner_id?: string
