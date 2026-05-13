@@ -3,7 +3,7 @@ import { Link, useSearchParams } from "react-router-dom";
 import {
   LayoutGrid, User, Sparkles, Briefcase, Users, CreditCard, Plus,
   ShieldCheck, Bell, Mail, FileText, MessageCircle, Lock, ArrowUpRight,
-  Search,
+  Search, CheckCircle2,
 } from "lucide-react";
 import { QuotesSection } from "@/components/dashboard/QuotesSection";
 import { SiteHeader } from "@/components/SiteHeader";
@@ -48,6 +48,7 @@ const Dashboard = () => {
   const { business } = useMyBusiness();
   const access = useProviderAccess();
   const [params, setParams] = useSearchParams();
+  const sectionParam = params.get("section");
 
   useEffect(() => {
     if (params.get("paid") === "1") {
@@ -67,6 +68,19 @@ const Dashboard = () => {
       setParams(params, { replace: true });
     }
   }, [params, setParams]);
+
+  useEffect(() => {
+    if (sectionParam && SECTIONS.some((s) => s.key === sectionParam)) {
+      setSection(sectionParam as SectionKey);
+    }
+  }, [sectionParam]);
+
+  const jumpToSection = (next: SectionKey) => {
+    setSection(next);
+    const nextParams = new URLSearchParams(params);
+    nextParams.set("section", next);
+    setParams(nextParams, { replace: true });
+  };
 
   const sidebarName =
     business?.name ||
@@ -103,7 +117,7 @@ const Dashboard = () => {
                   return (
                     <button
                       key={s.key}
-                      onClick={() => setSection(s.key)}
+                      onClick={() => jumpToSection(s.key)}
                       className={cn(
                         "w-full flex items-center gap-2.5 px-3 py-2.5 text-sm font-bold rounded-full transition-colors text-left",
                         active ? "bg-sa-dark text-white shadow-sm" : "text-sa-dark/62 hover:bg-white/75 hover:text-sa-dark",
@@ -120,7 +134,7 @@ const Dashboard = () => {
 
           {/* Content */}
           <div className="space-y-6">
-            {section === "overview" && <OverviewSection onJump={setSection} />}
+            {section === "overview" && <OverviewSection onJump={jumpToSection} />}
             {section === "quotes" && <QuotesSection />}
             {section === "verification" && <VerificationSection />}
             {section === "profile" && <ProfileSection />}
@@ -388,6 +402,9 @@ const ProfileSection = () => {
   const [myBiz, setMyBiz] = useState<{ id: string; category_slug: string } | null>(null);
   const [form, setForm] = useState({ name: "", phone: "", email: "", website: "", description: "" });
   const [saving, setSaving] = useState(false);
+  const [galleryCount, setGalleryCount] = useState(0);
+  const hasContact = Boolean(form.phone.trim() || form.email.trim());
+  const hasDescription = form.description.trim().length >= 40;
 
   useEffect(() => {
     if (!user) return;
@@ -413,7 +430,7 @@ const ProfileSection = () => {
         description: business.description ?? "",
       });
     }
-  }, [business?.id]);
+  }, [business]);
 
   const onSave = async () => {
     if (!business?.id) return;
@@ -458,10 +475,38 @@ const ProfileSection = () => {
   return (
     <>
       <header>
-        <h1 className="font-display text-3xl font-medium tracking-tight">My Profile</h1>
-        <p className="text-sm text-ink-2 mt-1">Edit how your business appears on Sjoh.</p>
+        <h1 className="font-display text-3xl font-medium tracking-tight">Profile & portfolio</h1>
+        <p className="text-sm text-ink-2 mt-1">Make the page customers see after your quote feel trustworthy and ready to hire.</p>
       </header>
+      <div className="grid md:grid-cols-4 gap-3">
+        {[
+          { label: "Business basics", body: "Name, location and contact details.", done: Boolean(form.name.trim() && hasContact) },
+          { label: "Clear intro", body: "Tell customers what you do and where you work.", done: hasDescription },
+          { label: "Work photos", body: "Add finished jobs, team shots or before/after photos below.", done: galleryCount > 0 },
+          { label: "Trust proof", body: "Connect reviews and finish verification next.", done: Boolean(business.google_place_id) },
+        ].map((item) => (
+          <div
+            key={item.label}
+            className={cn(
+              "rounded-2xl border p-4",
+              item.done ? "border-sa-green/30 bg-sa-green/10" : "border-border bg-card",
+            )}
+          >
+            <div className="flex items-center gap-2">
+              <span className={cn("size-5 rounded-full flex items-center justify-center", item.done ? "bg-sa-green text-white" : "bg-secondary text-muted-foreground")}>
+                {item.done ? <CheckCircle2 className="size-3.5" /> : <span className="size-1.5 rounded-full bg-current" />}
+              </span>
+              <p className="text-sm font-black">{item.label}</p>
+            </div>
+            <p className="text-xs text-ink-2 mt-2 leading-relaxed">{item.body}</p>
+          </div>
+        ))}
+      </div>
       <div className="bg-card border border-border rounded-xl p-6 space-y-5">
+        <div>
+          <h2 className="font-display text-xl font-black tracking-tight">Business details</h2>
+          <p className="text-sm text-ink-2 mt-1">This copy appears on your public profile and beside your quotes.</p>
+        </div>
         <div className="grid sm:grid-cols-2 gap-4">
           <Field label="Business name">
             <input className="db-input" value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} />
@@ -476,13 +521,15 @@ const ProfileSection = () => {
             <input className="db-input" value={form.website} onChange={(e) => setForm((f) => ({ ...f, website: e.target.value }))} />
           </Field>
         </div>
-        <Field label="Description">
+        <Field label="Profile intro">
           <textarea
             rows={4}
             className="db-input resize-none"
+            placeholder="Example: Family-run electrical team helping homes and small businesses across Sandton with COCs, fault finding, lighting and emergency repairs."
             value={form.description}
             onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
           />
+          <span className="block text-xs text-ink-2 mt-1.5">Aim for 2-3 plain-English sentences. Customers should know what you do, where you work, and why they can trust you.</span>
         </Field>
         <div className="flex justify-end gap-3 pt-3 border-t border-border">
           <Button variant="outline" onClick={() => business && setForm({
@@ -492,7 +539,7 @@ const ProfileSection = () => {
           <Button onClick={onSave} disabled={saving}>{saving ? "Saving…" : "Save Changes"}</Button>
         </div>
       </div>
-      <BusinessGalleryCard businessId={business.id} />
+      <BusinessGalleryCard businessId={business.id} onCountChange={setGalleryCount} />
       {myBiz && (
         <SecondaryCategoriesCard
           businessId={myBiz.id}
@@ -868,10 +915,16 @@ const NotificationPrefsCard = () => {
         .eq("user_id", user.id)
         .maybeSingle();
       if (data) {
+        const prefs = data as {
+          email_alerts_optin?: boolean | null;
+          push_alerts_optin?: boolean | null;
+          whatsapp_alerts_optin?: boolean | null;
+          whatsapp_number?: string | null;
+        };
         setEmailOn(data.email_alerts_optin ?? true);
         setPushOn(data.push_alerts_optin ?? false);
-        setWaOn((data as any).whatsapp_alerts_optin ?? false);
-        setWaNumber((data as any).whatsapp_number ?? "");
+        setWaOn(prefs.whatsapp_alerts_optin ?? false);
+        setWaNumber(prefs.whatsapp_number ?? "");
       }
       setLoading(false);
     })();
@@ -911,8 +964,9 @@ const NotificationPrefsCard = () => {
         setPushOn(false);
         toast({ title: "Push alerts off", description: "No more buzzes. Sharp." });
       }
-    } catch (e: any) {
-      toast({ title: "Aikona, push failed", description: String(e?.message ?? e), variant: "destructive" });
+    } catch (e: unknown) {
+      const message = e instanceof Error ? e.message : String(e);
+      toast({ title: "Aikona, push failed", description: message, variant: "destructive" });
     }
     setBusy(null);
   };

@@ -148,10 +148,11 @@ const ListBusiness = () => {
         description: "We've saved your listing in workshop mode. Polish it from your dashboard anytime.",
       });
       next();
-    } catch (e: any) {
+    } catch (e: unknown) {
+      const message = e instanceof Error ? e.message : "Please try again in a moment.";
       toast({
         title: "Couldn't save your listing",
-        description: e?.message ?? "Please try again in a moment.",
+        description: message,
         variant: "destructive",
       });
     } finally {
@@ -461,10 +462,10 @@ const ListBusiness = () => {
               </div>
               <h2 className="font-display text-3xl font-medium tracking-tight">Your business profile is saved.</h2>
               <p className="mt-3 text-ink-2 max-w-md mx-auto">
-                Sharp! Next, polish your profile from the dashboard or browse opportunities to see what customers are asking for. We'll verify your details before switching the listing live.
+                Sharp! Next, add a few portfolio photos and trust signals so customers feel confident when your quote lands. We'll verify your details before switching the listing live.
               </p>
               <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
-                <Button onClick={() => navigate("/dashboard")}>Go to Dashboard</Button>
+                <Button onClick={() => navigate("/dashboard?section=profile")}>Polish my profile</Button>
                 <Button variant="outline" onClick={() => navigate("/leads")}>Browse Opportunities</Button>
               </div>
             </div>

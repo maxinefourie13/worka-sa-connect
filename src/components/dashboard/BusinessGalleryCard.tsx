@@ -15,7 +15,7 @@ interface GalleryImage {
 
 const MAX_IMAGES = 12;
 
-export function BusinessGalleryCard({ businessId }: { businessId: string }) {
+export function BusinessGalleryCard({ businessId, onCountChange }: { businessId: string; onCountChange?: (count: number) => void }) {
   const [images, setImages] = useState<GalleryImage[]>([]);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
@@ -33,7 +33,9 @@ export function BusinessGalleryCard({ businessId }: { businessId: string }) {
       console.error("[gallery] load failed", error);
       toast({ title: "Couldn't load gallery", description: error.message, variant: "destructive" });
     }
-    setImages((data ?? []) as GalleryImage[]);
+    const nextImages = (data ?? []) as GalleryImage[];
+    setImages(nextImages);
+    onCountChange?.(nextImages.length);
     setLoading(false);
   };
 

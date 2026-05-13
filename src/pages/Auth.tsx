@@ -19,6 +19,16 @@ interface AuthShellProps {
   children: React.ReactNode;
 }
 
+const getSafeNextPath = (location: ReturnType<typeof useLocation>) => {
+  const fromState = (location.state as { from?: string } | null)?.from;
+  const fromQuery = new URLSearchParams(location.search).get("next");
+  const target = fromState || fromQuery || "/dashboard";
+  return target.startsWith("/") && !target.startsWith("//") ? target : "/dashboard";
+};
+
+const withNext = (path: string, nextPath: string) =>
+  nextPath === "/dashboard" ? path : `${path}?next=${encodeURIComponent(nextPath)}`;
+
 const BrandPanel = () => (
   <aside className="relative hidden lg:flex flex-col justify-between overflow-hidden rounded-3xl bg-gradient-to-br from-primary via-primary to-[hsl(227_100%_29%)] p-10 text-primary-foreground min-h-[560px]">
     {/* soft glow */}
@@ -33,15 +43,15 @@ const BrandPanel = () => (
         Find someone who can do it properly.
       </h2>
       <p className="mt-3 text-primary-foreground/80 text-sm max-w-sm">
-        South Africa's no-commission directory of vetted local pros. Post the job, get real quotes, get it sorted.
+        One Sjoh account lets you post jobs, compare quotes, save invoices, or build a business profile customers can trust.
       </p>
     </div>
 
     <ul className="relative z-10 space-y-4 text-sm">
       {[
-        { Icon: HandCoins, text: "0% commission. Ever." },
-        { Icon: ShieldCheck, text: "Vetted SA pros, real reviews." },
-        { Icon: Handshake, text: "Talk to them direct. No middleman." },
+        { Icon: HandCoins, text: "Customers get real quotes. Pros keep the full job." },
+        { Icon: ShieldCheck, text: "Profiles, reviews and trust signals in one place." },
+        { Icon: Handshake, text: "Contact unlocks when the quote is accepted." },
       ].map(({ Icon, text }) => (
         <li key={text} className="flex items-center gap-3">
           <span className="flex size-9 items-center justify-center rounded-xl bg-white/15 backdrop-blur-sm">
@@ -88,14 +98,14 @@ const GoogleGlyph = () => (
   </svg>
 );
 
-const SocialButtons = () => {
+const SocialButtons = ({ nextPath }: { nextPath: string }) => {
   const [loading, setLoading] = useState<"google" | "apple" | null>(null);
 
   const handle = async (provider: "google" | "apple") => {
     setLoading(provider);
     try {
       const result = await lovable.auth.signInWithOAuth(provider, {
-        redirect_uri: window.location.origin,
+        redirect_uri: `${window.location.origin}${nextPath}`,
       });
       if (result.error) {
         toast({ title: "Sign-in failed", description: String(result.error), variant: "destructive" });
@@ -103,7 +113,7 @@ const SocialButtons = () => {
         return;
       }
       if (result.redirected) return;
-      window.location.href = "/dashboard";
+      window.location.href = nextPath;
     } catch (e) {
       toast({ title: "Sign-in failed", description: e instanceof Error ? e.message : "Unknown error", variant: "destructive" });
       setLoading(null);
@@ -137,14 +147,16 @@ const useRedirectIfAuthed = () => {
   const location = useLocation();
   useEffect(() => {
     if (!loading && session) {
-      const target = (location.state as { from?: string } | null)?.from || "/dashboard";
-      navigate(target, { replace: true });
+      navigate(getSafeNextPath(location), { replace: true });
     }
-  }, [session, loading, navigate, location.state]);
+  }, [session, loading, navigate, location]);
 };
 
 export const Login = () => {
   useRedirectIfAuthed();
+  const location = useLocation();
+  const navigate = useNavigate();
+  const nextPath = getSafeNextPath(location);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -159,18 +171,19 @@ export const Login = () => {
       return;
     }
     toast({ title: "Welcome back" });
+    navigate(nextPath, { replace: true });
   };
 
   return (
     <AuthShell
-      title="Welcome back, boet."
-      subtitle="Log in to manage your business and pick up where you left off."
-      footer={<>Don't have an account? <Link to="/register" className="text-primary font-semibold hover:underline">Register</Link></>}
+      title="Welcome back."
+      subtitle="Log in to post a job, compare quotes, save invoices, or manage your business profile."
+      footer={<>Don't have an account? <Link to={withNext("/register", nextPath)} className="text-primary font-semibold hover:underline">Create one</Link></>}
     >
       <form className="space-y-4" onSubmit={onSubmit}>
         <div className="space-y-1.5">
           <Label htmlFor="login-email">Email</Label>
-          <Input id="login-email" type="email" required placeholder="you@business.co.za" value={email} onChange={(e) => setEmail(e.target.value)} />
+          <Input id="login-email" type="email" required placeholder="you@email.com" value={email} onChange={(e) => setEmail(e.target.value)} />
         </div>
         <div className="space-y-1.5">
           <Label htmlFor="login-password">Password</Label>
@@ -184,7 +197,7 @@ export const Login = () => {
           Log in
         </Button>
         <Divider />
-        <SocialButtons />
+        <SocialButtons nextPath={nextPath} />
       </form>
     </AuthShell>
   );
@@ -193,6 +206,8 @@ export const Login = () => {
 export const Register = () => {
   useRedirectIfAuthed();
   const location = useLocation();
+  const navigate = useNavigate();
+  const nextPath = getSafeNextPath(location);
   const [displayName, setDisplayName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -217,7 +232,7 @@ export const Register = () => {
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!agreeTerms) {
-      toast({ title: "Tick the box, boet", description: "You need to agree to the Terms before registering.", variant: "destructive" });
+      toast({ title: "Please accept the terms", description: "You need to agree to the Terms before creating an account.", variant: "destructive" });
       return;
     }
     if (password.length < 8) {
@@ -229,7 +244,7 @@ export const Register = () => {
       email,
       password,
       options: {
-        emailRedirectTo: window.location.origin,
+        emailRedirectTo: `${window.location.origin}${nextPath}`,
         data: { display_name: displayName, referral_code: referralCode || null },
       },
     });
@@ -247,14 +262,19 @@ export const Register = () => {
       }
     }
 
-    toast({ title: "Sharp-sharp!", description: "You're in. Let's get to work." });
+    if (data.session) {
+      toast({ title: "Sharp-sharp!", description: "You're in. Let's get to work." });
+      navigate(nextPath, { replace: true });
+    } else {
+      toast({ title: "Check your email", description: "Tap the confirmation link, then we'll take you back to where you started." });
+    }
   };
 
   return (
     <AuthShell
-      title="Pull in, boet."
-      subtitle="The graft is waiting — let's get you set up in 60 seconds."
-      footer={<>Already have an account? <Link to="/login" className="text-primary font-semibold hover:underline">Log in</Link></>}
+      title="Create your Sjoh account."
+      subtitle="Use one account to post jobs, accept quotes, save invoices, or list your business."
+      footer={<>Already have an account? <Link to={withNext("/login", nextPath)} className="text-primary font-semibold hover:underline">Log in</Link></>}
     >
       <form className="space-y-4" onSubmit={onSubmit}>
         {referralCode && (
@@ -267,16 +287,16 @@ export const Register = () => {
           </div>
         )}
         <div className="space-y-1.5">
-          <Label htmlFor="reg-name">What does your Ma call you?</Label>
-          <Input id="reg-name" required placeholder="First name + surname (or business name)" value={displayName} onChange={(e) => setDisplayName(e.target.value)} />
+          <Label htmlFor="reg-name">Your name</Label>
+          <Input id="reg-name" required placeholder="First name + surname" value={displayName} onChange={(e) => setDisplayName(e.target.value)} />
         </div>
         <div className="space-y-1.5">
           <Label htmlFor="reg-email">Email</Label>
-          <Input id="reg-email" type="email" required placeholder="you@business.co.za" value={email} onChange={(e) => setEmail(e.target.value)} />
+          <Input id="reg-email" type="email" required placeholder="you@email.com" value={email} onChange={(e) => setEmail(e.target.value)} />
         </div>
         <div className="space-y-1.5">
           <Label htmlFor="reg-password">Password</Label>
-          <Input id="reg-password" type="password" required minLength={8} placeholder="Make it stronger than Ouma's rusks." value={password} onChange={(e) => setPassword(e.target.value)} />
+          <Input id="reg-password" type="password" required minLength={8} placeholder="At least 8 characters" value={password} onChange={(e) => setPassword(e.target.value)} />
         </div>
         <label className="flex items-start gap-2.5 text-xs cursor-pointer select-none">
           <input
@@ -292,10 +312,10 @@ export const Register = () => {
         </label>
         <Button className="w-full" size="lg" disabled={submitting || !agreeTerms}>
           {submitting ? <Loader2 className="size-4 animate-spin" /> : null}
-          Let's gooi
+          Create account
         </Button>
         <Divider />
-        <SocialButtons />
+        <SocialButtons nextPath={nextPath} />
       </form>
     </AuthShell>
   );
@@ -332,7 +352,7 @@ export const ForgotPassword = () => {
         <form className="space-y-4" onSubmit={onSubmit}>
           <div className="space-y-1.5">
             <Label htmlFor="forgot-email">Email</Label>
-            <Input id="forgot-email" type="email" required placeholder="you@business.co.za" value={email} onChange={(e) => setEmail(e.target.value)} />
+            <Input id="forgot-email" type="email" required placeholder="you@email.com" value={email} onChange={(e) => setEmail(e.target.value)} />
           </div>
           <Button className="w-full" size="lg" disabled={submitting}>
             {submitting ? <Loader2 className="size-4 animate-spin" /> : null}

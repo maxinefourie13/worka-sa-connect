@@ -96,7 +96,7 @@ const PostOpportunity = () => {
         toast({ title: "File too big", description: `"${file.name}" is over 10MB even after compression.`, variant: "destructive" });
         continue;
       }
-      const safeName = file.name.replace(/[^\w.\-]+/g, "_");
+      const safeName = file.name.replace(/[^\w.-]+/g, "_");
       const path = `${user.id}/${Date.now()}-${safeName}`;
       const { error: upErr } = await supabase.storage
         .from("request-attachments")
@@ -120,7 +120,7 @@ const PostOpportunity = () => {
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) {
-      navigate("/login");
+      navigate(`/login?next=${encodeURIComponent("/requests/new")}`);
       return;
     }
     if (!agreeTerms) {
