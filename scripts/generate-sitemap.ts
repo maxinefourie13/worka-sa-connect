@@ -84,17 +84,15 @@ const STATIC: Entry[] = [
 entries.push(...STATIC);
 
 // Skip the placeholder "Other" categories — they're not real search terms.
-const realCategories = CATEGORIES.filter((c) => !c.slug.startsWith("other-"));
-
-for (const cat of realCategories) {
+for (const slug of CATEGORY_SLUGS) {
   // Category landing
-  entries.push({ path: `/${cat.slug}`, changefreq: "weekly", priority: "0.8" });
+  entries.push({ path: `/${slug}`, changefreq: "weekly", priority: "0.8" });
 
   for (const province of PROVINCES) {
     const provSlug = slugify(province);
     // Category × Province
     entries.push({
-      path: `/${cat.slug}/${provSlug}`,
+      path: `/${slug}/${provSlug}`,
       changefreq: "weekly",
       priority: "0.7",
     });
@@ -103,7 +101,7 @@ for (const cat of realCategories) {
     const cities = CITIES_BY_PROVINCE[province] ?? [];
     for (const city of cities) {
       entries.push({
-        path: `/${cat.slug}/${provSlug}/${slugify(city)}`,
+        path: `/${slug}/${provSlug}/${slugify(city)}`,
         changefreq: "weekly",
         priority: "0.6",
       });
