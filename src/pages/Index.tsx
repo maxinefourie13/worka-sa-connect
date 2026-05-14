@@ -17,7 +17,7 @@ import { cn } from "@/lib/utils";
 import heroGroup1 from "@/assets/hero-group-1.jpg";
 import heroGroup2 from "@/assets/hero-group-2.jpg";
 import heroGroup3 from "@/assets/hero-group-3.jpg";
-import solarInstaller from "@/assets/solar-installer.jpg";
+import heroGroup4 from "@/assets/hero-group-4.jpg";
 
 const HERO_PHRASES = [
   "Sjoh! Your husband's DIY is a crime scene. Hire an actual professional.",
@@ -61,12 +61,12 @@ const HERO_SERVICE_CARDS = [
 ];
 
 const CATEGORY_TILE_STYLES = [
-  { bg: "var(--sa-gold)", color: "var(--sa-dark)", iconBg: "rgba(0,0,0,0.10)" },
-  { bg: "var(--sa-red)", color: "#fff", iconBg: "rgba(0,0,0,0.13)" },
-  { bg: "var(--sa-navy)", color: "#fff", iconBg: "rgba(255,255,255,0.12)" },
-  { bg: "var(--sa-green)", color: "#fff", iconBg: "rgba(0,0,0,0.13)" },
-  { bg: "var(--sa-peri)", color: "#fff", iconBg: "rgba(0,0,0,0.13)" },
-  { bg: "var(--sa-pink)", color: "#fff", iconBg: "rgba(0,0,0,0.13)" },
+  "var(--sa-gold)",
+  "var(--sa-red)",
+  "var(--sa-green)",
+  "var(--sa-peri)",
+  "var(--sa-pink)",
+  "var(--sa-navy)",
 ];
 
 type CountingStatProps = {
@@ -433,7 +433,7 @@ const HomePage = () => {
         <div className="container">
           <div className="grid gap-8 lg:grid-cols-[0.95fr_1.05fr] lg:items-stretch">
             <div className="relative min-h-[520px] overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.05]">
-              <img src={solarInstaller} alt="Solar installer working on a rooftop" className="absolute inset-0 h-full w-full object-cover" />
+              <img src={heroGroup4} alt="South Africans using Sjoh to find local services" className="absolute inset-0 h-full w-full object-cover" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/86 via-black/42 to-black/10" />
               <div className="relative z-[1] flex h-full min-h-[520px] flex-col justify-end p-6 md:p-8">
                 <div className="max-w-md rounded-[1.35rem] border border-white/15 bg-black/52 p-5 backdrop-blur-sm">
@@ -506,24 +506,24 @@ const HomePage = () => {
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
             {groupCounts.map((g, index) => {
               const Icon = getCategoryGroupIcon(g.slug);
-              const tile = CATEGORY_TILE_STYLES[index % CATEGORY_TILE_STYLES.length];
+              const accent = CATEGORY_TILE_STYLES[index % CATEGORY_TILE_STYLES.length];
               return (
                 <Link
                   key={g.slug}
                   to={`/directory/g/${g.slug}`}
-                  className="group relative overflow-hidden rounded-xl p-5 flex items-center gap-4 border border-white/10 hover:-translate-y-1 hover:shadow-card transition-all duration-300 ease-out"
-                  style={{ background: tile.bg, color: tile.color }}
+                  className="group relative overflow-hidden rounded-xl bg-white/[0.06] p-5 flex items-center gap-4 border hover:bg-white/[0.1] hover:-translate-y-1 hover:shadow-card transition-all duration-300 ease-out"
+                  style={{ borderColor: `color-mix(in srgb, ${accent} 45%, transparent)` }}
                 >
-                  <span className="pointer-events-none absolute -right-8 -top-10 size-28 rounded-full bg-white/12 blur-2xl" />
+                  <span className="pointer-events-none absolute -right-8 -top-10 size-28 rounded-full opacity-0 blur-2xl transition-opacity duration-300 group-hover:opacity-25" style={{ background: accent }} />
                   <span
-                    className="relative size-11 rounded-xl flex items-center justify-center shrink-0 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300"
-                    style={{ background: tile.iconBg }}
+                    className="relative size-11 rounded-xl bg-white/10 flex items-center justify-center shrink-0 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300"
+                    style={{ color: accent }}
                   >
                     <Icon className="size-5" strokeWidth={2} />
                   </span>
                   <div className="relative min-w-0">
-                    <p className="font-semibold text-sm transition-colors leading-snug">{g.name}</p>
-                    <p className="text-xs mt-0.5 tabular-nums opacity-68">{g.subCount} services</p>
+                    <p className="font-semibold text-sm text-white transition-colors leading-snug group-hover:text-white">{g.name}</p>
+                    <p className="text-xs text-white/45 mt-0.5 tabular-nums">{g.subCount} services</p>
                   </div>
                 </Link>
               );
