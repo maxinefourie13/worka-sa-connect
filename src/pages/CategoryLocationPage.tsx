@@ -118,9 +118,9 @@ const CategoryLocationPage = () => {
     ? `${provinceName}`
     : "South Africa";
 
-  const heading = `Find a ${keyword} in ${locationLabel}`;
-  const title = `Top ${keyword}s in ${locationLabel} | Verified Pros | Sjoh!`;
-  const description = `Need a ${keyword.toLowerCase()} in ${locationLabel}? Get quotes from vetted South African pros. No ghosters, no half-jobs — just okes who can do it properly.`;
+  const heading = `Need a ${keyword.toLowerCase()} in ${locationLabel}? Let's help you find one.`;
+  const title = `${keyword}s in ${locationLabel} | Find a Verified Pro | Sjoh`;
+  const description = `Looking for a professional ${keyword.toLowerCase()} in ${locationLabel}? Sjoh connects you directly with vetted South African pros — the possibilities are endless. No commission, no ghosters, just someone who can do it properly.`;
   const canonical = buildLocationCanonical(categorySlug ?? "", provinceSlug, citySlug);
 
   // Example/preview row injected into every category page until we have enough
