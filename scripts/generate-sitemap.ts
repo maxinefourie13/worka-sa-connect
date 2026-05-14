@@ -5,7 +5,25 @@
 
 import { writeFileSync } from "fs";
 import { resolve } from "path";
-import { CATEGORIES, PROVINCES } from "../src/lib/mockData";
+
+// Inlined to avoid pulling .jpg/.png imports from src/lib/mockData.ts at build time.
+const PROVINCES = [
+  "Gauteng", "Western Cape", "KwaZulu-Natal", "Eastern Cape", "Limpopo",
+  "Mpumalanga", "Free State", "North West", "Northern Cape",
+] as const;
+
+const CATEGORY_SLUGS: string[] = [
+  "plumbing", "electrical", "handyman", "roofing", "painting", "carpentry", "appliance-repair",
+  "home-cleaning", "deep-cleaning", "carpet-cleaning", "laundry-ironing", "window-cleaning", "post-construction-cleaning",
+  "lawn-mowing", "garden-services", "tree-felling", "landscaping", "irrigation", "pool-maintenance",
+  "mobile-car-wash", "mechanics", "panel-beating", "tire-services", "vehicle-detailing", "roadside-assistance",
+  "builders", "renovations", "tiling", "bricklaying", "paving", "steelwork-fabrication",
+  "event-planning", "catering", "decor-hiring", "photography", "djs-entertainment", "kids-party-services",
+  "web-design", "graphic-design", "social-media-management", "copywriting", "virtual-assistants", "it-support",
+  "personal-training", "hair-beauty", "makeup-artists", "life-coaching", "tutoring", "babysitting",
+  "furniture-removal", "delivery-services", "courier-services", "storage-solutions", "packing-services",
+  "pet-grooming", "pet-sitting",
+];
 
 const BASE_URL = "https://sjoh.co.za";
 
