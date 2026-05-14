@@ -9,8 +9,8 @@ import { JobCard } from "@/components/JobCard";
 import { Typewriter } from "@/components/Typewriter";
 import { FoundingSpotsBanner } from "@/components/FoundingSpotsBanner";
 import { EarlyAccessNotice } from "@/components/EarlyAccessNotice";
-import { BUSINESSES, CATEGORIES, CATEGORY_GROUPS, PROVINCES } from "@/lib/mockData";
-import { useBusinesses, useOpportunities } from "@/hooks/useDirectory";
+import { BUSINESSES, CATEGORIES, CATEGORY_GROUPS, OPPORTUNITIES, PROVINCES } from "@/lib/mockData";
+import { useBusinesses } from "@/hooks/useDirectory";
 import { getCategoryGroupIcon } from "@/lib/categoryIcons";
 import { useReveal } from "@/hooks/useReveal";
 import { cn } from "@/lib/utils";
@@ -132,13 +132,12 @@ const HomePage = () => {
   };
 
   const { data: allBusinesses } = useBusinesses();
-  const { data: allOpps } = useOpportunities();
   const featuredRailRef = useRef<HTMLDivElement | null>(null);
   const featured = [...allBusinesses, ...BUSINESSES]
     .filter((business, index, businesses) => businesses.findIndex((item) => item.slug === business.slug) === index)
     .sort((a, b) => (b.reviewCount - a.reviewCount) || (b.rating - a.rating))
     .slice(0, 8);
-  const latest = allOpps.slice(0, 3);
+  const latest = OPPORTUNITIES.slice(0, 3);
   const popularCatSlugs = ["plumbing", "electrical", "home-cleaning", "garden-services", "mechanics", "web-design"];
   const popularCats = popularCatSlugs
     .map((s) => CATEGORIES.find((c) => c.slug === s))
@@ -652,7 +651,7 @@ const HomePage = () => {
               <h2 className="font-display-bold text-3xl md:text-5xl leading-[1.03] text-white">
                 Latest customer requests
               </h2>
-              <p className="mt-3 text-white/55">Real requests posted by people and businesses across SA.</p>
+              <p className="mt-3 text-white/55">Example jobs showing the kinds of requests customers can post on Sjoh.</p>
             </div>
             <Link to="/requests" className="text-sm font-semibold hover:underline hidden md:inline-block text-sa-gold">
               View all requests
