@@ -17,7 +17,7 @@ const PLANS = [
     id: "verified_pro",
     name: "Verified Pro",
     price: "R250/mo",
-    desc: "Send quotes on customer job requests, build verified reviews, get stronger placement, and keep the whole quote.",
+    desc: "Build a profile customers can find, send quotes, generate invoices, collect reviews, and keep the whole quote.",
     recommended: true,
   },
 ];
@@ -206,7 +206,7 @@ const ListBusiness = () => {
             <div className="space-y-5">
               <div>
                 <h2 className="font-display text-2xl font-semibold">Start your business profile</h2>
-                <p className="text-sm text-ink-2 mt-1">This creates the profile customers will see when you send quotes. Keep it simple now — you can polish it later.</p>
+                <p className="text-sm text-ink-2 mt-1">This creates your online reputation on Sjoh. Keep it simple now — you can polish the proof, photos, and services later.</p>
               </div>
               <Field label="Business name">
                 <input
@@ -291,8 +291,8 @@ const ListBusiness = () => {
           {step === 1 && (
             <div className="space-y-5">
               <div>
-                <h2 className="font-display text-2xl font-semibold">Make customers trust the quote</h2>
-                <p className="text-sm text-ink-2 mt-1">Add enough detail so when your quote lands, the customer knows who you are and why you are worth choosing.</p>
+                <h2 className="font-display text-2xl font-semibold">Show why customers should trust you</h2>
+                <p className="text-sm text-ink-2 mt-1">Add enough detail so customers understand what you do, where you work, and why you are worth choosing before they call.</p>
               </div>
               <Field label="Description">
                 <textarea
@@ -370,7 +370,7 @@ const ListBusiness = () => {
             <div className="space-y-5">
               <div>
                 <h2 className="font-display text-2xl font-semibold">Founding-member perks</h2>
-                <p className="text-sm text-ink-2 mt-1">Get in early while Sjoh fills the marketplace. You can quote, build reviews, and lock in 0% commission.</p>
+                <p className="text-sm text-ink-2 mt-1">Get in early while Sjoh fills the marketplace. Build visibility, collect reviews, and look professional before the first call.</p>
               </div>
               <div className="space-y-3">
                 {PLANS.map((p) => (
@@ -407,7 +407,7 @@ const ListBusiness = () => {
               <div>
                 <h2 className="font-display text-2xl font-semibold">Review and confirm</h2>
                 <p className="text-sm text-ink-2 mt-1">
-                  Founding members get a 2-month free trial — no card required. After that, it's the price below or cancel anytime.
+                  Founding members get a 2-month free trial with a card on file. After that, it's the price below or cancel anytime before billing starts.
                 </p>
               </div>
               <div className="rounded-xl border border-border p-5 bg-secondary/40 space-y-3">
@@ -424,7 +424,7 @@ const ListBusiness = () => {
                     {PLANS.find((p) => p.id === plan)?.name ?? "—"}
                   </p>
                   <p className="text-xs text-muted-foreground mt-1">
-                    R250/month after your free trial. Send quotes on customer job requests, generate invoices, and collect verified reviews.
+                    R250/month after your free trial. Build a public profile, respond to quote requests, generate invoices, and collect verified reviews.
                   </p>
                 </div>
               </div>
@@ -462,7 +462,7 @@ const ListBusiness = () => {
               </div>
               <h2 className="font-display text-3xl font-medium tracking-tight">Your business profile is saved.</h2>
               <p className="mt-3 text-ink-2 max-w-md mx-auto">
-                Sharp! Next, add a few portfolio photos and trust signals so customers feel confident when your quote lands. We'll verify your details before switching the listing live.
+                Sharp! Next, add a few portfolio photos and trust signals so customers feel confident before they contact you. We'll verify your details before switching the listing live.
               </p>
               <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
                 <Button onClick={() => navigate("/dashboard?section=profile")}>Polish my profile</Button>

@@ -24,7 +24,7 @@ const HERO_PHRASES = [
 
 const PERKS = [
   { Icon: Award, title: "Founder badge", body: "First 500 pros get a permanent Founder badge on their profile." },
-  { Icon: Gift, title: "Extra month free", body: "Founding members get a bonus month on top of the trial. No card now." },
+  { Icon: Gift, title: "Extra month free", body: "Founding members get a bonus month on top of the trial. Card required to activate." },
   { Icon: Handshake, title: "Keep the whole quote", body: "No commission on jobs. Clients contact you directly." },
   { Icon: ShieldCheck, title: "Vetted marketplace", body: "Profiles, reviews, and trust signals help good pros stand out." },
 ];
@@ -88,7 +88,7 @@ const EarlyAccessLanding = () => {
     <div className="min-h-dvh w-full overflow-hidden bg-[#050505] text-white">
       <SeoHead
         title="Sjoh — Claim your founding spot"
-        description="Join Sjoh as a founding member. South Africa's no-commission directory of vetted pros. First 500 get a Founder badge + extra month free. No card needed."
+        description="Join Sjoh as a founding member. South Africa's no-commission directory of vetted pros. First 500 get a Founder badge + extra month free. Card required to activate your trial."
       />
 
       <div
@@ -145,7 +145,7 @@ const EarlyAccessLanding = () => {
             <FoundingSpotsBanner />
             <span className="inline-flex items-center gap-2 rounded-full border border-white/12 bg-white/7 px-3.5 py-1.5 text-sm font-bold text-white/78">
               <CheckCircle2 className="size-4 text-sa-green" strokeWidth={2.5} />
-              No card needed today
+              Card required to activate
             </span>
           </div>
 
@@ -280,7 +280,7 @@ const EarlyAccessLanding = () => {
                 <div>
                   <h2 className="font-display-bold text-2xl tracking-tight text-white">Claim your founding spot</h2>
                   <p className="mt-1 text-sm leading-relaxed text-white/65">
-                    Founder badge, extra trial month, and 0% commission. No card now.
+                    Founder badge, extra trial month, and 0% commission. Card required to activate.
                   </p>
                 </div>
                 <span className="hidden rounded-full bg-sa-green px-3 py-1.5 text-[10px] font-black uppercase tracking-widest text-white sm:inline-flex">
@@ -357,7 +357,7 @@ const EarlyAccessLanding = () => {
                 </Button>
 
                 <p className="text-center text-[11px] text-white/55 leading-relaxed">
-                  No card. No commitment. We'll only nudge you when we open the doors.
+                  Card required for trial activation. Cancel before billing starts if you don't want to continue.
                 </p>
 
                 <p className="text-center text-xs text-white/55">

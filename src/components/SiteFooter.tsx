@@ -7,7 +7,7 @@ const cols = [
       { to: "/directory", label: "Browse Directory" },
       { to: "/requests", label: "Post a Job" },
       { to: "/leads", label: "Opportunities (find work)" },
-      { to: "/pricing", label: "0% Commission" },
+      { to: "/pricing", label: "Pricing" },
       { to: "/list", label: "List Your Business" },
     ],
   },
@@ -32,7 +32,7 @@ export const SiteFooter = () => {
               </span>
             </Link>
             <p className="text-sm text-white/55 max-w-xs leading-relaxed">
-              Find someone who can do it properly. No mamparas. No commissions. Just sorted.
+              Find someone who can do it properly. Help proper local pros get found. Just sorted.
             </p>
           </div>
           {cols.map((col) => (

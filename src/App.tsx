@@ -17,6 +17,8 @@ import BusinessProfile from "./pages/BusinessProfile.tsx";
 import ExampleProfile from "./pages/ExampleProfile.tsx";
 import Opportunities from "./pages/Opportunities.tsx";
 import RequestsHub from "./pages/RequestsHub.tsx";
+import BusinessLanding from "./pages/BusinessLanding.tsx";
+import AvatarLanding from "./pages/AvatarLanding.tsx";
 import PostOpportunity from "./pages/PostOpportunity.tsx";
 import LeadDetail from "./pages/LeadDetail.tsx";
 import Pricing from "./pages/Pricing.tsx";
@@ -67,6 +69,8 @@ const App = () => {
               <Route path="/requests" element={<RequestsHub />} />
               <Route path="/requests/new" element={<ProtectedRoute><PostOpportunity /></ProtectedRoute>} />
               <Route path="/requests/:id" element={<LeadDetail />} />
+              <Route path="/for-businesses" element={<BusinessLanding />} />
+              <Route path="/for-businesses/:avatarSlug" element={<AvatarLanding />} />
               {/* Pro-facing: Leads (same board, different framing) */}
               <Route path="/leads" element={<Opportunities />} />
               <Route path="/leads/:id" element={<LeadDetail />} />

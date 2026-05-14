@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { Check, Siren, Sparkles, Zap } from "lucide-react";
+import { Check, CreditCard, Sparkles, Zap } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
 import { SeoHead } from "@/components/SeoHead";
 import { Button } from "@/components/ui/button";
@@ -11,11 +11,11 @@ import { useAuth } from "@/hooks/useAuth";
 const FAQS = [
   {
     q: "How does the free trial work?",
-    a: "Sign up, complete your profile, and you get 30 days free — no card, no upfront commitment. Founding members get an extended 2-month trial. After your trial it's R250/month, or R150/month locked in forever for the first 500 founding members.",
+    a: "Sign up, add your payment method, and complete your profile. Founding members get an extended trial window, then R250/month or the locked founder rate if they qualify. Cancel before billing starts if you don't want to continue.",
   },
   {
     q: "Do you take commission on the work I do?",
-    a: "Never. Sjoh is a directory — payments happen directly between you and your customer. We don't touch your money, your invoice, or your quote. 0% commission means 0% commission.",
+    a: "Never. As a Founding Business, your 0% commission lock-in means clients pay you directly and Sjoh does not take a cut of your invoice, quote, or payout.",
   },
   {
     q: "What does the Coral Checkmark actually mean?",
@@ -39,7 +39,30 @@ const FAQS = [
   },
   {
     q: "I already have a good reputation. Why do I need Sjoh?",
-    a: "Because your reputation is currently stuck in your phone. Sjoh gives it a home — a verified, portable profile with real reviews, a Trust Index, and a Coral Checkmark that follows you everywhere. Stop being 'a guy in a WhatsApp group' and start being a professional.",
+    a: "Because your reputation is probably stuck in your phone, WhatsApp chats, and word of mouth. Sjoh gives it a proper home: a verified profile, photos, reviews, quote tools, invoices, and trust signals customers can see before they call.",
+  },
+];
+
+const OFFER_STACK = [
+  {
+    name: "The Sjoh Verified Public Profile",
+    value: "Value: R1,500 setup",
+    body: "A proper local profile customers can find, with your services, photos, trust signals, reviews, and work areas in one place.",
+  },
+  {
+    name: "The Zero Middleman Quote & Invoice System",
+    value: "Value: R350/month",
+    body: "Send professional quotes and invoices without looking like a tiny WhatsApp side-hustle. Less back-and-forth, more confidence before the job starts.",
+  },
+  {
+    name: "The Local Trust Builder",
+    value: "Value: R750/month",
+    body: "Collect reviews, build proof, and show customers why your work is worth choosing over the cheaper mampara with a louder Facebook page.",
+  },
+  {
+    name: "Lifetime 0% Commission Lock-In",
+    value: "Value: Priceless",
+    body: "Founding Businesses keep 100% of the job money. Quote the work, do the work, get paid directly.",
   },
 ];
 
@@ -59,8 +82,8 @@ const Pricing = () => {
   return (
     <SiteLayout>
       <SeoHead
-        title="Sjoh pricing — 0% commission, R250/month for pros"
-        description="Verified Pro is R250/month with a 30-day free trial. Customers post jobs free. No commission, no bidding wars — just direct work."
+        title="Sjoh Founding Member Accelerator — R250/month for service pros"
+        description="Claim the Sjoh Founding Member Accelerator: a verified public profile, quote and invoice tools, reviews, local visibility, and 0% commission lock-in for service businesses."
         canonical="https://sjoh.co.za/pricing"
         jsonLd={{
           "@context": "https://schema.org",
@@ -75,26 +98,29 @@ const Pricing = () => {
       <div className="bg-[#050505] text-white">
       <div className="container py-16 md:py-20">
 
-        <header className="text-center max-w-2xl mx-auto mb-14">
-          <span className="text-xs font-bold uppercase tracking-widest text-sa-gold">Simple pricing</span>
-          <h1 className="font-display text-4xl md:text-5xl font-extrabold tracking-tight mt-3 text-balance">
-            One plan. Everything included.
+        <header className="text-center max-w-3xl mx-auto mb-14">
+          <span className="text-xs font-bold uppercase tracking-widest text-sa-gold">Founding business offer</span>
+          <h1 className="font-display text-4xl md:text-6xl font-extrabold tracking-tight mt-3 text-balance">
+            The Sjoh Founding Member Accelerator.
           </h1>
-          <p className="mt-4 text-lg text-white/60">
-            No tiers. No upsells. No commission. Just a small monthly fee
-            to get your business properly in front of the right people.
+          <p className="mt-5 text-lg text-white/68">
+            For proper South African service businesses that want local customers to find them,
+            trust them, and hire them, without building a website or becoming a social media person.
           </p>
         </header>
 
-        <div className="max-w-xl mx-auto">
+        <div className="max-w-5xl mx-auto grid gap-6 lg:grid-cols-[0.95fr_1.05fr] lg:items-start">
           <div className="relative bg-white text-sa-dark border-2 border-sa-gold rounded-3xl p-8 md:p-10 shadow-pop">
             <span className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-sa-gold text-sa-dark text-[10px] font-bold uppercase tracking-widest px-4 py-1.5 rounded-full animate-soft-bob">
-              30-day free trial — no card needed
+              First 500 founding businesses
             </span>
 
             <div className="mt-2 mb-6">
-              <h2 className="font-display text-3xl font-bold">{tier.name}</h2>
-              <p className="text-ink-2 mt-2">{tier.blurb}</p>
+              <h2 className="font-display text-3xl font-bold">Local Authority Launchpad</h2>
+              <p className="text-ink-2 mt-2">
+                Get a professional online reputation, quote tools, invoice tools, customer reviews,
+                and founding-business perks in one monthly plan.
+              </p>
             </div>
 
             <div className="pb-7 border-b border-border">
@@ -104,11 +130,19 @@ const Pricing = () => {
                 </span>
                 <span className="text-muted-foreground mb-2 text-base">/month</span>
               </div>
-              <p className="mt-2 text-sm text-ink-2">After your 30-day free trial. Cancel anytime.</p>
+              <p className="mt-2 text-sm text-ink-2">
+                Card required to claim your founding spot. Cancel anytime before billing starts.
+              </p>
             </div>
 
             <ul className="mt-7 space-y-3.5">
-              {tier.features.map((f) => (
+              {[
+                "Verified public profile customers can actually find",
+                "Professional quotes and invoices",
+                "Reviews and trust signals in one place",
+                "Local category and suburb visibility",
+                "Founding-business 0% commission lock-in",
+              ].map((f) => (
                 <li key={f} className="flex items-start gap-3 text-sm">
                   <Check className="size-4 text-sa-green mt-0.5 shrink-0" strokeWidth={3} />
                   <span>{f}</span>
@@ -117,58 +151,101 @@ const Pricing = () => {
             </ul>
 
             <Button size="lg" className="w-full mt-8 text-base font-bold h-14" onClick={handleStart}>
-              Start your free 30 days
+              Claim my founding spot
             </Button>
             <p className="text-center text-xs text-muted-foreground mt-3">
-              No card required to start. You choose when you're ready to pay.
+              Limited to 500 Founding Businesses while Sjoh fills the marketplace.
             </p>
           </div>
 
-          <div className="mt-5 rounded-2xl border border-sa-gold/50 bg-sa-gold/10 p-5 flex items-start gap-3">
-            <Sparkles className="size-5 text-sa-gold shrink-0 mt-0.5" strokeWidth={2.5} />
-            <div className="text-sm">
-              <p className="font-bold text-white">
-                Founding Member pricing — {formatRand(tier.founderPrice!)}/month, locked forever.
+          <div className="space-y-4">
+            <div className="rounded-3xl border border-white/10 bg-white/[0.06] p-6 md:p-7">
+              <span className="text-[10px] font-bold uppercase tracking-widest text-sa-pink">What you actually get</span>
+              <h2 className="mt-2 font-display text-3xl font-extrabold tracking-tight">
+                A proper business presence, not just a listing.
+              </h2>
+              <p className="mt-3 text-sm leading-relaxed text-white/62">
+                The point is not to “be in another directory.” The point is to stop being invisible
+                when a customer searches from their phone, and to look like the trusted professional
+                you already are.
               </p>
-              <p className="text-white/62 mt-1">
-                The first 500 pros who join get our founder rate of R150/month — never increases,
-                even when the price does. Plus your Coral Checkmark verification is on us.{" "}
-                <span className="font-semibold text-white">Don't let someone else take your spot.</span>
+            </div>
+
+            {OFFER_STACK.map((item, index) => (
+              <div key={item.name} className="rounded-2xl border border-white/10 bg-white/[0.055] p-5">
+                <div className="flex items-start gap-4">
+                  <span
+                    className="grid size-10 shrink-0 place-items-center rounded-xl font-display font-black text-sa-dark"
+                    style={{
+                      background:
+                        index % 4 === 0 ? "var(--sa-gold)" :
+                        index % 4 === 1 ? "var(--sa-peri)" :
+                        index % 4 === 2 ? "var(--sa-green)" :
+                        "var(--sa-pink)",
+                    }}
+                  >
+                    {index === 0 ? "✓" : `+${index}`}
+                  </span>
+                  <div>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <h3 className="font-display text-lg font-extrabold text-white">{item.name}</h3>
+                      <span className="rounded-full border border-white/10 bg-black/25 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-white/55">
+                        {item.value}
+                      </span>
+                    </div>
+                    <p className="mt-2 text-sm leading-relaxed text-white/62">{item.body}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="max-w-5xl mx-auto mt-10 grid gap-4 md:grid-cols-2">
+          <div className="rounded-2xl border-2 border-sa-green/30 bg-sa-green/15 p-6 md:p-8 flex items-start gap-5 hover:border-sa-green hover:shadow-pop transition-all duration-300">
+            <span className="size-14 rounded-xl bg-sa-green text-white flex items-center justify-center shrink-0 font-display font-extrabold text-xl animate-pulse-ring">
+              0%
+            </span>
+            <div>
+              <p className="font-display font-extrabold tracking-tight text-lg text-white">
+                Lifetime 0% commission lock-in.
+              </p>
+              <p className="text-white/62 mt-2 text-sm md:text-base">
+                Founding Businesses keep every cent of the work they win through Sjoh. Clients pay you directly.
+                We do not take a cut of your invoice, quote, or payout.
+              </p>
+            </div>
+          </div>
+
+          <div className="rounded-2xl border-2 border-sa-gold/35 bg-sa-gold/12 p-6 md:p-8 flex items-start gap-5">
+            <span className="size-14 rounded-xl bg-sa-gold text-sa-dark flex items-center justify-center shrink-0 font-display font-extrabold text-xl">
+              500
+            </span>
+            <div>
+              <p className="font-display font-extrabold tracking-tight text-lg text-white">
+                Honest scarcity: only 500 founding spots.
+              </p>
+              <p className="text-white/62 mt-2 text-sm md:text-base">
+                We are limiting early access so founding businesses have room to stand out while customer demand grows.
+                When a category or suburb fills up, the next business waits.
               </p>
             </div>
           </div>
         </div>
 
-        <div className="max-w-3xl mx-auto mt-16 rounded-2xl border-2 border-sa-green/30 bg-sa-green/15 p-6 md:p-8 flex items-start gap-5 hover:border-sa-green hover:shadow-pop transition-all duration-300">
-          <span className="size-14 rounded-xl bg-sa-green text-white flex items-center justify-center shrink-0 font-display font-extrabold text-xl animate-pulse-ring">
-            0%
-          </span>
-          <div>
-            <p className="font-display font-extrabold tracking-tight text-lg text-white">
-              You keep every cent you earn.
-            </p>
-            <p className="text-white/62 mt-2 text-sm md:text-base">
-              Your R250/month covers unlimited quotes, your full directory listing, and every feature
-              in the platform. We don't take a cut of your invoice, charge per message, or touch your
-              Paystack payouts. Clients pay you directly — always.
-            </p>
-          </div>
-        </div>
-
-        <section className="mt-14 max-w-3xl mx-auto rounded-2xl p-8 md:p-10 bg-[#101010] border border-white/10 text-white">
-          <div className="flex items-start gap-4">
-            <span className="size-12 rounded-xl bg-sa-red text-white flex items-center justify-center shrink-0">
-              <Siren className="size-6" strokeWidth={2.5} />
+        <section className="mt-10 max-w-5xl mx-auto rounded-3xl p-8 md:p-10 bg-[#101010] border border-white/10 text-white">
+          <div className="flex flex-col gap-5 md:flex-row md:items-start">
+            <span className="size-12 rounded-xl bg-sa-peri text-white flex items-center justify-center shrink-0">
+              <CreditCard className="size-6" strokeWidth={2.5} />
             </span>
             <div>
-              <span className="text-[10px] font-bold uppercase tracking-widest text-sa-gold">For customers</span>
-              <h2 className="font-display text-2xl md:text-3xl font-medium tracking-tight mt-1">
-                Eish! Urgent — R50 SOS
+              <span className="text-[10px] font-bold uppercase tracking-widest text-sa-gold">Simple start</span>
+              <h2 className="font-display text-2xl md:text-3xl font-extrabold tracking-tight mt-1">
+                Claim your spot, build your profile, cancel before billing if it is not for you.
               </h2>
-              <p className="mt-2 text-white/85 text-sm md:text-base">
-                Burst geyser at 9pm? Locked out in your PJs? Customers can boost a job to{" "}
-                <strong>Eish! Urgent</strong> for R50 — we WhatsApp every Verified Pro within 10km,
-                pin it to the top of the feed for 72 hours, and slap a flashing coral border on it. Sorted.
+              <p className="mt-3 text-white/68 text-sm md:text-base leading-relaxed">
+                Add your card to claim a real founding spot, then use your trial window to complete your
+                profile, add proof, and see how Sjoh works. If it is not the right fit, cancel before billing starts.
               </p>
             </div>
           </div>
@@ -176,7 +253,7 @@ const Pricing = () => {
 
         <div className="mt-14 max-w-3xl mx-auto grid sm:grid-cols-3 gap-4 text-center">
           {[
-            { icon: <Zap className="size-5" />, title: "No hidden fees", body: "R250/month is all you pay. No setup fee, no listing fee, no per-quote charge." },
+            { icon: <Zap className="size-5" />, title: "No hidden fees", body: "R250/month is the plan. No listing fee, no per-quote charge, no surprise platform cut." },
             { icon: <Check className="size-5" />, title: "Cancel anytime", body: "Month-to-month. No contracts. Stop whenever you like — no penalty." },
             { icon: <Sparkles className="size-5" />, title: "Built for SA", body: "ZAR pricing, SA ID verification, WhatsApp-first comms. Made here, for here." },
           ].map((s) => (
@@ -209,7 +286,7 @@ const Pricing = () => {
         <div className="mt-20 text-center">
           <p className="text-white/60 text-sm mb-4">Ready to stop being a secret?</p>
           <Button size="lg" className="text-base font-bold px-10 h-14" onClick={handleStart}>
-            Start your free 30 days — no card needed
+            Start your free 30 days — card required
           </Button>
         </div>
 

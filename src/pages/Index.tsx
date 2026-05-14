@@ -37,7 +37,7 @@ const HERO_PHRASES = [
 ];
 
 const MARQUEE_ITEMS = [
-  "No commission",
+  "Get found",
   "Vetted pros",
   "All 9 provinces",
   "240+ categories",
@@ -50,7 +50,7 @@ const HOW_STEPS = [
   { n: "01", Icon: Search, title: "Post the job", body: "Describe what you need in 60 seconds.", bg: "var(--sa-gold)", color: "var(--sa-dark)", rot: "-1.5deg" },
   { n: "02", Icon: UsersRound, title: "Get real quotes", body: "Vetted local businesses send quotes to your dashboard.", bg: "var(--sa-red)", color: "#fff", rot: "1.2deg" },
   { n: "03", Icon: Star, title: "Check the reviews", body: "Browse profiles, work history, and the Sjoh Trust Index.", bg: "var(--sa-navy)", color: "#fff", rot: "-0.8deg" },
-  { n: "04", Icon: CheckCircle2, title: "Get it sorted", body: "Contact them directly. No middleman. No commission.", bg: "var(--sa-green)", color: "#fff", rot: "1.5deg" },
+  { n: "04", Icon: CheckCircle2, title: "Get it sorted", body: "Contact them directly, compare proof, and choose who feels right.", bg: "var(--sa-green)", color: "#fff", rot: "1.5deg" },
 ];
 
 const HERO_SERVICE_CARDS = [
@@ -161,7 +161,7 @@ const HomePage = () => {
     <SiteLayout>
       <SeoHead
         title="Sjoh — Find someone who can do it properly"
-        description="South Africa's no-commission directory of vetted service providers. Plumbers, sparkies, designers, tutors and more — find someone who actually shows up."
+        description="South Africa's service marketplace for customers who need proper local pros, and service businesses that want to be found without website building or social media admin."
         canonical="https://sjoh.co.za/"
         jsonLd={[
           {
@@ -180,7 +180,7 @@ const HomePage = () => {
             "@type": "Organization",
             name: "Sjoh",
             url: "https://sjoh.co.za/",
-            description: "South African directory of vetted service providers. No commission, direct contact.",
+            description: "South African service marketplace where customers find trusted local pros and proper businesses build an online reputation.",
             areaServed: "ZA",
           },
         ]}
@@ -203,7 +203,7 @@ const HomePage = () => {
             <div className="mb-5 flex flex-wrap items-center justify-center gap-3">
               <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/8 border border-white/15 text-xs font-semibold text-white/85">
                 <span className="size-2 rounded-full" style={{ background: "var(--sa-pink)" }} />
-                No commission. No middlemen. Real local pros.
+                Find the skill. Check the proof. Get it sorted.
               </span>
               <div className="max-w-md">
                 <FoundingSpotsBanner />
@@ -338,7 +338,7 @@ const HomePage = () => {
         <div className="container">
           <EarlyAccessNotice
             title="Sjoh is open early, while the marketplace fills up."
-            body="That’s why some areas may look quiet right now. We’re onboarding vetted South African pros category by category, and founding businesses can still lock in 0% commission while the community grows."
+            body="That’s why some areas may look quiet right now. We’re onboarding proper South African pros category by category, and founding businesses can claim early visibility while the community grows."
             ctaLabel="Get on early"
             ctaTo="/list"
           />
@@ -406,7 +406,7 @@ const HomePage = () => {
                 {[
                   { title: "Post a request", body: "Share the job once and let interested pros come back to you.", cta: "Start here", to: "/requests/new" },
                   { title: "Browse vetted pros", body: "Compare profiles, reviews, work areas, and services across SA.", cta: "Open directory", to: "/directory" },
-                  { title: "List your business", body: "Get found by customers who are already searching for your skill.", cta: "List your business", to: "/list" },
+                  { title: "List your business", body: "Look legitimate online without building a website or running ads.", cta: "List your business", to: "/list" },
                 ].map((card) => (
                   <Link
                     key={card.title}
@@ -686,28 +686,28 @@ const HomePage = () => {
             ● For service providers
           </div>
           <h2 className="font-display-bold text-white text-5xl md:text-6xl leading-[1.02] mb-5">
-            Get found.<br />Get hired.<br />
+            Do the work.<br />We help customers<br />
             <span className="px-3 py-1 rounded-lg" style={{ background: "var(--sa-gold)", color: "var(--sa-dark)" }}>
-              Keep the whole quote.
+              find you.
             </span>
           </h2>
           <p className="text-white/75 text-base leading-relaxed max-w-md mb-8">
-            List your business on Sjoh and start getting real enquiries from local clients. We don't take a cut of your work — ever.
+            Sjoh gives proper service businesses a professional online reputation: profile, work photos, reviews, quotes, and invoices, without website building, social media admin, or Google Ads confusion.
           </p>
           <div className="flex gap-3 flex-wrap">
             <Button size="lg" asChild className="font-bold rounded-full" style={{ background: "var(--sa-gold)", color: "var(--sa-dark)" }}>
               <Link to="/list">List your business <ArrowRight className="size-4" /></Link>
             </Button>
             <Button size="lg" variant="outline" asChild className="font-bold rounded-full bg-white/10 border-white/30 text-white hover:bg-white/20">
-              <Link to="/pricing">30-day free trial</Link>
+              <Link to="/pricing">See pro pricing</Link>
             </Button>
           </div>
         </div>
         <div className="relative z-[1] flex flex-col gap-4">
           {[
-            { num: "0%", lbl: "Commission on jobs", bg: "var(--sa-gold)", color: "var(--sa-dark)", rot: "-1.5deg" },
+            { num: "1", lbl: "Professional profile", bg: "var(--sa-gold)", color: "var(--sa-dark)", rot: "-1.5deg" },
             { num: "240+", lbl: "Service categories", bg: "var(--sa-navy)", color: "#fff", rot: "1.2deg" },
-            { num: "9", lbl: "Provinces covered", bg: "var(--sa-pink)", color: "#fff", rot: "-0.8deg" },
+            { num: "0%", lbl: "Founding commission bonus", bg: "var(--sa-pink)", color: "#fff", rot: "-0.8deg" },
           ].map((s) => (
             <div
               key={s.lbl}

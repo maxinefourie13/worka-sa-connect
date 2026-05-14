@@ -183,7 +183,7 @@ const PaywallDialog = ({ kind, onClose, onPickPlan, onRunKyc }: PaywallProps) =>
     locked: {
       icon: <Lock className="size-5 text-accent" strokeWidth={2.5} />,
       title: "Your account is paused",
-      body: "Your free trial ended without a payment method. Subscribe to Verified Pro (R250/mo) to send quotes again.",
+      body: "Your free trial ended or your payment method needs attention. Subscribe to Verified Pro (R250/mo) to send quotes again.",
       cta: "Choose a plan",
       onCta: onPickPlan,
     },

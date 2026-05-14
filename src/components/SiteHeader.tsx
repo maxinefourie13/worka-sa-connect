@@ -22,7 +22,7 @@ import {
 const BASE_NAV = [
   { to: "/directory", label: "Browse" },
   { to: "/requests", label: "Post a Job" },
-  { to: "/pricing", label: "0% Commission" },
+  { to: "/pricing", label: "Pricing" },
 ];
 const PRO_NAV_ITEM = { to: "/leads", label: "Opportunities" };
 
