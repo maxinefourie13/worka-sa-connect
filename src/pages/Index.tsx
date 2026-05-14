@@ -17,6 +17,7 @@ import { cn } from "@/lib/utils";
 import heroGroup1 from "@/assets/hero-group-1.jpg";
 import heroGroup2 from "@/assets/hero-group-2.jpg";
 import heroGroup3 from "@/assets/hero-group-3.jpg";
+import solarInstaller from "@/assets/solar-installer.jpg";
 
 const HERO_PHRASES = [
   "Sjoh! Your husband's DIY is a crime scene. Hire an actual professional.",
@@ -57,6 +58,15 @@ const HERO_SERVICE_CARDS = [
   { title: "Electrical COC", meta: "Pretoria · quote requested", color: "var(--sa-gold)" },
   { title: "Website refresh", meta: "Remote · budget shared", color: "var(--sa-peri)" },
   { title: "Garden service", meta: "Durban · this week", color: "var(--sa-green)" },
+];
+
+const CATEGORY_TILE_STYLES = [
+  { bg: "var(--sa-gold)", color: "var(--sa-dark)", iconBg: "rgba(0,0,0,0.10)" },
+  { bg: "var(--sa-red)", color: "#fff", iconBg: "rgba(0,0,0,0.13)" },
+  { bg: "var(--sa-navy)", color: "#fff", iconBg: "rgba(255,255,255,0.12)" },
+  { bg: "var(--sa-green)", color: "#fff", iconBg: "rgba(0,0,0,0.13)" },
+  { bg: "var(--sa-peri)", color: "#fff", iconBg: "rgba(0,0,0,0.13)" },
+  { bg: "var(--sa-pink)", color: "#fff", iconBg: "rgba(0,0,0,0.13)" },
 ];
 
 type CountingStatProps = {
@@ -418,62 +428,13 @@ const HomePage = () => {
           </div>
       </section>
 
-      {/* ========== HOMEPAGE EXPLAINER VIDEO ========== */}
-      <section className="bg-[#050505]">
-        <div className="px-5 py-10 md:px-10 lg:px-14 xl:px-20">
-          <div className="grid gap-6 md:grid-cols-[0.9fr_1.1fr] md:items-end">
-            <div>
-              <div className="mb-4 text-[11px] font-bold uppercase tracking-[0.16em] text-sa-gold">
-                ● For service providers
-              </div>
-              <h2 className="font-display-bold text-4xl leading-[1.02] text-white md:text-6xl">
-                Why should I sign up for Sjoh?
-              </h2>
-            </div>
-            <div className="max-w-xl text-base leading-relaxed text-white/68 md:text-lg">
-              See how Sjoh helps local businesses get found, quote real enquiries, build trust, and keep the whole quote.
-              <div className="mt-5 flex flex-wrap gap-2">
-                {["Real enquiries", "Accepted quotes", "Good reviews", "0% commission"].map((item) => (
-                  <span key={item} className="rounded-full border border-white/14 bg-white/[0.07] px-3.5 py-2 text-xs font-black uppercase tracking-widest text-white/72">
-                    {item}
-                  </span>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="relative overflow-hidden border-y border-white/10 bg-[#050505]">
-          <div className="absolute inset-x-0 top-0 z-[1] h-1 bg-[linear-gradient(90deg,var(--sa-gold),var(--sa-red),var(--sa-green),var(--sa-peri),var(--sa-pink))]" />
-          <video
-            className="block aspect-video w-full object-cover"
-            src="/videos/sjoh-homepage-explainer.mp4"
-            autoPlay
-            muted
-            loop
-            playsInline
-            controls
-            poster="/videos/sjoh-homepage-explainer-poster.jpg"
-          >
-            Your browser does not support the video tag.
-          </video>
-          <div className="pointer-events-none absolute bottom-5 left-5 right-5 flex items-center justify-between gap-3 md:left-10 md:right-10">
-            <div className="rounded-full border border-white/16 bg-black/48 px-4 py-2 text-xs font-black uppercase tracking-widest text-white/78 backdrop-blur-md">
-              Business explainer
-            </div>
-            <div className="hidden rounded-full bg-sa-gold px-4 py-2 text-xs font-black uppercase tracking-widest text-sa-dark md:block">
-              Keep the whole quote
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* ========== HOW IT WORKS — rotated colored cards ========== */}
       <section className="bg-[#101010] py-20">
         <div className="container">
           <div className="grid gap-8 lg:grid-cols-[0.95fr_1.05fr] lg:items-stretch">
             <div className="relative min-h-[520px] overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.05]">
-              <img src={heroGroup3} alt="South Africans using Sjoh to find local services" className="absolute inset-0 h-full w-full object-cover" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/82 via-black/34 to-black/8" />
+              <img src={solarInstaller} alt="Solar installer working on a rooftop" className="absolute inset-0 h-full w-full object-cover" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/86 via-black/42 to-black/10" />
               <div className="relative z-[1] flex h-full min-h-[520px] flex-col justify-end p-6 md:p-8">
                 <div className="max-w-md rounded-[1.35rem] border border-white/15 bg-black/52 p-5 backdrop-blur-sm">
                   <div className="mb-4 w-fit rounded-full border border-white/20 bg-white/15 px-3 py-1.5 text-[11px] font-black uppercase tracking-widest text-white backdrop-blur-md">
@@ -543,20 +504,26 @@ const HomePage = () => {
             </Link>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-            {groupCounts.map((g) => {
+            {groupCounts.map((g, index) => {
               const Icon = getCategoryGroupIcon(g.slug);
+              const tile = CATEGORY_TILE_STYLES[index % CATEGORY_TILE_STYLES.length];
               return (
                 <Link
                   key={g.slug}
                   to={`/directory/g/${g.slug}`}
-                  className="group bg-white/[0.06] border border-white/10 rounded-xl p-5 flex items-center gap-4 hover:border-sa-gold hover:bg-white/[0.1] hover:-translate-y-1 hover:shadow-card transition-all duration-300 ease-out"
+                  className="group relative overflow-hidden rounded-xl p-5 flex items-center gap-4 border border-white/10 hover:-translate-y-1 hover:shadow-card transition-all duration-300 ease-out"
+                  style={{ background: tile.bg, color: tile.color }}
                 >
-                  <span className="size-11 rounded-xl bg-white/10 text-sa-gold flex items-center justify-center shrink-0 group-hover:bg-sa-gold group-hover:text-sa-dark group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
+                  <span className="pointer-events-none absolute -right-8 -top-10 size-28 rounded-full bg-white/12 blur-2xl" />
+                  <span
+                    className="relative size-11 rounded-xl flex items-center justify-center shrink-0 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300"
+                    style={{ background: tile.iconBg }}
+                  >
                     <Icon className="size-5" strokeWidth={2} />
                   </span>
-                  <div className="min-w-0">
-                    <p className="font-semibold text-sm text-white group-hover:text-sa-gold transition-colors leading-snug">{g.name}</p>
-                    <p className="text-xs text-white/45 mt-0.5 tabular-nums">{g.subCount} services</p>
+                  <div className="relative min-w-0">
+                    <p className="font-semibold text-sm transition-colors leading-snug">{g.name}</p>
+                    <p className="text-xs mt-0.5 tabular-nums opacity-68">{g.subCount} services</p>
                   </div>
                 </Link>
               );
