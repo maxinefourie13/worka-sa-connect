@@ -10,7 +10,7 @@ import { lovable } from "@/integrations/lovable";
 import { toast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { Loader2, ShieldCheck, HandCoins, Handshake, Gift, Apple } from "lucide-react";
-import sjohLogo from "@/assets/sjoh-logo.png";
+import heroGroup from "@/assets/hero-group-3.jpg";
 
 interface AuthShellProps {
   title: string;
@@ -29,32 +29,44 @@ const getSafeNextPath = (location: ReturnType<typeof useLocation>) => {
 const withNext = (path: string, nextPath: string) =>
   nextPath === "/dashboard" ? path : `${path}?next=${encodeURIComponent(nextPath)}`;
 
+const authInputClass =
+  "h-12 border-white/15 bg-white/[0.08] text-white placeholder:text-white/35 shadow-inner shadow-black/10 focus-visible:ring-white/35";
+
+const primaryAuthButtonClass =
+  "h-12 rounded-2xl border border-white/20 bg-white text-[color:var(--sa-dark)] shadow-[0_16px_35px_rgba(255,255,255,0.12)] hover:bg-white/90";
+
+const authLinkClass = "font-semibold text-[color:var(--sa-gold)] hover:underline";
+
 const BrandPanel = () => (
-  <aside className="relative hidden lg:flex flex-col justify-between overflow-hidden rounded-3xl bg-gradient-to-br from-primary via-primary to-[hsl(227_100%_29%)] p-10 text-primary-foreground min-h-[560px]">
-    {/* soft glow */}
-    <div className="absolute -top-24 -right-24 size-72 rounded-full bg-accent/40 blur-3xl pointer-events-none" />
-    <div className="absolute -bottom-32 -left-20 size-80 rounded-full bg-white/15 blur-3xl pointer-events-none" />
+  <aside className="relative hidden min-h-[620px] overflow-hidden rounded-[2rem] border border-white/15 bg-[#080808] p-10 text-white shadow-2xl lg:flex lg:flex-col lg:justify-between">
+    <img src={heroGroup} alt="" className="absolute inset-0 size-full object-cover opacity-75" />
+    <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.12),rgba(0,0,0,0.82)),linear-gradient(90deg,rgba(0,0,0,0.86),rgba(0,0,0,0.15))]" />
+    <div className="absolute inset-0 bg-[radial-gradient(circle_at_78%_18%,rgba(245,166,35,0.18),transparent_28%),radial-gradient(circle_at_20%_78%,rgba(232,62,140,0.14),transparent_30%),radial-gradient(circle_at_58%_62%,rgba(11,110,58,0.12),transparent_34%)]" />
 
     <div className="relative z-10">
       <Link to="/" aria-label="Sjoh home">
         <SjohWordmark className="text-5xl" />
       </Link>
-      <h2 className="font-display font-extrabold tracking-tight text-3xl mt-10 leading-tight text-primary-foreground">
+      <div className="mt-10 inline-flex rounded-full border border-white/15 bg-white/10 px-4 py-2 text-xs font-black uppercase tracking-[0.22em] text-white backdrop-blur-xl">
+        <span className="mr-2 text-[color:var(--sa-green)]">●</span>
+        One account. Properly sorted.
+      </div>
+      <h2 className="font-display mt-5 text-4xl font-extrabold leading-tight tracking-tight text-white">
         Find someone who can do it properly.
       </h2>
-      <p className="mt-3 text-primary-foreground/80 text-sm max-w-sm">
+      <p className="mt-4 max-w-sm text-sm leading-6 text-white/75">
         One Sjoh account lets you post jobs, compare quotes, save invoices, or build a business profile customers can trust.
       </p>
     </div>
 
-    <ul className="relative z-10 space-y-4 text-sm">
+    <ul className="relative z-10 space-y-3 text-sm">
       {[
         { Icon: HandCoins, text: "Customers get real quotes. Pros keep the full job." },
         { Icon: ShieldCheck, text: "Profiles, reviews and trust signals in one place." },
         { Icon: Handshake, text: "Contact unlocks when the quote is accepted." },
       ].map(({ Icon, text }) => (
-        <li key={text} className="flex items-center gap-3">
-          <span className="flex size-9 items-center justify-center rounded-xl bg-white/15 backdrop-blur-sm">
+        <li key={text} className="flex items-center gap-3 rounded-2xl border border-white/15 bg-white/[0.08] p-3 backdrop-blur-xl">
+          <span className="flex size-10 items-center justify-center rounded-2xl bg-white/15">
             <Icon className="size-4" />
           </span>
           <span className="font-semibold">{text}</span>
@@ -66,21 +78,27 @@ const BrandPanel = () => (
 
 const AuthShell = ({ title, subtitle, footer, children }: AuthShellProps) => (
   <SiteLayout>
-    <div className="relative">
-      {/* subtle periwinkle wash */}
-      <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(60%_50%_at_50%_0%,hsl(var(--primary)/0.10),transparent_70%)]" />
-      <div className="container py-12 md:py-16">
+    <div className="relative overflow-hidden bg-[#050505] text-white">
+      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.035)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.035)_1px,transparent_1px)] bg-[size:64px_64px]" />
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-64 bg-[radial-gradient(circle_at_50%_0%,rgba(107,124,232,0.18),transparent_62%)]" />
+      <div className="container relative py-10 md:py-16">
         <div className="grid lg:grid-cols-2 gap-10 items-stretch max-w-6xl mx-auto">
           <div className="flex flex-col">
             <Link to="/" className="inline-block mb-8 lg:hidden" aria-label="Sjoh home">
-              <img src={sjohLogo} alt="Sjoh" className="h-14 w-auto" />
+              <SjohWordmark className="text-4xl" />
             </Link>
-            <h1 className="font-display text-4xl md:text-5xl font-extrabold tracking-tight">{title}</h1>
-            <p className="mt-3 text-ink-2 text-base max-w-md">{subtitle}</p>
-            <div className="mt-8 bg-card border border-border rounded-2xl p-6 md:p-8 shadow-card">
+            <div className="rounded-[2rem] border border-white/15 bg-white/[0.07] p-6 shadow-2xl shadow-black/30 backdrop-blur-xl md:p-8 lg:mt-auto">
+              <div className="mb-8 inline-flex rounded-full border border-white/15 bg-black/30 px-4 py-2 text-xs font-black uppercase tracking-[0.2em] text-white">
+                <span className="mr-2 text-[color:var(--sa-pink)]">●</span>
+                Sjoh account
+              </div>
+              <h1 className="font-display text-4xl font-extrabold tracking-tight text-white md:text-5xl">{title}</h1>
+              <p className="mt-3 max-w-md text-base leading-7 text-white/70">{subtitle}</p>
+            </div>
+            <div className="mt-5 rounded-[1.75rem] border border-white/15 bg-white/[0.08] p-5 shadow-2xl shadow-black/25 backdrop-blur-xl md:p-7">
               {children}
             </div>
-            <div className="mt-6 text-sm text-muted-foreground">{footer}</div>
+            <div className="mt-6 text-sm text-white/60">{footer}</div>
           </div>
           <BrandPanel />
         </div>
@@ -122,11 +140,11 @@ const SocialButtons = ({ nextPath }: { nextPath: string }) => {
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-      <Button type="button" variant="outline" size="lg" className="w-full" onClick={() => handle("google")} disabled={loading !== null}>
+      <Button type="button" variant="outline" size="lg" className="h-12 w-full rounded-2xl border-white/15 bg-white/[0.06] text-white hover:bg-white/[0.12] hover:text-white" onClick={() => handle("google")} disabled={loading !== null}>
         {loading === "google" ? <Loader2 className="size-4 animate-spin" /> : <GoogleGlyph />}
         Google
       </Button>
-      <Button type="button" variant="outline" size="lg" className="w-full" onClick={() => handle("apple")} disabled={loading !== null}>
+      <Button type="button" variant="outline" size="lg" className="h-12 w-full rounded-2xl border-white/15 bg-white/[0.06] text-white hover:bg-white/[0.12] hover:text-white" onClick={() => handle("apple")} disabled={loading !== null}>
         {loading === "apple" ? <Loader2 className="size-4 animate-spin" /> : <Apple className="size-4" />}
         Apple
       </Button>
@@ -136,8 +154,8 @@ const SocialButtons = ({ nextPath }: { nextPath: string }) => {
 
 const Divider = () => (
   <div className="relative text-center my-2">
-    <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-border" /></div>
-    <span className="relative bg-card px-3 text-xs text-muted-foreground uppercase tracking-widest font-semibold">or</span>
+    <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-white/15" /></div>
+    <span className="relative bg-[#111]/80 px-3 text-xs text-white/50 uppercase tracking-widest font-semibold">or</span>
   </div>
 );
 
@@ -178,21 +196,21 @@ export const Login = () => {
     <AuthShell
       title="Welcome back."
       subtitle="Log in to post a job, compare quotes, save invoices, or manage your business profile."
-      footer={<>Don't have an account? <Link to={withNext("/register", nextPath)} className="text-primary font-semibold hover:underline">Create one</Link></>}
+      footer={<>Don't have an account? <Link to={withNext("/register", nextPath)} className={authLinkClass}>Create one</Link></>}
     >
       <form className="space-y-4" onSubmit={onSubmit}>
         <div className="space-y-1.5">
-          <Label htmlFor="login-email">Email</Label>
-          <Input id="login-email" type="email" required placeholder="you@email.com" value={email} onChange={(e) => setEmail(e.target.value)} />
+          <Label htmlFor="login-email" className="text-white/85">Email</Label>
+          <Input id="login-email" type="email" required placeholder="you@email.com" value={email} onChange={(e) => setEmail(e.target.value)} className={authInputClass} />
         </div>
         <div className="space-y-1.5">
-          <Label htmlFor="login-password">Password</Label>
-          <Input id="login-password" type="password" required placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} />
+          <Label htmlFor="login-password" className="text-white/85">Password</Label>
+          <Input id="login-password" type="password" required placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} className={authInputClass} />
         </div>
         <div className="flex justify-end">
-          <Link to="/forgot-password" className="text-xs text-muted-foreground hover:text-foreground">Forgot password?</Link>
+          <Link to="/forgot-password" className="text-xs text-white/55 hover:text-white">Forgot password?</Link>
         </div>
-        <Button className="w-full" size="lg" disabled={submitting}>
+        <Button className={`w-full ${primaryAuthButtonClass}`} size="lg" disabled={submitting}>
           {submitting ? <Loader2 className="size-4 animate-spin" /> : null}
           Log in
         </Button>
@@ -274,29 +292,29 @@ export const Register = () => {
     <AuthShell
       title="Create your Sjoh account."
       subtitle="Use one account to post jobs, accept quotes, save invoices, or list your business."
-      footer={<>Already have an account? <Link to={withNext("/login", nextPath)} className="text-primary font-semibold hover:underline">Log in</Link></>}
+      footer={<>Already have an account? <Link to={withNext("/login", nextPath)} className={authLinkClass}>Log in</Link></>}
     >
       <form className="space-y-4" onSubmit={onSubmit}>
         {referralCode && (
-          <div className="rounded-lg border border-primary/30 bg-primary/5 px-3 py-2 text-xs flex items-start gap-2">
-            <Gift className="size-4 text-primary shrink-0 mt-0.5" />
+          <div className="rounded-2xl border border-white/15 bg-white/[0.06] px-3 py-2 text-xs flex items-start gap-2">
+            <Gift className="size-4 text-[color:var(--sa-pink)] shrink-0 mt-0.5" />
             <div>
-              <div className="font-bold text-foreground">Referral applied: <span className="font-mono">{referralCode}</span></div>
-              <div className="text-ink-2 mt-0.5">When you upgrade to Verified Pro, you both get a free month.</div>
+              <div className="font-bold text-white">Referral applied: <span className="font-mono">{referralCode}</span></div>
+              <div className="text-white/65 mt-0.5">When you upgrade to Verified Pro, you both get a free month.</div>
             </div>
           </div>
         )}
         <div className="space-y-1.5">
-          <Label htmlFor="reg-name">Your name</Label>
-          <Input id="reg-name" required placeholder="First name + surname" value={displayName} onChange={(e) => setDisplayName(e.target.value)} />
+          <Label htmlFor="reg-name" className="text-white/85">Your name</Label>
+          <Input id="reg-name" required placeholder="First name + surname" value={displayName} onChange={(e) => setDisplayName(e.target.value)} className={authInputClass} />
         </div>
         <div className="space-y-1.5">
-          <Label htmlFor="reg-email">Email</Label>
-          <Input id="reg-email" type="email" required placeholder="you@email.com" value={email} onChange={(e) => setEmail(e.target.value)} />
+          <Label htmlFor="reg-email" className="text-white/85">Email</Label>
+          <Input id="reg-email" type="email" required placeholder="you@email.com" value={email} onChange={(e) => setEmail(e.target.value)} className={authInputClass} />
         </div>
         <div className="space-y-1.5">
-          <Label htmlFor="reg-password">Password</Label>
-          <Input id="reg-password" type="password" required minLength={8} placeholder="At least 8 characters" value={password} onChange={(e) => setPassword(e.target.value)} />
+          <Label htmlFor="reg-password" className="text-white/85">Password</Label>
+          <Input id="reg-password" type="password" required minLength={8} placeholder="At least 8 characters" value={password} onChange={(e) => setPassword(e.target.value)} className={authInputClass} />
         </div>
         <label className="flex items-start gap-2.5 text-xs cursor-pointer select-none">
           <input
@@ -304,13 +322,13 @@ export const Register = () => {
             checked={agreeTerms}
             onChange={(e) => setAgreeTerms(e.target.checked)}
             required
-            className="mt-0.5 size-4 rounded border-border text-primary focus:ring-primary cursor-pointer shrink-0"
+            className="mt-0.5 size-4 rounded border-white/20 bg-white/10 text-[color:var(--sa-green)] focus:ring-white/35 cursor-pointer shrink-0"
           />
-          <span className="text-muted-foreground leading-relaxed">
-            I agree to the <Link to="/terms" className="text-primary font-semibold hover:underline">Terms of Service</Link> and POPIA privacy policy, and confirm I will not offer or request illegal services.
+          <span className="text-white/60 leading-relaxed">
+            I agree to the <Link to="/terms" className={authLinkClass}>Terms of Service</Link> and POPIA privacy policy, and confirm I will not offer or request illegal services.
           </span>
         </label>
-        <Button className="w-full" size="lg" disabled={submitting || !agreeTerms}>
+        <Button className={`w-full ${primaryAuthButtonClass}`} size="lg" disabled={submitting || !agreeTerms}>
           {submitting ? <Loader2 className="size-4 animate-spin" /> : null}
           Create account
         </Button>
@@ -344,17 +362,17 @@ export const ForgotPassword = () => {
     <AuthShell
       title="Forgot the password?"
       subtitle="No stress — pop in your email and we'll send a reset link."
-      footer={<>Remembered it? <Link to="/login" className="text-primary font-semibold hover:underline">Back to log in</Link></>}
+      footer={<>Remembered it? <Link to="/login" className={authLinkClass}>Back to log in</Link></>}
     >
       {sent ? (
-        <p className="text-sm">Check your inbox at <strong>{email}</strong> for the reset link.</p>
+        <p className="text-sm text-white/75">Check your inbox at <strong className="text-white">{email}</strong> for the reset link.</p>
       ) : (
         <form className="space-y-4" onSubmit={onSubmit}>
           <div className="space-y-1.5">
-            <Label htmlFor="forgot-email">Email</Label>
-            <Input id="forgot-email" type="email" required placeholder="you@email.com" value={email} onChange={(e) => setEmail(e.target.value)} />
+            <Label htmlFor="forgot-email" className="text-white/85">Email</Label>
+            <Input id="forgot-email" type="email" required placeholder="you@email.com" value={email} onChange={(e) => setEmail(e.target.value)} className={authInputClass} />
           </div>
-          <Button className="w-full" size="lg" disabled={submitting}>
+          <Button className={`w-full ${primaryAuthButtonClass}`} size="lg" disabled={submitting}>
             {submitting ? <Loader2 className="size-4 animate-spin" /> : null}
             Send reset link
           </Button>
@@ -390,14 +408,14 @@ export const ResetPassword = () => {
     <AuthShell
       title="Set a new password"
       subtitle="Pick something strong — you'll only have to do this once."
-      footer={<Link to="/login" className="text-primary font-semibold hover:underline">Back to log in</Link>}
+      footer={<Link to="/login" className={authLinkClass}>Back to log in</Link>}
     >
       <form className="space-y-4" onSubmit={onSubmit}>
         <div className="space-y-1.5">
-          <Label htmlFor="reset-password">New password</Label>
-          <Input id="reset-password" type="password" required minLength={8} placeholder="At least 8 characters" value={password} onChange={(e) => setPassword(e.target.value)} />
+          <Label htmlFor="reset-password" className="text-white/85">New password</Label>
+          <Input id="reset-password" type="password" required minLength={8} placeholder="At least 8 characters" value={password} onChange={(e) => setPassword(e.target.value)} className={authInputClass} />
         </div>
-        <Button className="w-full" size="lg" disabled={submitting}>
+        <Button className={`w-full ${primaryAuthButtonClass}`} size="lg" disabled={submitting}>
           {submitting ? <Loader2 className="size-4 animate-spin" /> : null}
           Update password
         </Button>

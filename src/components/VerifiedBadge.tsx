@@ -9,8 +9,7 @@ interface Props {
 }
 
 /**
- * Coral verification badge. Shown on every surface where a verified business appears.
- * Tooltip explains what it means. Encourages non-verified pros to upgrade to Verified Pro.
+ * Verification badge. Shown on every surface where a checked business appears.
  */
 export const VerifiedBadge = ({ size = "sm", className, withLabel = false }: Props) => {
   const dims = size === "lg" ? "size-5" : size === "md" ? "size-4" : "size-3.5";
@@ -33,7 +32,7 @@ export const VerifiedBadge = ({ size = "sm", className, withLabel = false }: Pro
       </TooltipTrigger>
       <TooltipContent side="top" className="max-w-xs">
         <p className="text-xs">
-          <strong>ID-verified by Sjoh.</strong> This pro has gone through our verification process and is a Verified Pro.
+          <strong>ID document checked by Sjoh.</strong> We matched this pro's submitted name and ID number to their uploaded ID document.
         </p>
       </TooltipContent>
     </Tooltip>

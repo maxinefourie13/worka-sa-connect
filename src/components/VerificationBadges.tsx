@@ -23,7 +23,7 @@ export const VerificationBadges = ({
     <div className={cn("flex flex-wrap items-center gap-1.5", className)}>
       {idVerified && (
         <span
-          title="ID verified — phone & ID checked"
+          title="ID document checked by Sjoh"
           className={cn("inline-flex items-center gap-1 font-bold uppercase tracking-widest text-primary bg-primary/10 px-2 py-0.5 rounded", text)}
         >
           <ShieldCheck className={icon} strokeWidth={2.5} />

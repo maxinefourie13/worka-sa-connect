@@ -19,11 +19,11 @@ const FAQS = [
   },
   {
     q: "What does the Coral Checkmark actually mean?",
-    a: "It means your SA ID has been verified by a third-party identity service. Customers know you are who you say you are. It's a once-off verification — no recurring cost.",
+    a: "It means Sjoh has checked your uploaded ID document against the name and SA ID number you submitted. Customers know there is a real person behind the profile.",
   },
   {
     q: "Why do I need to verify my ID to get the Checkmark?",
-    a: "Because customers are letting strangers into their homes. The Checkmark tells them you've been ID-verified, not just self-registered. It costs a small once-off fee to cover our verification provider — and it sets you apart from every unverified competitor on other platforms.",
+    a: "Because customers are letting strangers into their homes. The Checkmark tells them your ID document was checked by Sjoh, not just self-registered, and it sets you apart from unverified competitors.",
   },
   {
     q: "What is the Eish! Urgent Boost?",

@@ -668,7 +668,7 @@ export const SJOH_TIERS: SjohTier[] = [
       "Listed in the Sjoh directory",
       "Receive & apply to customer job requests",
       "Send unlimited branded PDF quotations",
-      "Coral Checkmark — SA ID verified badge",
+      "Coral Checkmark — Sjoh ID Check badge",
       "Invoice generator with your logo",
       "WhatsApp lead notifications",
       "Top placement in local search results",

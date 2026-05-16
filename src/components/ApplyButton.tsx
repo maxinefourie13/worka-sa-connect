@@ -163,7 +163,7 @@ export const ApplyButton = ({
         kind={paywall}
         onClose={() => setPaywall(null)}
         onPickPlan={() => { setPaywall(null); navigate("/pricing"); }}
-        onRunKyc={() => { setPaywall(null); navigate("/dashboard"); }}
+        onRunKyc={() => { setPaywall(null); navigate("/dashboard?section=verification"); }}
       />
     </>
   );

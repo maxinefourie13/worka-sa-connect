@@ -47,7 +47,7 @@ const Privacy = () => {
           </ul>
 
           <h2 className="font-display text-xl font-bold">3. Sources of Personal Information</h2>
-          <p>We collect personal information directly from you when you register, use or interact with the Platform; from publicly available sources (such as Google&rsquo;s Places API for business listings); and from third parties such as identity-verification providers and payment processors acting on our instruction.</p>
+          <p>We collect personal information directly from you when you register, use or interact with the Platform; from publicly available sources (such as Google&rsquo;s Places API for business listings); and from operators such as payment processors acting on our instruction. For provider trust checks, we may also process ID document images and extracted document details.</p>
 
           <h2 className="font-display text-xl font-bold">4. Lawful Basis and Purposes of Processing</h2>
           <p>We process personal information on one or more of the following lawful bases recognised under POPIA:</p>
@@ -63,7 +63,7 @@ const Privacy = () => {
           <p>We may disclose personal information to the following categories of recipients:</p>
           <ul className="list-disc pl-6 space-y-2">
             <li><strong>Other Users of the Platform,</strong> to the extent necessary to facilitate Transactions (e.g. a Customer&rsquo;s contact details are disclosed to a Service Provider only after the Customer has expressly accepted that Service Provider&rsquo;s quotation).</li>
-            <li><strong>Operators</strong> processing personal information on our behalf under written contract, including cloud-hosting providers, identity-verification providers, payment processors, email-delivery providers and analytics providers.</li>
+            <li><strong>Operators</strong> processing personal information on our behalf under written contract, including cloud-hosting providers, document-processing tools, payment processors, email-delivery providers and analytics providers.</li>
             <li><strong>Regulatory and law-enforcement authorities,</strong> where disclosure is required or permitted by law.</li>
             <li><strong>Professional advisors,</strong> including legal, accounting and audit professionals bound by duties of confidentiality.</li>
             <li><strong>Acquirers or successors</strong> in the event of a sale, merger, restructuring or insolvency of Sjoh.</li>

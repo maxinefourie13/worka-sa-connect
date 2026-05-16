@@ -84,7 +84,7 @@ const GroupLanding = () => {
               </span>
               <div>
                 <p className="font-semibold">Verified IDs</p>
-                <p className="text-xs text-muted-foreground">Phone & ID checked at the door.</p>
+                <p className="text-xs text-muted-foreground">ID document checked before quoting.</p>
               </div>
             </div>
             <div className="flex items-center gap-3">

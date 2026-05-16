@@ -3,11 +3,11 @@ project_id = "zwgjbffesalpiaaycbac"
 [functions.paystack-webhook]
 verify_jwt = false
 
-[functions.smile-id-webhook]
-verify_jwt = false
-
 [functions.sitemap-xml]
 verify_jwt = false
+
+[functions.verify-sa-id]
+verify_jwt = true
 
 [functions.process-email-queue]
 verify_jwt = true

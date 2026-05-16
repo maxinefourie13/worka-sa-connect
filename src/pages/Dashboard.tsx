@@ -3,11 +3,12 @@ import { Link, useSearchParams } from "react-router-dom";
 import {
   LayoutGrid, User, Sparkles, Briefcase, Users, CreditCard, Plus,
   ShieldCheck, Bell, Mail, FileText, MessageCircle, Lock, ArrowUpRight,
-  Search, CheckCircle2,
+  Search, CheckCircle2, Upload, Loader2, AlertCircle,
 } from "lucide-react";
 import { QuotesSection } from "@/components/dashboard/QuotesSection";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { formatRand, SJOH_TIERS } from "@/lib/mockData";
 import { useMyBusinessStats } from "@/hooks/useMyBusinessStats";
 import { useRecentActivity, timeAgo } from "@/hooks/useRecentActivity";
@@ -319,42 +320,80 @@ const OverviewSection = ({ onJump }: { onJump: (s: SectionKey) => void }) => {
 
 const VerificationSection = () => {
   const verification = useVerification();
+  const { business } = useMyBusiness();
+  const [fullName, setFullName] = useState("");
+  const [idNumber, setIdNumber] = useState("");
+  const [file, setFile] = useState<File | null>(null);
+  const [submitting, setSubmitting] = useState(false);
 
   const verifyLabel: Record<typeof verification.status, string> = {
-    not_required: "Upgrade to verify",
-    required: "Verify now",
-    pending: "Verifying…",
+    not_required: "Start ID check",
+    required: "Start ID check",
+    pending: "Checking…",
+    processing: "Checking…",
     verified: "✓ Verified",
     failed: "Try again",
+    needs_review: "Upload clearer photo",
     expired: "Re-verify",
   };
 
   const verifyHint: Record<typeof verification.status, string> = {
-    not_required: "Available on paid tiers — your badge stays once verified.",
-    required: "Subscription active. Tap to verify your ID and unlock the Verified Pro badge.",
-    pending: "We're processing your verification. This usually takes under a minute.",
+    not_required: "Upload your ID document when you're ready. You can still set up your profile before verification clears.",
+    required: "Upload your ID document to unlock quoting and job applications.",
+    pending: "Your ID check is queued. Keep setting up your profile while we process it.",
+    processing: "Sjoh is checking the document. You can keep editing your profile while you wait.",
     verified: verification.expiresAt
       ? `Re-verify by ${new Date(verification.expiresAt).toLocaleDateString("en-ZA")}`
-      : "Verified — keep grafting.",
-    failed: "We couldn't verify your ID. Try again with a clearer photo.",
-    expired: "Your verification expired. Re-verify to bring back your badge.",
+      : "ID document checked by Sjoh. You can apply for jobs and send quotes.",
+    failed: verification.latestSubmission?.failure_reason ?? "We couldn't match the details. Try again with a clearer ID photo.",
+    needs_review: verification.latestSubmission?.failure_reason ?? "We couldn't read the document clearly. Upload a sharper photo.",
+    expired: "Your ID check expired. Re-verify to bring back your badge.",
+  };
+
+  const canSubmit =
+    Boolean(business?.id) &&
+    Boolean(fullName.trim()) &&
+    idNumber.replace(/\D/g, "").length === 13 &&
+    Boolean(file) &&
+    !submitting &&
+    verification.status !== "pending" &&
+    verification.status !== "processing" &&
+    verification.status !== "verified";
+
+  const handleSubmit = async () => {
+    if (!business?.id || !file) return;
+    setSubmitting(true);
+    await verification.submitDocumentCheck({
+      businessId: business.id,
+      fullName,
+      idNumber,
+      file,
+    });
+    setSubmitting(false);
   };
 
   return (
     <>
       <header>
         <h1 className="font-display text-3xl font-medium tracking-tight">Verification</h1>
-        <p className="text-sm text-ink-2 mt-1">Your trust badges, visible on every listing.</p>
+        <p className="text-sm text-ink-2 mt-1">Your trust badge, visible on every listing.</p>
       </header>
 
       <div className="bg-card border border-border rounded-xl p-6">
         <div className="flex items-start justify-between gap-3 flex-wrap">
           <div>
             <h2 className="font-display text-lg font-semibold flex items-center gap-2">
-              <ShieldCheck className="size-5 text-primary" /> No Tjops verification
+              <ShieldCheck className="size-5 text-primary" /> Sjoh ID Check
             </h2>
-            <p className="text-sm text-ink-2 mt-1">Verified pros land 3x more enquiries.</p>
+            <p className="text-sm text-ink-2 mt-1">
+              We match your typed name and SA ID number to your uploaded ID document. No selfie. No complicated portal.
+            </p>
           </div>
+          {verification.status === "verified" && (
+            <span className="inline-flex items-center gap-2 rounded-full bg-sa-green/15 px-3 py-1 text-xs font-bold uppercase tracking-widest text-sa-green">
+              <CheckCircle2 className="size-3.5" /> Checked
+            </span>
+          )}
         </div>
         <div className="mt-5">
           <VerificationBadges
@@ -363,29 +402,66 @@ const VerificationSection = () => {
             certifications={[]}
           />
         </div>
-        <div className="mt-5 grid sm:grid-cols-2 gap-3">
+        <div className="mt-5 grid lg:grid-cols-[1.3fr_0.7fr] gap-3">
           <div className="border border-border rounded-lg p-4">
-            <p className="text-sm font-semibold">ID & Selfie</p>
+            <p className="text-sm font-semibold">ID document check</p>
             <p className="text-xs text-muted-foreground mt-1">{verifyHint[verification.status]}</p>
+
+            {["failed", "needs_review"].includes(verification.status) && (
+              <div className="mt-3 flex items-start gap-2 rounded-lg border border-destructive/20 bg-destructive/5 p-3 text-xs text-destructive">
+                <AlertCircle className="mt-0.5 size-4 shrink-0" />
+                <span>Make sure the name and ID number are readable and match what you type below.</span>
+              </div>
+            )}
+
+            <div className="mt-4 grid gap-3">
+              <Input
+                value={fullName}
+                onChange={(event) => setFullName(event.target.value)}
+                placeholder="Full name as it appears on your ID"
+                disabled={verification.status === "pending" || verification.status === "processing" || verification.status === "verified"}
+              />
+              <Input
+                value={idNumber}
+                onChange={(event) => setIdNumber(event.target.value.replace(/\D/g, "").slice(0, 13))}
+                inputMode="numeric"
+                maxLength={13}
+                placeholder="13-digit South African ID number"
+                disabled={verification.status === "pending" || verification.status === "processing" || verification.status === "verified"}
+              />
+              <label className="flex cursor-pointer items-center justify-between gap-3 rounded-lg border border-dashed border-border bg-background px-3 py-3 text-sm">
+                <span className="min-w-0 truncate text-muted-foreground">
+                  {file ? file.name : "Upload a clear ID photo"}
+                </span>
+                <Upload className="size-4 shrink-0 text-primary" />
+                <input
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp,image/heic"
+                  className="sr-only"
+                  disabled={verification.status === "pending" || verification.status === "processing" || verification.status === "verified"}
+                  onChange={(event) => setFile(event.target.files?.[0] ?? null)}
+                />
+              </label>
+            </div>
+
             <Button
               size="sm"
-              variant="outline"
+              variant={verification.status === "verified" ? "outline" : "default"}
               className="mt-3"
-              disabled={
-                verification.loading ||
-                verification.status === "pending" ||
-                verification.status === "verified" ||
-                verification.status === "not_required"
-              }
-              onClick={() => verification.startVerification()}
+              disabled={verification.loading || !canSubmit}
+              onClick={handleSubmit}
             >
+              {submitting && <Loader2 className="mr-2 size-4 animate-spin" />}
               {verifyLabel[verification.status]}
             </Button>
+            {!business?.id && (
+              <p className="mt-2 text-xs text-muted-foreground">List your business first, then run the ID check.</p>
+            )}
           </div>
           <div className="border border-border rounded-lg p-4">
             <p className="text-sm font-semibold">Trade certificates</p>
             <p className="text-xs text-muted-foreground mt-1">
-              Got a Wireman's Licence, PIRB, or trade qualification? Certificate uploads are landing soon — we'll buzz you the moment they're live so you can claim your Certified Pro badge.
+              Got a Wireman's Licence, PIRB, or trade qualification? Certificate uploads are landing soon so you can claim your Certified Pro badge too.
             </p>
           </div>
         </div>
