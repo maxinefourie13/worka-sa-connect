@@ -466,7 +466,7 @@ const AvatarLanding = () => {
                 No awkward PDF chasing, no messy screenshots, just a secure email link.
               </p>
             </div>
-            <QuoteInvoiceDemo demo={config.quoteDemo} accent={config.accent} />
+            <QuoteInvoiceDemo quoteDemo={config.quoteDemo} accent={config.accent} />
           </div>
         </section>
 
