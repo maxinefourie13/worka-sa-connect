@@ -271,7 +271,7 @@ export const AVATAR_LANDING_PAGES: Record<string, AvatarLandingConfig> = {
 
 const palette = ["var(--sa-gold)", "var(--sa-green)", "var(--sa-peri)", "var(--sa-red)", "var(--sa-pink)"];
 
-const QuoteInvoiceDemo = ({ demo, accent }: Pick<AvatarLandingConfig, "quoteDemo" | "accent">) => (
+const QuoteInvoiceDemo = ({ quoteDemo: demo, accent }: Pick<AvatarLandingConfig, "quoteDemo" | "accent">) => (
   <div className="grid gap-4 lg:grid-cols-2">
     <div className="rounded-[1.75rem] border border-white/12 bg-white p-5 text-sa-dark shadow-[0_18px_70px_rgba(0,0,0,0.35)]">
       <div className="flex items-start justify-between gap-4 border-b border-sa-dark/10 pb-5">
