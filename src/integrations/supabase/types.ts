@@ -118,68 +118,6 @@ export type Database = {
           },
         ]
       }
-      id_verification_submissions: {
-        Row: {
-          business_id: string
-          created_at: string
-          document_path: string
-          extracted_id_number: string | null
-          extracted_name: string | null
-          failure_reason: string | null
-          full_name: string
-          id: string
-          id_number: string
-          match_score: number | null
-          processed_at: string | null
-          provider: string
-          status: Database["public"]["Enums"]["id_check_status"]
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          business_id: string
-          created_at?: string
-          document_path: string
-          extracted_id_number?: string | null
-          extracted_name?: string | null
-          failure_reason?: string | null
-          full_name: string
-          id?: string
-          id_number: string
-          match_score?: number | null
-          processed_at?: string | null
-          provider?: string
-          status?: Database["public"]["Enums"]["id_check_status"]
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          business_id?: string
-          created_at?: string
-          document_path?: string
-          extracted_id_number?: string | null
-          extracted_name?: string | null
-          failure_reason?: string | null
-          full_name?: string
-          id?: string
-          id_number?: string
-          match_score?: number | null
-          processed_at?: string | null
-          provider?: string
-          status?: Database["public"]["Enums"]["id_check_status"]
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "id_verification_submissions_business_id_fkey"
-            columns: ["business_id"]
-            isOneToOne: false
-            referencedRelation: "businesses"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       business_images: {
         Row: {
           business_id: string
@@ -1170,6 +1108,7 @@ export type Database = {
           paystack_subscription_code: string | null
           push_alerts_optin: boolean
           referral_code: string | null
+          smile_id_job_id: string | null
           tier: Database["public"]["Enums"]["sjoh_tier"]
           tier_expires_at: string | null
           trial_ends_at: string | null
@@ -1194,6 +1133,7 @@ export type Database = {
           paystack_subscription_code?: string | null
           push_alerts_optin?: boolean
           referral_code?: string | null
+          smile_id_job_id?: string | null
           tier?: Database["public"]["Enums"]["sjoh_tier"]
           tier_expires_at?: string | null
           trial_ends_at?: string | null
@@ -1218,6 +1158,7 @@ export type Database = {
           paystack_subscription_code?: string | null
           push_alerts_optin?: boolean
           referral_code?: string | null
+          smile_id_job_id?: string | null
           tier?: Database["public"]["Enums"]["sjoh_tier"]
           tier_expires_at?: string | null
           trial_ends_at?: string | null
@@ -1779,6 +1720,10 @@ export type Database = {
         }
         Returns: boolean
       }
+      apply_verification_result: {
+        Args: { _job_id: string; _user_id: string; _verified: boolean }
+        Returns: undefined
+      }
       bump_last_active: { Args: never; Returns: undefined }
       business_avg_response_hours: {
         Args: { _business_id: string }
@@ -1967,6 +1912,10 @@ export type Database = {
         Args: { _dispute_id: string; _notes?: string; _provided_to: string }
         Returns: undefined
       }
+      mark_verification_pending: {
+        Args: { _job_id: string }
+        Returns: undefined
+      }
       move_to_dlq: {
         Args: {
           dlq_name: string
@@ -2073,12 +2022,6 @@ export type Database = {
       budget_type: "fixed" | "estimate" | "negotiable"
       business_plan: "free" | "standard" | "featured"
       deal_memo_status: "pending" | "accepted" | "completed" | "cancelled"
-      id_check_status:
-        | "pending"
-        | "processing"
-        | "verified"
-        | "failed"
-        | "needs_review"
       dispute_category:
         | "fraud"
         | "no_show"
@@ -2255,13 +2198,6 @@ export const Constants = {
       budget_type: ["fixed", "estimate", "negotiable"],
       business_plan: ["free", "standard", "featured"],
       deal_memo_status: ["pending", "accepted", "completed", "cancelled"],
-      id_check_status: [
-        "pending",
-        "processing",
-        "verified",
-        "failed",
-        "needs_review",
-      ],
       dispute_category: [
         "fraud",
         "no_show",
