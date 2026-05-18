@@ -2,6 +2,30 @@
 
 This checklist covers the pieces that must be done outside the local app before launch.
 
+## How To Add Secrets
+
+Use the helper script so secrets are hidden while typing and do not end up in shell history:
+
+```bash
+cd /Users/maxin/Downloads/sjoh
+./scripts/set-supabase-secrets.sh
+```
+
+Add these first because they block launch testing:
+
+- `PAYSTACK_SECRET_KEY` from Paystack live mode.
+- `PAYSTACK_PLAN_VERIFIED_PRO_MONTHLY` from the live R250/month Paystack plan.
+- `OPENAI_API_KEY` for the automated Sjoh ID Check.
+
+Optional but useful before a bigger launch:
+
+- `PAYSTACK_WEBHOOK_SECRET` if you choose a separate webhook secret. If not, the function falls back to the Paystack secret key.
+- `PAYSTACK_PLAN_VERIFIED_PRO_ANNUAL` if annual billing stays enabled.
+- `GOOGLE_PLACES_API_KEY` for Places imports/linking.
+- `LOVABLE_API_KEY` and `LOVABLE_SEND_URL` for transactional email sending.
+- `ONESIGNAL_APP_ID` and `ONESIGNAL_REST_API_KEY` for push notifications.
+- `TWILIO_API_KEY` and `TWILIO_WHATSAPP_FROM` for WhatsApp notifications.
+
 ## Supabase
 
 - Production project:
@@ -57,6 +81,11 @@ This checklist covers the pieces that must be done outside the local app before 
 ## Production Deploy
 
 - Push the latest code to GitHub.
+- Set the production frontend env vars in the deploy host:
+  - `VITE_SUPABASE_PROJECT_ID=omhjcalrfhswjmanriqv`
+  - `VITE_SUPABASE_URL=https://omhjcalrfhswjmanriqv.supabase.co`
+  - `VITE_SUPABASE_PUBLISHABLE_KEY=<the publishable key from the local .env>`
+  - Optional: `VITE_ONESIGNAL_APP_ID=<your OneSignal app id>`
 - Deploy the latest build to `sjoh.co.za`.
 - Confirm:
   - `https://sjoh.co.za/`
