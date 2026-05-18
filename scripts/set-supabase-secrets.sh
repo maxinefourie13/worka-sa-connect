@@ -3,6 +3,7 @@ set -euo pipefail
 
 PROJECT_REF="omhjcalrfhswjmanriqv"
 SUPABASE_CLI="${SUPABASE_CLI:-/private/tmp/supabase-cli/supabase}"
+SHOW_SECRETS="${SHOW_SECRETS:-0}"
 MISSING_REQUIRED=()
 
 if [[ ! -x "$SUPABASE_CLI" ]]; then
@@ -21,7 +22,11 @@ set_secret() {
     printf "%s (optional, press Enter to skip): " "$name" >&2
   fi
 
-  IFS= read -r -s value
+  if [[ "$SHOW_SECRETS" == "1" ]]; then
+    IFS= read -r value
+  else
+    IFS= read -r -s value
+  fi
   printf "\n" >&2
 
   if [[ -z "$value" ]]; then
@@ -38,7 +43,12 @@ set_secret() {
 }
 
 echo "This stores secrets in Supabase for project $PROJECT_REF."
-echo "Values are hidden while typing and are not written to your shell history."
+if [[ "$SHOW_SECRETS" == "1" ]]; then
+  echo "Visible-entry mode is ON, so you can see what you type."
+  echo "Only use this when no one else can see your screen."
+else
+  echo "Values are hidden while typing and are not written to your shell history."
+fi
 echo
 
 set_secret "PAYSTACK_SECRET_KEY" "required"

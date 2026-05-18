@@ -16,8 +16,8 @@ Status key:
 | `[DONE]` | GitHub repo | Repo renamed to `sjoh`, latest code pushed to `main` | Codex |
 | `[DONE]` | Local app health | Lint, build, and unit tests pass | Codex |
 | `[DONE]` | Supabase project | New project is linked, migrations are applied, functions are deployed | Codex |
-| `[BLOCKED]` | Supabase secrets | Live Paystack, OpenAI, email/notification keys are added to Supabase | Maxine + Codex |
-| `[BLOCKED]` | Paystack | Paystack live account is verified and live keys/plans/webhook are configured | Maxine + Codex |
+| `[DONE]` | Supabase secrets | Live Paystack, OpenAI, email/notification keys are added to Supabase | Maxine + Codex |
+| `[CHECKING]` | Paystack | Paystack live account is verified and live keys/plans/webhook are configured | Maxine + Codex |
 | `[BLOCKED]` | Production deploy | `sjoh.co.za` is redeployed with the new Supabase env vars | Maxine + Codex/Lovable |
 | `[CHECKING]` | Customer journey | Customer can search, post a job, and receive quote/invoice emails | Codex |
 | `[CHECKING]` | Business journey | Business can sign up, pay, create profile, verify ID, browse opportunities, quote, and invoice | Codex |
@@ -27,9 +27,7 @@ Status key:
 ## Current Launch Blockers
 
 1. `sjoh.co.za` is still serving the old Supabase project (`zwgjbffesalpiaaycbac`). The repo is updated, but production needs a fresh deploy with the new env vars.
-2. The new Supabase project currently only has the built-in Supabase secrets plus `PUBLIC_SITE_URL`.
-3. Paystack live secrets, plan codes, and webhook setup are still needed before paid business signup can be tested.
-4. `OPENAI_API_KEY` is needed before the Sjoh ID Check can process ID uploads automatically.
+2. Paystack webhook/account live-mode setup still needs to be confirmed before paid business signup can be tested.
 
 ## Launch Nice-To-Haves
 

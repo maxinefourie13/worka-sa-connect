@@ -11,6 +11,15 @@ cd /Users/maxin/Downloads/sjoh
 ./scripts/set-supabase-secrets.sh
 ```
 
+If you need to see what you are typing, run visible-entry mode instead:
+
+```bash
+cd /Users/maxin/Downloads/sjoh
+SHOW_SECRETS=1 ./scripts/set-supabase-secrets.sh
+```
+
+Only use visible-entry mode when no one else can see your screen.
+
 Add these first because they block launch testing:
 
 - `PAYSTACK_SECRET_KEY` from Paystack live mode.
