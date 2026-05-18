@@ -14,4 +14,4 @@ User-agent: *
 Allow: /
 
 Sitemap: https://sjoh.co.za/sitemap.xml
-Sitemap: https://zwgjbffesalpiaaycbac.supabase.co/functions/v1/sitemap-xml
+Sitemap: https://omhjcalrfhswjmanriqv.supabase.co/functions/v1/sitemap-xml

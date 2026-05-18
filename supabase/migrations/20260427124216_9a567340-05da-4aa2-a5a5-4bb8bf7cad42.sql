@@ -205,7 +205,7 @@ begin
 end;
 $$;
 
--- 6c) Apply verification result from Smile ID webhook
+-- 6c) Apply verification result from the legacy verification webhook
 create or replace function public.apply_verification_result(
   _user_id uuid,
   _job_id text,
@@ -245,7 +245,7 @@ begin
 end;
 $$;
 
--- 6e) Mark verification flow as pending (called by smile-id-init)
+-- 6e) Mark verification flow as pending (called by the legacy verification init flow)
 create or replace function public.mark_verification_pending(_job_id text)
 returns void
 language plpgsql
