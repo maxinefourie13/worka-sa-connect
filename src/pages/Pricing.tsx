@@ -285,7 +285,7 @@ const Pricing = () => {
 
         <div className="mt-20 text-center">
           <p className="text-white/60 text-sm mb-4">Ready to stop being a secret?</p>
-          <Button size="lg" className="text-base font-bold px-10 h-14" onClick={handleStart}>
+          <Button size="lg" className="h-14 w-full max-w-sm px-4 text-sm font-bold sm:w-auto sm:px-10 sm:text-base" onClick={handleStart}>
             Start your free 30 days — card required
           </Button>
         </div>
