@@ -14,7 +14,7 @@ const Terms = () => {
           <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">Legal</p>
           <h1 className="font-display text-3xl md:text-4xl font-extrabold tracking-tight mt-2">Terms of Service</h1>
           <p className="text-sm text-muted-foreground mt-3">
-            Effective date: 30 April 2026 &nbsp;·&nbsp; Last updated: 30 April 2026
+            Effective date: 30 April 2026 &nbsp;·&nbsp; Last updated: 19 May 2026
           </p>
         </header>
 
@@ -58,6 +58,13 @@ const Terms = () => {
             under South African law in order to register an account. You undertake to provide accurate, current and
             complete information during registration and to maintain such information. You are solely responsible for
             safeguarding your account credentials and for all activities undertaken under your account.
+          </p>
+          <p>
+            Sjoh may ask Service Providers to complete Sjoh ID Check before they can respond to certain job opportunities.
+            Sjoh ID Check is an internal platform trust and safety check that compares submitted account details against
+            uploaded identity documentation. It is not a government-certified identity verification service, credit check,
+            criminal record check or professional qualification verification. Customers remain responsible for satisfying
+            themselves that a Service Provider is suitable, qualified and legally permitted to perform the requested work.
           </p>
 
           <h2 className="font-display text-xl font-bold">5. Service Provider Obligations</h2>
