@@ -64,6 +64,7 @@ Optional but useful before a bigger launch:
   - Keep the current code and change copy to say the first month is charged immediately.
   - Or keep the “30-day free trial, card required” promise and implement a card-authorization/first-charge-later flow.
   - Do not launch paid acquisition while the copy and checkout behavior disagree.
+- Paystack-supported free-trial path to investigate next: collect a reusable authorization first, then create the subscription with a `start_date` 30 days out. Paystack documents that `start_date` is intended for a free period before the first debit, but the customer must already have an authorization on the integration.
 - Confirm live keys are saved as Supabase secrets:
   - `PAYSTACK_SECRET_KEY`
   - `PAYSTACK_WEBHOOK_SECRET` if different from the secret key
