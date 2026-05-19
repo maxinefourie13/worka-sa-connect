@@ -407,7 +407,7 @@ const ListBusiness = () => {
               <div>
                 <h2 className="font-display text-2xl font-semibold">Review and confirm</h2>
                 <p className="text-sm text-ink-2 mt-1">
-                  Founding members get a 2-month free trial with a card on file. After that, it's the price below or cancel anytime before billing starts.
+                  Founding members get a 30-day free trial with a card on file. After that, it's the price below or cancel anytime before billing starts.
                 </p>
               </div>
               <div className="rounded-xl border border-border p-5 bg-secondary/40 space-y-3">
