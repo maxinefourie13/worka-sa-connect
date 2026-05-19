@@ -17,6 +17,7 @@ Status key:
 | `[DONE]` | Local app health | Lint, build, and unit tests pass | Codex |
 | `[DONE]` | Supabase project | New project is linked, migrations are applied, functions are deployed | Codex |
 | `[DONE]` | Supabase secrets | Live Paystack, OpenAI, email/notification keys are added to Supabase | Maxine + Codex |
+| `[DONE]` | Security audit | High-severity npm audit findings are resolved without force-upgrading launch tooling | Codex |
 | `[CHECKING]` | Paystack | Paystack live account is verified and live keys/plans/webhook are configured | Maxine + Codex |
 | `[BLOCKED]` | Production deploy | `sjoh.co.za` is redeployed with the new Supabase env vars | Maxine + Codex/Lovable |
 | `[CHECKING]` | Customer journey | Customer can search, post a job, and receive quote/invoice emails | Codex |
@@ -28,6 +29,14 @@ Status key:
 
 1. `sjoh.co.za` is still serving the old Supabase project (`zwgjbffesalpiaaycbac`). The repo is updated, but production needs a fresh deploy with the new env vars.
 2. Paystack webhook/account live-mode setup still needs to be confirmed before paid business signup can be tested.
+
+## Latest Overnight Checks
+
+- Latest GitHub commit on `main`: launch hygiene and mobile pricing fixes are pushed.
+- Local production build, lint, unit tests, route smoke tests, and mobile pricing overflow checks pass.
+- `npm audit --audit-level=high` passes. Remaining audit items require force upgrades to dev tooling and are not launch blockers.
+- Local build points at production Supabase `omhjcalrfhswjmanriqv`.
+- Live `sjoh.co.za` still points at old Supabase `zwgjbffesalpiaaycbac`, so production must be redeployed from the Sjoh Lovable project before live journey testing.
 
 ## Launch Nice-To-Haves
 
