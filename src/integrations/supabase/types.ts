@@ -1245,36 +1245,6 @@ export type Database = {
         }
         Relationships: []
       }
-      trial_code_redemptions: {
-        Row: {
-          code: string
-          id: string
-          redeemed_at: string
-          tier: Database["public"]["Enums"]["sjoh_tier"]
-          trial_days: number
-          trial_ends_at: string
-          user_id: string
-        }
-        Insert: {
-          code: string
-          id?: string
-          redeemed_at?: string
-          tier?: Database["public"]["Enums"]["sjoh_tier"]
-          trial_days?: number
-          trial_ends_at: string
-          user_id: string
-        }
-        Update: {
-          code?: string
-          id?: string
-          redeemed_at?: string
-          tier?: Database["public"]["Enums"]["sjoh_tier"]
-          trial_days?: number
-          trial_ends_at?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
       quote_revisions: {
         Row: {
           created_at: string
@@ -2022,14 +1992,6 @@ export type Database = {
       }
       provider_status: { Args: { _user_id: string }; Returns: string }
       reactivate_listing: { Args: { _business_id: string }; Returns: boolean }
-      redeem_trial_code: {
-        Args: { _code: string }
-        Returns: {
-          code: string
-          tier: Database["public"]["Enums"]["sjoh_tier"]
-          trial_ends_at: string
-        }[]
-      }
       read_email_batch: {
         Args: { batch_size: number; queue_name: string; vt: number }
         Returns: {
