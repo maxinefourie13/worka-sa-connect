@@ -60,6 +60,10 @@ Optional but useful before a bigger launch:
 ## Paystack
 
 - Wait for Paystack account verification.
+- Decide the final trial mechanic before launch:
+  - Keep the current code and change copy to say the first month is charged immediately.
+  - Or keep the “30-day free trial, card required” promise and implement a card-authorization/first-charge-later flow.
+  - Do not launch paid acquisition while the copy and checkout behavior disagree.
 - Confirm live keys are saved as Supabase secrets:
   - `PAYSTACK_SECRET_KEY`
   - `PAYSTACK_WEBHOOK_SECRET` if different from the secret key
@@ -69,6 +73,7 @@ Optional but useful before a bigger launch:
 - Confirm the Paystack webhook points to:
   - `https://omhjcalrfhswjmanriqv.supabase.co/functions/v1/paystack-webhook`
 - Test a card-required trial, first subscription charge, failed charge, cancellation, and webhook state update.
+- Confirm Paystack sends durable `SUB_*` subscription codes to the webhook; Sjoh stores those codes for cancellation and failed-payment matching.
 
 ## Sjoh ID Check
 

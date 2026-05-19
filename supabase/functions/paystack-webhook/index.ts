@@ -11,6 +11,42 @@ function verifySignature(rawBody: string, signature: string | null, secret: stri
   return computed === signature;
 }
 
+function asRecord(value: unknown): Record<string, any> | null {
+  return value && typeof value === 'object' ? value as Record<string, any> : null;
+}
+
+function textValue(value: unknown): string | null {
+  return typeof value === 'string' && value.length > 0 ? value : null;
+}
+
+function readCustomerCode(data: Record<string, any>): string | null {
+  const customer = asRecord(data.customer);
+  return textValue(customer?.customer_code)
+    ?? textValue(data.customer_code)
+    ?? textValue(data.customer);
+}
+
+function readSubscriptionCode(data: Record<string, any>): string | null {
+  const subscription = asRecord(data.subscription);
+  return textValue(subscription?.subscription_code)
+    ?? textValue(data.subscription_code);
+}
+
+function readPlanCode(data: Record<string, any>): string | null {
+  const planObject = asRecord(data.plan_object);
+  const plan = asRecord(data.plan);
+  return textValue(planObject?.plan_code)
+    ?? textValue(plan?.plan_code)
+    ?? textValue(data.plan);
+}
+
+function readNextPaymentDate(data: Record<string, any>): string | null {
+  const subscription = asRecord(data.subscription);
+  return textValue(data.next_payment_date)
+    ?? textValue(data.next_payment)
+    ?? textValue(subscription?.next_payment_date);
+}
+
 Deno.serve(async (req) => {
   if (req.method !== 'POST') {
     return new Response('Method not allowed', { status: 405 });
@@ -95,8 +131,8 @@ Deno.serve(async (req) => {
         ? 365 * 24 * 60 * 60 * 1000
         : 30  * 24 * 60 * 60 * 1000;
       const nextRenewal = new Date(Date.now() + renewalMs).toISOString();
-      const customerCode = data.customer?.customer_code ?? null;
-      const subscriptionCode = data.plan_object?.plan_code ?? data.plan ?? null;
+      const customerCode = readCustomerCode(data);
+      const subscriptionCode = readSubscriptionCode(data) ?? readPlanCode(data);
       const { error } = await admin.rpc('apply_subscription_payment', {
         _user_id: userId,
         _tier: tier,
@@ -122,8 +158,29 @@ Deno.serve(async (req) => {
         });
         if (error) processError = error.message;
       }
+    } else if (event === 'subscription.create') {
+      // The initial charge.success event can arrive before Paystack gives us the
+      // durable SUB_* code. Store it as soon as the subscription event lands so
+      // later disable/failure webhooks can match the account reliably.
+      const subCode = readSubscriptionCode(data);
+      const customerCode = readCustomerCode(data);
+      const nextPayment = readNextPaymentDate(data);
+
+      if (subCode && customerCode) {
+        const updates: Record<string, string | null> = {
+          paystack_subscription_code: subCode,
+          updated_at: new Date().toISOString(),
+        };
+        if (nextPayment) updates.next_renewal_at = nextPayment;
+
+        const { error } = await admin
+          .from('provider_balances')
+          .update(updates)
+          .eq('paystack_customer_code', customerCode);
+        if (error) processError = error.message;
+      }
     } else if (kind === 'subscription_disable' || kind === 'subscription_payment_failed') {
-      const subCode = data.subscription_code ?? data.plan ?? null;
+      const subCode = readSubscriptionCode(data) ?? readPlanCode(data);
       if (subCode) {
         const { error } = await admin.rpc('lapse_subscription', { _subscription_code: subCode });
         if (error) processError = error.message;
