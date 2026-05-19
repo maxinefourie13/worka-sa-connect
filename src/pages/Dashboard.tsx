@@ -9,7 +9,7 @@ import { QuotesSection } from "@/components/dashboard/QuotesSection";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { formatRand, SJOH_TIERS } from "@/lib/mockData";
+import { formatRand } from "@/lib/mockData";
 import { useMyBusinessStats } from "@/hooks/useMyBusinessStats";
 import { useRecentActivity, timeAgo } from "@/hooks/useRecentActivity";
 import { useMyBusiness } from "@/hooks/useMyBusiness";
@@ -23,7 +23,7 @@ import { requestPushPermission, disablePush, isPushConfigured } from "@/lib/push
 import { GoogleReviewsCard } from "@/components/dashboard/GoogleReviewsCard";
 import { SubscriptionGapBanner } from "@/components/SubscriptionGapBanner";
 import { ProfileVisibilityWarning } from "@/components/ProfileVisibilityWarning";
-import { TrialCodeRedeemer } from "@/components/TrialCodeRedeemer";
+import { LAUNCH_TRIAL_CODE, TrialCodeRedeemer } from "@/components/TrialCodeRedeemer";
 import { ReferAProCard } from "@/components/dashboard/ReferAProCard";
 import { SecondaryCategoriesCard } from "@/components/dashboard/SecondaryCategoriesCard";
 import { BusinessGalleryCard } from "@/components/dashboard/BusinessGalleryCard";
@@ -844,11 +844,6 @@ const FollowersSection = () => {
 const BillingSection = () => {
   const { user } = useAuth();
   const access = useProviderAccess();
-  const tierSlug =
-    access.tier === "verified_pro" || access.tier === "verified_pro_trial" ? "verified_pro"
-    : access.tier === "basic" || access.tier === "basic_trial" ? "basic"
-    : "basic_trial";
-  const tier = SJOH_TIERS.find((t) => t.slug === tierSlug) ?? SJOH_TIERS[0];
   const [liveSub, setLiveSub] = useState<{
     billing_cycle: "monthly" | "annual";
     next_renewal_at: string | null;
@@ -872,6 +867,22 @@ const BillingSection = () => {
   const isMonthlyPaid = isPaid && liveSub?.billing_cycle === "monthly";
   const monthlyPrice = liveSub?.tier === "verified_pro" ? 250 : liveSub?.tier === "basic" ? 50 : 0;
   const yearlySaving = monthlyPrice * 12 - Math.round(monthlyPrice * 12 * 0.9);
+  const currentPlanName =
+    access.tier === "verified_pro" ? "Verified Pro"
+    : access.tier === "basic" ? "Basic Listing"
+    : access.tier === "verified_pro_trial" ? "Verified Pro · Trial"
+    : access.tier === "basic_trial" ? "Basic Listing · Trial"
+    : access.tier === "locked" ? "Account paused"
+    : "No active plan";
+  const currentPlanMeta = isPaid
+    ? liveSub?.billing_cycle === "annual"
+      ? `${formatRand(Math.round(monthlyPrice * 12 * 0.9))} /year · billed yearly`
+      : `${formatRand(monthlyPrice)} /month`
+    : access.isOnTrial
+      ? `${access.trialDaysLeft} day${access.trialDaysLeft === 1 ? "" : "s"} left on trial`
+      : access.isLocked
+        ? "Subscribe to bring your profile back"
+        : `Use ${LAUNCH_TRIAL_CODE} for 3 days free, or subscribe for R250/month`;
 
   const switchToAnnual = async () => {
     if (!liveSub?.tier || (liveSub.tier !== "basic" && liveSub.tier !== "verified_pro")) return;
@@ -907,15 +918,9 @@ const BillingSection = () => {
 
       <div className="bg-foreground text-background rounded-xl p-6">
         <p className="text-xs font-bold uppercase tracking-widest text-background/70">Current plan</p>
-        <p className="font-display text-3xl font-semibold mt-2">{tier.name}</p>
+        <p className="font-display text-3xl font-semibold mt-2">{currentPlanName}</p>
         <p className="text-sm text-background/75 mt-1">
-          {isPaid ? (
-            liveSub?.billing_cycle === "annual"
-              ? `${formatRand(Math.round(monthlyPrice * 12 * 0.9))} /year · billed yearly`
-              : `${formatRand(monthlyPrice)} /month`
-          ) : (
-            tier.price === 0 ? "Free trial" : `${formatRand(tier.price)} ${tier.period}`
-          )}
+          {currentPlanMeta}
         </p>
         {renewalLabel && (
           <p className="text-xs text-background/60 mt-1">Next renewal: {renewalLabel}</p>
@@ -930,7 +935,7 @@ const BillingSection = () => {
         </div>
       </div>
 
-      {!isPaid && (
+      {!isPaid && !access.isOnTrial && (
         <TrialCodeRedeemer tone="light" successRedirect="/dashboard?section=billing&trial=1" reloadOnSuccess />
       )}
 

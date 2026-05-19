@@ -30,7 +30,7 @@ Status key:
 
 1. `sjoh.co.za` is still serving the old Supabase project (`zwgjbffesalpiaaycbac`). The repo is updated, but production needs a fresh deploy with the new env vars.
 2. Paystack webhook/account live-mode setup still needs to be confirmed before paid business signup can be tested.
-3. Trial behavior has moved to the one-time launch code `SORTED3`: 3 days of Verified Pro without a card, then R250/month to continue.
+3. No additional code blockers are known right now; keep testing the live customer and business journeys after deployment.
 
 ## Latest Overnight Checks
 
@@ -40,6 +40,7 @@ Status key:
 - Local build points at production Supabase `omhjcalrfhswjmanriqv`.
 - Live `sjoh.co.za` still points at old Supabase `zwgjbffesalpiaaycbac`, so production must be redeployed from the Sjoh Lovable project before live journey testing.
 - Paystack webhook handling now stores durable subscription codes from subscription events when Paystack sends them, which makes later cancellation/failure matching more reliable.
+- Trial behavior has moved to `SORTED3`: no automatic 30-day Basic trial, one 3-day Verified Pro trial per user, then R250/month to continue.
 
 ## Launch Nice-To-Haves
 

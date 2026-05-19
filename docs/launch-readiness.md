@@ -60,7 +60,7 @@ Optional but useful before a bigger launch:
 ## Paystack
 
 - Wait for Paystack account verification.
-- Launch trial mechanic: `SORTED3` unlocks a one-time 3-day Verified Pro trial without a card. After the code trial, the business chooses the R250/month subscription to continue.
+- Launch trial mechanic: `SORTED3` unlocks a one-time 3-day Verified Pro trial without a card. New accounts no longer receive an automatic 30-day Basic trial. After the code trial, the business chooses the R250/month subscription to continue.
 - Paid checkout should be positioned as a normal R250/month subscription, not as a card-required free trial.
 - Confirm live keys are saved as Supabase secrets:
   - `PAYSTACK_SECRET_KEY`
