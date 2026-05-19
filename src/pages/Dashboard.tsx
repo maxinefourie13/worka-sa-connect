@@ -23,6 +23,7 @@ import { requestPushPermission, disablePush, isPushConfigured } from "@/lib/push
 import { GoogleReviewsCard } from "@/components/dashboard/GoogleReviewsCard";
 import { SubscriptionGapBanner } from "@/components/SubscriptionGapBanner";
 import { ProfileVisibilityWarning } from "@/components/ProfileVisibilityWarning";
+import { TrialCodeRedeemer } from "@/components/TrialCodeRedeemer";
 import { ReferAProCard } from "@/components/dashboard/ReferAProCard";
 import { SecondaryCategoriesCard } from "@/components/dashboard/SecondaryCategoriesCard";
 import { BusinessGalleryCard } from "@/components/dashboard/BusinessGalleryCard";
@@ -928,6 +929,10 @@ const BillingSection = () => {
           </Button>
         </div>
       </div>
+
+      {!isPaid && (
+        <TrialCodeRedeemer tone="light" successRedirect="/dashboard?section=billing&trial=1" reloadOnSuccess />
+      )}
 
       {/* Switch-to-yearly nudge for monthly paid subscribers */}
       {isMonthlyPaid && yearlySaving > 0 && (

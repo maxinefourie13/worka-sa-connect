@@ -664,7 +664,7 @@ export const SJOH_TIERS: SjohTier[] = [
     popular: true,
     founderPrice: 150,
     features: [
-      "30-day free trial — card required",
+      "SORTED3 launch code — 3 days free, no card",
       "Listed in the Sjoh directory",
       "Receive & apply to customer job requests",
       "Send unlimited branded PDF quotations",

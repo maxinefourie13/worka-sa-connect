@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
 import { SeoHead } from "@/components/SeoHead";
+import { LAUNCH_TRIAL_CODE, TrialCodeRedeemer } from "@/components/TrialCodeRedeemer";
 import { Button } from "@/components/ui/button";
 import heroImage from "@/assets/business-landing-hero.jpg";
 import phoneImage from "@/assets/business-landing-phone.jpg";
@@ -376,7 +377,7 @@ const AvatarLanding = () => {
                 </Button>
               </div>
               <div className="mt-10 grid max-w-2xl grid-cols-2 gap-3 sm:grid-cols-5">
-                {["R250/month", "Get found", "Profile", "Quotes", "Invoices"].map((item, index) => (
+                {["R250/month", `${LAUNCH_TRIAL_CODE} trial`, "Profile", "Quotes", "Invoices"].map((item, index) => (
                   <div
                     key={item}
                     className="rounded-2xl border border-white/10 bg-white/[0.06] px-4 py-3 text-sm font-bold text-white/80"
@@ -491,6 +492,7 @@ const AvatarLanding = () => {
                 <span className="font-display text-6xl font-black">{isCustomer ? "Free" : "R250"}</span>
                 {!isCustomer && <span className="mb-3 text-white/62">/month</span>}
               </div>
+              {!isCustomer && <TrialCodeRedeemer className="mt-5" compact />}
               <div className="mt-5 space-y-3">
                 {[
                   isCustomer ? "Search local pros" : "Professional profile",

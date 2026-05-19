@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { Check, CreditCard, Sparkles, Zap } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
 import { SeoHead } from "@/components/SeoHead";
+import { LAUNCH_TRIAL_CODE, TrialCodeRedeemer } from "@/components/TrialCodeRedeemer";
 import { Button } from "@/components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { SJOH_TIERS, formatRand } from "@/lib/mockData";
@@ -10,8 +11,8 @@ import { useAuth } from "@/hooks/useAuth";
 
 const FAQS = [
   {
-    q: "How does the free trial work?",
-    a: "Sign up, add your payment method, and complete your profile. Founding members get an extended trial window, then R250/month or the locked founder rate if they qualify. Cancel before billing starts if you don't want to continue.",
+    q: "How does the launch trial code work?",
+    a: `Use ${LAUNCH_TRIAL_CODE} after signup to unlock a 3-day Verified Pro trial. No card is needed for the code, and it can only be redeemed once per user. After that, choose R250/month to keep your Verified Pro access.`,
   },
   {
     q: "Do you take commission on the work I do?",
@@ -131,7 +132,7 @@ const Pricing = () => {
                 <span className="text-muted-foreground mb-2 text-base">/month</span>
               </div>
               <p className="mt-2 text-sm text-ink-2">
-                Card required to claim your founding spot. Cancel anytime before billing starts.
+                Use {LAUNCH_TRIAL_CODE} for 3 days free, or subscribe for R250/month when you are ready.
               </p>
             </div>
 
@@ -150,11 +151,13 @@ const Pricing = () => {
               ))}
             </ul>
 
+            <TrialCodeRedeemer className="mt-7" />
+
             <Button size="lg" className="w-full mt-8 text-base font-bold h-14" onClick={handleStart}>
-              Claim my founding spot
+              Subscribe for R250/month
             </Button>
             <p className="text-center text-xs text-muted-foreground mt-3">
-              Limited to 500 Founding Businesses while Sjoh fills the marketplace.
+              Limited to 500 Founding Businesses while Sjoh fills the marketplace. Trial code is optional.
             </p>
           </div>
 
@@ -241,11 +244,11 @@ const Pricing = () => {
             <div>
               <span className="text-[10px] font-bold uppercase tracking-widest text-sa-gold">Simple start</span>
               <h2 className="font-display text-2xl md:text-3xl font-extrabold tracking-tight mt-1">
-                Claim your spot, build your profile, cancel before billing if it is not for you.
+                Try Verified Pro for 3 days, then keep going for R250/month.
               </h2>
               <p className="mt-3 text-white/68 text-sm md:text-base leading-relaxed">
-                Add your card to claim a real founding spot, then use your trial window to complete your
-                profile, add proof, and see how Sjoh works. If it is not the right fit, cancel before billing starts.
+                Redeem {LAUNCH_TRIAL_CODE} once per user to build your profile, add proof, test the quote tools,
+                and see how Sjoh works. No card is needed for the trial code.
               </p>
             </div>
           </div>
@@ -286,7 +289,7 @@ const Pricing = () => {
         <div className="mt-20 text-center">
           <p className="text-white/60 text-sm mb-4">Ready to stop being a secret?</p>
           <Button size="lg" className="h-14 w-full max-w-sm px-4 text-sm font-bold sm:w-auto sm:px-10 sm:text-base" onClick={handleStart}>
-            Start your free 30 days — card required
+            Subscribe for R250/month
           </Button>
         </div>
 

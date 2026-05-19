@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
 import { SeoHead } from "@/components/SeoHead";
+import { LAUNCH_TRIAL_CODE, TrialCodeRedeemer } from "@/components/TrialCodeRedeemer";
 import { Button } from "@/components/ui/button";
 import heroImage from "@/assets/business-landing-hero.jpg";
 import phoneImage from "@/assets/business-landing-phone.jpg";
@@ -115,7 +116,7 @@ const BusinessLanding = () => {
                 Sjoh gives proper service businesses a professional online reputation without the
                 website building, Facebook posting, local SEO homework, or Google Ads confusion.
                 Get listed early for <strong className="text-white">R250/month</strong> and claim
-                visibility while your category is still opening up.
+                visibility while your category is still opening up. Use <strong className="text-white">{LAUNCH_TRIAL_CODE}</strong> for 3 days free.
               </p>
               <div className="mt-9 flex flex-col gap-3 sm:flex-row">
                 <Button size="xl" asChild className="rounded-full bg-sa-gold text-sa-dark hover:bg-sa-gold/90">
@@ -135,7 +136,7 @@ const BusinessLanding = () => {
               </div>
 
               <div className="mt-10 grid max-w-2xl grid-cols-2 gap-3 sm:grid-cols-5">
-                {["R250/month", "Get found", "Quotes", "Invoices", "Reviews"].map((item, index) => (
+                {["R250/month", `${LAUNCH_TRIAL_CODE} trial`, "Quotes", "Invoices", "Reviews"].map((item, index) => (
                   <div
                     key={item}
                     className="rounded-2xl border border-white/10 bg-white/[0.06] px-4 py-3 text-sm font-bold text-white/80"
@@ -147,6 +148,7 @@ const BusinessLanding = () => {
                   </div>
                 ))}
               </div>
+              <TrialCodeRedeemer className="mt-5 max-w-2xl" compact />
             </div>
 
             <div className="relative">

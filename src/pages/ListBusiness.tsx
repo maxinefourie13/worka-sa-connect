@@ -2,6 +2,7 @@ import { useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Check, ArrowRight, ArrowLeft, CheckCircle2, Upload, Loader2, X } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
+import { LAUNCH_TRIAL_CODE, TrialCodeRedeemer } from "@/components/TrialCodeRedeemer";
 import { Button } from "@/components/ui/button";
 import { CATEGORIES, CATEGORY_GROUPS, PROVINCES } from "@/lib/mockData";
 import { cn } from "@/lib/utils";
@@ -407,7 +408,7 @@ const ListBusiness = () => {
               <div>
                 <h2 className="font-display text-2xl font-semibold">Review and confirm</h2>
                 <p className="text-sm text-ink-2 mt-1">
-                  Founding members get a 30-day free trial with a card on file. After that, it's the price below or cancel anytime before billing starts.
+                  Founding businesses can use {LAUNCH_TRIAL_CODE} once for a 3-day Verified Pro trial. No card needed for the code.
                 </p>
               </div>
               <div className="rounded-xl border border-border p-5 bg-secondary/40 space-y-3">
@@ -424,10 +425,11 @@ const ListBusiness = () => {
                     {PLANS.find((p) => p.id === plan)?.name ?? "—"}
                   </p>
                   <p className="text-xs text-muted-foreground mt-1">
-                    R250/month after your free trial. Build a public profile, respond to quote requests, generate invoices, and collect verified reviews.
+                    R250/month when you are ready to keep Verified Pro. Build a public profile, respond to quote requests, generate invoices, and collect verified reviews.
                   </p>
                 </div>
               </div>
+              <TrialCodeRedeemer tone="light" />
               <div className="rounded-xl border border-dashed border-sa-peri/60 bg-sa-peri/10 p-5 text-sm text-ink-2 leading-relaxed">
                 <strong className="text-foreground">Heads up — early access.</strong> We'll save your listing in workshop mode so you can keep editing it from your dashboard. The Sjoh team will reach out within 24 hours to verify details and switch it live.
               </div>

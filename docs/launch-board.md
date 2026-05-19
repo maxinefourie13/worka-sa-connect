@@ -19,7 +19,7 @@ Status key:
 | `[DONE]` | Supabase secrets | Live Paystack, OpenAI, email/notification keys are added to Supabase | Maxine + Codex |
 | `[DONE]` | Security audit | High-severity npm audit findings are resolved without force-upgrading launch tooling | Codex |
 | `[CHECKING]` | Paystack | Paystack live account is verified and live keys/plans/webhook are configured | Maxine + Codex |
-| `[BLOCKED]` | Paystack trial policy | Decide whether the card-required trial authorizes only, charges R1, or charges the first month immediately | Maxine + Codex |
+| `[DONE]` | Trial code | `SORTED3` gives a one-time 3-day Verified Pro trial without a card | Codex |
 | `[BLOCKED]` | Production deploy | `sjoh.co.za` is redeployed with the new Supabase env vars | Maxine + Codex/Lovable |
 | `[CHECKING]` | Customer journey | Customer can search, post a job, and receive quote/invoice emails | Codex |
 | `[CHECKING]` | Business journey | Business can sign up, pay, create profile, verify ID, browse opportunities, quote, and invoice | Codex |
@@ -30,7 +30,7 @@ Status key:
 
 1. `sjoh.co.za` is still serving the old Supabase project (`zwgjbffesalpiaaycbac`). The repo is updated, but production needs a fresh deploy with the new env vars.
 2. Paystack webhook/account live-mode setup still needs to be confirmed before paid business signup can be tested.
-3. The site copy says “30-day free trial, card required,” but the current Paystack checkout initializes the full subscription amount. Before launch, choose the final trial mechanic and align both code and copy.
+3. Trial behavior has moved to the one-time launch code `SORTED3`: 3 days of Verified Pro without a card, then R250/month to continue.
 
 ## Latest Overnight Checks
 

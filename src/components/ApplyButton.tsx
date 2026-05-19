@@ -183,14 +183,14 @@ const PaywallDialog = ({ kind, onClose, onPickPlan, onRunKyc }: PaywallProps) =>
     locked: {
       icon: <Lock className="size-5 text-accent" strokeWidth={2.5} />,
       title: "Your account is paused",
-      body: "Your free trial ended or your payment method needs attention. Subscribe to Verified Pro (R250/mo) to send quotes again.",
+      body: "Your trial or payment access needs attention. Subscribe to Verified Pro (R250/mo) to send quotes again.",
       cta: "Choose a plan",
       onCta: onPickPlan,
     },
     "no-plan": {
       icon: <Lock className="size-5 text-accent" strokeWidth={2.5} />,
-      title: "Your trial has ended",
-      body: "Your 30-day free trial is finished. Choose a plan to keep sending quotes.",
+      title: "Verified Pro needed",
+      body: "Use SORTED3 once for a 3-day Verified Pro trial, or subscribe for R250/mo to keep sending quotes.",
       cta: "See plans",
       onCta: onPickPlan,
     },

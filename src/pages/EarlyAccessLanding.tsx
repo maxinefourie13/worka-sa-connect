@@ -8,6 +8,7 @@ import { SeoHead } from "@/components/SeoHead";
 import { Typewriter } from "@/components/Typewriter";
 import { FoundingSpotsBanner } from "@/components/FoundingSpotsBanner";
 import { SjohWordmark } from "@/components/SjohWordmark";
+import { LAUNCH_TRIAL_CODE } from "@/components/TrialCodeRedeemer";
 import sjohMascot from "@/assets/sjoh-mascot-hoodie.png";
 import { Award, Gift, Handshake, ShieldCheck, Hammer, Search, ArrowRight, CheckCircle2, Star, MapPin } from "lucide-react";
 
@@ -24,7 +25,7 @@ const HERO_PHRASES = [
 
 const PERKS = [
   { Icon: Award, title: "Founder badge", body: "First 500 pros get a permanent Founder badge on their profile." },
-  { Icon: Gift, title: "Extra month free", body: "Founding members get a bonus month on top of the trial. Card required to activate." },
+  { Icon: Gift, title: "3 days free", body: `Use ${LAUNCH_TRIAL_CODE} once to unlock a no-card Verified Pro trial.` },
   { Icon: Handshake, title: "Keep the whole quote", body: "No commission on jobs. Clients contact you directly." },
   { Icon: ShieldCheck, title: "Vetted marketplace", body: "Profiles, reviews, and trust signals help good pros stand out." },
 ];
@@ -88,7 +89,7 @@ const EarlyAccessLanding = () => {
     <div className="min-h-dvh w-full overflow-hidden bg-[#050505] text-white">
       <SeoHead
         title="Sjoh — Claim your founding spot"
-        description="Join Sjoh as a founding member. South Africa's no-commission directory of vetted pros. First 500 get a Founder badge + extra month free. Card required to activate your trial."
+        description={`Join Sjoh as a founding member. South Africa's no-commission directory of vetted pros. First 500 get a Founder badge, and ${LAUNCH_TRIAL_CODE} unlocks 3 days free with no card.`}
       />
 
       <div
@@ -145,7 +146,7 @@ const EarlyAccessLanding = () => {
             <FoundingSpotsBanner />
             <span className="inline-flex items-center gap-2 rounded-full border border-white/12 bg-white/7 px-3.5 py-1.5 text-sm font-bold text-white/78">
               <CheckCircle2 className="size-4 text-sa-green" strokeWidth={2.5} />
-              Card required to activate
+              {LAUNCH_TRIAL_CODE}: 3 days free
             </span>
           </div>
 
@@ -280,7 +281,7 @@ const EarlyAccessLanding = () => {
                 <div>
                   <h2 className="font-display-bold text-2xl tracking-tight text-white">Claim your founding spot</h2>
                   <p className="mt-1 text-sm leading-relaxed text-white/65">
-                    Founder badge, extra trial month, and 0% commission. Card required to activate.
+                    Founder badge, {LAUNCH_TRIAL_CODE} 3-day trial, and 0% commission.
                   </p>
                 </div>
                 <span className="hidden rounded-full bg-sa-green px-3 py-1.5 text-[10px] font-black uppercase tracking-widest text-white sm:inline-flex">
@@ -292,7 +293,7 @@ const EarlyAccessLanding = () => {
                 {[
                   ["0%", "commission"],
                   ["500", "founders"],
-                  ["1", "extra month"],
+                  ["3d", "trial code"],
                 ].map(([value, label]) => (
                   <div key={label} className="rounded-2xl border border-white/10 bg-black/25 px-2 py-3">
                     <div className="font-display-bold text-2xl text-sa-gold">{value}</div>
@@ -357,7 +358,7 @@ const EarlyAccessLanding = () => {
                 </Button>
 
                 <p className="text-center text-[11px] text-white/55 leading-relaxed">
-                  Card required for trial activation. Cancel before billing starts if you don't want to continue.
+                  Use {LAUNCH_TRIAL_CODE} after signup for 3 days free. No card needed for the code.
                 </p>
 
                 <p className="text-center text-xs text-white/55">
