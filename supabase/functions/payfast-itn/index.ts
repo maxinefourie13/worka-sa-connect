@@ -65,7 +65,7 @@ Deno.serve(async (req) => {
   }
 
   const providedSig = map.signature ?? '';
-  if (!(await verifyItnSignature(ordered, providedSig, PASSPHRASE))) {
+  if (!verifyItnSignature(ordered, providedSig, PASSPHRASE)) {
     console.warn('[payfast-itn] invalid signature');
     return new Response('Invalid signature', { status: 401 });
   }
