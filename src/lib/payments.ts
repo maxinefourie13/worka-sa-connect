@@ -9,8 +9,13 @@ export interface TrialCodeRedemption {
   code: string;
 }
 
+type CheckoutFn =
+  | "paystack-create-subscription"
+  | "paystack-create-urgent"
+  | "payfast-create-subscription";
+
 async function startCheckout(
-  fn: "paystack-create-subscription" | "paystack-create-urgent",
+  fn: CheckoutFn,
   body: Record<string, unknown>,
   loadingMsg: string,
 ) {
@@ -22,8 +27,11 @@ async function startCheckout(
 
   toast({ title: loadingMsg, description: "Sorting the chankura…" });
 
+  const returnUrl = window.location.origin + "/dashboard?paid=1";
+  const cancelUrl = window.location.origin + "/pricing?cancelled=1";
+
   const { data, error } = await supabase.functions.invoke(fn, {
-    body: { ...body, callback_url: window.location.origin + "/dashboard?paid=1" },
+    body: { ...body, callback_url: returnUrl, return_url: returnUrl, cancel_url: cancelUrl },
   });
 
   if (error || !data?.authorization_url) {
@@ -39,13 +47,25 @@ async function startCheckout(
   return data.reference as string;
 }
 
+export type PaymentProvider = "paystack" | "payfast";
+
 export const payments = {
-  startSubscription: (tier: Tier, billing_cycle: BillingCycle = "monthly") =>
-    startCheckout(
-      "paystack-create-subscription",
+  startSubscription: (
+    tier: Tier,
+    billing_cycle: BillingCycle = "monthly",
+    provider: PaymentProvider = "paystack",
+  ) => {
+    const fn: CheckoutFn = provider === "payfast"
+      ? "payfast-create-subscription"
+      : "paystack-create-subscription";
+    const planName = tier === "basic" ? "Basic Listing" : "Verified Pro";
+    const cycleLabel = billing_cycle === "annual" ? " (yearly)" : "";
+    return startCheckout(
+      fn,
       { tier, billing_cycle },
-      `Starting ${tier === "basic" ? "Basic Listing" : "Verified Pro"}${billing_cycle === "annual" ? " (yearly)" : ""} subscription`,
-    ),
+      `Starting ${planName}${cycleLabel} subscription via ${provider === "payfast" ? "PayFast" : "Paystack"}`,
+    );
+  },
   redeemTrialCode: async (code: string): Promise<TrialCodeRedemption | null> => {
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) {

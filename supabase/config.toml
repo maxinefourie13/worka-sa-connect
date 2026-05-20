@@ -26,3 +26,9 @@ verify_jwt = false
 
 [functions.invoice-download]
 verify_jwt = false
+
+[functions.payfast-itn]
+verify_jwt = false
+
+[functions.payfast-create-subscription]
+verify_jwt = true
