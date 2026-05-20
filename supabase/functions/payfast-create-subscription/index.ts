@@ -125,7 +125,7 @@ Deno.serve(async (req) => {
       cycles: '0',
     };
 
-    params.signature = await signPayload(params, PASSPHRASE);
+    params.signature = signPayload(params, PASSPHRASE);
 
     const host = payfastHost();
     const query = Object.entries(params)

@@ -6,6 +6,9 @@
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.0';
 
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.0';
+import { createHash } from 'node:crypto';
+
 function payfastValidateHost(): string {
   const mode = (Deno.env.get('PAYFAST_MODE') ?? 'sandbox').toLowerCase();
   return mode === 'live' ? 'www.payfast.co.za' : 'sandbox.payfast.co.za';
@@ -15,12 +18,8 @@ function pfEncode(value: string): string {
   return encodeURIComponent(value).replace(/%20/g, '+');
 }
 
-async function md5(input: string): Promise<string> {
-  const buf = new TextEncoder().encode(input);
-  const hash = await crypto.subtle.digest('MD5', buf);
-  return Array.from(new Uint8Array(hash))
-    .map((b) => b.toString(16).padStart(2, '0'))
-    .join('');
+function md5(input: string): string {
+  return createHash('md5').update(input).digest('hex');
 }
 
 // PayFast ITN: rebuild signature from all posted fields except `signature` itself,
