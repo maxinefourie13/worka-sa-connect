@@ -3,6 +3,7 @@
 // then receives the success notification and flips provider_balances to verified_pro.
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.0';
+import { createHash } from 'node:crypto';
 import { corsHeaders } from '../_shared/cors.ts';
 
 type Tier = 'verified_pro';
@@ -25,15 +26,11 @@ function pfEncode(value: string): string {
   return encodeURIComponent(value).replace(/%20/g, '+');
 }
 
-async function md5(input: string): Promise<string> {
-  const buf = new TextEncoder().encode(input);
-  const hash = await crypto.subtle.digest('MD5', buf);
-  return Array.from(new Uint8Array(hash))
-    .map((b) => b.toString(16).padStart(2, '0'))
-    .join('');
+function md5(input: string): string {
+  return createHash('md5').update(input).digest('hex');
 }
 
-async function signPayload(params: Record<string, string>, passphrase: string): Promise<string> {
+function signPayload(params: Record<string, string>, passphrase: string): string {
   const pairs: string[] = [];
   for (const key of Object.keys(params)) {
     const value = params[key];
