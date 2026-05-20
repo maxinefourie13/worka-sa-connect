@@ -72,12 +72,12 @@ const Pricing = () => {
   const navigate = useNavigate();
   const tier = SJOH_TIERS[0];
 
-  const handleStart = () => {
+  const handleStart = (provider: "paystack" | "payfast" = "paystack") => {
     if (!user) {
       navigate(`/login?next=${encodeURIComponent("/pricing")}`);
       return;
     }
-    payments.startSubscription("verified_pro", "monthly");
+    payments.startSubscription("verified_pro", "monthly", provider);
   };
 
   return (
@@ -153,11 +153,16 @@ const Pricing = () => {
 
             <TrialCodeRedeemer className="mt-7" />
 
-            <Button size="lg" className="w-full mt-8 text-base font-bold h-14" onClick={handleStart}>
-              Subscribe for R250/month
-            </Button>
+            <div className="mt-8 space-y-2">
+              <Button size="lg" className="w-full text-base font-bold h-14" onClick={() => handleStart("payfast")}>
+                Subscribe with PayFast — R250/month
+              </Button>
+              <Button size="lg" variant="outline" className="w-full text-base font-bold h-14" onClick={() => handleStart("paystack")}>
+                Subscribe with Paystack — R250/month
+              </Button>
+            </div>
             <p className="text-center text-xs text-muted-foreground mt-3">
-              Limited to 500 Founding Businesses while Sjoh fills the marketplace. Trial code is optional.
+              Both options bill R250/month, cancel anytime. Limited to 500 Founding Businesses. Trial code is optional.
             </p>
           </div>
 
@@ -288,9 +293,14 @@ const Pricing = () => {
 
         <div className="mt-20 text-center">
           <p className="text-white/60 text-sm mb-4">Ready to stop being a secret?</p>
-          <Button size="lg" className="h-14 w-full max-w-sm px-4 text-sm font-bold sm:w-auto sm:px-10 sm:text-base" onClick={handleStart}>
-            Subscribe for R250/month
-          </Button>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center items-stretch sm:items-center">
+            <Button size="lg" className="h-14 w-full max-w-sm px-4 text-sm font-bold sm:w-auto sm:px-10 sm:text-base" onClick={() => handleStart("payfast")}>
+              Subscribe with PayFast
+            </Button>
+            <Button size="lg" variant="outline" className="h-14 w-full max-w-sm px-4 text-sm font-bold sm:w-auto sm:px-10 sm:text-base bg-white/5 text-white border-white/30 hover:bg-white/10" onClick={() => handleStart("paystack")}>
+              Subscribe with Paystack
+            </Button>
+          </div>
         </div>
 
       </div>

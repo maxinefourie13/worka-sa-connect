@@ -936,6 +936,7 @@ export type Database = {
           paystack_reference: string
           processed: boolean
           processed_at: string | null
+          provider: string
           raw: Json
           user_id: string | null
         }
@@ -951,6 +952,7 @@ export type Database = {
           paystack_reference: string
           processed?: boolean
           processed_at?: string | null
+          provider?: string
           raw: Json
           user_id?: string | null
         }
@@ -966,6 +968,7 @@ export type Database = {
           paystack_reference?: string
           processed?: boolean
           processed_at?: string | null
+          provider?: string
           raw?: Json
           user_id?: string | null
         }
@@ -1180,6 +1183,7 @@ export type Database = {
           is_id_verified: boolean
           next_renewal_at: string | null
           onesignal_player_id: string | null
+          payfast_token: string | null
           paystack_customer_code: string | null
           paystack_subscription_code: string | null
           push_alerts_optin: boolean
@@ -1204,6 +1208,7 @@ export type Database = {
           is_id_verified?: boolean
           next_renewal_at?: string | null
           onesignal_player_id?: string | null
+          payfast_token?: string | null
           paystack_customer_code?: string | null
           paystack_subscription_code?: string | null
           push_alerts_optin?: boolean
@@ -1228,6 +1233,7 @@ export type Database = {
           is_id_verified?: boolean
           next_renewal_at?: string | null
           onesignal_player_id?: string | null
+          payfast_token?: string | null
           paystack_customer_code?: string | null
           paystack_subscription_code?: string | null
           push_alerts_optin?: boolean
