@@ -5,8 +5,6 @@
 // PayFast docs: https://developers.payfast.co.za/docs#step_4_confirm_payment
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.0';
-
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.0';
 import { createHash } from 'node:crypto';
 
 function payfastValidateHost(): string {
@@ -24,7 +22,7 @@ function md5(input: string): string {
 
 // PayFast ITN: rebuild signature from all posted fields except `signature` itself,
 // in the original POST order, joined with '&', then append &passphrase=… if set.
-async function verifyItnSignature(orderedPairs: Array<[string, string]>, providedSig: string, passphrase: string): Promise<boolean> {
+function verifyItnSignature(orderedPairs: Array<[string, string]>, providedSig: string, passphrase: string): boolean {
   const pairs: string[] = [];
   for (const [key, value] of orderedPairs) {
     if (key === 'signature') continue;
@@ -32,7 +30,7 @@ async function verifyItnSignature(orderedPairs: Array<[string, string]>, provide
     pairs.push(`${key}=${pfEncode(String(value).trim())}`);
   }
   if (passphrase) pairs.push(`passphrase=${pfEncode(passphrase.trim())}`);
-  const computed = await md5(pairs.join('&'));
+  const computed = md5(pairs.join('&'));
   return computed.toLowerCase() === (providedSig ?? '').toLowerCase();
 }
 
