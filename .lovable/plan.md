@@ -1,39 +1,62 @@
-## Goal
+# Add PayFast alongside Paystack
 
-Bring the auth pages (Login, Register, Forgot Password, Reset Password) in line with the rest of Sjoh — bold Plus Jakarta extrabold headings, periwinkle accents, proper Sjoh voice, and an inviting layout instead of the current plain centered form.
+Goal: let businesses subscribe to Verified Pro (R250/mo) and pay Urgent Boost via **PayFast** while Paystack live-mode is still pending. Paystack code stays — PayFast becomes a second route, picked by the user at checkout.
 
-## What changes
+## What you need to do first (outside the app)
 
-**Layout (`AuthShell`)**
-- Replace the narrow centered single-column with a two-column split on desktop (form left, brand panel right). On mobile it stacks, form first.
-- Right panel: periwinkle gradient background with the Sjoh wordmark, a punchy SA-flavoured tagline, and 3 trust bullets ("No commission", "Vetted SA pros", "Direct contact — no middleman") with Lucide icons. Adds the same warmth the home page has.
-- Soft background: subtle periwinkle radial wash behind the form card so the page doesn't feel sterile.
+1. Create / log into your PayFast account at payfast.co.za.
+2. From **Settings → Integration**, grab:
+   - `PAYFAST_MERCHANT_ID`
+   - `PAYFAST_MERCHANT_KEY`
+   - `PAYFAST_PASSPHRASE` (set one if blank — strongly recommended)
+3. Decide live vs sandbox. We'll add a `PAYFAST_MODE` secret (`sandbox` or `live`) so you can test before flipping.
 
-**Typography**
-- Headings switch from `font-medium` to `font-extrabold tracking-tight` (matches the Core rule for `font-display`).
-- Bigger H1 (text-4xl) so it carries the page like the rest of the site.
+I'll request these via the secrets tool once you approve the plan.
 
-**Form card**
-- Keep the rounded card but lift it: stronger shadow, slightly larger padding, periwinkle focus ring on inputs (already partially there).
-- Replace the inline `<style>` block + raw `<input className="input">` with shadcn `Input` and `Label` components for consistency with the rest of the app.
-- Social buttons: keep Google + Apple, but use the proper brand glyphs (inline SVG for Google "G" colour mark, Lucide `Apple` icon) instead of a plain bold "G" letter and an empty Apple button.
+## What I'll build
 
-**Voice & copy**
-- Login subtitle: "Welcome back, boet. Let's get you back to the graft."
-- Register already has good voice — keep "Pull in, boet." but tighten the subtitle.
-- Forgot/Reset: keep functional but add Sjoh warmth ("No stress — we'll sort it.").
-- Per memory: no emojis. The current `🎁` on the referral pill becomes a Lucide `Gift` icon.
+### 1. Edge functions (new)
+- `payfast-create-subscription` — builds a signed PayFast checkout URL for the R250/mo Verified Pro recurring subscription, returns it to the client to redirect.
+- `payfast-create-urgent-charge` — same pattern for one-off Urgent Boost (R50+).
+- `payfast-itn` — public ITN (Instant Transaction Notification) webhook. Verifies signature + source IP + posts back to PayFast for validation, then:
+  - Logs to existing `payment_events` table (extend `kind` enum if needed, add a `provider` column).
+  - On successful subscription → upgrade `provider_balances.tier` to `verified_pro`, set `tier_expires_at`, store PayFast `token` as `payfast_subscription_token`.
+  - On cancellation/failure → mirror the Paystack webhook behaviour.
+- `verify_jwt = false` for `payfast-itn` (PayFast can't send JWT). Subscription/charge creators stay JWT-verified.
 
-**Misc**
-- Logo at the top: keep but slightly smaller (h-16) since the right brand panel carries the brand on desktop.
-- Replace the empty Apple span with the actual Apple icon import.
+### 2. Schema changes (one migration)
+- `provider_balances`: add `payfast_subscription_token text`, `payment_provider text default 'paystack'`.
+- `payment_events`: add `provider text default 'paystack'` so we can tell rows apart.
+- No data migration — existing Paystack rows keep working.
 
-## Out of scope
+### 3. Frontend
+- On **Pricing** + paywall CTAs, replace the single "Subscribe" button with two: **Pay with Paystack** (existing) and **Pay with PayFast**. Periwinkle primary on both, PayFast labelled clearly as the live option for now.
+- Same dual-button on Urgent Boost modal.
+- Success / cancel return pages reuse existing post-payment screens (PayFast `return_url` / `cancel_url`).
 
-- No auth logic changes (signIn/signUp/OAuth flows untouched).
-- No new routes, no new dependencies.
-- Email templates and post-auth pages unchanged.
+### 4. Secrets (added via tool after approval)
+`PAYFAST_MERCHANT_ID`, `PAYFAST_MERCHANT_KEY`, `PAYFAST_PASSPHRASE`, `PAYFAST_MODE`, `PUBLIC_SITE_URL` (already exists, reused for return URLs).
 
-## Files touched
+### 5. Launch board update
+Mark Paystack live-mode as "nice-to-have" instead of blocker; PayFast becomes the launch payment rail.
 
-- `src/pages/Auth.tsx` — only file edited.
+## Out of scope (this plan)
+- No refactor of the Paystack flow.
+- No PayFast subscription cancellation UI yet — admin can cancel from PayFast dashboard; I'll add a "Cancel subscription" button in a follow-up if you want.
+- No PayFast for invoicing customer→pro payments (those stay direct contact, per the no-commission model).
+
+## Technical notes (for reference)
+- PayFast signing: MD5 of URL-encoded, alpha-sorted key=value pairs + passphrase. Must match exactly on both checkout build and ITN verification.
+- ITN must do three checks: signature match, source IP in PayFast's published ranges, and a POST back to `https://www.payfast.co.za/eng/query/validate` returning `VALID`.
+- Subscription type = `1` (recurring), `frequency = 3` (monthly), `cycles = 0` (indefinite).
+- Sandbox host: `sandbox.payfast.co.za`. Live host: `www.payfast.co.za`.
+
+## Order of execution after approval
+1. Request the 4 PayFast secrets.
+2. Run the migration.
+3. Build the 3 edge functions + deploy.
+4. Wire the dual-button UI on Pricing + Urgent Boost.
+5. Test in sandbox end-to-end (curl the create function, walk through checkout, hit ITN with a sandbox transaction).
+6. Flip `PAYFAST_MODE=live` when you're ready to take real money.
+
+Approve and I'll start with the secrets request.
