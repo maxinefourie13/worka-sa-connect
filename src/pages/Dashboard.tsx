@@ -884,10 +884,10 @@ const BillingSection = () => {
         ? "Subscribe to bring your profile back"
         : `Use ${LAUNCH_TRIAL_CODE} for 3 days free, or subscribe for R250/month`;
 
-  const switchToAnnual = async () => {
+  const switchToAnnual = async (provider: "paystack" | "payfast" = "paystack") => {
     if (!liveSub?.tier || (liveSub.tier !== "basic" && liveSub.tier !== "verified_pro")) return;
     setSwitching(true);
-    await payments.startSubscription(liveSub.tier as "basic" | "verified_pro", "annual");
+    await payments.startSubscription(liveSub.tier as "basic" | "verified_pro", "annual", provider);
     setSwitching(false);
   };
 
@@ -950,16 +950,21 @@ const BillingSection = () => {
               Pay for the year and save 10%. Sorted.
             </p>
           </div>
-          <Button onClick={switchToAnnual} disabled={switching} className="shrink-0">
-            {switching ? "Sorting…" : "Switch to yearly"}
-          </Button>
+          <div className="shrink-0 flex flex-col sm:flex-row gap-2">
+            <Button onClick={() => switchToAnnual("payfast")} disabled={switching}>
+              {switching ? "Sorting…" : "Switch via PayFast"}
+            </Button>
+            <Button variant="outline" onClick={() => switchToAnnual("paystack")} disabled={switching}>
+              {switching ? "Sorting…" : "Switch via Paystack"}
+            </Button>
+          </div>
         </div>
       )}
 
       <div className="bg-card border border-border rounded-xl p-6">
         <h3 className="font-display text-lg font-semibold mb-4">Payment method</h3>
         <p className="text-sm text-muted-foreground">
-          Your card is managed securely by Paystack. To update your card, change your plan, or cancel, use the buttons above — Paystack will email you a secure update link if needed.
+          Your subscription is billed by either Paystack or PayFast, depending on which option you chose at checkout. To update your card, change your plan, or cancel, contact support and we'll sort it.
         </p>
       </div>
     </>
