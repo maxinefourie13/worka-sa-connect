@@ -74,7 +74,9 @@ export const payments = {
     }
 
     const normalized = code.trim().toUpperCase().replace(/[^A-Z0-9]/g, "");
-    const { data, error } = await supabase.rpc("redeem_trial_code", { _code: normalized });
+    // Cast through any: the generated types file lags behind newer RPCs
+    // (redeem_trial_code is deployed but not in src/integrations/supabase/types.ts yet).
+    const { data, error } = await (supabase.rpc as any)("redeem_trial_code", { _code: normalized });
 
     if (error) {
       toast({
